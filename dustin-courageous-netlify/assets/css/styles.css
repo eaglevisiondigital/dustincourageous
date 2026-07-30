@@ -169,8 +169,8 @@ textarea{min-height:130px;resize:vertical}
 
 /* Gift Box page */
 .giftbox-page-section{padding:42px 0 56px;background:#f7f7f7}
-.giftbox-page-card{display:grid;grid-template-columns:1.08fr .92fr;gap:34px;align-items:center;background:white;border-radius:18px;padding:28px 34px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
-.giftbox-page-media img{width:100%;height:auto;display:block;border-radius:12px}
+.giftbox-page-card{display:grid;grid-template-columns:1.16fr .84fr;gap:34px;align-items:center;background:white;border-radius:18px;padding:28px 34px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
+.giftbox-page-media img{width:100%;height:auto;display:block;border-radius:12px;object-fit:contain}
 .giftbox-page-copy{padding:12px 6px}
 .giftbox-page-copy .eyebrow{color:var(--red);margin-bottom:8px}
 .giftbox-page-title{font-size:3.4rem;line-height:.98;margin:0 0 20px}
