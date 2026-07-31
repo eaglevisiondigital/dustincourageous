@@ -57,9 +57,9 @@ button,input,select,textarea{font:inherit}
 .hero-mobile img{display:block;width:100%;height:auto;position:relative;z-index:1}
 .hero-mobile-copy{text-align:center;padding:18px 12px 12px}
 /* Mobile headline uses the approved branded wordmark artwork for an exact desktop-brand match. */
-.mobile-hero-wordmark{position:relative;z-index:20;background:#050505;padding:2px 0 0;margin:0;overflow:visible;isolation:isolate}
-.mobile-hero-wordmark img{display:block;width:100%;height:auto;position:relative;z-index:21}
-.hero-mobile .mobile-hero-scene{display:block;width:100%;height:auto;position:relative;z-index:1;margin-top:-30px}
+.mobile-hero-wordmark{position:relative;z-index:30;background:#050505;padding:2px 0 0;margin:0 0 -42px;overflow:visible}
+.mobile-hero-wordmark img{display:block;width:100%;height:auto;position:relative;z-index:31;pointer-events:none}
+.hero-mobile .mobile-hero-scene{display:block;width:100%;height:auto;position:relative;z-index:1;margin-top:0}
 .hero-mobile-bottom{padding:16px 0 4px}
 .hero-mobile-bottom p{margin:0 auto;color:#ddd;max-width:34rem;font-size:1rem}
 
@@ -211,8 +211,8 @@ textarea{min-height:130px;resize:vertical}
   .page-hero{padding:48px 0}
   .page-hero h1{font-size:2.7rem}
   @media (max-width:430px){
-    .mobile-hero-wordmark{margin-bottom:0}
-    .hero-mobile .mobile-hero-scene{margin-top:-26px}
+    .mobile-hero-wordmark{margin-bottom:-34px}
+    .hero-mobile .mobile-hero-scene{margin-top:0}
   }
   .roadmap{grid-template-columns:1fr 1fr}
   .form-grid{grid-template-columns:1fr}
