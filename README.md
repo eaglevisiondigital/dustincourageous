@@ -19,3 +19,7 @@ Static multi-page site using the approved Dustin Courageous assets supplied in t
 
 ## Latest update
 - Adventure Club page refreshed with the approved black/red/yellow cave artwork and parent/guardian reservation form.
+
+
+## Netlify publish directory
+Deploy from the repository root. Leave Base directory blank and set Publish directory to `.`.
