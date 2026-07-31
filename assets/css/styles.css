@@ -245,7 +245,7 @@ textarea{min-height:130px;resize:vertical}
 .adventure-hero-actions{display:flex;gap:14px;flex-wrap:wrap}
 .adventure-hero-actions .button{min-width:150px}
 .adventure-hero-actions .button.outline{border-color:#ddd;color:#fff}
-.adventure-hero-visual{min-height:500px;background-image:linear-gradient(90deg,rgba(5,5,5,.08),rgba(5,5,5,0) 24%),url('../images/adventure-club-scene-approved.png');background-size:cover;background-repeat:no-repeat;background-position:center center;position:relative}
+.adventure-hero-visual{min-height:500px;background-image:linear-gradient(90deg,rgba(5,5,5,.08),rgba(5,5,5,0) 24%),url('../images/adventure-club-hero-approved-final-v4.png');background-size:cover;background-repeat:no-repeat;background-position:center center;position:relative}
 .adventure-hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,5,.65) 0,rgba(5,5,5,.08) 16%,transparent 35%);pointer-events:none}
 
 .adventure-signup-section{padding:0 0 48px;background:#050505}
