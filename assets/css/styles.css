@@ -1,0 +1,300 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+  --red:#c81e1e;
+  --red-dark:#9e1515;
+  --black:#070707;
+  --charcoal:#161616;
+  --ink:#222;
+  --white:#fff;
+  --silver:#d9dde3;
+  --blue:#173f91;
+  --yellow:#f7c928;
+  --max:1240px;
+  --shadow:0 18px 55px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:#f7f7f5;line-height:1.55}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit}
+.container{width:min(var(--max),calc(100% - 40px));margin-inline:auto}
+.eyebrow{font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-size:.86rem}
+.display{font-family:Anton,Impact,sans-serif;letter-spacing:.01em;text-transform:uppercase;line-height:.98;margin:.15em 0 .35em}
+.section{padding:72px 0}
+.section-tight{padding:44px 0}
+.dark{background:var(--black);color:white}
+.red-panel{background:linear-gradient(135deg,var(--red-dark),var(--red));color:white}
+.muted{color:#666}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;background:var(--red);color:#fff;border:1px solid var(--red);padding:13px 20px;border-radius:4px;font-weight:900;text-transform:uppercase;letter-spacing:.02em;transition:.2s ease;cursor:pointer}
+.button:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(200,30,30,.28);background:#e02a2a}
+.button.secondary{background:#111;border-color:#444}
+.button.light{background:white;color:#111;border-color:white}
+.button.outline{background:transparent;border-color:#777;color:inherit}
+.button.small{padding:9px 14px;font-size:.86rem}
+.badge{display:inline-block;background:var(--yellow);color:#111;border-radius:999px;padding:6px 10px;font-weight:900;text-transform:uppercase;font-size:.72rem}
+
+/* Header */
+.site-header{background:#050505;color:white;position:sticky;top:0;z-index:50;border-bottom:1px solid #252525}
+.nav{min-height:76px;display:flex;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;gap:12px;min-width:245px}
+.brand img{width:58px;height:58px;object-fit:cover;border-radius:10px}
+.brand-copy strong{display:block;font-family:Anton,Impact,sans-serif;font-size:1.32rem;line-height:.95;text-transform:uppercase}
+.brand-copy small{display:block;color:#ddd;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+.navlinks{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.8rem;font-weight:800;text-transform:uppercase}
+.navlinks a{padding:28px 0 24px;border-bottom:3px solid transparent}
+.navlinks a:hover,.navlinks a.active{border-color:var(--red)}
+.menu-toggle{display:none;margin-left:auto;background:none;border:0;color:white;font-size:1.7rem}
+
+/* Hero */
+.hero-art{background:#050505}
+.hero-art img{display:block;width:100%;height:auto;object-fit:contain}
+.hero-actions{background:#050505;border-top:1px solid #202020;padding:18px 0 22px}
+.hero-actions-inner{display:flex;justify-content:center;gap:12px}
+.hero-actions .button{min-width:180px}
+.hero-mobile{display:none;background:#050505;color:white}
+.hero-mobile img{display:block;width:100%;height:auto}
+.hero-mobile-copy{text-align:center;padding:18px 12px 12px}
+.mobile-hero-title{margin:0;display:flex;justify-content:center;align-items:baseline;gap:.16em;font-family:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;font-size:3.6rem;line-height:.92;letter-spacing:.01em;text-transform:uppercase;transform:skew(-4deg);text-shadow:0 3px 0 #111}
+.mobile-hero-title .no,.mobile-hero-title .here{color:#fff}
+.mobile-hero-title .fear{color:#e02525}
+.mobile-hero-sub{margin-top:12px;font-family:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;font-size:2rem;line-height:1;text-transform:uppercase;letter-spacing:.02em;transform:skew(-5deg);color:#fff}
+.mobile-hero-sub strong{position:relative;color:#e02525;margin-left:.18em}
+.mobile-hero-sub strong:after{content:"";position:absolute;left:0;right:-6px;bottom:-8px;height:6px;background:#d51f1f;transform:skewX(-18deg) rotate(-2deg);border-radius:50%}
+.hero-mobile-bottom{padding:16px 0 4px}
+.hero-mobile-bottom p{margin:0 auto;color:#ddd;max-width:34rem;font-size:1rem}
+
+/* Mobile-only values */
+.mobile-pillars{display:none;background:#080808;color:white;border-top:1px solid #242424;border-bottom:1px solid #242424}
+.mobile-pillar-grid{display:grid;grid-template-columns:1fr 1fr}
+.mobile-pillar{display:flex;align-items:center;gap:12px;padding:18px 14px;border-right:1px solid #303030;border-bottom:1px solid #303030}
+.mobile-pillar:nth-child(2n){border-right:0}
+.mobile-pillar:nth-last-child(-n+2){border-bottom:0}
+.mobile-pillar h3{margin:0 0 3px;color:#ef2b2b;font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:1.18rem}
+.mobile-pillar p{margin:0;color:#ddd;font-size:.78rem;line-height:1.35}
+.pillar-icon{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center}
+.pillar-icon svg{width:42px;height:42px;fill:none;stroke:white;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 0 #000)}
+.icon-faith svg,.icon-courage svg,.icon-victory svg,.icon-purpose svg{stroke:#fff}
+.pillar-icon{border-radius:8px;outline:2px solid #d92323;outline-offset:-2px}
+
+/* Launch */
+.launch-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
+.card{background:white;border:1px solid #e4e4e4;border-radius:12px;box-shadow:0 9px 34px rgba(0,0,0,.08);overflow:hidden}
+.book-feature{display:grid;grid-template-columns:minmax(240px,.8fr) 1.2fr;min-height:520px}
+.book-image{background:linear-gradient(160deg,#f2f4f7,#fff);display:flex;align-items:center;justify-content:center;padding:24px;min-height:500px}
+.book-image img{width:min(100%,520px);max-height:500px;object-fit:contain;box-shadow:0 20px 32px rgba(0,0,0,.2)}
+.book-copy{padding:38px}
+.book-copy h2{font-size:2.4rem}
+.book-one-match .book-image{background:#f7f9fc}
+.book-one-match .book-copy,.coming-book .book-copy{padding:34px 38px 40px}
+.book-one-match h3,.coming-book h3{font-size:1.1rem;line-height:1.35;margin:.4rem 0 1rem}
+.price-row{display:flex;gap:28px;margin:24px 0}
+.price-row strong{display:block;font-size:1.35rem}
+.scripture-chips{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.scripture-chip{background:#f3f4f6;border-left:4px solid var(--red);padding:10px 12px;font-size:.83rem}
+.coming-book .book-image{background:#eef6ff}
+
+/* Roadmap */
+.roadmap{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:26px}
+.road-item{text-align:center}
+.road-cover{aspect-ratio:1/1;background:linear-gradient(145deg,#333,#111);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);overflow:hidden}
+.road-cover img{width:100%;height:100%;object-fit:cover}
+.placeholder-shield{width:42%;opacity:.2;filter:grayscale(1)}
+.road-item h4{margin:12px 0 2px;font-size:.92rem;text-transform:uppercase}
+.road-item p{margin:0;color:#777;font-size:.75rem;font-weight:700;text-transform:uppercase}
+
+/* Products */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.feature-panel{border-radius:14px;overflow:hidden;min-height:470px;position:relative}
+.feature-panel.dark-card{background:#080808;color:white}
+.feature-panel .content{padding:34px;position:relative;z-index:2}
+.feature-panel h2{font-size:2.35rem}
+.product-photo{width:100%;height:100%;object-fit:cover}
+.gift-grid{display:grid;grid-template-columns:.9fr 1.1fr;align-items:stretch}
+.gift-grid .content{padding:42px}
+.gift-grid img{height:100%;object-fit:cover}
+.list-check{padding:0;list-style:none}
+.list-check li{margin:9px 0;padding-left:25px;position:relative}
+.list-check li:before{content:'✓';position:absolute;left:0;color:#ff3030;font-weight:900}
+
+/* Club */
+.club-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#080808;color:white;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.club-copy{padding:48px;background:radial-gradient(circle at 70% 40%,rgba(200,30,30,.3),transparent 40%),#080808}
+.club-form{padding:48px;background:#121212}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+input,textarea{border:1px solid #cfd3d9;border-radius:5px;padding:12px 13px;background:white;color:#111;width:100%}
+textarea{min-height:130px;resize:vertical}
+.checkline{display:flex;gap:9px;align-items:flex-start;font-size:.78rem;color:#ccc;margin:14px 0}
+.checkline input{width:auto;margin-top:3px}
+.form-note{font-size:.74rem;color:#888;margin-top:10px}
+
+/* Parents */
+.resource-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:25px 0}
+.resource{background:white;border:1px solid #e5e5e5;padding:18px;text-align:center;border-radius:10px}
+.resource .icon{font-size:1.8rem}
+.resource strong{display:block;text-transform:uppercase;font-size:.75rem;margin-top:8px}
+
+.coming-resources{padding:38px 42px;background:linear-gradient(135deg,#fff,#f5f5f5);border-left:5px solid var(--red)}
+.coming-resources h2{font-size:2.6rem}
+.coming-resources p{max-width:900px}
+
+/* Footer */
+.site-footer{background:#050505;color:white;padding:44px 0 24px}
+.footer-grid{display:grid;grid-template-columns:1.35fr .85fr .9fr .9fr;gap:32px}
+.footer-brand{display:flex;gap:14px;align-items:center}
+.footer-brand img{width:78px;border-radius:12px}
+.footer-brand strong{font-family:Anton,Impact,sans-serif;font-size:1.5rem;text-transform:uppercase;line-height:1}
+.footer-title{text-transform:uppercase;font-weight:900;color:#ef3333;font-size:.82rem;margin-bottom:10px}
+.footer-links{display:grid;gap:7px;font-size:.82rem;color:#ddd}
+.socials{display:flex;gap:10px;flex-wrap:wrap}
+.social{border:1px solid #444;border-radius:999px;padding:8px 11px;font-weight:800;font-size:.78rem}
+.legal{border-top:1px solid #292929;margin-top:32px;padding-top:18px;color:#aaa;font-size:.72rem;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* Interior pages */
+.page-hero{background:#080808;color:white;padding:70px 0;position:relative;overflow:hidden}
+.page-hero:after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 78% 40%,rgba(200,30,30,.26),transparent 34%);pointer-events:none}
+.page-hero .container{position:relative;z-index:1}
+.page-hero h1{font-size:4rem;max-width:850px}
+.page-hero p{max-width:720px;color:#ddd;font-size:1.05rem}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.content-grid.reverse>div:first-child{order:2}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.gallery-grid img{border-radius:10px;box-shadow:var(--shadow)}
+.notice{background:#fff7d6;border:1px solid #f4d15f;padding:16px 18px;border-radius:8px}
+
+
+/* Gift Box page */
+.giftbox-page-section{padding:42px 0 56px;background:#f7f7f7}
+.giftbox-page-card{display:grid;grid-template-columns:1.16fr .84fr;gap:34px;align-items:center;background:white;border-radius:18px;padding:28px 34px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
+.giftbox-page-media img{width:100%;height:auto;display:block;border-radius:12px;object-fit:contain}
+.giftbox-page-copy{padding:12px 6px}
+.giftbox-page-copy .eyebrow{color:var(--red);margin-bottom:8px}
+.giftbox-page-title{font-size:3.4rem;line-height:.98;margin:0 0 20px}
+.giftbox-page-list{margin:0 0 18px}
+.giftbox-page-list li{font-size:1rem;margin:12px 0}
+.giftbox-page-note{max-width:520px;margin:8px 0 20px;line-height:1.45}
+.giftbox-page-button{display:inline-flex;justify-content:center;min-width:245px}
+@media (max-width:1000px){
+  .navlinks{display:none;position:absolute;top:76px;left:0;right:0;background:#080808;padding:14px 24px 24px;flex-direction:column;align-items:stretch;gap:0;border-top:1px solid #222}
+  .navlinks.open{display:flex}
+  .navlinks a{padding:13px 0;border-bottom:1px solid #222}
+  .nav .button.small{display:none}
+  .menu-toggle{display:block}
+  .launch-grid,.split,.club-grid,.content-grid,.gift-grid,.giftbox-page-card{grid-template-columns:1fr}
+  .book-feature{grid-template-columns:1fr}
+  .book-image img{max-height:380px}
+  .roadmap{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .resource-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:680px){
+  .container{width:min(100% - 26px,var(--max))}
+  .brand{min-width:0}
+  .brand-copy strong{font-size:1.08rem}
+  .brand-copy small{font-size:.53rem}
+  .brand img{width:50px;height:50px}
+  .hero-desktop{display:none}
+  .hero-mobile{display:block}
+  .hero-mobile-copy{padding:20px 0 12px}
+  .mobile-hero-title{font-size:3.05rem}.mobile-hero-sub{font-size:1.72rem}
+  .hero-mobile-bottom{padding:15px 0 2px}
+  .hero-mobile-bottom p{font-size:.95rem;line-height:1.45}
+  .hero-actions{padding:14px 0 16px}
+  .hero-actions-inner{display:grid;grid-template-columns:1fr;gap:10px}
+  .hero-actions .button{width:100%;min-width:0}
+  .mobile-pillars{display:block}
+  .section{padding:52px 0}
+  .book-copy,.club-copy,.club-form{padding:26px}
+  .book-copy h2,.feature-panel h2{font-size:1.9rem}
+  .page-hero{padding:48px 0}
+  .page-hero h1{font-size:2.7rem}
+  .roadmap{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .resource-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .price-row{flex-wrap:wrap}
+  .gallery-grid{grid-template-columns:1fr}
+  .giftbox-page-section{padding:20px 0 34px}
+  .giftbox-page-card{padding:18px;gap:20px;border-radius:14px}
+  .giftbox-page-copy{text-align:center;padding:0 4px 6px}
+  .giftbox-page-title{font-size:2.45rem}
+  .giftbox-page-list{text-align:left;display:inline-block;margin:0 auto 16px}
+  .giftbox-page-note{margin:8px auto 18px}
+  .giftbox-page-button{width:100%;min-width:0}
+  .coming-resources{padding:28px 24px}
+  .coming-resources h2{font-size:2.1rem}
+}
+
+/* =========================================================
+   Adventure Club page — approved July 2026 layout
+   ========================================================= */
+.adventure-club-page{background:#050505}
+.adventure-main{background:#050505;color:#fff}
+.adventure-hero{background:#050505;border-bottom:1px solid #171717;overflow:hidden}
+.adventure-hero-grid{display:grid;grid-template-columns:.78fr 1.22fr;min-height:500px;align-items:stretch}
+.adventure-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:62px 28px 62px 0;position:relative;z-index:2;background:linear-gradient(90deg,#050505 0%,#050505 76%,rgba(5,5,5,.88) 90%,rgba(5,5,5,0) 100%)}
+.adventure-hero-title{font-family:Anton,Impact,sans-serif;text-transform:uppercase;line-height:.98;font-size:clamp(3rem,5.3vw,5.4rem);letter-spacing:.01em;margin:0 0 22px;display:grid;gap:4px}
+.adventure-hero-title span{color:#fff}
+.adventure-hero-title strong{color:#d51f1f;font-weight:400}
+.adventure-hero-copy p{max-width:560px;color:#e3e3e3;font-size:1.08rem;margin:0 0 28px}
+.adventure-hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.adventure-hero-actions .button{min-width:150px}
+.adventure-hero-actions .button.outline{border-color:#ddd;color:#fff}
+.adventure-hero-visual{min-height:500px;background-image:linear-gradient(90deg,rgba(5,5,5,.08),rgba(5,5,5,0) 24%),url('../images/adventure-club-scene-approved.png');background-size:cover;background-repeat:no-repeat;background-position:center center;position:relative}
+.adventure-hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,5,.65) 0,rgba(5,5,5,.08) 16%,transparent 35%);pointer-events:none}
+
+.adventure-signup-section{padding:0 0 48px;background:#050505}
+.adventure-signup-shell{display:grid;grid-template-columns:1fr 1fr;border:2px solid #e5bd00;border-radius:10px;overflow:hidden;background:#070707;box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.adventure-signup-copy{padding:42px 46px 48px;position:relative;overflow:hidden;background:radial-gradient(circle at 80% 45%,rgba(200,30,30,.11),transparent 38%),#070707}
+.adventure-signup-copy:after{content:"DC";position:absolute;right:-28px;top:34px;font-family:Anton,Impact,sans-serif;font-size:17rem;line-height:1;color:rgba(255,255,255,.025);transform:rotate(-8deg);pointer-events:none}
+.adventure-coming{position:relative;z-index:1;color:#d92424;font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}
+.adventure-club-heading{position:relative;z-index:1;font-family:Anton,Impact,sans-serif;text-transform:uppercase;line-height:.94;margin:0 0 22px;display:grid}
+.adventure-club-heading span{font-size:clamp(2.45rem,4vw,4.35rem);color:#fff;font-weight:400}
+.adventure-club-heading strong{font-size:clamp(2.75rem,4.5vw,4.8rem);color:#f0bd00;font-weight:400}
+.adventure-signup-copy p{position:relative;z-index:1;color:#eee;font-size:1.02rem;max-width:610px}
+.adventure-reserve{margin-top:26px}
+.adventure-reserve strong{color:#f0bd00}
+.adventure-signup-copy:before{content:"";position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(173deg,transparent 0 34%,#e8b900 35% 53%,transparent 54% 61%,#e8b900 62% 74%,transparent 75%);opacity:.96}
+
+.adventure-signup-form{padding:38px 40px;background:linear-gradient(145deg,#121212,#080808);border-left:1px solid #cda900;display:flex;align-items:center}
+.adventure-signup-form form{width:100%}
+.adventure-signup-form label{color:#fff;font-size:.78rem}
+.adventure-signup-form input{min-height:54px;border-radius:6px;border-color:#d9d9d9}
+.adventure-consent{margin:18px 0;color:#d7d7d7!important;font-size:.78rem!important;line-height:1.4}
+.adventure-consent input{min-height:0;margin-top:3px}
+.adventure-reserve-button{font-size:1.02rem;padding:16px 24px;min-width:320px}
+.adventure-signup-form .form-note{color:#929292;margin-bottom:0}
+
+@media (max-width:1000px){
+  .adventure-hero-grid{grid-template-columns:1fr;min-height:0}
+  .adventure-hero-copy{padding:44px 0 24px;background:#050505;text-align:center;align-items:center}
+  .adventure-hero-copy p{margin-inline:auto}
+  .adventure-hero-actions{justify-content:center}
+  .adventure-hero-visual{min-height:430px;background-size:cover;background-position:center center}
+  .adventure-hero-visual:after{background:linear-gradient(180deg,rgba(5,5,5,.22),transparent 30%,rgba(5,5,5,.12))}
+  .adventure-signup-shell{grid-template-columns:1fr}
+  .adventure-signup-form{border-left:0;border-top:1px solid #cda900}
+}
+
+@media (max-width:680px){
+  .adventure-hero-copy{padding:36px 0 22px}
+  .adventure-hero-title{font-size:3.05rem;gap:2px}
+  .adventure-hero-copy p{font-size:.96rem;max-width:94%}
+  .adventure-hero-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .adventure-hero-actions .button{min-width:0;width:100%}
+  .adventure-hero-visual{min-height:360px;background-size:cover;background-position:center center}
+  .adventure-signup-section{padding:18px 0 36px}
+  .adventure-signup-shell{border-radius:8px}
+  .adventure-signup-copy{padding:30px 24px 42px;text-align:left}
+  .adventure-club-heading span{font-size:2.45rem}
+  .adventure-club-heading strong{font-size:2.9rem}
+  .adventure-signup-copy p{font-size:.94rem}
+  .adventure-signup-form{padding:28px 22px}
+  .adventure-signup-form .form-grid{grid-template-columns:1fr}
+  .adventure-reserve-button{width:100%;min-width:0}
+}
