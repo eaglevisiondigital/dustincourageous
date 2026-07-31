@@ -229,3 +229,72 @@ textarea{min-height:130px;resize:vertical}
   .coming-resources{padding:28px 24px}
   .coming-resources h2{font-size:2.1rem}
 }
+
+/* =========================================================
+   Adventure Club page — approved July 2026 layout
+   ========================================================= */
+.adventure-club-page{background:#050505}
+.adventure-main{background:#050505;color:#fff}
+.adventure-hero{background:#050505;border-bottom:1px solid #171717;overflow:hidden}
+.adventure-hero-grid{display:grid;grid-template-columns:.78fr 1.22fr;min-height:500px;align-items:stretch}
+.adventure-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:62px 28px 62px 0;position:relative;z-index:2;background:linear-gradient(90deg,#050505 0%,#050505 76%,rgba(5,5,5,.88) 90%,rgba(5,5,5,0) 100%)}
+.adventure-hero-title{font-family:Anton,Impact,sans-serif;text-transform:uppercase;line-height:.98;font-size:clamp(3rem,5.3vw,5.4rem);letter-spacing:.01em;margin:0 0 22px;display:grid;gap:4px}
+.adventure-hero-title span{color:#fff}
+.adventure-hero-title strong{color:#d51f1f;font-weight:400}
+.adventure-hero-copy p{max-width:560px;color:#e3e3e3;font-size:1.08rem;margin:0 0 28px}
+.adventure-hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.adventure-hero-actions .button{min-width:150px}
+.adventure-hero-actions .button.outline{border-color:#ddd;color:#fff}
+.adventure-hero-visual{min-height:500px;background-image:linear-gradient(90deg,rgba(5,5,5,.08),rgba(5,5,5,0) 24%),url('../images/adventure-club-approved.png');background-size:auto 112%;background-repeat:no-repeat;background-position:right center;position:relative}
+.adventure-hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,5,.65) 0,rgba(5,5,5,.08) 16%,transparent 35%);pointer-events:none}
+
+.adventure-signup-section{padding:0 0 48px;background:#050505}
+.adventure-signup-shell{display:grid;grid-template-columns:1fr 1fr;border:2px solid #e5bd00;border-radius:10px;overflow:hidden;background:#070707;box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.adventure-signup-copy{padding:42px 46px 48px;position:relative;overflow:hidden;background:radial-gradient(circle at 80% 45%,rgba(200,30,30,.11),transparent 38%),#070707}
+.adventure-signup-copy:after{content:"DC";position:absolute;right:-28px;top:34px;font-family:Anton,Impact,sans-serif;font-size:17rem;line-height:1;color:rgba(255,255,255,.025);transform:rotate(-8deg);pointer-events:none}
+.adventure-coming{position:relative;z-index:1;color:#d92424;font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}
+.adventure-club-heading{position:relative;z-index:1;font-family:Anton,Impact,sans-serif;text-transform:uppercase;line-height:.94;margin:0 0 22px;display:grid}
+.adventure-club-heading span{font-size:clamp(2.45rem,4vw,4.35rem);color:#fff;font-weight:400}
+.adventure-club-heading strong{font-size:clamp(2.75rem,4.5vw,4.8rem);color:#f0bd00;font-weight:400}
+.adventure-signup-copy p{position:relative;z-index:1;color:#eee;font-size:1.02rem;max-width:610px}
+.adventure-reserve{margin-top:26px}
+.adventure-reserve strong{color:#f0bd00}
+.adventure-signup-copy:before{content:"";position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(173deg,transparent 0 34%,#e8b900 35% 53%,transparent 54% 61%,#e8b900 62% 74%,transparent 75%);opacity:.96}
+
+.adventure-signup-form{padding:38px 40px;background:linear-gradient(145deg,#121212,#080808);border-left:1px solid #cda900;display:flex;align-items:center}
+.adventure-signup-form form{width:100%}
+.adventure-signup-form label{color:#fff;font-size:.78rem}
+.adventure-signup-form input{min-height:54px;border-radius:6px;border-color:#d9d9d9}
+.adventure-consent{margin:18px 0;color:#d7d7d7!important;font-size:.78rem!important;line-height:1.4}
+.adventure-consent input{min-height:0;margin-top:3px}
+.adventure-reserve-button{font-size:1.02rem;padding:16px 24px;min-width:320px}
+.adventure-signup-form .form-note{color:#929292;margin-bottom:0}
+
+@media (max-width:1000px){
+  .adventure-hero-grid{grid-template-columns:1fr;min-height:0}
+  .adventure-hero-copy{padding:44px 0 24px;background:#050505;text-align:center;align-items:center}
+  .adventure-hero-copy p{margin-inline:auto}
+  .adventure-hero-actions{justify-content:center}
+  .adventure-hero-visual{min-height:430px;background-size:cover;background-position:68% center}
+  .adventure-hero-visual:after{background:linear-gradient(180deg,rgba(5,5,5,.22),transparent 30%,rgba(5,5,5,.12))}
+  .adventure-signup-shell{grid-template-columns:1fr}
+  .adventure-signup-form{border-left:0;border-top:1px solid #cda900}
+}
+
+@media (max-width:680px){
+  .adventure-hero-copy{padding:36px 0 22px}
+  .adventure-hero-title{font-size:3.05rem;gap:2px}
+  .adventure-hero-copy p{font-size:.96rem;max-width:94%}
+  .adventure-hero-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .adventure-hero-actions .button{min-width:0;width:100%}
+  .adventure-hero-visual{min-height:360px;background-size:auto 100%;background-position:72% center}
+  .adventure-signup-section{padding:18px 0 36px}
+  .adventure-signup-shell{border-radius:8px}
+  .adventure-signup-copy{padding:30px 24px 42px;text-align:left}
+  .adventure-club-heading span{font-size:2.45rem}
+  .adventure-club-heading strong{font-size:2.9rem}
+  .adventure-signup-copy p{font-size:.94rem}
+  .adventure-signup-form{padding:28px 22px}
+  .adventure-signup-form .form-grid{grid-template-columns:1fr}
+  .adventure-reserve-button{width:100%;min-width:0}
+}

@@ -16,3 +16,6 @@ Static multi-page site using the approved Dustin Courageous assets supplied in t
 - Paperback: $12.99
 - Hardcover: $19.99
 - Contact: info@dustincourageous.com
+
+## Latest update
+- Adventure Club page refreshed with the approved black/red/yellow cave artwork and parent/guardian reservation form.
