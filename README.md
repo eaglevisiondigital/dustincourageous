@@ -23,3 +23,6 @@ Static multi-page site using the approved Dustin Courageous assets supplied in t
 
 ## Netlify publish directory
 Deploy from the repository root. Leave Base directory blank and set Publish directory to `.`.
+
+
+Final mobile homepage wordmark update: uses assets/images/mobile-no-fear-wordmark-APPROVED.png above the approved mobile hero, with no overlap or cropping.

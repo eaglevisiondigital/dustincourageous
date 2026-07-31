@@ -57,9 +57,9 @@ button,input,select,textarea{font:inherit}
 .hero-mobile img{display:block;width:100%;height:auto;position:relative;z-index:1}
 .hero-mobile-copy{text-align:center;padding:18px 12px 12px}
 /* Mobile headline uses the approved branded wordmark artwork for an exact desktop-brand match. */
-.mobile-hero-wordmark{position:relative;z-index:2;background:#050505;padding:0;margin:-8px 0 0;overflow:visible}
-.mobile-hero-wordmark img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;position:relative;z-index:2;pointer-events:none}
-.hero-mobile .mobile-hero-scene{display:block;width:100%;height:auto;position:relative;z-index:1;margin:0}
+.mobile-hero-wordmark{position:relative;background:#050505;padding:8px 0 6px;margin:0;overflow:visible}
+.mobile-hero-wordmark img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;margin:0;pointer-events:none}
+.hero-mobile .mobile-hero-scene{display:block;width:100%;height:auto;position:relative;margin:0}
 .hero-mobile-bottom{padding:16px 0 4px}
 .hero-mobile-bottom p{margin:0 auto;color:#ddd;max-width:34rem;font-size:1rem}
 
