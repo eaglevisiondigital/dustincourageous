@@ -1,19 +1,12 @@
 {
   "name": "Dustin Courageous",
   "short_name": "Dustin Courageous",
-  "icons": [
-    {
-      "src": "/favicon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/favicon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "theme_color": "#050505",
+  "start_url": "/",
+  "display": "standalone",
   "background_color": "#050505",
-  "display": "standalone"
+  "theme_color": "#050505",
+  "icons": [
+    {"src": "/dc-shield-favicon-v23-1-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/dc-shield-favicon-v23-1-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
 }
