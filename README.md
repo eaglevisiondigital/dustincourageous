@@ -44,3 +44,8 @@ V17 mobile homepage update:
 - Preview pages converted to high-quality WebP without changing dimensions or layout.
 - Preview images lazy-load when the interactive preview opens.
 - Existing homepage, mobile hero, pages, forms, modals, and navigation remain unchanged.
+
+## V21 update
+- Added complete DC Shield favicon and Apple/Android icon package.
+- Added root favicon.ico and web manifest.
+- Updated every HTML page to reference the new favicon assets.
