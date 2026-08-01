@@ -31,3 +31,16 @@ V17 mobile homepage update:
 - Uses mobile-no-fear-wordmark-WEB-FINAL.png only on the mobile homepage.
 - Wordmark is rendered on the same black background as the page, with no transparent white-gap artifacts.
 - Wordmark and hero are separate stacked sections: no overlap, no crop, no hero repositioning.
+
+
+## V18 update
+- Added the Book One “Begin the Adventure” interactive flip-through to the homepage and Books page.
+- Includes the approved cover and selected preview pages, desktop/mobile controls, swipe support, keyboard navigation, final pre-order CTA, and Collect the Series panel.
+- Series dates: Book 1 August 31, 2026; Book 2 September 30, 2026; Books 3–5 November 2026.
+
+
+## V19 production optimization
+- Book 1 preview uses only the eight approved preview images.
+- Preview pages converted to high-quality WebP without changing dimensions or layout.
+- Preview images lazy-load when the interactive preview opens.
+- Existing homepage, mobile hero, pages, forms, modals, and navigation remain unchanged.
