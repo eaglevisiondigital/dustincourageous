@@ -1,0 +1,24 @@
+/favicon.ico
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
+
+/dc-shield-favicon-v23-2.ico
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
+
+/dc-shield-favicon-v23-2-32.png
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+
+/dc-shield-favicon-v23-2-192.png
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+
+/dc-shield-favicon-v23-2-512.png
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+
+/dc-shield-apple-touch-v23-2.png
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+
+/site.webmanifest
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0

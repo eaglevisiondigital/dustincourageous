@@ -62,3 +62,9 @@ V17 mobile homepage update:
 - Parents and grandparents messaging
 - Desktop Books page CTA/card layout polish
 - Existing mobile layouts, Book One preview, Adventure Club, and approved assets preserved
+
+## V23.2 Launch Edition
+- Uses a new DC Shield favicon filename on every page to bypass stale browser caches.
+- Replaces the conventional root `favicon.ico` with the verified DC Shield icon.
+- Adds Netlify `_headers` rules that prevent favicon and manifest caching during the refresh.
+- Keeps all V23.1 layouts, previews, forms, artwork, and functionality unchanged.
