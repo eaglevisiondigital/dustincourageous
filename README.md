@@ -26,3 +26,8 @@ Deploy from the repository root. Leave Base directory blank and set Publish dire
 
 
 Final mobile homepage wordmark update: uses assets/images/mobile-no-fear-wordmark-APPROVED.png above the approved mobile hero, with no overlap or cropping.
+
+V17 mobile homepage update:
+- Uses mobile-no-fear-wordmark-WEB-FINAL.png only on the mobile homepage.
+- Wordmark is rendered on the same black background as the page, with no transparent white-gap artifacts.
+- Wordmark and hero are separate stacked sections: no overlap, no crop, no hero repositioning.

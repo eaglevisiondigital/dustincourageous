@@ -334,3 +334,41 @@ body.modal-open{overflow:hidden}
   .book-modal-scriptures{grid-template-columns:1fr;gap:5px;padding:15px 17px}
   .book-modal-scriptures span{margin-bottom:6px}
 }
+
+/* V17 FINAL MOBILE WORDMARK — locked mobile-only artwork, no overlap/crop. */
+@media (max-width:680px){
+  .mobile-hero-wordmark{
+    position:relative;
+    z-index:2;
+    display:block;
+    width:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:#050505;
+  }
+  .mobile-hero-wordmark img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:none;
+    margin:0;
+    padding:0;
+    object-fit:contain;
+    object-position:center;
+  }
+  .mobile-hero-image{
+    position:relative;
+    z-index:1;
+    margin:0!important;
+    transform:none!important;
+  }
+  .mobile-hero-image img{
+    display:block;
+    width:100%;
+    height:auto;
+    margin:0;
+    object-fit:contain;
+    object-position:center top;
+  }
+}
