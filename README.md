@@ -10,14 +10,16 @@ Static multi-page site using the approved Dustin Courageous assets supplied in t
 5. Connect `dustincourageous.com` in Netlify Domain Management when ready.
 
 ## Current launch data
-- Book 1: August 31, 2026
-- Book 2: September 30, 2026
+- Book 1: September 30, 2026
+- Book 2: October 30, 2026
 - Books 3–5: planned by Thanksgiving 2026
 - Paperback: $12.99
 - Hardcover: $19.99
 - Contact: info@dustincourageous.com
 
 ## Latest update
+- Book 1 release date updated to September 30, 2026.
+- Book 2 release date updated to October 30, 2026.
 - Adventure Club page refreshed with the approved black/red/yellow cave artwork and parent/guardian reservation form.
 
 
@@ -36,7 +38,7 @@ V17 mobile homepage update:
 ## V18 update
 - Added the Book One “Begin the Adventure” interactive flip-through to the homepage and Books page.
 - Includes the approved cover and selected preview pages, desktop/mobile controls, swipe support, keyboard navigation, final pre-order CTA, and Collect the Series panel.
-- Series dates: Book 1 August 31, 2026; Book 2 September 30, 2026; Books 3–5 November 2026.
+- Series dates: Book 1 September 30, 2026; Book 2 October 30, 2026; Books 3–5 November 2026.
 
 
 ## V19 production optimization
