@@ -12,6 +12,59 @@ document.querySelectorAll('[data-preorder]').forEach(el => {
   });
 });
 
+// Release date sync — Sept. 30, 2026 for Book 1; Oct. 30, 2026 for Book 2.
+(function syncReleaseDates(){
+  const preorderCards = document.querySelectorAll('#preorder .coming-book');
+  if (preorderCards[0]) {
+    const eyebrow = preorderCards[0].querySelector('.book-copy .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'The Adventure Begins · September 30, 2026';
+  }
+  if (preorderCards[1]) {
+    const eyebrow = preorderCards[1].querySelector('.book-copy .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'The Adventure Continues · October 30, 2026';
+  }
+
+  const roadmapItems = document.querySelectorAll('.roadmap .road-item');
+  if (roadmapItems[0]) {
+    const date = roadmapItems[0].querySelector('p');
+    if (date) date.textContent = 'Sep 30, 2026';
+  }
+  if (roadmapItems[1]) {
+    const date = roadmapItems[1].querySelector('p');
+    if (date) date.textContent = 'Oct 30, 2026';
+  }
+
+  const bookFeatures = document.querySelectorAll('.books-page .launch-grid .book-feature');
+  if (bookFeatures[0]) {
+    const eyebrow = bookFeatures[0].querySelector('.book-copy .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Book #1 · September 30, 2026';
+  }
+  if (bookFeatures[1]) {
+    const eyebrow = bookFeatures[1].querySelector('.book-copy .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Book #2 · October 30, 2026';
+  }
+
+  const booksHeroCopy = document.querySelector('.books-page .page-hero p');
+  if (booksHeroCopy && /series begins in August 2026/i.test(booksHeroCopy.textContent)) {
+    booksHeroCopy.textContent = 'The series begins in September 2026 and continues with new faith-filled adventures throughout the fall.';
+  }
+
+  document.querySelectorAll('.series-preview-grid').forEach(grid => {
+    const cards = grid.querySelectorAll('.series-preview-card');
+    if (cards[0]) {
+      const info = cards[0].querySelector('small');
+      if (info) info.innerHTML = info.innerHTML.replace(/(?:August|September) 31, 2026|August 31, 2026|September 30, 2026/g, 'September 30, 2026');
+    }
+    if (cards[1]) {
+      const info = cards[1].querySelector('small');
+      if (info) info.innerHTML = info.innerHTML.replace(/September 30, 2026|October 30, 2026/g, 'October 30, 2026');
+    }
+  });
+
+  const book2ResourceDate = document.querySelector('.future-resource-card.featured .release-date');
+  if (book2ResourceDate) book2ResourceDate.textContent = 'Coming October 30, 2026';
+})();
+
 
 // Book story popups
 let activeBookModal = null;
