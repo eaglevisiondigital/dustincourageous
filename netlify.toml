@@ -1,4 +1,5 @@
 [build]
+  command = "node scripts/social-preview.cjs"
   publish = "."
 
 [[headers]]
