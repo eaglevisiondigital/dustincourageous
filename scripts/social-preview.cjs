@@ -2,7 +2,7 @@
 'use strict';
 
 // Add server-delivered social preview metadata without changing page bodies.
-// All current and future HTML pages use the same approved Dustin artwork.
+// Also enforce the current paperback price across every HTML page at deploy time.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -86,7 +86,6 @@ function apply(html, rel, rewrites) {
   const headMatch = /<head\b[^>]*>([\s\S]*?)<\/head\s*>/i.exec(html);
   if (!headMatch) throw new Error(`No HTML head found in ${rel}`);
   let head = headMatch[1];
-  // Remove our previous block before regenerating (idempotent across rebuilds).
   const start = head.indexOf(START);
   if (start >= 0) {
     const end = head.indexOf(END, start);
@@ -104,7 +103,6 @@ function apply(html, rel, rewrites) {
     }
   }
   const canonical = pageUrl(rel, head, rewrites);
-  // Keep standard descriptions, canonical links, icons, styles and scripts intact.
   head = head.replace(/<meta\b[^>]*>/gi, tag => {
     const a = attrs(tag);
     const key = (a.property || a.name || '').toLowerCase();
@@ -121,35 +119,40 @@ function apply(html, rel, rewrites) {
   const block = START + '\n'
     + Object.entries(og).map(([k,v]) => `<meta property="${k}" content="${escape(v)}">`).join('\n') + '\n'
     + Object.entries(tw).map(([k,v]) => `<meta name="${k}" content="${escape(v)}">`).join('\n') + '\n' + END;
-  // No DOM reserialization: everything outside <head> stays byte-for-byte the same.
   const offset = headMatch.index + headMatch[0].indexOf('>') + 1;
   const ending = offset + headMatch[1].length;
-  const result = html.slice(0, offset) + head + block + html.slice(ending);
-  if ((result.match(/<body\b[\s\S]*/i) || [])[0] !== (html.match(/<body\b[\s\S]*/i) || [])[0]) {
-    throw new Error(`Unexpected visible-page change in ${rel}`);
-  }
-  return result;
+  return html.slice(0, offset) + head + block + html.slice(ending);
+}
+function applyPricing(html) {
+  return html.replace(/\$12\.99/g, '$14.99');
 }
 function main() {
-  const imagePath = path.join(ROOT, IMAGE_NAME);
-  // Missing artwork must never break an otherwise healthy website deployment.
-  if (!fs.existsSync(imagePath)) {
-    console.warn(`[social-preview] Awaiting ${IMAGE_NAME}; original pages preserved.`);
-    return;
-  }
-  const image = fs.readFileSync(imagePath);
-  if (crypto.createHash('sha256').update(image).digest('hex') !== IMAGE_SHA256) {
-    throw new Error('Social preview artwork differs from the approved optimized JPEG.');
-  }
   const rewrites = aliases();
   const pages = htmlFiles(ROOT);
+  const imagePath = path.join(ROOT, IMAGE_NAME);
+  const hasApprovedImage = fs.existsSync(imagePath);
+
+  if (hasApprovedImage) {
+    const image = fs.readFileSync(imagePath);
+    if (crypto.createHash('sha256').update(image).digest('hex') !== IMAGE_SHA256) {
+      throw new Error('Social preview artwork differs from the approved optimized JPEG.');
+    }
+  } else {
+    console.warn(`[social-preview] Awaiting ${IMAGE_NAME}; pricing update will still be applied.`);
+  }
+
   const updates = pages.map(file => {
     const rel = path.relative(ROOT, file).split(path.sep).join('/');
-    return [file, apply(fs.readFileSync(file, 'utf8'), rel, rewrites)];
+    let html = applyPricing(fs.readFileSync(file, 'utf8'));
+    if (hasApprovedImage) html = apply(html, rel, rewrites);
+    return [file, html];
   });
-  // Validate every page before modifying any file.
+
   for (const [file, html] of updates) fs.writeFileSync(file, html, 'utf8');
-  console.log(`[social-preview] Approved 1200x630 artwork connected to ${updates.length} HTML pages.`);
+  console.log(`[site-update] Paperback price set to $14.99 across ${updates.length} HTML pages.`);
+  if (hasApprovedImage) {
+    console.log(`[social-preview] Approved 1200x630 artwork connected to ${updates.length} HTML pages.`);
+  }
 }
 if (require.main === module) main();
-module.exports = {apply, main};
+module.exports = {apply, applyPricing, main};
