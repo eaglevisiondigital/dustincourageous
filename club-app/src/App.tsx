@@ -17,6 +17,7 @@ import { ActivitiesHub } from "./components/ActivitiesHub";
 import { KidHomeFocus } from "./components/KidHomeFocus";
 import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
 import { MembershipAccessCard } from "./components/MembershipAccessCard";
+import { OrderHistoryCard } from "./components/OrderHistoryCard";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -707,6 +708,7 @@ function FamilyPortal({
               {parentSection === "settings" ? (
                 <>
                   <MembershipAccessCard householdId={household.id} />
+                  <OrderHistoryCard householdId={household.id} />
                   <FamilySettings
                     user={user}
                     householdId={household.id}
