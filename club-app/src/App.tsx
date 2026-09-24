@@ -842,6 +842,16 @@ function FamilyPortal({
 
 export default function App() {
   const location = useLocation();
+
+  useEffect(() => {
+    const referralCode = new URLSearchParams(window.location.search).get("ref");
+    if (referralCode) {
+      localStorage.setItem(
+        "dc_referral_code",
+        referralCode.toUpperCase().replace(/[^A-F0-9]/g, "").slice(0, 10)
+      );
+    }
+  }, []);
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -882,6 +892,19 @@ export default function App() {
     }
 
     setHousehold(currentHousehold);
+
+    const storedReferralCode = localStorage.getItem("dc_referral_code");
+    if (storedReferralCode) {
+      void supabase
+        .rpc("attribute_referral", {
+          p_code: storedReferralCode,
+          p_referred_household_id: currentHousehold.id,
+          p_source: "adventure_club_signup"
+        })
+        .then(({ error }) => {
+          if (!error) localStorage.removeItem("dc_referral_code");
+        });
+    }
 
     const [childResult, pinResult] = await Promise.all([
       supabase
