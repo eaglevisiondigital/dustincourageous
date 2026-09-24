@@ -92,6 +92,17 @@ export function ReferralSupportCard({
             <div className="referral-code-box">
               <strong>{code}</strong>
               <span>{referralCount} joined household{referralCount===1?"":"s"}</span>
+              <button
+                type="button"
+                className="text-button small"
+                onClick={() => {
+                  const link = window.location.origin + "/?ref=" + code;
+                  void navigator.clipboard?.writeText(link);
+                  setMessage("Referral link copied.");
+                }}
+              >
+                Copy referral link
+              </button>
             </div>
           ):(
             <button className="secondary-button" disabled={working} onClick={()=>void createCode()}>
