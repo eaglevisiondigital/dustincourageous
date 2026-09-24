@@ -2799,3 +2799,111 @@ select:focus {
   .commerce-order-row { grid-template-columns: 1fr auto; }
   .commerce-order-row select { grid-column: 1 / -1; }
 }
+
+
+/* Adventure Club Groups */
+.family-groups-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.group-join-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+.group-preview {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 15px;
+  background: rgba(240,198,91,.05);
+}
+.group-preview span,
+.family-group-head span,
+.group-assignment-row span {
+  color: #8f8b85;
+  font-size: .66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.group-preview h3,
+.family-group-head h3 {
+  margin: 4px 0;
+}
+.group-preview p,
+.family-group-head p {
+  margin: 0;
+  color: #8f8b85;
+  font-size: .78rem;
+}
+.group-preview-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+.group-preview-actions small {
+  color: #77736e;
+}
+.family-group-list {
+  display: grid;
+  gap: 10px;
+}
+.family-group-row {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.family-group-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+.group-assignment-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.group-assignment-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 11px;
+  text-align: left;
+  color: #d7d2cb;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #101010;
+}
+.group-assignment-row strong,
+.group-assignment-row span {
+  display: block;
+}
+.group-assignment-row strong {
+  margin-top: 3px;
+}
+.group-assignment-row small {
+  color: #817d77;
+}
+@media (max-width: 760px) {
+  .group-join-form { grid-template-columns: 1fr; }
+  .group-preview,
+  .family-group-head,
+  .group-assignment-row { align-items: flex-start; flex-direction: column; }
+  .group-preview-actions { justify-items: start; }
+}
