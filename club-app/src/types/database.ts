@@ -4860,6 +4860,14 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_organization: {
+        Args: {
+          p_name: string
+          p_organization_key: string
+          p_organization_type: string
+        }
+        Returns: string
+      }
       admin_create_power_verse: {
         Args: {
           p_access_level?: string
@@ -5004,6 +5012,18 @@ export type Database = {
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
         Returns: boolean
+      }
+      create_adventure_group: {
+        Args: {
+          p_description?: string
+          p_group_key: string
+          p_group_type?: string
+          p_maximum_age?: number
+          p_minimum_age?: number
+          p_name: string
+          p_organization_id: string
+        }
+        Returns: string
       }
       create_group_join_code: {
         Args: {
