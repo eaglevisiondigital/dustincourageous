@@ -12,6 +12,7 @@ import { OrganizationsAdmin } from "./OrganizationsAdmin";
 import { EventsAdmin } from "./EventsAdmin";
 import { SupportAdmin } from "./SupportAdmin";
 import { GovernanceAdmin } from "./GovernanceAdmin";
+import { AnalyticsPrivacyAdmin } from "./AnalyticsPrivacyAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -742,7 +743,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"governance" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
+  const [section, setSection] = useState<"governance" | "operations" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -822,6 +823,7 @@ export function AdminPortal({
           <p className="eyebrow">Management</p>
           {[
             ["governance", "DC Governance"],
+            ["operations", "Analytics & Privacy"],
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
@@ -862,13 +864,15 @@ export function AdminPortal({
 
           {error && <div className="form-message">{error}</div>}
 
-          {!canCreateContent && section !== "fulfillment" && section !== "support" && section !== "governance" ? (
+          {!canCreateContent && section !== "fulfillment" && section !== "support" && section !== "governance" && section !== "operations" ? (
             <section className="admin-card">
               <h2>Read-only access</h2>
               <p className="muted">Your current admin role can review this area but cannot create or edit content.</p>
             </section>
           ) : section === "governance" ? (
             <GovernanceAdmin />
+          ) : section === "operations" ? (
+            <AnalyticsPrivacyAdmin role={role} />
           ) : section === "challenges" ? (
             <ChallengeAdmin challenges={challenges} refresh={refresh} />
           ) : section === "series" ? (
