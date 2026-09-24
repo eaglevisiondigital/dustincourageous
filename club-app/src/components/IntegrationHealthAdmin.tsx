@@ -36,6 +36,32 @@ type WorkerHealth = {
   last_suppressed_count: number | null;
 };
 
+type CommerceReadiness = {
+  active_products: number;
+  product_drafts_needing_governance: number;
+  approved_products_ready_to_activate: number;
+  open_checkouts: number;
+  paid_orders_24h: number;
+  webhook_failures_24h: number;
+  stale_pending_orders: number;
+  provider_status: string | null;
+  provider_health: string | null;
+  provider_last_success_at: string | null;
+  provider_last_error: string | null;
+};
+
+type CommerceWebhook = {
+  id: string;
+  provider: string;
+  provider_event_id: string;
+  event_type: string | null;
+  order_id: string | null;
+  status: string;
+  error_message: string | null;
+  received_at: string;
+  processed_at: string | null;
+};
+
 type AppChannel = {
   app_channel: string;
   platform: string | null;
@@ -50,12 +76,14 @@ export function IntegrationHealthAdmin() {
   const [workers,setWorkers]=useState<WorkerHealth[]>([]);
   const [channels,setChannels]=useState<AppChannel[]>([]);
   const [runs,setRuns]=useState<any[]>([]);
+  const [commerce,setCommerce]=useState<CommerceReadiness|null>(null);
+  const [commerceWebhooks,setCommerceWebhooks]=useState<CommerceWebhook[]>([]);
   const [message,setMessage]=useState("");
 
   const load=useCallback(async()=>{
     setMessage("");
 
-    const [providerResult,deliveryResult,workerResult,channelResult,runResult]=await Promise.all([
+    const [providerResult,deliveryResult,workerResult,channelResult,runResult,commerceResult,webhookResult]=await Promise.all([
       supabase.from("integration_health_summary").select("*").order("provider_type"),
       supabase.from("notification_delivery_health").select("*").order("channel").order("status"),
       supabase.from("delivery_worker_health").select("*").order("worker_key"),
@@ -64,10 +92,25 @@ export function IntegrationHealthAdmin() {
         .from("delivery_worker_runs")
         .select("id,worker_key,started_at,completed_at,status,claimed_count,sent_count,failed_count,suppressed_count,error_message")
         .order("started_at",{ascending:false})
+        .limit(12),
+      supabase
+        .from("commerce_readiness_summary")
+        .select("*")
+        .maybeSingle(),
+      supabase
+        .from("commerce_recent_webhooks")
+        .select("*")
         .limit(12)
     ]);
 
-    const error=providerResult.error||deliveryResult.error||workerResult.error||channelResult.error||runResult.error;
+    const error=
+      providerResult.error||
+      deliveryResult.error||
+      workerResult.error||
+      channelResult.error||
+      runResult.error||
+      commerceResult.error||
+      webhookResult.error;
     if(error){
       setMessage(error.message);
       return;
@@ -78,6 +121,8 @@ export function IntegrationHealthAdmin() {
     setWorkers((workerResult.data??[]) as WorkerHealth[]);
     setChannels((channelResult.data??[]) as AppChannel[]);
     setRuns(runResult.data??[]);
+    setCommerce((commerceResult.data??null) as CommerceReadiness|null);
+    setCommerceWebhooks((webhookResult.data??[]) as CommerceWebhook[]);
   },[]);
 
   useEffect(()=>{void load();},[load]);
@@ -189,6 +234,55 @@ export function IntegrationHealthAdmin() {
                 </div>
                 <span className={run.status==="succeeded"?"status-chip done":"status-chip"}>{run.status}</span>
                 <small>{run.sent_count} sent · {run.failed_count} failed · {run.suppressed_count} suppressed</small>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="admin-card commerce-readiness-card">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="eyebrow gold">Commerce Readiness</p>
+            <h2>Hosted checkout health</h2>
+          </div>
+          <span className={commerce?.provider_health==="healthy"?"status-chip done":"status-chip"}>
+            {commerce?.provider_status?.replaceAll("_"," ")||"not configured"}
+          </span>
+        </div>
+
+        {commerce&&(
+          <>
+            <div className="commerce-readiness-grid">
+              <div><span>Active products</span><strong>{commerce.active_products}</strong></div>
+              <div><span>Needs DC review</span><strong>{commerce.product_drafts_needing_governance}</strong></div>
+              <div><span>Approved to activate</span><strong>{commerce.approved_products_ready_to_activate}</strong></div>
+              <div><span>Open checkouts</span><strong>{commerce.open_checkouts}</strong></div>
+              <div><span>Paid orders 24h</span><strong>{commerce.paid_orders_24h}</strong></div>
+              <div><span>Webhook failures 24h</span><strong>{commerce.webhook_failures_24h}</strong></div>
+              <div><span>Stale pending</span><strong>{commerce.stale_pending_orders}</strong></div>
+              <div><span>Provider health</span><strong>{commerce.provider_health||"unknown"}</strong></div>
+            </div>
+
+            {commerce.provider_last_error&&(
+              <p className="integration-error">{commerce.provider_last_error}</p>
+            )}
+
+            <p className="privacy-note">
+              Adventure Club creates the authoritative order and never collects raw card data. The configured hosted payment adapter handles payment and returns only payment/shipping confirmation to Dustin Supabase.
+            </p>
+          </>
+        )}
+
+        {commerceWebhooks.length>0&&(
+          <div className="commerce-webhook-list">
+            {commerceWebhooks.map((event)=>(
+              <article key={event.id}>
+                <div>
+                  <strong>{event.event_type||"payment event"}</strong>
+                  <small>{event.provider} · {new Date(event.received_at).toLocaleString()}</small>
+                </div>
+                <span className={event.status==="processed"?"status-chip done":"status-chip"}>{event.status}</span>
               </article>
             ))}
           </div>
