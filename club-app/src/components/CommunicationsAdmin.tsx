@@ -32,6 +32,22 @@ type Campaign = {
     | null;
 };
 
+type ReminderRule = {
+  id: string;
+  rule_key: string;
+  name: string;
+  rule_type: string;
+  lead_minutes: number;
+  organization_id: string | null;
+  group_id: string | null;
+  delivery_channels: string[];
+  status: string;
+  notification_templates:
+    | { name: string; title: string }
+    | { name: string; title: string }[]
+    | null;
+};
+
 type Plan = { id: string; name: string; plan_key: string };
 type Organization = { id: string; name: string; organization_type: string };
 type Group = { id: string; name: string; organization_id: string };
@@ -57,6 +73,7 @@ function localDateTimeValue(date = new Date(Date.now() + 15 * 60 * 1000)) {
 export function CommunicationsAdmin({ role }: { role: string }) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [reminderRules, setReminderRules] = useState<ReminderRule[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
@@ -87,6 +104,16 @@ export function CommunicationsAdmin({ role }: { role: string }) {
   const [pushChannel, setPushChannel] = useState(true);
   const [audienceCount, setAudienceCount] = useState<number | null>(null);
 
+  const [reminderName, setReminderName] = useState("");
+  const [reminderKey, setReminderKey] = useState("");
+  const [reminderType, setReminderType] = useState("event_upcoming");
+  const [reminderTemplateId, setReminderTemplateId] = useState("");
+  const [leadHours, setLeadHours] = useState("24");
+  const [reminderOrganizationId, setReminderOrganizationId] = useState("");
+  const [reminderGroupId, setReminderGroupId] = useState("");
+  const [reminderEmail, setReminderEmail] = useState(true);
+  const [reminderPush, setReminderPush] = useState(true);
+
   const canSchedule = ["super_admin", "content_admin", "operations_admin"].includes(role);
 
   const load = useCallback(async () => {
@@ -95,6 +122,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
     const [
       templateResult,
       campaignResult,
+      reminderResult,
       planResult,
       orgResult,
       groupResult,
@@ -109,6 +137,10 @@ export function CommunicationsAdmin({ role }: { role: string }) {
         .select("id,campaign_key,name,audience_type,delivery_channels,scheduled_at,status,recipients_count,sent_at,error_message,notification_templates(name,title)")
         .order("created_at", { ascending: false })
         .limit(100),
+      supabase
+        .from("notification_reminder_rules")
+        .select("id,rule_key,name,rule_type,lead_minutes,organization_id,group_id,delivery_channels,status,notification_templates(name,title)")
+        .order("created_at", { ascending: false }),
       supabase
         .from("membership_plans")
         .select("id,name,plan_key")
@@ -136,6 +168,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
     const error =
       templateResult.error ||
       campaignResult.error ||
+      reminderResult.error ||
       planResult.error ||
       orgResult.error ||
       groupResult.error ||
@@ -154,6 +187,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
 
     setTemplates(nextTemplates);
     setCampaigns((campaignResult.data ?? []) as Campaign[]);
+    setReminderRules((reminderResult.data ?? []) as ReminderRule[]);
     setPlans(nextPlans);
     setOrganizations(nextOrgs);
     setGroups(nextGroups);
@@ -161,11 +195,12 @@ export function CommunicationsAdmin({ role }: { role: string }) {
 
     const firstActive = nextTemplates.find((item) => item.status === "active");
     if (!templateId && firstActive) setTemplateId(firstActive.id);
+    if (!reminderTemplateId && firstActive) setReminderTemplateId(firstActive.id);
     if (!planId && nextPlans[0]) setPlanId(nextPlans[0].id);
     if (!organizationId && nextOrgs[0]) setOrganizationId(nextOrgs[0].id);
     if (!groupId && nextGroups[0]) setGroupId(nextGroups[0].id);
     if (!eventId && nextEvents[0]) setEventId(nextEvents[0].id);
-  }, [templateId, planId, organizationId, groupId, eventId]);
+  }, [templateId, reminderTemplateId, planId, organizationId, groupId, eventId]);
 
   useEffect(() => {
     void load();
@@ -315,6 +350,72 @@ export function CommunicationsAdmin({ role }: { role: string }) {
     setMessage("Guardian campaign scheduled. The dispatcher checks due campaigns every five minutes.");
     await load();
     await previewAudience();
+  }
+
+  async function createReminderRule(event: FormEvent) {
+    event.preventDefault();
+
+    if (!reminderTemplateId) {
+      setMessage("Choose an active DC-approved reminder template.");
+      return;
+    }
+
+    setWorking("reminder");
+    setMessage("");
+
+    const channels = [
+      ...(reminderEmail ? ["email"] : []),
+      ...(reminderPush ? ["push"] : [])
+    ];
+
+    const { error } = await supabase.rpc(
+      "admin_create_notification_reminder_rule",
+      {
+        p_rule_key: reminderKey || slugify(reminderName),
+        p_name: reminderName.trim(),
+        p_rule_type: reminderType,
+        p_template_id: reminderTemplateId,
+        p_lead_minutes: Math.max(15, Math.round((Number(leadHours) || 24) * 60)),
+        p_delivery_channels: channels,
+        p_organization_id: reminderOrganizationId || undefined,
+        p_group_id: reminderGroupId || undefined
+      }
+    );
+
+    setWorking("");
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setReminderName("");
+    setReminderKey("");
+    setMessage("Automatic reminder rule created.");
+    await load();
+  }
+
+  async function toggleReminderRule(rule: ReminderRule) {
+    if (!canSchedule) return;
+
+    const nextStatus = rule.status === "active" ? "paused" : "active";
+    setWorking("rule:" + rule.id);
+    setMessage("");
+
+    const { error } = await supabase
+      .from("notification_reminder_rules")
+      .update({ status: nextStatus })
+      .eq("id", rule.id);
+
+    setWorking("");
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setMessage(nextStatus === "active" ? "Reminder rule resumed." : "Reminder rule paused.");
+    await load();
   }
 
   async function cancelCampaign(id: string) {
@@ -482,6 +583,191 @@ export function CommunicationsAdmin({ role }: { role: string }) {
             ))}
             {!templates.length && (
               <p className="muted">No guardian message templates yet.</p>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <div className="admin-two-column communications-reminder-section">
+        <section className="admin-card">
+          <p className="eyebrow gold">Automatic Reminders</p>
+          <h2>Event & group challenge reminders</h2>
+
+          {!canSchedule ? (
+            <p className="muted">Your role can review reminder rules but cannot create or pause them.</p>
+          ) : (
+            <form className="admin-form" onSubmit={createReminderRule}>
+              <label>
+                Rule name
+                <input
+                  required
+                  value={reminderName}
+                  onChange={(event) => {
+                    setReminderName(event.target.value);
+                    if (!reminderKey) setReminderKey(slugify(event.target.value));
+                  }}
+                />
+              </label>
+
+              <label>
+                Rule key
+                <input
+                  required
+                  value={reminderKey}
+                  onChange={(event) => setReminderKey(slugify(event.target.value))}
+                />
+              </label>
+
+              <label>
+                Reminder type
+                <select value={reminderType} onChange={(event) => setReminderType(event.target.value)}>
+                  <option value="event_upcoming">Upcoming registered event</option>
+                  <option value="group_challenge_due">Incomplete group challenge due</option>
+                </select>
+              </label>
+
+              <label>
+                Lead time in hours
+                <input
+                  type="number"
+                  min="0.25"
+                  max="168"
+                  step="0.25"
+                  value={leadHours}
+                  onChange={(event) => setLeadHours(event.target.value)}
+                />
+              </label>
+
+              <label className="full">
+                Active template
+                <select
+                  required
+                  value={reminderTemplateId}
+                  onChange={(event) => setReminderTemplateId(event.target.value)}
+                >
+                  <option value="">Choose DC-approved template</option>
+                  {activeTemplates.map((template) => (
+                    <option key={template.id} value={template.id}>
+                      {template.name} · {template.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Organization scope <span className="optional">(optional)</span>
+                <select
+                  value={reminderOrganizationId}
+                  onChange={(event) => {
+                    setReminderOrganizationId(event.target.value);
+                    if (
+                      reminderGroupId &&
+                      !groups.some(
+                        (group) =>
+                          group.id === reminderGroupId &&
+                          (!event.target.value || group.organization_id === event.target.value)
+                      )
+                    ) {
+                      setReminderGroupId("");
+                    }
+                  }}
+                >
+                  <option value="">All approved organizations</option>
+                  {organizations.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Group scope <span className="optional">(optional)</span>
+                <select value={reminderGroupId} onChange={(event) => setReminderGroupId(event.target.value)}>
+                  <option value="">All matching groups</option>
+                  {groups
+                    .filter(
+                      (group) =>
+                        !reminderOrganizationId ||
+                        group.organization_id === reminderOrganizationId
+                    )
+                    .map((group) => (
+                      <option key={group.id} value={group.id}>
+                        {group.name}
+                      </option>
+                    ))}
+                </select>
+              </label>
+
+              <div className="communication-channel-picks full">
+                <span>External delivery</span>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={reminderEmail}
+                    onChange={(event) => setReminderEmail(event.target.checked)}
+                  />
+                  Email queue
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={reminderPush}
+                    onChange={(event) => setReminderPush(event.target.checked)}
+                  />
+                  Push queue
+                </label>
+                <small>In-app is always included. Each source event/challenge can trigger only once per guardian per rule.</small>
+              </div>
+
+              <button className="secondary-button full" disabled={working === "reminder"}>
+                Create reminder rule
+              </button>
+            </form>
+          )}
+        </section>
+
+        <section className="admin-card">
+          <div className="section-heading compact-heading">
+            <div>
+              <p className="eyebrow red">Reminder Rules</p>
+              <h2>Active automation</h2>
+            </div>
+            <span className="pill">{reminderRules.length}</span>
+          </div>
+
+          <div className="admin-list">
+            {reminderRules.map((rule) => {
+              const template = firstRelation(rule.notification_templates);
+              return (
+                <article className="communications-campaign-row" key={rule.id}>
+                  <div>
+                    <strong>{rule.name}</strong>
+                    <small>
+                      {rule.rule_type.replaceAll("_", " ")} · {Math.round(rule.lead_minutes / 60 * 100) / 100} hours before
+                    </small>
+                    <p>{template?.title}</p>
+                  </div>
+
+                  <div className="communications-campaign-status">
+                    <span className={rule.status === "active" ? "status-chip done" : "status-chip"}>
+                      {rule.status}
+                    </span>
+                    {canSchedule && rule.status !== "archived" && (
+                      <button
+                        className="text-button small"
+                        disabled={working === "rule:" + rule.id}
+                        onClick={() => void toggleReminderRule(rule)}
+                      >
+                        {rule.status === "active" ? "Pause" : "Resume"}
+                      </button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+            {!reminderRules.length && (
+              <p className="muted">No automatic reminder rules are configured yet.</p>
             )}
           </div>
         </section>
