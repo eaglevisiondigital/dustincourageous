@@ -2194,6 +2194,53 @@ export type Database = {
         }
         Relationships: []
       }
+      dc_blueprint_requirements: {
+        Row: {
+          blueprint_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          requirement_key: string
+          requirement_text: string
+          severity: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          blueprint_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          requirement_key: string
+          requirement_text: string
+          severity?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          blueprint_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          requirement_key?: string
+          requirement_text?: string
+          severity?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dc_blueprint_requirements_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "dc_content_blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dc_brand_assets: {
         Row: {
           approval_status: string
@@ -2305,6 +2352,48 @@ export type Database = {
             referencedColumns: ["asset_key"]
           },
         ]
+      }
+      dc_content_blueprints: {
+        Row: {
+          applies_to: string
+          blueprint_key: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          is_locked: boolean
+          metadata: Json
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          applies_to: string
+          blueprint_key: string
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean
+          is_locked?: boolean
+          metadata?: Json
+          title: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          applies_to?: string
+          blueprint_key?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          is_locked?: boolean
+          metadata?: Json
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
       }
       dc_content_reviews: {
         Row: {
