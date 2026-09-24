@@ -35,6 +35,7 @@ type BadgeRow = {
         streak_key: string | null;
         challenge_type: string | null;
         token_type: string | null;
+        activity_event_type: string | null;
         is_active: boolean;
       }[]
     | null;
@@ -325,6 +326,7 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
   const [streakKey, setStreakKey] = useState("challenge_completion");
   const [challengeType, setChallengeType] = useState("scripture");
   const [tokenType, setTokenType] = useState("weekly_star");
+  const [activityEventType, setActivityEventType] = useState("scripture_memorized");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -344,7 +346,8 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
       p_rarity: rarity,
       p_streak_key: ruleType === "streak" ? streakKey : undefined,
       p_challenge_type: ruleType === "challenge_type_count" ? challengeType : undefined,
-      p_token_type: ruleType === "token_threshold" ? tokenType : undefined
+      p_token_type: ruleType === "token_threshold" ? tokenType : undefined,
+      p_activity_event_type: ruleType === "activity_event_count" ? activityEventType : undefined
     });
 
     setWorking(false);
@@ -426,6 +429,7 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
               <option value="streak">Streak</option>
               <option value="challenge_type_count">Challenge type count</option>
               <option value="token_threshold">Achievement token total</option>
+              <option value="activity_event_count">Activity completion count</option>
               <option value="manual">Manual award</option>
             </select>
           </label>
@@ -460,6 +464,19 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
               Achievement token
               <select value={tokenType} onChange={(event) => setTokenType(event.target.value)}>
                 <option value="weekly_star">Weekly Star</option>
+              </select>
+            </label>
+          )}
+          {ruleType === "activity_event_count" && (
+            <label>
+              Activity
+              <select value={activityEventType} onChange={(event) => setActivityEventType(event.target.value)}>
+                <option value="scripture_memorized">Power Verse memorized</option>
+                <option value="devotional_completed">Devotional day completed</option>
+                <option value="prayer_activity_completed">Prayer activity completed</option>
+                <option value="book_completed">Book completed</option>
+                <option value="challenge_completed">Challenge completed</option>
+                <option value="adventure_completed">Adventure completed</option>
               </select>
             </label>
           )}
@@ -738,7 +755,7 @@ export function AdminPortal({
         .order("created_at", { ascending: false }),
       supabase
         .from("badges")
-        .select("id,badge_key,name,description,rarity,badge_scope,badge_tier,badge_family_key,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,token_type,is_active)")
+        .select("id,badge_key,name,description,rarity,badge_scope,badge_tier,badge_family_key,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,token_type,activity_event_type,is_active)")
         .order("created_at", { ascending: false }),
       supabase
         .from("rewards")
