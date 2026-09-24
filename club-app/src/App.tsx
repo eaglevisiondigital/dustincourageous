@@ -1,34 +1,38 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
-import { ChallengeDialog } from "./components/ChallengeDialog";
-import { RewardsPanel } from "./components/RewardsPanel";
-import { NotificationsPanel } from "./components/NotificationsPanel";
-import { AdminPortal } from "./components/AdminPortal";
-import { GuardianPinSetup, GuardianUnlockDialog } from "./components/GuardianPin";
-import { TrophyRoom } from "./components/TrophyRoom";
-import { BibleHub } from "./components/BibleHub";
-import { Bookshelf } from "./components/Bookshelf";
-import { ParentChildProgress } from "./components/ParentChildProgress";
-import { ParentProgressOverview } from "./components/ParentProgressOverview";
-import { FamilySettings } from "./components/FamilySettings";
-import { ActivitiesHub } from "./components/ActivitiesHub";
-import { KidHomeFocus } from "./components/KidHomeFocus";
-import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
-import { MembershipAccessCard } from "./components/MembershipAccessCard";
-import { OrderHistoryCard } from "./components/OrderHistoryCard";
-import { FamilyStore } from "./components/FamilyStore";
-import { FamilyGroupsCard } from "./components/FamilyGroupsCard";
-import { FamilyEventsCard } from "./components/FamilyEventsCard";
-import { ReferralSupportCard } from "./components/ReferralSupportCard";
-import { LeaderGroupsHub } from "./components/LeaderGroupsHub";
-import { PrivacyDataControls } from "./components/PrivacyDataControls";
-import { ParentApprovals } from "./components/ParentApprovals";
-import { InviteAccept } from "./components/InviteAccept";
-import { OrganizationInviteAccept } from "./components/OrganizationInviteAccept";
-import { LeaderOnlyPortal } from "./components/LeaderOnlyPortal";
 import { registerCurrentInstallation } from "./lib/installations";
+
+const AdminPortal = lazy(() =>
+  import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
+);
+const ChallengeDialog = lazy(() => import("./components/ChallengeDialog").then((module) => ({ default: module.ChallengeDialog })));
+const RewardsPanel = lazy(() => import("./components/RewardsPanel").then((module) => ({ default: module.RewardsPanel })));
+const NotificationsPanel = lazy(() => import("./components/NotificationsPanel").then((module) => ({ default: module.NotificationsPanel })));
+const InviteAccept = lazy(() => import("./components/InviteAccept").then((module) => ({ default: module.InviteAccept })));
+const OrganizationInviteAccept = lazy(() => import("./components/OrganizationInviteAccept").then((module) => ({ default: module.OrganizationInviteAccept })));
+const LeaderOnlyPortal = lazy(() => import("./components/LeaderOnlyPortal").then((module) => ({ default: module.LeaderOnlyPortal })));
+const KidHomeFocus = lazy(() => import("./components/KidHomeFocus").then((module) => ({ default: module.KidHomeFocus })));
+const GuardianPinSetup = lazy(() => import("./components/GuardianPin").then((module) => ({ default: module.GuardianPinSetup })));
+const GuardianUnlockDialog = lazy(() => import("./components/GuardianPin").then((module) => ({ default: module.GuardianUnlockDialog })));
+const TrophyRoom = lazy(() => import("./components/TrophyRoom").then((module) => ({ default: module.TrophyRoom })));
+const BibleHub = lazy(() => import("./components/BibleHub").then((module) => ({ default: module.BibleHub })));
+const Bookshelf = lazy(() => import("./components/Bookshelf").then((module) => ({ default: module.Bookshelf })));
+const ActivitiesHub = lazy(() => import("./components/ActivitiesHub").then((module) => ({ default: module.ActivitiesHub })));
+const FamilyStore = lazy(() => import("./components/FamilyStore").then((module) => ({ default: module.FamilyStore })));
+const ParentApprovals = lazy(() => import("./components/ParentApprovals").then((module) => ({ default: module.ParentApprovals })));
+const ParentProgressOverview = lazy(() => import("./components/ParentProgressOverview").then((module) => ({ default: module.ParentProgressOverview })));
+const FamilyFaithAtHome = lazy(() => import("./components/FamilyFaithAtHome").then((module) => ({ default: module.FamilyFaithAtHome })));
+const FamilyGroupsCard = lazy(() => import("./components/FamilyGroupsCard").then((module) => ({ default: module.FamilyGroupsCard })));
+const FamilyEventsCard = lazy(() => import("./components/FamilyEventsCard").then((module) => ({ default: module.FamilyEventsCard })));
+const ParentChildProgress = lazy(() => import("./components/ParentChildProgress").then((module) => ({ default: module.ParentChildProgress })));
+const MembershipAccessCard = lazy(() => import("./components/MembershipAccessCard").then((module) => ({ default: module.MembershipAccessCard })));
+const OrderHistoryCard = lazy(() => import("./components/OrderHistoryCard").then((module) => ({ default: module.OrderHistoryCard })));
+const LeaderGroupsHub = lazy(() => import("./components/LeaderGroupsHub").then((module) => ({ default: module.LeaderGroupsHub })));
+const ReferralSupportCard = lazy(() => import("./components/ReferralSupportCard").then((module) => ({ default: module.ReferralSupportCard })));
+const PrivacyDataControls = lazy(() => import("./components/PrivacyDataControls").then((module) => ({ default: module.PrivacyDataControls })));
+const FamilySettings = lazy(() => import("./components/FamilySettings").then((module) => ({ default: module.FamilySettings })));
 
 type Household = {
   id: string;
@@ -618,6 +622,7 @@ function FamilyPortal({
         </aside>
 
         <main className="portal-main">
+          <Suspense fallback={<div className="loader" aria-label="Loading section" />}>
           {view === "kid" ? (
             <>
               <nav className="kid-subnav" aria-label="Kid area">
@@ -887,10 +892,12 @@ function FamilyPortal({
               )}
             </>
           )}
+          </Suspense>
         </main>
       </div>
 
       {selectedChallenge && selectedChild && (
+        <Suspense fallback={null}>
         <ChallengeDialog
           challenge={selectedChallenge}
           childId={selectedChild.id}
@@ -900,9 +907,11 @@ function FamilyPortal({
             window.dispatchEvent(new Event("dc-progress-updated"));
           }}
         />
+        </Suspense>
       )}
 
       {unlockOpen && (
+        <Suspense fallback={null}>
         <GuardianUnlockDialog
           householdId={household.id}
           onClose={() => setUnlockOpen(false)}
@@ -918,6 +927,7 @@ function FamilyPortal({
             await supabase.auth.signOut();
           }}
         />
+        </Suspense>
       )}
     </div>
   );
@@ -1088,6 +1098,7 @@ export default function App() {
     }
 
     return (
+      <Suspense fallback={<LoadingScreen />}>
       <OrganizationInviteAccept
         invitationId={invitationId}
         token={token}
@@ -1097,6 +1108,7 @@ export default function App() {
           navigate("/");
         }}
       />
+      </Suspense>
     );
   }
 
@@ -1120,6 +1132,7 @@ export default function App() {
     }
 
     return (
+      <Suspense fallback={<LoadingScreen />}>
       <InviteAccept
         invitationId={invitationId}
         token={token}
@@ -1128,6 +1141,7 @@ export default function App() {
           navigate("/");
         }}
       />
+      </Suspense>
     );
   }
 
@@ -1148,10 +1162,12 @@ export default function App() {
 
     if (household && guardianPinConfigured === false) {
       return (
+        <Suspense fallback={<LoadingScreen />}>
         <GuardianPinSetup
           householdId={household.id}
           onComplete={() => setGuardianPinConfigured(true)}
         />
+        </Suspense>
       );
     }
 
@@ -1171,6 +1187,7 @@ export default function App() {
             </button>
           </div>
           {adminUnlockOpen && (
+            <Suspense fallback={null}>
             <GuardianUnlockDialog
               householdId={household.id}
               onClose={() => setAdminUnlockOpen(false)}
@@ -1184,21 +1201,28 @@ export default function App() {
                 await supabase.auth.signOut();
               }}
             />
+            </Suspense>
           )}
         </main>
       );
     }
 
-    return <AdminPortal user={session.user} role={adminRole} onExit={() => navigate("/")} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <AdminPortal user={session.user} role={adminRole} onExit={() => navigate("/")} />
+      </Suspense>
+    );
   }
 
   if (!household && hasOrganizationAccess) {
     return (
+      <Suspense fallback={<LoadingScreen />}>
       <LeaderOnlyPortal
         user={session.user}
         adminRole={adminRole}
         onAdmin={() => navigate("/admin")}
       />
+      </Suspense>
     );
   }
 
@@ -1212,10 +1236,12 @@ export default function App() {
 
   if (guardianPinConfigured === false) {
     return (
+      <Suspense fallback={<LoadingScreen />}>
       <GuardianPinSetup
         householdId={household.id}
         onComplete={() => setGuardianPinConfigured(true)}
       />
+      </Suspense>
     );
   }
 

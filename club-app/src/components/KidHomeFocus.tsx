@@ -61,6 +61,7 @@ export function KidHomeFocus({
   const [book, setBook] = useState<Book | null>(null);
   const [summary, setSummary] = useState<AdventureSummary | null>(null);
   const [bookProgressStatus, setBookProgressStatus] = useState<string | null>(null);
+  const [hasBookAccess, setHasBookAccess] = useState(false);
   const [steps, setSteps] = useState<AdventureStep[]>([]);
   const [powerVerse, setPowerVerse] = useState<PowerVerse | null>(null);
   const [error, setError] = useState("");
@@ -100,10 +101,11 @@ export function KidHomeFocus({
       setSummary(null);
       setSteps([]);
       setBookProgressStatus(null);
+      setHasBookAccess(false);
       return;
     }
 
-    const [summaryResult, stepsResult, progressResult] = await Promise.all([
+    const [summaryResult, stepsResult, progressResult, accessResult] = await Promise.all([
       supabase.rpc("get_child_book_adventure_summary", {
         p_child_profile_id: childId,
         p_book_id: nextBook.id
@@ -113,17 +115,19 @@ export function KidHomeFocus({
         p_book_id: nextBook.id
       }),
       supabase.from("child_book_progress").select("status")
-        .eq("child_profile_id", childId).eq("book_id", nextBook.id).maybeSingle()
+        .eq("child_profile_id", childId).eq("book_id", nextBook.id).maybeSingle(),
+      supabase.rpc("has_book_access", { p_book_id: nextBook.id })
     ]);
 
-    if (summaryResult.error || stepsResult.error || progressResult.error) {
-      setError(summaryResult.error?.message || stepsResult.error?.message || progressResult.error?.message || "Unable to load adventure.");
+    if (summaryResult.error || stepsResult.error || progressResult.error || accessResult.error) {
+      setError(summaryResult.error?.message || stepsResult.error?.message || progressResult.error?.message || accessResult.error?.message || "Unable to load adventure.");
       return;
     }
 
     setSummary(((summaryResult.data ?? [])[0] ?? null) as AdventureSummary | null);
     setSteps((stepsResult.data ?? []) as AdventureStep[]);
     setBookProgressStatus(progressResult.data?.status ?? null);
+    setHasBookAccess(accessResult.data === true);
   }, [childId]);
 
   useEffect(() => {
@@ -137,8 +141,8 @@ export function KidHomeFocus({
   }, [load]);
 
   const nextStep = useMemo(
-    () => bookProgressStatus === "adventure_completed" ? null : steps.find((step) => step.is_required && !step.completed) ?? null,
-    [steps, bookProgressStatus]
+    () => !hasBookAccess || bookProgressStatus === "adventure_completed" ? null : steps.find((step) => step.is_required && !step.completed) ?? null,
+    [steps, bookProgressStatus, hasBookAccess]
   );
 
   function openNext() {
@@ -174,9 +178,11 @@ export function KidHomeFocus({
           {book && <img src={coverUrl(book.cover_asset_key)} alt={book.title} />}
         </div>
         <div className="continue-adventure-copy">
-          <p className="eyebrow red">{bookProgressStatus === "adventure_completed" ? "Adventure Complete" : "Continue Adventure"}</p>
+          <p className="eyebrow red">{!hasBookAccess ? "Book Companion" : bookProgressStatus === "adventure_completed" ? "Adventure Complete" : "Continue Adventure"}</p>
           <h2>{book ? "Book #" + (book.book_number ?? "") + ": " + book.title : "Your next adventure"}</h2>
-          {summary ? (
+          {!hasBookAccess ? (
+            <p>This companion is ready to unlock through your family's membership, book purchase, gift, or bundle.</p>
+          ) : summary ? (
             <>
               <p>
                 {summary.completed_required_steps} of {summary.required_steps} required steps complete.

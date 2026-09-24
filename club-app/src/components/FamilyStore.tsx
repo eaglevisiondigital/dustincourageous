@@ -152,10 +152,39 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       ["canceled", "failed"].includes(data.order_status ?? "")) {
       setReturnStatus("canceled");
       setCheckoutUncertain(false);
+      rememberCheckout(householdId, null);
     } else {
       setReturnStatus("pending");
     }
   }, [householdId]);
+
+  async function cancelRememberedCheckout() {
+    const sessionId = rememberedCheckout(householdId);
+    if (!sessionId) {
+      setCheckoutUncertain(false);
+      setReturnStatus(null);
+      return;
+    }
+
+    setWorking(true);
+    setMessage("");
+    const { error } = await supabase.rpc("cancel_checkout_session", {
+      p_checkout_session_id: sessionId
+    });
+    setWorking(false);
+
+    if (error) {
+      await checkReturnedCheckout();
+      setMessage("This checkout could not be canceled. Its current order status was checked again.");
+      return;
+    }
+
+    rememberCheckout(householdId, null);
+    setCheckoutUncertain(false);
+    setCheckoutSummary(null);
+    setReturnStatus("canceled");
+    setMessage("The unfinished checkout was canceled and its temporary inventory reservation was released.");
+  }
 
   useEffect(() => {
     if (returnStatus === "checking") void checkReturnedCheckout();
@@ -432,10 +461,17 @@ export function FamilyStore({ householdId }: { householdId: string }) {
             {returnStatus === "canceled" && "This checkout did not complete. Your cart is still here if you want to try again."}
             {returnStatus === "unavailable" && "We could not verify this checkout in this browser. Check Orders & fulfillment or contact support before trying again."}
           </p>
-          {returnStatus === "pending" && (
-            <button type="button" className="secondary-button" onClick={() => void checkReturnedCheckout()}>
-              Check order status
-            </button>
+          {(returnStatus === "pending" || returnStatus === "unavailable") && (
+            <div className="button-row">
+              <button type="button" className="secondary-button" disabled={working} onClick={() => void checkReturnedCheckout()}>
+                Check order status
+              </button>
+              {checkoutUncertain && (
+                <button type="button" className="text-button" disabled={working} onClick={() => void cancelRememberedCheckout()}>
+                  Cancel unfinished checkout
+                </button>
+              )}
+            </div>
           )}
         </section>
       )}

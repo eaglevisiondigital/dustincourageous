@@ -4414,6 +4414,11 @@ select:focus {
 .store-return-status strong { color: var(--gold); }
 .store-return-status p { margin: 8px 0 0; line-height: 1.5; }
 .store-return-status button { margin-top: 12px; }
+.store-return-status .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 .store-catalog,
 .store-cart {
   padding: 22px;

@@ -136,6 +136,7 @@ export function Bookshelf({
 }) {
   const [books, setBooks] = useState<Book[]>([]);
   const [progress, setProgress] = useState<BookProgress[]>([]);
+  const [bookAccess, setBookAccess] = useState<Record<string, boolean>>({});
   const [selectedBookId, setSelectedBookId] = useState<string>("");
   const [powerLinks, setPowerLinks] = useState<PowerVerseLink[]>([]);
   const [devotionalLinks, setDevotionalLinks] = useState<DevotionalLink[]>([]);
@@ -213,7 +214,17 @@ export function Bookshelf({
     }
 
     const nextBooks = (booksResult.data ?? []) as Book[];
+    const accessResults = await Promise.all(
+      nextBooks.map((book) => supabase.rpc("has_book_access", { p_book_id: book.id }))
+    );
+    const accessError = accessResults.find((result) => result.error)?.error;
+    if (accessError) {
+      setError(accessError.message);
+      return;
+    }
+
     setBooks(nextBooks);
+    setBookAccess(Object.fromEntries(nextBooks.map((book, index) => [book.id, accessResults[index].data === true])));
     setProgress((progressResult.data ?? []) as BookProgress[]);
     setPowerLinks((powerResult.data ?? []) as PowerVerseLink[]);
     setDevotionalLinks((devotionalResult.data ?? []) as DevotionalLink[]);
@@ -237,6 +248,7 @@ export function Bookshelf({
   );
 
   const selectedBook = books.find((book) => book.id === selectedBookId) ?? books[0] ?? null;
+  const selectedHasAccess = selectedBook ? bookAccess[selectedBook.id] === true : false;
   const selectedProgress = selectedBook ? progressByBook.get(selectedBook.id) : undefined;
   const selectedBookCompleted = ["completed", "adventure_completed"].includes(selectedProgress?.status ?? "");
 
@@ -304,6 +316,7 @@ export function Bookshelf({
   }, [load, loadAdventure]);
 
   async function completeSimpleStep(step: AdventureStep) {
+    if (!selectedHasAccess) return;
     setStepWorking(step.step_type + ":" + step.source_id);
     setError("");
 
@@ -343,7 +356,7 @@ export function Bookshelf({
   }
 
   async function finishFullAdventure() {
-    if (!selectedBook) return;
+    if (!selectedBook || !selectedHasAccess) return;
     setStepWorking("finish");
     setError("");
 
@@ -430,7 +443,7 @@ export function Bookshelf({
   }
 
   async function setBookStatus(status: "reading" | "completed") {
-    if (!selectedBook) return;
+    if (!selectedBook || !selectedHasAccess) return;
 
     if (progressByBook.get(selectedBook.id)?.status === "adventure_completed") return;
 
@@ -525,7 +538,9 @@ export function Bookshelf({
 
             <div className="book-status-row">
               <span className="pill">
-                {selectedProgress?.status === "adventure_completed"
+                {!selectedHasAccess
+                  ? "Companion access required"
+                  : selectedProgress?.status === "adventure_completed"
                   ? "Full Adventure completed"
                   : selectedProgress?.status === "completed"
                     ? "Completed"
@@ -543,7 +558,7 @@ export function Bookshelf({
             <div className="book-progress-actions">
               <button
                 className="secondary-button"
-                disabled={working || selectedProgress?.status === "reading" || selectedBookCompleted}
+                disabled={!selectedHasAccess || working || selectedProgress?.status === "reading" || selectedBookCompleted}
                 onClick={() => void setBookStatus("reading")}
               >
                 {selectedProgress?.status === "reading" || selectedBookCompleted
@@ -552,7 +567,7 @@ export function Bookshelf({
               </button>
               <button
                 className="primary-button compact"
-                disabled={working || selectedBookCompleted}
+                disabled={!selectedHasAccess || working || selectedBookCompleted}
                 onClick={() => void setBookStatus("completed")}
               >
                 {selectedBookCompleted
@@ -561,7 +576,13 @@ export function Bookshelf({
               </button>
             </div>
 
-
+            {!selectedHasAccess && (
+              <div className="form-message">
+                This Book Companion is locked for this family. A guardian can unlock it through membership, a book purchase, a gift, or a bundle.
+              </div>
+            )}
+            {selectedHasAccess && (
+              <>
             <section className="book-adventure-path">
               <div className="book-adventure-heading">
                 <div>
@@ -605,7 +626,7 @@ export function Bookshelf({
               <button
                 type="button"
                 className="primary-button book-adventure-finish"
-                disabled={!adventureSummary?.ready_for_adventure_completion || stepWorking === "finish" || selectedProgress?.status === "adventure_completed"}
+                disabled={!selectedHasAccess || !adventureSummary?.ready_for_adventure_completion || stepWorking === "finish" || selectedProgress?.status === "adventure_completed"}
                 onClick={() => void finishFullAdventure()}
               >
                 {selectedProgress?.status === "adventure_completed"
@@ -678,6 +699,8 @@ export function Bookshelf({
                 </article>
               ))}
             </div>
+              </>
+            )}
           </div>
         </section>
       )}
