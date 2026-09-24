@@ -89,6 +89,7 @@ function AuthScreen() {
             email,
             password,
             options: {
+              emailRedirectTo: window.location.origin + "/",
               data: {
                 first_name: firstName.trim(),
                 display_name: firstName.trim()
