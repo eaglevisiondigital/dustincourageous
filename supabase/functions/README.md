@@ -40,6 +40,8 @@ It:
 - loads the authoritative order total/items from Supabase
 - never accepts browser-supplied prices
 - calls the configured hosted checkout adapter
+- requires an authenticated HTTPS adapter and returns only an HTTPS hosted checkout URL
+- verifies the signed-in guardian created the checkout session before calling that adapter
 - returns only the hosted checkout URL
 - never collects raw card numbers or CVV
 

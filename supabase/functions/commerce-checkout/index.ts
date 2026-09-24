@@ -88,6 +88,10 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Checkout session not found" }, 404, origin);
   }
 
+  if (session.user_id !== authData.user.id) {
+    return json({ error: "Checkout session not found" }, 404, origin);
+  }
+
   if (session.checkout_status !== "created") {
     return json({ error: "Checkout session is not available" }, 409, origin);
   }
@@ -110,7 +114,16 @@ Deno.serve(async (req: Request) => {
   const adapterUrl = Deno.env.get("DC_COMMERCE_CHECKOUT_ADAPTER_URL");
   const adapterSecret = Deno.env.get("DC_COMMERCE_CHECKOUT_ADAPTER_SECRET");
 
-  if (provider !== "webhook" || !adapterUrl) {
+  let trustedAdapterUrl: URL | null = null;
+  try {
+    trustedAdapterUrl = adapterUrl ? new URL(adapterUrl) : null;
+  } catch {
+    // A malformed adapter address is treated as an unconfigured provider.
+  }
+
+  if (provider !== "webhook" || !adapterSecret ||
+    trustedAdapterUrl?.protocol !== "https:" ||
+    trustedAdapterUrl.username || trustedAdapterUrl.password) {
     await admin.rpc("update_integration_provider_health", {
       p_provider_key: "commerce-primary",
       p_status: "not_configured",
@@ -155,11 +168,11 @@ Deno.serve(async (req: Request) => {
   let responseBody: Record<string, unknown> = {};
 
   try {
-    response = await fetch(adapterUrl, {
+    response = await fetch(trustedAdapterUrl.toString(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(adapterSecret ? { Authorization: `Bearer ${adapterSecret}` } : {}),
+        Authorization: `Bearer ${adapterSecret}`,
       },
       body: JSON.stringify(requestPayload),
     });
@@ -222,7 +235,15 @@ Deno.serve(async (req: Request) => {
       ? responseBody.provider_checkout_id
       : "";
 
-  if (!checkoutUrl || !providerCheckoutId) {
+  let hostedUrl: URL | null = null;
+  try {
+    hostedUrl = checkoutUrl ? new URL(checkoutUrl) : null;
+  } catch {
+    // Invalid or relative URLs must never be forwarded to a guardian browser.
+  }
+
+  if (!providerCheckoutId.trim() || hostedUrl?.protocol !== "https:" ||
+    hostedUrl.username || hostedUrl.password) {
     return json({ error: "Checkout adapter returned an invalid response." }, 502, origin);
   }
 
@@ -268,7 +289,7 @@ Deno.serve(async (req: Request) => {
   return json(
     {
       ok: true,
-      checkout_url: checkoutUrl,
+      checkout_url: hostedUrl.toString(),
       provider_checkout_id: providerCheckoutId,
       order_number: session.order_number,
     },
