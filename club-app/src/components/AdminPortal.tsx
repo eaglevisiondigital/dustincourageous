@@ -11,6 +11,7 @@ import { CommerceAdmin } from "./CommerceAdmin";
 import { OrganizationsAdmin } from "./OrganizationsAdmin";
 import { EventsAdmin } from "./EventsAdmin";
 import { SupportAdmin } from "./SupportAdmin";
+import { GovernanceAdmin } from "./GovernanceAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -190,7 +191,11 @@ function ChallengeAdmin({
   }
 
   async function toggleStatus(challenge: ChallengeRow) {
-    const nextStatus = challenge.status === "published" ? "draft" : "published";
+    if (challenge.status !== "published") {
+      setMessage("Use DC Governance to review and publish draft challenges.");
+      return;
+    }
+    const nextStatus = "draft";
     const { error } = await supabase
       .from("challenges")
       .update({ status: nextStatus })
@@ -262,7 +267,7 @@ function ChallengeAdmin({
             Initial status
             <select value={status} onChange={(event) => setStatus(event.target.value)}>
               <option value="draft">Draft</option>
-              <option value="published">Published</option>
+              <option value="published" disabled>Publish through DC Governance</option>
             </select>
           </label>
           <label className="full">
@@ -737,7 +742,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"governance" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -816,6 +821,7 @@ export function AdminPortal({
         <aside className="admin-nav">
           <p className="eyebrow">Management</p>
           {[
+            ["governance", "DC Governance"],
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
@@ -856,11 +862,13 @@ export function AdminPortal({
 
           {error && <div className="form-message">{error}</div>}
 
-          {!canCreateContent && section !== "fulfillment" && section !== "support" ? (
+          {!canCreateContent && section !== "fulfillment" && section !== "support" && section !== "governance" ? (
             <section className="admin-card">
               <h2>Read-only access</h2>
               <p className="muted">Your current admin role can review this area but cannot create or edit content.</p>
             </section>
+          ) : section === "governance" ? (
+            <GovernanceAdmin />
           ) : section === "challenges" ? (
             <ChallengeAdmin challenges={challenges} refresh={refresh} />
           ) : section === "series" ? (
