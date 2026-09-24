@@ -15,6 +15,7 @@ import { GovernanceAdmin } from "./GovernanceAdmin";
 import { AnalyticsPrivacyAdmin } from "./AnalyticsPrivacyAdmin";
 import { CommunicationsAdmin } from "./CommunicationsAdmin";
 import { IntegrationHealthAdmin } from "./IntegrationHealthAdmin";
+import { LeadsAdmin } from "./LeadsAdmin";
 import { LaunchReadinessAdmin } from "./LaunchReadinessAdmin";
 
 type ChallengeRow = {
@@ -830,6 +831,7 @@ export function AdminPortal({
             ["operations", "Analytics & Privacy"],
             ["communications", "Communications"],
             ["integrations", "Integrations & Delivery"],
+            ["leads", "Leads & Inquiries"],
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
@@ -885,6 +887,8 @@ export function AdminPortal({
             <CommunicationsAdmin role={role} />
           ) : section === "integrations" ? (
             <IntegrationHealthAdmin />
+          ) : section === "leads" ? (
+            <LeadsAdmin />
           ) : section === "challenges" ? (
             <ChallengeAdmin challenges={challenges} refresh={refresh} />
           ) : section === "series" ? (
