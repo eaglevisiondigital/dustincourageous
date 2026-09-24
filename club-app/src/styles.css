@@ -4693,3 +4693,88 @@ select:focus {
 .launch-gate-note p:last-child{margin-bottom:0;color:#99948d;line-height:1.55}
 @media (max-width:850px){.launch-gate-areas{grid-template-columns:1fr}}
 @media (max-width:650px){.launch-gate-hero{flex-direction:column;align-items:flex-start}.launch-gate-score{text-align:left}.launch-gate-summary{grid-template-columns:1fr}.launch-warning-list article{grid-template-columns:1fr}}
+
+
+/* Public leads and inquiries */
+.leads-admin {
+  display: grid;
+  gap: 18px;
+}
+.leads-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 10px;
+}
+.leads-summary-grid article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0a0a0a;
+}
+.leads-summary-grid span,
+.leads-summary-grid strong,
+.leads-summary-grid small {
+  display: block;
+}
+.leads-summary-grid span,
+.leads-summary-grid small {
+  color: #817d77;
+  font-size: .66rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.leads-summary-grid strong {
+  margin: 5px 0;
+  font-size: 2rem;
+}
+.lead-record-list {
+  display: grid;
+  gap: 9px;
+}
+.lead-record {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(150px,190px);
+  gap: 14px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.lead-record.inquiry {
+  grid-template-columns: minmax(0,1fr) minmax(150px,190px);
+}
+.lead-record-main > span {
+  color: #ff6a6a;
+  font-size: .63rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.lead-record-main h3 {
+  margin: 4px 0 2px;
+}
+.lead-record-main a {
+  color: var(--gold);
+  font-size: .78rem;
+}
+.lead-record-main p {
+  margin: 8px 0 0;
+  color: #9b9690;
+  line-height: 1.45;
+  font-size: .78rem;
+}
+.lead-record-main small,
+.lead-record-consent small {
+  display: block;
+  margin-top: 7px;
+  color: #77736e;
+  font-size: .68rem;
+}
+.lead-record-consent {
+  min-width: 160px;
+}
+@media (max-width: 850px) {
+  .leads-summary-grid { grid-template-columns: 1fr; }
+  .lead-record,
+  .lead-record.inquiry { grid-template-columns: 1fr; }
+}
