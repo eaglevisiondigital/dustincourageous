@@ -4710,6 +4710,69 @@ export type Database = {
           },
         ]
       }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          group_id: string | null
+          group_role: string | null
+          id: string
+          invited_by: string
+          organization_id: string
+          organization_role: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          group_id?: string | null
+          group_role?: string | null
+          id?: string
+          invited_by: string
+          organization_id: string
+          organization_role: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          group_id?: string | null
+          group_role?: string | null
+          id?: string
+          invited_by?: string
+          organization_id?: string
+          organization_role?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -6374,6 +6437,10 @@ export type Database = {
         Args: { p_invitation_id: string; p_token: string }
         Returns: string
       }
+      accept_organization_invitation: {
+        Args: { p_invitation_id: string; p_token: string }
+        Returns: string
+      }
       admin_add_devotional_day: {
         Args: {
           p_action_step?: string
@@ -6788,6 +6855,10 @@ export type Database = {
         Args: { p_registration_id: string }
         Returns: undefined
       }
+      cancel_organization_invitation: {
+        Args: { p_invitation_id: string }
+        Returns: undefined
+      }
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
         Returns: boolean
@@ -6835,6 +6906,20 @@ export type Database = {
       create_household_with_consent: {
         Args: { p_name: string; p_timezone: string }
         Returns: string
+      }
+      create_organization_invitation: {
+        Args: {
+          p_email: string
+          p_expires_in_days?: number
+          p_group_id?: string
+          p_group_role?: string
+          p_organization_id: string
+          p_organization_role: string
+        }
+        Returns: {
+          invitation_id: string
+          invitation_token: string
+        }[]
       }
       dc_preflight_scan: {
         Args: { p_entity_id: string; p_entity_type: string }
@@ -6938,6 +7023,20 @@ export type Database = {
           organization_name: string
           organization_type: string
           spots_remaining: number
+        }[]
+      }
+      preview_organization_invitation: {
+        Args: { p_invitation_id: string; p_token: string }
+        Returns: {
+          expires_at: string
+          group_id: string
+          group_name: string
+          group_role: string
+          invitation_id: string
+          organization_id: string
+          organization_name: string
+          organization_role: string
+          organization_type: string
         }[]
       }
       privacy_export_payload: { Args: { p_request_id: string }; Returns: Json }
