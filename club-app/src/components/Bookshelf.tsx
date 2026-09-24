@@ -238,6 +238,7 @@ export function Bookshelf({
 
   const selectedBook = books.find((book) => book.id === selectedBookId) ?? books[0] ?? null;
   const selectedProgress = selectedBook ? progressByBook.get(selectedBook.id) : undefined;
+  const selectedBookCompleted = ["completed", "adventure_completed"].includes(selectedProgress?.status ?? "");
 
   const selectedPowerVerse = selectedBook
     ? firstRelation(powerLinks.find((item) => item.book_id === selectedBook.id)?.power_verses ?? null)
@@ -431,6 +432,8 @@ export function Bookshelf({
   async function setBookStatus(status: "reading" | "completed") {
     if (!selectedBook) return;
 
+    if (progressByBook.get(selectedBook.id)?.status === "adventure_completed") return;
+
     setWorking(true);
     setError("");
 
@@ -494,8 +497,10 @@ export function Bookshelf({
               <span>Book #{book.book_number ?? ""}</span>
               <strong>{book.title}</strong>
               <small>
-                {bookProgress?.status === "completed"
-                  ? "Completed ✓"
+                {bookProgress?.status === "adventure_completed"
+                  ? "Full Adventure ✓"
+                  : bookProgress?.status === "completed"
+                    ? "Completed ✓"
                   : bookProgress?.status === "reading"
                     ? "Reading"
                     : book.status === "coming_soon"
@@ -520,8 +525,10 @@ export function Bookshelf({
 
             <div className="book-status-row">
               <span className="pill">
-                {selectedProgress?.status === "completed"
-                  ? "Completed"
+                {selectedProgress?.status === "adventure_completed"
+                  ? "Full Adventure completed"
+                  : selectedProgress?.status === "completed"
+                    ? "Completed"
                   : selectedProgress?.status === "reading"
                     ? "Currently reading"
                     : selectedBook.status === "coming_soon"
@@ -536,19 +543,19 @@ export function Bookshelf({
             <div className="book-progress-actions">
               <button
                 className="secondary-button"
-                disabled={working || selectedProgress?.status === "reading" || selectedProgress?.status === "completed"}
+                disabled={working || selectedProgress?.status === "reading" || selectedBookCompleted}
                 onClick={() => void setBookStatus("reading")}
               >
-                {selectedProgress?.status === "reading" || selectedProgress?.status === "completed"
+                {selectedProgress?.status === "reading" || selectedBookCompleted
                   ? "Reading started ✓"
                   : "Start reading"}
               </button>
               <button
                 className="primary-button compact"
-                disabled={working || selectedProgress?.status === "completed"}
+                disabled={working || selectedBookCompleted}
                 onClick={() => void setBookStatus("completed")}
               >
-                {selectedProgress?.status === "completed"
+                {selectedBookCompleted
                   ? "Book completed ✓"
                   : `I finished the book · +${selectedBook.completion_xp} XP`}
               </button>
