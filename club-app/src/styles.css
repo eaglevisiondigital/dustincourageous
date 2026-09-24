@@ -3453,3 +3453,67 @@ select:focus {
   font-size: .76rem;
   line-height: 1.45;
 }
+
+
+/* DC creative blueprints */
+.governance-blueprints {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+.governance-blueprints > article {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #090909;
+}
+.governance-blueprint-head span,
+.governance-blueprint-head small {
+  display: block;
+  color: #817d77;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.governance-blueprint-head h3 {
+  margin: 4px 0;
+}
+.governance-blueprints > article > p {
+  color: #9b9690;
+  line-height: 1.5;
+  font-size: .77rem;
+}
+.governance-blueprint-requirements {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+.governance-blueprint-requirements > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #111;
+}
+.governance-blueprint-requirements strong,
+.governance-blueprint-requirements span {
+  display: block;
+}
+.governance-blueprint-requirements strong {
+  font-size: .8rem;
+}
+.governance-blueprint-requirements span {
+  grid-column: 1 / -1;
+  color: #88847e;
+  font-size: .7rem;
+  line-height: 1.4;
+}
+.governance-blueprint-requirements small {
+  color: var(--gold);
+  font-size: .6rem;
+  text-transform: uppercase;
+}
+@media (max-width: 800px) {
+  .governance-blueprints { grid-template-columns: 1fr; }
+}
