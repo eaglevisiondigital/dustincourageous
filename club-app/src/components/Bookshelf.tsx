@@ -215,7 +215,7 @@ export function Bookshelf({
 
     const nextBooks = (booksResult.data ?? []) as Book[];
     const accessResults = await Promise.all(
-      nextBooks.map((book) => (supabase as any).rpc("has_book_access", { p_book_id: book.id }))
+      nextBooks.map((book) => supabase.rpc("has_book_access", { p_book_id: book.id }))
     );
     const accessError = accessResults.find((result) => result.error)?.error;
     if (accessError) {

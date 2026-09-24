@@ -116,7 +116,7 @@ export function KidHomeFocus({
       }),
       supabase.from("child_book_progress").select("status")
         .eq("child_profile_id", childId).eq("book_id", nextBook.id).maybeSingle(),
-      (supabase as any).rpc("has_book_access", { p_book_id: nextBook.id })
+      supabase.rpc("has_book_access", { p_book_id: nextBook.id })
     ]);
 
     if (summaryResult.error || stepsResult.error || progressResult.error || accessResult.error) {
