@@ -378,6 +378,7 @@ export type Database = {
       }
       badge_rules: {
         Row: {
+          activity_event_type: string | null
           badge_id: string
           challenge_type: string | null
           created_at: string
@@ -391,6 +392,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          activity_event_type?: string | null
           badge_id: string
           challenge_type?: string | null
           created_at?: string
@@ -404,6 +406,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          activity_event_type?: string | null
           badge_id?: string
           challenge_type?: string | null
           created_at?: string
@@ -3475,6 +3478,7 @@ export type Database = {
       }
       admin_create_lifetime_badge_level: {
         Args: {
+          p_activity_event_type?: string
           p_badge_family_key?: string
           p_badge_key: string
           p_challenge_type?: string
