@@ -11,6 +11,7 @@ import { TrophyRoom } from "./components/TrophyRoom";
 import { BibleHub } from "./components/BibleHub";
 import { Bookshelf } from "./components/Bookshelf";
 import { ParentChildProgress } from "./components/ParentChildProgress";
+import { ParentProgressOverview } from "./components/ParentProgressOverview";
 import { FamilySettings } from "./components/FamilySettings";
 import { ActivitiesHub } from "./components/ActivitiesHub";
 import { InviteAccept } from "./components/InviteAccept";
@@ -580,20 +581,6 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
-                  className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("bible")}
-                >
-                  Bible
-                </button>
-                <button
-                  type="button"
-                  className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("books")}
-                >
-                  Books
-                </button>
-                <button
-                  type="button"
                   className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("trophies")}
                 >
@@ -615,6 +602,8 @@ function FamilyPortal({
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
                   onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+                  onOpenBible={() => setKidSection("bible")}
+                  onOpenActivities={() => setKidSection("activities")}
                 />
               ) : kidSection === "activities" && selectedChild ? (
                 <ActivitiesHub
@@ -750,6 +739,17 @@ function FamilyPortal({
                 <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
               </section>
 
+              <ParentProgressOverview
+                householdId={household.id}
+                selectedChildId={selectedChild?.id ?? ""}
+                onSelectChild={(childId) => setSelectedChildId(childId)}
+                onOpenChild={(childId) => {
+                  setSelectedChildId(childId);
+                  setKidSection("home");
+                  setView("kid");
+                }}
+              />
+
               {selectedChild && (
                 <>
                   <ParentChildProgress childId={selectedChild.id} childName={selectedChild.display_name} />
@@ -773,6 +773,7 @@ function FamilyPortal({
           onClose={() => setSelectedChallenge(null)}
           onCompleted={async () => {
             await loadChildDashboard();
+            window.dispatchEvent(new Event("dc-progress-updated"));
           }}
         />
       )}
