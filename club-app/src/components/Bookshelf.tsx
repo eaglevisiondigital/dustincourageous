@@ -22,6 +22,28 @@ type BookProgress = {
   adventure_completed_at: string | null;
 };
 
+type AdventureStep = {
+  step_type: string;
+  source_id: string;
+  title: string;
+  subtitle: string | null;
+  sort_group: number;
+  sort_order: number;
+  is_required: boolean;
+  completed: boolean;
+  status: string;
+  xp_reward: number;
+};
+
+type AdventureSummary = {
+  total_steps: number;
+  required_steps: number;
+  completed_steps: number;
+  completed_required_steps: number;
+  progress_percent: number;
+  ready_for_adventure_completion: boolean;
+};
+
 type PowerVerseLink = {
   book_id: string;
   power_verses:
@@ -101,12 +123,16 @@ export function Bookshelf({
   childId,
   childName,
   onProgress,
-  onOpenChallenge
+  onOpenChallenge,
+  onOpenBible,
+  onOpenActivities
 }: {
   childId: string;
   childName: string;
   onProgress: () => Promise<void>;
   onOpenChallenge: (challengeId: string) => void;
+  onOpenBible: () => void;
+  onOpenActivities: () => void;
 }) {
   const [books, setBooks] = useState<Book[]>([]);
   const [progress, setProgress] = useState<BookProgress[]>([]);
@@ -117,7 +143,10 @@ export function Bookshelf({
   const [identityLinks, setIdentityLinks] = useState<IdentityLink[]>([]);
   const [challengeLinks, setChallengeLinks] = useState<ChallengeLink[]>([]);
   const [contentLinks, setContentLinks] = useState<ContentLink[]>([]);
+  const [adventureSteps, setAdventureSteps] = useState<AdventureStep[]>([]);
+  const [adventureSummary, setAdventureSummary] = useState<AdventureSummary | null>(null);
   const [working, setWorking] = useState(false);
+  const [stepWorking, setStepWorking] = useState("");
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
@@ -232,6 +261,173 @@ export function Bookshelf({
         .filter((item) => item.content)
     : [];
 
+  const loadAdventure = useCallback(async () => {
+    if (!selectedBook) {
+      setAdventureSteps([]);
+      setAdventureSummary(null);
+      return;
+    }
+
+    const [stepsResult, summaryResult] = await Promise.all([
+      supabase.rpc("get_child_book_adventure_steps", {
+        p_child_profile_id: childId,
+        p_book_id: selectedBook.id
+      }),
+      supabase.rpc("get_child_book_adventure_summary", {
+        p_child_profile_id: childId,
+        p_book_id: selectedBook.id
+      })
+    ]);
+
+    const firstError = stepsResult.error || summaryResult.error;
+    if (firstError) {
+      setError(firstError.message);
+      return;
+    }
+
+    setAdventureSteps((stepsResult.data ?? []) as AdventureStep[]);
+    setAdventureSummary(((summaryResult.data ?? [])[0] ?? null) as AdventureSummary | null);
+  }, [childId, selectedBook]);
+
+  useEffect(() => {
+    void loadAdventure();
+  }, [loadAdventure]);
+
+  useEffect(() => {
+    const handler = () => {
+      void load();
+      void loadAdventure();
+    };
+    window.addEventListener("dc-progress-updated", handler);
+    return () => window.removeEventListener("dc-progress-updated", handler);
+  }, [load, loadAdventure]);
+
+  async function completeSimpleStep(step: AdventureStep) {
+    setStepWorking(step.step_type + ":" + step.source_id);
+    setError("");
+
+    let stepError = null;
+
+    if (step.step_type === "identity") {
+      const result = await supabase
+        .from("child_identity_progress")
+        .upsert({
+          child_profile_id: childId,
+          identity_truth_id: step.source_id,
+          learned: true,
+          learned_at: new Date().toISOString()
+        }, { onConflict: "child_profile_id,identity_truth_id" });
+      stepError = result.error;
+    } else if (step.step_type === "prayer") {
+      const result = await supabase
+        .from("child_prayer_progress")
+        .upsert({
+          child_profile_id: childId,
+          prayer_prompt_id: step.source_id,
+          completed_at: new Date().toISOString()
+        }, { onConflict: "child_profile_id,prayer_prompt_id" });
+      stepError = result.error;
+    }
+
+    setStepWorking("");
+
+    if (stepError) {
+      setError(stepError.message);
+      return;
+    }
+
+    window.dispatchEvent(new Event("dc-progress-updated"));
+    await onProgress();
+    await loadAdventure();
+  }
+
+  async function finishFullAdventure() {
+    if (!selectedBook) return;
+    setStepWorking("finish");
+    setError("");
+
+    const { error: finishError } = await supabase.rpc("complete_child_book_adventure", {
+      p_child_profile_id: childId,
+      p_book_id: selectedBook.id
+    });
+
+    setStepWorking("");
+
+    if (finishError) {
+      setError(finishError.message);
+      return;
+    }
+
+    window.dispatchEvent(new Event("dc-progress-updated"));
+    await onProgress();
+    await load();
+    await loadAdventure();
+  }
+
+  function stepAction(step: AdventureStep) {
+    if (step.completed) return null;
+
+    if (step.step_type === "book") {
+      return (
+        <button type="button" className="secondary-button" onClick={() => void setBookStatus("completed")}>
+          Mark book complete
+        </button>
+      );
+    }
+
+    if (step.step_type === "power_verse" || step.step_type === "devotional") {
+      return (
+        <button type="button" className="secondary-button" onClick={onOpenBible}>
+          Go to Bible
+        </button>
+      );
+    }
+
+    if (step.step_type === "activity") {
+      return (
+        <button type="button" className="secondary-button" onClick={onOpenActivities}>
+          Open Activities
+        </button>
+      );
+    }
+
+    if (step.step_type === "challenge") {
+      return (
+        <button type="button" className="secondary-button" onClick={() => onOpenChallenge(step.source_id)}>
+          Open Challenge
+        </button>
+      );
+    }
+
+    if (step.step_type === "identity") {
+      return (
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={stepWorking === step.step_type + ":" + step.source_id}
+          onClick={() => void completeSimpleStep(step)}
+        >
+          {stepWorking === step.step_type + ":" + step.source_id ? "Saving..." : "I learned this truth"}
+        </button>
+      );
+    }
+
+    if (step.step_type === "prayer") {
+      return (
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={stepWorking === step.step_type + ":" + step.source_id}
+          onClick={() => void completeSimpleStep(step)}
+        >
+          {stepWorking === step.step_type + ":" + step.source_id ? "Saving..." : "I prayed this"}
+        </button>
+      );
+    }
+
+    return null;
+  }
+
   async function setBookStatus(status: "reading" | "completed") {
     if (!selectedBook) return;
 
@@ -263,6 +459,8 @@ export function Bookshelf({
     }
 
     await load();
+    await loadAdventure();
+    window.dispatchEvent(new Event("dc-progress-updated"));
     if (status === "completed") await onProgress();
   }
 
@@ -355,6 +553,63 @@ export function Bookshelf({
                   : `I finished the book · +${selectedBook.completion_xp} XP`}
               </button>
             </div>
+
+
+            <section className="book-adventure-path">
+              <div className="book-adventure-heading">
+                <div>
+                  <p className="eyebrow red">Full Book Adventure</p>
+                  <h3>Keep the story going</h3>
+                  <p>
+                    Complete the required steps connected to this book. The full Adventure completion is validated by the Dustin backend.
+                  </p>
+                </div>
+                {adventureSummary && (
+                  <div className="book-adventure-score">
+                    <strong>{adventureSummary.progress_percent}%</strong>
+                    <span>{adventureSummary.completed_required_steps}/{adventureSummary.required_steps} required</span>
+                  </div>
+                )}
+              </div>
+
+              {adventureSummary && (
+                <div className="level-progress-track book-adventure-meter">
+                  <span style={{width: adventureSummary.progress_percent + "%"}} />
+                </div>
+              )}
+
+              <div className="book-adventure-steps">
+                {adventureSteps.map((step) => (
+                  <article className={step.completed ? "book-adventure-step complete" : "book-adventure-step"} key={step.step_type + ":" + step.source_id}>
+                    <span className="book-step-icon">{step.completed ? "✓" : step.sort_group === 0 ? "1" : "◆"}</span>
+                    <div>
+                      <small>{step.step_type.replaceAll("_"," ")}{step.is_required ? " · required" : " · optional"}</small>
+                      <strong>{step.title}</strong>
+                      {step.subtitle && <p>{step.subtitle}</p>}
+                      {step.xp_reward > 0 && <em>+{step.xp_reward} XP</em>}
+                    </div>
+                    <div className="book-step-action">
+                      {step.completed ? <span className="status-chip done">Complete</span> : stepAction(step)}
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="primary-button book-adventure-finish"
+                disabled={!adventureSummary?.ready_for_adventure_completion || stepWorking === "finish" || selectedProgress?.status === "adventure_completed"}
+                onClick={() => void finishFullAdventure()}
+              >
+                {selectedProgress?.status === "adventure_completed"
+                  ? "Full Book Adventure Completed ✓"
+                  : stepWorking === "finish"
+                    ? "Completing..."
+                    : adventureSummary?.ready_for_adventure_completion
+                      ? "Complete Full Book Adventure"
+                      : "Finish the required steps to unlock"}
+              </button>
+            </section>
 
             <div className="book-companion-grid">
               {selectedPowerVerse && (() => {
