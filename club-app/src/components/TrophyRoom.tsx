@@ -372,7 +372,7 @@ export function TrophyRoom({
           </div>
         ) : (
           <div className="empty-state compact-empty">
-            <h3>Lifetime badges will live here.</h3>
+            <h3>No lifetime badges earned yet.</h3>
             <p>They never disappear once earned.</p>
           </div>
         )}

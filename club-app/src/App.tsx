@@ -97,19 +97,33 @@ function LoadingScreen() {
   );
 }
 
-function AuthScreen() {
+function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const leaderInvitation = window.location.pathname.startsWith("/org-invite");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [working, setWorking] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(initialMessage);
+  const [confirmationPending, setConfirmationPending] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     setWorking(true);
     setMessage("");
+
+    if (mode === "forgot") {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/"
+      });
+      setWorking(false);
+      setMessage(
+        error
+          ? error.message
+          : "If an Adventure Club account uses that email, a secure password reset link is on its way."
+      );
+      return;
+    }
 
     const result =
       mode === "signup"
@@ -139,7 +153,20 @@ function AuthScreen() {
 
     if (mode === "signup" && !result.data.session) {
       setMessage("Check your email to confirm your guardian account, then come back and sign in.");
+      setConfirmationPending(true);
     }
+  }
+
+  async function resendConfirmation() {
+    if (!email) return;
+    setWorking(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin + "/" }
+    });
+    setWorking(false);
+    setMessage(error ? error.message : "A new confirmation email has been requested. Please check your inbox and spam folder.");
   }
 
   return (
@@ -168,14 +195,18 @@ function AuthScreen() {
             {leaderInvitation ? "Adventure Club Adult Access" : "Adventure Club Family Access"}
           </p>
           <h2>
-            {mode === "signin"
+            {mode === "forgot"
+              ? "Reset your password"
+              : mode === "signin"
               ? "Welcome back"
               : leaderInvitation
                 ? "Create your adult account"
                 : "Create your family account"}
           </h2>
           <p className="muted">
-            {leaderInvitation
+            {mode === "forgot"
+              ? "Enter the adult account email. We will send a secure link if the account exists."
+              : leaderInvitation
               ? "Use the exact email address that received the organization invitation. Leader access does not require a child or family household."
               : "Parents and guardians manage the account. Children participate through protected family profiles."}
           </p>
@@ -202,35 +233,50 @@ function AuthScreen() {
                 onChange={(event) => setEmail(event.target.value)}
               />
             </label>
-            <label>
-              Password
-              <input
-                required
-                minLength={8}
-                type="password"
-                autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
+            {mode !== "forgot" && (
+              <label>
+                Password
+                <input
+                  required
+                  minLength={8}
+                  type="password"
+                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </label>
+            )}
 
             {message && <div className="form-message">{message}</div>}
 
             <button className="primary-button" disabled={working} type="submit">
-              {working ? "Working..." : mode === "signin" ? "Sign in" : "Create family account"}
+              {working ? "Working..." : mode === "forgot" ? "Send secure reset link" : mode === "signin" ? "Sign in" : "Create family account"}
             </button>
+            {confirmationPending && (
+              <button className="secondary-button" disabled={working} type="button" onClick={() => void resendConfirmation()}>
+                Resend confirmation email
+              </button>
+            )}
           </form>
 
-          <button
-            type="button"
-            className="text-button"
-            onClick={() => {
-              setMode(mode === "signin" ? "signup" : "signin");
-              setMessage("");
-            }}
-          >
-            {mode === "signin" ? "New family? Create an account" : "Already have an account? Sign in"}
-          </button>
+          <div className="auth-link-row">
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setMessage("");
+                setConfirmationPending(false);
+              }}
+            >
+              {mode === "signin" ? "New family? Create an account" : "Back to sign in"}
+            </button>
+            {mode === "signin" && (
+              <button type="button" className="text-button" onClick={() => { setMode("forgot"); setMessage(""); }}>
+                Forgot password?
+              </button>
+            )}
+          </div>
 
           <p className="privacy-note">
             Dustin Courageous does not require children to create email accounts. Family access is controlled
@@ -238,6 +284,61 @@ function AuthScreen() {
           </p>
         </div>
       </section>
+    </main>
+  );
+}
+
+function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
+  const [password, setPassword] = useState("");
+  const [confirmation, setConfirmation] = useState("");
+  const [working, setWorking] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setMessage("");
+    if (password.length < 8) {
+      setMessage("Choose a password with at least 8 characters.");
+      return;
+    }
+    if (password !== confirmation) {
+      setMessage("The passwords do not match.");
+      return;
+    }
+
+    setWorking(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setWorking(false);
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    onComplete();
+  }
+
+  return (
+    <main className="setup-page">
+      <div className="setup-card">
+        <Brand />
+        <p className="eyebrow red">Guardian Account</p>
+        <h1>Choose a new password</h1>
+        <p className="muted">This updates the password for the adult Adventure Club account.</p>
+        <form className="form-stack" onSubmit={submit}>
+          <label>
+            New password
+            <input required minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          </label>
+          <label>
+            Confirm new password
+            <input required minLength={8} type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
+          </label>
+          {message && <div className="form-message">{message}</div>}
+          <button className="primary-button" disabled={working}>
+            {working ? "Updating..." : "Update password"}
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
@@ -456,7 +557,7 @@ function FamilyPortal({
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
   const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">("home");
-  const [parentSection, setParentSection] = useState<"overview" | "store" | "settings">(
+  const [parentSection, setParentSection] = useState<"overview" | "faith" | "groups" | "events" | "store" | "settings">(
     () => ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
       ? "store" : "overview"
   );
@@ -769,6 +870,27 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
+                  className={parentSection === "faith" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("faith")}
+                >
+                  Family Faith
+                </button>
+                <button
+                  type="button"
+                  className={parentSection === "groups" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("groups")}
+                >
+                  Groups
+                </button>
+                <button
+                  type="button"
+                  className={parentSection === "events" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("events")}
+                >
+                  Events
+                </button>
+                <button
+                  type="button"
                   className={parentSection === "store" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setParentSection("store")}
                 >
@@ -804,6 +926,25 @@ function FamilyPortal({
                     onHouseholdUpdated={reload}
                   />
                 </>
+              ) : parentSection === "faith" ? (
+                <FamilyFaithAtHome
+                  householdId={household.id}
+                  user={user}
+                  children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                  selectedChildId={selectedChild?.id ?? ""}
+                />
+              ) : parentSection === "groups" ? (
+                <FamilyGroupsCard
+                  children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                  selectedChildId={selectedChild?.id ?? ""}
+                  onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+                />
+              ) : parentSection === "events" ? (
+                <FamilyEventsCard
+                  householdId={household.id}
+                  children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                  selectedChildId={selectedChild?.id ?? ""}
+                />
               ) : (
                 <>
               <section className="parent-hero">
@@ -840,7 +981,7 @@ function FamilyPortal({
               <section className="parent-modules">
                 <article><span>Progress</span><strong>See XP, streaks, badges, and completed challenges.</strong></article>
                 <article><span>Rewards</span><strong>Review and approve rewards your kids unlock.</strong></article>
-                <article><span>Faith at Home</span><strong>Family devotionals and discussion guides will live here.</strong></article>
+                <article><span>Faith at Home</span><strong>Read, talk, pray, and take a practical faith step together.</strong></article>
                 <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
               </section>
 
@@ -858,25 +999,6 @@ function FamilyPortal({
                   setKidSection("home");
                   setView("kid");
                 }}
-              />
-
-              <FamilyFaithAtHome
-                householdId={household.id}
-                user={user}
-                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
-                selectedChildId={selectedChild?.id ?? ""}
-              />
-
-              <FamilyGroupsCard
-                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
-                selectedChildId={selectedChild?.id ?? ""}
-                onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
-              />
-
-              <FamilyEventsCard
-                householdId={household.id}
-                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
-                selectedChildId={selectedChild?.id ?? ""}
               />
 
               {selectedChild && (
@@ -954,6 +1076,16 @@ export default function App() {
   const [hasOrganizationAccess, setHasOrganizationAccess] = useState(false);
   const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(
+    () => window.location.hash.includes("type=recovery") || new URLSearchParams(window.location.search).get("type") === "recovery"
+  );
+
+  const authRedirectMessage = useMemo(() => {
+    const search = new URLSearchParams(window.location.search);
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const description = search.get("error_description") || hash.get("error_description");
+    return description ? description.replaceAll("+", " ") : "";
+  }, []);
 
   const loadFamily = useCallback(async (user: User) => {
     const { data: adminData, error: adminError } = await supabase
@@ -1050,7 +1182,8 @@ export default function App() {
       setLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
       setSession(nextSession);
 
       if (!nextSession) {
@@ -1074,7 +1207,18 @@ export default function App() {
   }, [loadFamily]);
 
   if (loading) return <LoadingScreen />;
-  if (!session?.user) return <AuthScreen />;
+  if (!session?.user) return <AuthScreen initialMessage={authRedirectMessage} />;
+  if (passwordRecovery) {
+    return (
+      <ResetPasswordScreen
+        onComplete={() => {
+          window.history.replaceState({}, document.title, "/");
+          setPasswordRecovery(false);
+          navigate("/", { replace: true });
+        }}
+      />
+    );
+  }
 
   if (location.pathname.startsWith("/org-invite")) {
     const params = new URLSearchParams(location.search);
