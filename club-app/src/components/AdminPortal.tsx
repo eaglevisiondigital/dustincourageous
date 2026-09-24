@@ -7,6 +7,7 @@ import { BookAdmin } from "./BookAdmin";
 import { MediaAdmin } from "./MediaAdmin";
 import { ContentAdmin } from "./ContentAdmin";
 import { FamilyFaithAdmin } from "./FamilyFaithAdmin";
+import { CommerceAdmin } from "./CommerceAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -733,7 +734,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "store" | "badges" | "rewards" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -819,6 +820,7 @@ export function AdminPortal({
             ["books", "Books"],
             ["content", "Content Studio"],
             ["media", "Media Library"],
+            ["store", "Store & Orders"],
             ["badges", "Badges"],
             ["rewards", "Rewards"],
             ["fulfillment", "Fulfillment"]
@@ -867,6 +869,8 @@ export function AdminPortal({
             <ContentAdmin />
           ) : section === "media" ? (
             <MediaAdmin />
+          ) : section === "store" ? (
+            <CommerceAdmin canOperate={canFulfill} />
           ) : section === "badges" ? (
             <BadgeAdmin badges={badges} refresh={refresh} />
           ) : section === "rewards" ? (
