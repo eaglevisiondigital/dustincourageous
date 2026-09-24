@@ -952,6 +952,7 @@ function FamilyPortal({
                 />
               ) : parentSection === "events" ? (
                 <FamilyEventsCard
+                  key={household.id}
                   householdId={household.id}
                   children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
                   selectedChildId={selectedChild?.id ?? ""}

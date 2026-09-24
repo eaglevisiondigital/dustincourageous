@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type EventRow = {
@@ -38,8 +38,15 @@ export function FamilyEventsCard({
   const [childId,setChildId]=useState(selectedChildId);
   const [working,setWorking]=useState("");
   const [message,setMessage]=useState("");
+  const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState("");
+  const loadVersion=useRef(0);
+  const actionBusy=useRef(false);
 
   const load=useCallback(async()=>{
+    const version=++loadVersion.current;
+    setLoading(true);setLoadError("");
+    try {
     const [eventResult,registrationResult]=await Promise.all([
       supabase
         .from("events")
@@ -54,49 +61,76 @@ export function FamilyEventsCard({
     ]);
 
     const error=eventResult.error||registrationResult.error;
-    if(error){setMessage(error.message);return;}
+    if(version!==loadVersion.current)return;
+    if(error)throw error;
     setEvents((eventResult.data??[]) as EventRow[]);
     setRegistrations((registrationResult.data??[]) as Registration[]);
+    } catch {
+      if(version===loadVersion.current)setLoadError("Events and registrations could not be loaded. Please try again.");
+    } finally {
+      if(version===loadVersion.current)setLoading(false);
+    }
   },[householdId]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{void load();return ()=>{loadVersion.current+=1;};},[load]);
   useEffect(()=>{if(selectedChildId)setChildId(selectedChildId);},[selectedChildId]);
 
   async function register(eventId:string){
+    if(actionBusy.current||loading||loadError)return;
+    actionBusy.current=true;
     setWorking(eventId);setMessage("");
+    try {
     const {data,error}=await supabase.rpc("register_for_event",{
       p_event_id:eventId,
       p_household_id:householdId,
       p_child_profile_id:childId||undefined
     });
-    setWorking("");
-    if(error){setMessage(error.message);return;}
-    setMessage(data==="waitlist"?"Added to the waitlist.":"Registration confirmed.");
-    await load();
+    if(error)throw error;
+    if(!["registered","waitlist","attended"].includes(data??""))throw new Error("Registration status could not be confirmed.");
+    setMessage(data==="waitlist"?"Added to the waitlist. A place is not yet confirmed.":data==="attended"?"Attendance is already recorded.":"Registration confirmed.");
+    } catch {
+      setMessage("Registration could not be confirmed. Please check the refreshed registration status before trying again.");
+    } finally {
+      await load();
+      actionBusy.current=false;setWorking("");
+    }
   }
 
   async function cancel(registrationId:string){
+    if(actionBusy.current||loading||loadError)return;
+    actionBusy.current=true;
     setWorking(registrationId);setMessage("");
+    try {
     const {error}=await supabase.rpc("cancel_event_registration",{p_registration_id:registrationId});
-    setWorking("");
-    if(error){setMessage(error.message);return;}
+    if(error)throw error;
+    const {data,error:verifyError}=await supabase.from("event_registrations")
+      .select("status").eq("id",registrationId).eq("household_id",householdId).single();
+    if(verifyError||data?.status!=="canceled")throw new Error("Cancellation not confirmed");
     setMessage("Registration canceled.");
-    await load();
+    } catch {
+      setMessage("Cancellation could not be confirmed. Please check the refreshed registration status.");
+    } finally {
+      await load();
+      actionBusy.current=false;setWorking("");
+    }
   }
 
   return (
     <section className="family-events-card">
       <div className="section-heading">
         <div><p className="eyebrow gold">Events</p><h2>Adventure Club experiences</h2></div>
-        <span className="pill">{events.length} upcoming</span>
+        {!loading&&!loadError&&<span className="pill">{events.length} events</span>}
       </div>
 
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="status">{message}</div>}
+      {loading?<p className="muted" role="status">Loading events and registrations...</p>:loadError?(
+        <div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={!!working} onClick={()=>void load()}>Retry events</button></div>
+      ):<>
 
       {events.length>0&&(
         <label className="event-child-selector">
           Register
-          <select value={childId} onChange={(event)=>setChildId(event.target.value)}>
+          <select disabled={!!working} value={childId} onChange={(event)=>setChildId(event.target.value)}>
             <option value="">Whole family</option>
             {children.map((child)=><option key={child.id} value={child.id}>{child.display_name}</option>)}
           </select>
@@ -125,11 +159,11 @@ export function FamilyEventsCard({
                 {registration&&registration.status!=="canceled"?(
                   <>
                     <span className={registration.status==="registered"?"status-chip done":"status-chip"}>{registration.status}</span>
-                    <button className="text-button small" disabled={working===registration.id} onClick={()=>void cancel(registration.id)}>Cancel</button>
+                    {["registered","waitlist"].includes(registration.status)&&<button type="button" className="text-button small" disabled={!!working} onClick={()=>void cancel(registration.id)}>{working===registration.id?"Canceling...":"Cancel"}</button>}
                   </>
                 ):(
-                  <button className="secondary-button" disabled={working===event.id} onClick={()=>void register(event.id)}>
-                    {working===event.id?"Saving...":"Register"}
+                  <button type="button" className="secondary-button" disabled={!!working||Date.parse(event.starts_at)<=Date.now()} onClick={()=>void register(event.id)}>
+                    {working===event.id?"Saving...":Date.parse(event.starts_at)<=Date.now()?"Registration closed":"Register"}
                   </button>
                 )}
               </div>
@@ -138,6 +172,7 @@ export function FamilyEventsCard({
         })}
         {!events.length&&<p className="muted">No upcoming Adventure Club events are published for this family yet.</p>}
       </div>
+      </>}
     </section>
   );
 }
