@@ -474,6 +474,42 @@ export type Database = {
         }
         Relationships: []
       }
+      book_challenges: {
+        Row: {
+          book_id: string
+          challenge_id: string
+          created_at: string
+          sort_order: number
+        }
+        Insert: {
+          book_id: string
+          challenge_id: string
+          created_at?: string
+          sort_order?: number
+        }
+        Update: {
+          book_id?: string
+          challenge_id?: string
+          created_at?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_challenges_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       book_content_links: {
         Row: {
           book_id: string
@@ -513,9 +549,154 @@ export type Database = {
           },
         ]
       }
+      book_devotional_series: {
+        Row: {
+          book_id: string
+          created_at: string
+          devotional_series_id: string
+          sort_order: number
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          devotional_series_id: string
+          sort_order?: number
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          devotional_series_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_devotional_series_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_devotional_series_devotional_series_id_fkey"
+            columns: ["devotional_series_id"]
+            isOneToOne: false
+            referencedRelation: "devotional_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_identity_truths: {
+        Row: {
+          book_id: string
+          created_at: string
+          identity_truth_id: string
+          sort_order: number
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          identity_truth_id: string
+          sort_order?: number
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          identity_truth_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_identity_truths_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_identity_truths_identity_truth_id_fkey"
+            columns: ["identity_truth_id"]
+            isOneToOne: false
+            referencedRelation: "identity_truths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_power_verses: {
+        Row: {
+          book_id: string
+          created_at: string
+          power_verse_id: string
+          sort_order: number
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          power_verse_id: string
+          sort_order?: number
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          power_verse_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_power_verses_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_power_verses_power_verse_id_fkey"
+            columns: ["power_verse_id"]
+            isOneToOne: false
+            referencedRelation: "power_verses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_prayer_prompts: {
+        Row: {
+          book_id: string
+          created_at: string
+          prayer_prompt_id: string
+          sort_order: number
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          prayer_prompt_id: string
+          sort_order?: number
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          prayer_prompt_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_prayer_prompts_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_prayer_prompts_prayer_prompt_id_fkey"
+            columns: ["prayer_prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prayer_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       books: {
         Row: {
           book_number: number | null
+          completion_xp: number
           cover_asset_key: string | null
           created_at: string
           description: string | null
@@ -530,6 +711,7 @@ export type Database = {
         }
         Insert: {
           book_number?: number | null
+          completion_xp?: number
           cover_asset_key?: string | null
           created_at?: string
           description?: string | null
@@ -544,6 +726,7 @@ export type Database = {
         }
         Update: {
           book_number?: number | null
+          completion_xp?: number
           cover_asset_key?: string | null
           created_at?: string
           description?: string | null
@@ -924,6 +1107,64 @@ export type Database = {
           },
         ]
       }
+      child_book_progress: {
+        Row: {
+          adventure_completed_at: string | null
+          book_id: string
+          child_profile_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          adventure_completed_at?: string | null
+          book_id: string
+          child_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          adventure_completed_at?: string | null
+          book_id?: string
+          child_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_book_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_book_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_book_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_challenge_progress: {
         Row: {
           approved_at: string | null
@@ -991,6 +1232,214 @@ export type Database = {
           },
         ]
       }
+      child_content_progress: {
+        Row: {
+          child_profile_id: string
+          completed_at: string | null
+          content_item_id: string
+          created_at: string
+          id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          child_profile_id: string
+          completed_at?: string | null
+          content_item_id: string
+          created_at?: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          child_profile_id?: string
+          completed_at?: string | null
+          content_item_id?: string
+          created_at?: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_content_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_content_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_content_progress_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_devotional_progress: {
+        Row: {
+          child_profile_id: string
+          completed_at: string | null
+          created_at: string
+          devotional_day_id: string
+          id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          child_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          devotional_day_id: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          child_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          devotional_day_id?: string
+          id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_devotional_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_devotional_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_devotional_progress_devotional_day_id_fkey"
+            columns: ["devotional_day_id"]
+            isOneToOne: false
+            referencedRelation: "devotional_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_identity_progress: {
+        Row: {
+          child_profile_id: string
+          favorited: boolean
+          id: string
+          identity_truth_id: string
+          learned: boolean
+          learned_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          child_profile_id: string
+          favorited?: boolean
+          id?: string
+          identity_truth_id: string
+          learned?: boolean
+          learned_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          child_profile_id?: string
+          favorited?: boolean
+          id?: string
+          identity_truth_id?: string
+          learned?: boolean
+          learned_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_identity_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_identity_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_identity_progress_identity_truth_id_fkey"
+            columns: ["identity_truth_id"]
+            isOneToOne: false
+            referencedRelation: "identity_truths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_prayer_progress: {
+        Row: {
+          child_profile_id: string
+          completed_at: string
+          created_at: string
+          id: string
+          prayer_prompt_id: string
+        }
+        Insert: {
+          child_profile_id: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          prayer_prompt_id: string
+        }
+        Update: {
+          child_profile_id?: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          prayer_prompt_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_prayer_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_prayer_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_prayer_progress_prayer_prompt_id_fkey"
+            columns: ["prayer_prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prayer_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_profiles: {
         Row: {
           avatar_key: string | null
@@ -1031,6 +1480,67 @@ export type Database = {
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_scripture_progress: {
+        Row: {
+          child_profile_id: string
+          created_at: string
+          id: string
+          last_reviewed_at: string | null
+          memorized_at: string | null
+          power_verse_id: string
+          repetitions: number
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          child_profile_id: string
+          created_at?: string
+          id?: string
+          last_reviewed_at?: string | null
+          memorized_at?: string | null
+          power_verse_id: string
+          repetitions?: number
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          child_profile_id?: string
+          created_at?: string
+          id?: string
+          last_reviewed_at?: string | null
+          memorized_at?: string | null
+          power_verse_id?: string
+          repetitions?: number
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_scripture_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_scripture_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_scripture_progress_power_verse_id_fkey"
+            columns: ["power_verse_id"]
+            isOneToOne: false
+            referencedRelation: "power_verses"
             referencedColumns: ["id"]
           },
         ]
@@ -1348,6 +1858,111 @@ export type Database = {
         }
         Relationships: []
       }
+      devotional_days: {
+        Row: {
+          action_step: string | null
+          body: string
+          created_at: string
+          day_number: number
+          devotional_series_id: string
+          id: string
+          metadata: Json
+          prayer_prompt: string | null
+          scripture_passage_id: string | null
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          action_step?: string | null
+          body: string
+          created_at?: string
+          day_number: number
+          devotional_series_id: string
+          id?: string
+          metadata?: Json
+          prayer_prompt?: string | null
+          scripture_passage_id?: string | null
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          action_step?: string | null
+          body?: string
+          created_at?: string
+          day_number?: number
+          devotional_series_id?: string
+          id?: string
+          metadata?: Json
+          prayer_prompt?: string | null
+          scripture_passage_id?: string | null
+          title?: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devotional_days_devotional_series_id_fkey"
+            columns: ["devotional_series_id"]
+            isOneToOne: false
+            referencedRelation: "devotional_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devotional_days_scripture_passage_id_fkey"
+            columns: ["scripture_passage_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devotional_series: {
+        Row: {
+          access_level: string
+          available_from: string | null
+          available_until: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_featured: boolean
+          metadata: Json
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean
+          metadata?: Json
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean
+          metadata?: Json
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       entitlement_definitions: {
         Row: {
           created_at: string
@@ -1660,6 +2275,62 @@ export type Database = {
         }
         Relationships: []
       }
+      identity_truths: {
+        Row: {
+          access_level: string
+          created_at: string
+          explanation: string | null
+          id: string
+          identity_statement: string
+          metadata: Json
+          say_it: string | null
+          scripture_passage_id: string | null
+          slug: string
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access_level?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          identity_statement: string
+          metadata?: Json
+          say_it?: string | null
+          scripture_passage_id?: string | null
+          slug: string
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access_level?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          identity_statement?: string
+          metadata?: Json
+          say_it?: string | null
+          scripture_passage_id?: string | null
+          slug?: string
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_truths_scripture_passage_id_fkey"
+            columns: ["scripture_passage_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       levels: {
         Row: {
           created_at: string
@@ -1938,6 +2609,127 @@ export type Database = {
           },
         ]
       }
+      power_verses: {
+        Row: {
+          access_level: string
+          available_from: string | null
+          available_until: string | null
+          created_at: string
+          give_it_away: string | null
+          id: string
+          is_featured: boolean
+          kid_explanation: string | null
+          live_it: string | null
+          memorize_xp: number
+          metadata: Json
+          say_it: string | null
+          scripture_passage_id: string
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          give_it_away?: string | null
+          id?: string
+          is_featured?: boolean
+          kid_explanation?: string | null
+          live_it?: string | null
+          memorize_xp?: number
+          metadata?: Json
+          say_it?: string | null
+          scripture_passage_id: string
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          give_it_away?: string | null
+          id?: string
+          is_featured?: boolean
+          kid_explanation?: string | null
+          live_it?: string | null
+          memorize_xp?: number
+          metadata?: Json
+          say_it?: string | null
+          scripture_passage_id?: string
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_verses_scripture_passage_id_fkey"
+            columns: ["scripture_passage_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prayer_prompts: {
+        Row: {
+          access_level: string
+          category: string
+          created_at: string
+          id: string
+          metadata: Json
+          prompt_text: string
+          scripture_passage_id: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          access_level?: string
+          category?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          prompt_text: string
+          scripture_passage_id?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          access_level?: string
+          category?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          prompt_text?: string
+          scripture_passage_id?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_prompts_scripture_passage_id_fkey"
+            columns: ["scripture_passage_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -2148,6 +2940,45 @@ export type Database = {
           reward_type?: string
           updated_at?: string
           xp_required?: number | null
+        }
+        Relationships: []
+      }
+      scripture_passages: {
+        Row: {
+          copyright_note: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          reference: string
+          status: string
+          theme_key: string | null
+          translation: string
+          updated_at: string
+          verse_text: string
+        }
+        Insert: {
+          copyright_note?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          reference: string
+          status?: string
+          theme_key?: string | null
+          translation: string
+          updated_at?: string
+          verse_text: string
+        }
+        Update: {
+          copyright_note?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          reference?: string
+          status?: string
+          theme_key?: string | null
+          translation?: string
+          updated_at?: string
+          verse_text?: string
         }
         Relationships: []
       }
