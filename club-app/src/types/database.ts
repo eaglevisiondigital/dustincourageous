@@ -66,6 +66,13 @@ export type Database = {
             foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -129,6 +136,13 @@ export type Database = {
           request_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "admin_audit_log_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -436,6 +450,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "badges"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "badge_awards_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "badge_awards_child_profile_id_fkey"
@@ -940,6 +961,13 @@ export type Database = {
             foreignKeyName: "challenge_assignments_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "challenge_assignments_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1200,6 +1228,13 @@ export type Database = {
             foreignKeyName: "child_activity_events_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_activity_events_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1276,6 +1311,13 @@ export type Database = {
             foreignKeyName: "child_adventure_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_adventure_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1336,6 +1378,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "books"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_book_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "child_book_progress_child_profile_id_fkey"
@@ -1415,6 +1464,13 @@ export type Database = {
             foreignKeyName: "child_challenge_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_challenge_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1466,6 +1522,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "child_content_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "child_content_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -1528,6 +1591,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "child_devotional_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "child_devotional_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -1597,6 +1667,13 @@ export type Database = {
             foreignKeyName: "child_group_memberships_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_group_memberships_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1656,6 +1733,13 @@ export type Database = {
             foreignKeyName: "child_identity_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_identity_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1705,6 +1789,13 @@ export type Database = {
           prayer_prompt_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "child_prayer_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "child_prayer_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -1828,6 +1919,13 @@ export type Database = {
             foreignKeyName: "child_scripture_progress_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_scripture_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1897,6 +1995,13 @@ export type Database = {
             foreignKeyName: "child_series_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -1961,6 +2066,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "challenge_series"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_weekly_completions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "child_series_weekly_completions_child_profile_id_fkey"
@@ -2067,6 +2179,13 @@ export type Database = {
             foreignKeyName: "child_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -2085,6 +2204,45 @@ export type Database = {
             referencedColumns: ["child_profile_id"]
           },
         ]
+      }
+      consent_policies: {
+        Row: {
+          applies_to_child: boolean
+          consent_key: string
+          created_at: string
+          current_policy_version: string
+          description: string
+          is_active: boolean
+          metadata: Json
+          required_for_core_service: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          applies_to_child?: boolean
+          consent_key: string
+          created_at?: string
+          current_policy_version: string
+          description: string
+          is_active?: boolean
+          metadata?: Json
+          required_for_core_service?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          applies_to_child?: boolean
+          consent_key?: string
+          created_at?: string
+          current_policy_version?: string
+          description?: string
+          is_active?: boolean
+          metadata?: Json
+          required_for_core_service?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       contact_inquiries: {
         Row: {
@@ -2193,6 +2351,106 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      data_privacy_requests: {
+        Row: {
+          admin_notes: string | null
+          child_profile_id: string | null
+          completed_at: string | null
+          created_at: string
+          export_reference: string | null
+          household_id: string
+          id: string
+          identity_confirmed_at: string | null
+          metadata: Json
+          reason: string | null
+          request_type: string
+          requested_by: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          child_profile_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          export_reference?: string | null
+          household_id: string
+          id?: string
+          identity_confirmed_at?: string | null
+          metadata?: Json
+          reason?: string | null
+          request_type: string
+          requested_by: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          child_profile_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          export_reference?: string | null
+          household_id?: string
+          id?: string
+          identity_confirmed_at?: string | null
+          metadata?: Json
+          reason?: string | null
+          request_type?: string
+          requested_by?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_privacy_requests_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "data_privacy_requests_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "data_privacy_requests_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_privacy_requests_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "data_privacy_requests_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "data_privacy_requests_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dc_blueprint_requirements: {
         Row: {
@@ -2745,6 +3003,13 @@ export type Database = {
             foreignKeyName: "event_registrations_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "event_registrations_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -3168,6 +3433,13 @@ export type Database = {
             foreignKeyName: "household_consents_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -3291,6 +3563,13 @@ export type Database = {
           metadata?: Json
         }
         Relationships: [
+          {
+            foreignKeyName: "household_faith_sessions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "household_faith_sessions_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -3786,6 +4065,65 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      notification_deliveries: {
+        Row: {
+          attempt_count: number
+          channel: string
+          created_at: string
+          id: string
+          last_error: string | null
+          metadata: Json
+          next_attempt_at: string
+          notification_id: string
+          provider: string | null
+          provider_message_id: string | null
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          channel: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          metadata?: Json
+          next_attempt_at?: string
+          notification_id: string
+          provider?: string | null
+          provider_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number
+          channel?: string
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          metadata?: Json
+          next_attempt_at?: string
+          notification_id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "user_notifications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_preferences: {
         Row: {
@@ -4733,6 +5071,13 @@ export type Database = {
             foreignKeyName: "reward_unlocks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "reward_unlocks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -4950,6 +5295,13 @@ export type Database = {
             foreignKeyName: "streak_badge_earnings_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5106,6 +5458,13 @@ export type Database = {
             foreignKeyName: "user_notifications_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "user_notifications_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5175,6 +5534,13 @@ export type Database = {
             foreignKeyName: "xp_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "xp_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5196,6 +5562,38 @@ export type Database = {
       }
     }
     Views: {
+      admin_daily_metrics: {
+        Row: {
+          books_completed: number | null
+          challenges_completed: number | null
+          event_registrations: number | null
+          family_faith_sessions: number | null
+          gross_revenue_cents: number | null
+          metric_date: string | null
+          new_child_profiles: number | null
+          new_households: number | null
+          paid_orders: number | null
+          referrals_attributed: number | null
+          verses_memorized: number | null
+        }
+        Relationships: []
+      }
+      admin_platform_snapshot: {
+        Row: {
+          active_child_profiles: number | null
+          active_groups: number | null
+          active_households: number | null
+          active_organizations: number | null
+          active_subscriptions: number | null
+          books_completed_all_time: number | null
+          challenges_completed_all_time: number | null
+          open_privacy_requests: number | null
+          open_support_tickets: number | null
+          rewards_unlocked_all_time: number | null
+          verses_memorized_all_time: number | null
+        }
+        Relationships: []
+      }
       child_active_streak_badges: {
         Row: {
           badge_family_key: string | null
@@ -5224,6 +5622,13 @@ export type Database = {
             foreignKeyName: "child_series_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5246,6 +5651,84 @@ export type Database = {
             columns: ["badge_id"]
             isOneToOne: false
             referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_data_inventory: {
+        Row: {
+          activity_records: number | null
+          adventure_progress_records: number | null
+          badge_records: number | null
+          book_progress_records: number | null
+          challenge_progress_records: number | null
+          child_profile_id: string | null
+          content_progress_records: number | null
+          devotional_progress_records: number | null
+          display_name: string | null
+          event_registration_records: number | null
+          group_membership_records: number | null
+          household_id: string | null
+          identity_progress_records: number | null
+          prayer_progress_records: number | null
+          reward_records: number | null
+          scripture_progress_records: number | null
+          status: string | null
+          xp_records: number | null
+        }
+        Insert: {
+          activity_records?: never
+          adventure_progress_records?: never
+          badge_records?: never
+          book_progress_records?: never
+          challenge_progress_records?: never
+          child_profile_id?: string | null
+          content_progress_records?: never
+          devotional_progress_records?: never
+          display_name?: string | null
+          event_registration_records?: never
+          group_membership_records?: never
+          household_id?: string | null
+          identity_progress_records?: never
+          prayer_progress_records?: never
+          reward_records?: never
+          scripture_progress_records?: never
+          status?: string | null
+          xp_records?: never
+        }
+        Update: {
+          activity_records?: never
+          adventure_progress_records?: never
+          badge_records?: never
+          book_progress_records?: never
+          challenge_progress_records?: never
+          child_profile_id?: string | null
+          content_progress_records?: never
+          devotional_progress_records?: never
+          display_name?: string | null
+          event_registration_records?: never
+          group_membership_records?: never
+          household_id?: string | null
+          identity_progress_records?: never
+          prayer_progress_records?: never
+          reward_records?: never
+          scripture_progress_records?: never
+          status?: string | null
+          xp_records?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_profiles_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "child_profiles_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
             referencedColumns: ["id"]
           },
         ]
@@ -5290,6 +5773,13 @@ export type Database = {
             foreignKeyName: "child_series_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5316,6 +5806,13 @@ export type Database = {
           total: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -5349,6 +5846,13 @@ export type Database = {
             foreignKeyName: "xp_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "xp_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_level_progress"
             referencedColumns: ["child_profile_id"]
           },
@@ -5365,6 +5869,67 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "parent_child_progress_summary"
             referencedColumns: ["child_profile_id"]
+          },
+        ]
+      }
+      current_household_consents: {
+        Row: {
+          action: string | null
+          applies_to_child: boolean | null
+          child_profile_id: string | null
+          consent_key: string | null
+          created_at: string | null
+          current_policy_version: string | null
+          description: string | null
+          guardian_user_id: string | null
+          household_id: string | null
+          id: string | null
+          policy_version: string | null
+          required_for_core_service: boolean | null
+          title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_consents_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "household_consents_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -5716,6 +6281,39 @@ export type Database = {
         }
         Returns: string
       }
+      admin_get_daily_metrics: {
+        Args: { p_days?: number }
+        Returns: {
+          books_completed: number
+          challenges_completed: number
+          event_registrations: number
+          family_faith_sessions: number
+          gross_revenue_cents: number
+          metric_date: string
+          new_child_profiles: number
+          new_households: number
+          paid_orders: number
+          referrals_attributed: number
+          verses_memorized: number
+        }[]
+      }
+      admin_get_platform_snapshot: {
+        Args: never
+        Returns: {
+          active_child_profiles: number
+          active_groups: number
+          active_households: number
+          active_organizations: number
+          active_subscriptions: number
+          books_completed_all_time: number
+          challenges_completed_all_time: number
+          open_privacy_requests: number
+          open_support_tickets: number
+          queued_external_notifications: number
+          rewards_unlocked_all_time: number
+          verses_memorized_all_time: number
+        }[]
+      }
       admin_link_book_experience: {
         Args: {
           p_book_id: string
@@ -5749,6 +6347,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      archive_child_profile: {
+        Args: { p_child_profile_id: string }
+        Returns: undefined
+      }
       attribute_referral: {
         Args: {
           p_code: string
@@ -5756,6 +6358,10 @@ export type Database = {
           p_source?: string
         }
         Returns: boolean
+      }
+      cancel_data_privacy_request: {
+        Args: { p_request_id: string }
+        Returns: undefined
       }
       cancel_event_registration: {
         Args: { p_registration_id: string }
@@ -5774,6 +6380,14 @@ export type Database = {
           p_minimum_age?: number
           p_name: string
           p_organization_id: string
+        }
+        Returns: string
+      }
+      create_child_with_consent: {
+        Args: {
+          p_birth_year?: number
+          p_display_name: string
+          p_household_id: string
         }
         Returns: string
       }
@@ -5796,6 +6410,10 @@ export type Database = {
           invitation_id: string
           invitation_token: string
         }[]
+      }
+      create_household_with_consent: {
+        Args: { p_name: string; p_timezone: string }
+        Returns: string
       }
       dc_preflight_scan: {
         Args: { p_entity_id: string; p_entity_type: string }
@@ -5909,6 +6527,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_household_consent: {
+        Args: {
+          p_action: string
+          p_child_profile_id?: string
+          p_consent_key: string
+          p_household_id: string
+          p_metadata?: Json
+        }
+        Returns: string
+      }
       register_for_event: {
         Args: {
           p_child_profile_id?: string
@@ -5921,9 +6549,22 @@ export type Database = {
         Args: { p_household_id: string; p_user_id: string }
         Returns: undefined
       }
+      request_data_privacy_action: {
+        Args: {
+          p_child_profile_id?: string
+          p_household_id: string
+          p_reason?: string
+          p_request_type: string
+        }
+        Returns: string
+      }
       request_dc_content_review: {
         Args: { p_entity_id: string; p_entity_type: string; p_notes?: string }
         Returns: string
+      }
+      restore_child_profile: {
+        Args: { p_child_profile_id: string }
+        Returns: undefined
       }
       revoke_household_invitation: {
         Args: { p_invitation_id: string }
