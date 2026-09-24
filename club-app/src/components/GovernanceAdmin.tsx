@@ -294,7 +294,7 @@ export function GovernanceAdmin() {
     setWorking(true);setMessage("");
 
     let targetStatus="published";
-    if (selectedEntity.entity_type === "notification_template") {
+    if (selectedEntity.entity_type === "notification_template" || selectedEntity.entity_type === "product") {
       targetStatus = "active";
     } else if (selectedEntity.entity_type === "book" && selectedEntity.entity_status === "draft") {
       targetStatus = "published";
@@ -444,7 +444,11 @@ export function GovernanceAdmin() {
 
           {selectedEntity?.approval_current&&["draft"].includes(selectedEntity.entity_status)&&(
             <button className="primary-button governance-publish" disabled={working} onClick={()=>void publishEntity()}>
-              {selectedEntity?.entity_type === "notification_template" ? "Activate approved template" : "Publish approved content"}
+              {selectedEntity?.entity_type === "notification_template"
+                ? "Activate approved template"
+                : selectedEntity?.entity_type === "product"
+                  ? "Activate approved product"
+                  : "Publish approved content"}
             </button>
           )}
         </section>
