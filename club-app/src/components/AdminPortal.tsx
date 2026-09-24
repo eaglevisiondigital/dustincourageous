@@ -21,6 +21,9 @@ type BadgeRow = {
   name: string;
   description: string | null;
   rarity: string;
+  badge_scope: string;
+  badge_tier: string | null;
+  badge_family_key: string | null;
   is_active: boolean;
   badge_rules:
     | {
@@ -312,6 +315,8 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
   const [badgeKey, setBadgeKey] = useState("");
   const [description, setDescription] = useState("");
   const [rarity, setRarity] = useState("standard");
+  const [badgeFamilyKey, setBadgeFamilyKey] = useState("");
+  const [badgeTier, setBadgeTier] = useState("");
   const [ruleType, setRuleType] = useState("xp_threshold");
   const [threshold, setThreshold] = useState("500");
   const [streakKey, setStreakKey] = useState("challenge_completion");
@@ -324,13 +329,15 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
     setWorking(true);
     setMessage("");
 
-    const { error } = await supabase.rpc("admin_create_badge_with_rule", {
+    const { error } = await supabase.rpc("admin_create_lifetime_badge_level", {
       p_badge_key: badgeKey || slugify(name),
       p_name: name.trim(),
-      p_description: description.trim() || undefined,
-      p_rarity: rarity,
       p_rule_type: ruleType,
       p_threshold_value: ruleType === "manual" ? undefined : Number(threshold),
+      p_description: description.trim() || undefined,
+      p_badge_family_key: badgeFamilyKey.trim() || undefined,
+      p_tier: badgeTier || undefined,
+      p_rarity: rarity,
       p_streak_key: ruleType === "streak" ? streakKey : undefined,
       p_challenge_type: ruleType === "challenge_type_count" ? challengeType : undefined
     });
@@ -345,7 +352,9 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
     setName("");
     setBadgeKey("");
     setDescription("");
-    setMessage("Badge and rule created.");
+    setBadgeFamilyKey("");
+    setBadgeTier("");
+    setMessage("Lifetime badge level created.");
     await refresh();
   }
 
@@ -373,6 +382,26 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
           <label className="full">
             Description
             <textarea value={description} onChange={(event) => setDescription(event.target.value)} />
+          </label>
+          <label>
+            Badge family
+            <input
+              value={badgeFamilyKey}
+              onChange={(event) => setBadgeFamilyKey(slugify(event.target.value))}
+              placeholder="example: scripture-master"
+            />
+          </label>
+          <label>
+            Tier
+            <select value={badgeTier} onChange={(event) => setBadgeTier(event.target.value)}>
+              <option value="">No tier</option>
+              <option value="bronze">Bronze</option>
+              <option value="silver">Silver</option>
+              <option value="gold">Gold</option>
+              <option value="platinum">Platinum</option>
+              <option value="diamond">Diamond</option>
+              <option value="legendary">Legendary</option>
+            </select>
           </label>
           <label>
             Rarity
@@ -422,7 +451,7 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
           )}
           {message && <div className="form-message full">{message}</div>}
           <button className="primary-button full" disabled={working}>
-            {working ? "Creating..." : "Create badge"}
+            {working ? "Creating..." : "Create lifetime badge level"}
           </button>
         </form>
       </section>
@@ -443,8 +472,9 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
                 <div>
                   <strong>{badge.name}</strong>
                   <small>
-                    {badge.rarity} · {rule?.rule_type?.replaceAll("_", " ") || "manual"}
+                    {badge.badge_tier ? `${badge.badge_tier} · ` : ""}{badge.rarity} · {rule?.rule_type?.replaceAll("_", " ") || "manual"}
                     {rule?.threshold_value ? ` · ${rule.threshold_value}` : ""}
+                    {badge.badge_family_key ? ` · ${badge.badge_family_key}` : ""}
                   </small>
                 </div>
                 <span className={badge.is_active ? "status-chip done" : "status-chip"}>
@@ -694,7 +724,7 @@ export function AdminPortal({
         .order("created_at", { ascending: false }),
       supabase
         .from("badges")
-        .select("id,badge_key,name,description,rarity,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,is_active)")
+        .select("id,badge_key,name,description,rarity,badge_scope,badge_tier,badge_family_key,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,is_active)")
         .order("created_at", { ascending: false }),
       supabase
         .from("rewards")
