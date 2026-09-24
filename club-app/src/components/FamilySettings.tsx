@@ -321,6 +321,35 @@ export function FamilySettings({
               </button>
             ))}
           </div>
+          <div className="quiet-hours-settings">
+            <div>
+              <p className="eyebrow gold">Quiet Hours</p>
+              <p className="muted">Queued email and push delivery waits until quiet hours end. In-app notifications remain available.</p>
+            </div>
+            <label>
+              Quiet starts
+              <input
+                type="time"
+                value={preferences.quiet_hours_start?.slice(0,5) ?? ""}
+                onChange={e=>setPreferences(current=>({...current,quiet_hours_start:e.target.value||null}))}
+              />
+            </label>
+            <label>
+              Quiet ends
+              <input
+                type="time"
+                value={preferences.quiet_hours_end?.slice(0,5) ?? ""}
+                onChange={e=>setPreferences(current=>({...current,quiet_hours_end:e.target.value||null}))}
+              />
+            </label>
+            <label>
+              Notification timezone
+              <input
+                value={preferences.timezone}
+                onChange={e=>setPreferences(current=>({...current,timezone:e.target.value}))}
+              />
+            </label>
+          </div>
           <button className="primary-button compact" disabled={working} onClick={()=>void savePreferences()}>Save Preferences</button>
         </section>
       )}
