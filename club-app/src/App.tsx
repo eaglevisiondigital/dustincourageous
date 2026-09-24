@@ -18,6 +18,7 @@ import { KidHomeFocus } from "./components/KidHomeFocus";
 import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
 import { MembershipAccessCard } from "./components/MembershipAccessCard";
 import { OrderHistoryCard } from "./components/OrderHistoryCard";
+import { FamilyStore } from "./components/FamilyStore";
 import { FamilyGroupsCard } from "./components/FamilyGroupsCard";
 import { FamilyEventsCard } from "./components/FamilyEventsCard";
 import { ReferralSupportCard } from "./components/ReferralSupportCard";
@@ -451,7 +452,7 @@ function FamilyPortal({
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
   const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">("home");
-  const [parentSection, setParentSection] = useState<"overview" | "settings">("overview");
+  const [parentSection, setParentSection] = useState<"overview" | "store" | "settings">("overview");
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
@@ -758,6 +759,13 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
+                  className={parentSection === "store" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("store")}
+                >
+                  Store
+                </button>
+                <button
+                  type="button"
                   className={parentSection === "settings" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setParentSection("settings")}
                 >
@@ -765,7 +773,9 @@ function FamilyPortal({
                 </button>
               </nav>
 
-              {parentSection === "settings" ? (
+              {parentSection === "store" ? (
+                <FamilyStore householdId={household.id} />
+              ) : parentSection === "settings" ? (
                 <>
                   <MembershipAccessCard householdId={household.id} />
                   <OrderHistoryCard householdId={household.id} />
