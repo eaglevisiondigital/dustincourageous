@@ -131,7 +131,7 @@ export function CommerceAdmin({ canOperate }: { canOperate: boolean }) {
     }
 
     setName("");setProductKey("");setSku("");setDescription("");setPrice("");setMemberPrice("");setInventory("");
-    setMessage("Product created.");
+    setMessage("Product draft created. Review and activate it through DC Governance.");
     await load();
     if(typeof data==="string") setMappingProductId(data);
   }
@@ -232,7 +232,7 @@ export function CommerceAdmin({ canOperate }: { canOperate: boolean }) {
               Status
               <select value={status} onChange={(event)=>setStatus(event.target.value)}>
                 <option value="draft">Draft</option>
-                <option value="active">Active</option>
+                <option value="active" disabled>Activate through DC Governance</option>
                 <option value="inactive">Inactive</option>
               </select>
             </label>
