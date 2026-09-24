@@ -653,3 +653,55 @@ select:focus {
   .redemption-row { grid-template-columns: 1fr auto; }
   .admin-row-actions { grid-column: 1 / -1; }
 }
+
+
+/* Guardian lock */
+.guardian-lock-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 26px;
+  border: 1px solid rgba(240,198,91,.2);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(240,198,91,.16), rgba(198,40,40,.1));
+  color: var(--gold);
+  font-size: 1.35rem;
+}
+.guardian-lock-icon.small {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  font-size: 1rem;
+}
+.guardian-unlock-dialog {
+  position: relative;
+  width: min(100%, 480px);
+  padding: 34px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: radial-gradient(circle at 100% 0%, rgba(198,40,40,.15), transparent 18rem), #121212;
+  box-shadow: 0 40px 120px rgba(0,0,0,.65);
+}
+.guardian-unlock-dialog h2 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+.recovery-button {
+  margin-top: 20px;
+  color: #8f8b85;
+  font-size: .75rem;
+  line-height: 1.4;
+}
+.kid-lock-status {
+  padding: 7px 10px;
+  border: 1px solid rgba(111,184,121,.22);
+  border-radius: 999px;
+  background: rgba(68,126,76,.11);
+  color: #aad3b0;
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
