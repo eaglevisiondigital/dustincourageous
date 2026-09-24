@@ -4225,6 +4225,63 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_test_runs: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          metadata: Json
+          provider_id: string | null
+          provider_key: string
+          requested_by: string
+          response_summary: string | null
+          started_at: string
+          status: string
+          test_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          provider_id?: string | null
+          provider_key: string
+          requested_by: string
+          response_summary?: string | null
+          started_at?: string
+          status?: string
+          test_type?: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          provider_id?: string | null
+          provider_key?: string
+          requested_by?: string
+          response_summary?: string | null
+          started_at?: string
+          status?: string
+          test_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_test_runs_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "integration_health_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_test_runs_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "integration_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_reservations: {
         Row: {
           checkout_session_id: string
@@ -4329,6 +4386,9 @@ export type Database = {
           child_first_name: string | null
           consent_text: string | null
           consented_at: string | null
+          converted_at: string | null
+          converted_household_id: string | null
+          converted_user_id: string | null
           created_at: string
           email: string
           id: string
@@ -4349,6 +4409,9 @@ export type Database = {
           child_first_name?: string | null
           consent_text?: string | null
           consented_at?: string | null
+          converted_at?: string | null
+          converted_household_id?: string | null
+          converted_user_id?: string | null
           created_at?: string
           email: string
           id?: string
@@ -4369,6 +4432,9 @@ export type Database = {
           child_first_name?: string | null
           consent_text?: string | null
           consented_at?: string | null
+          converted_at?: string | null
+          converted_household_id?: string | null
+          converted_user_id?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -4384,7 +4450,22 @@ export type Database = {
           submission_count?: number
           user_agent_hash?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "marketing_leads_converted_household_id_fkey"
+            columns: ["converted_household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "marketing_leads_converted_household_id_fkey"
+            columns: ["converted_household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       media_assets: {
         Row: {
@@ -6997,6 +7078,27 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_latest_tests: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          provider_key: string | null
+          response_summary: string | null
+          started_at: string | null
+          status: string | null
+          test_type: string | null
+        }
+        Relationships: []
+      }
+      marketing_conversion_summary: {
+        Row: {
+          conversion_percent: number | null
+          converted_households: number | null
+          lead_type: string | null
+          unique_leads: number | null
+        }
+        Relationships: []
+      }
       marketing_lead_summary: {
         Row: {
           latest_submission_at: string | null
@@ -7530,6 +7632,10 @@ export type Database = {
           p_user_agent_hash: string
         }
         Returns: string
+      }
+      claim_marketing_leads_for_household: {
+        Args: { p_household_id: string }
+        Returns: number
       }
       claim_notification_deliveries: {
         Args: { p_limit?: number }
