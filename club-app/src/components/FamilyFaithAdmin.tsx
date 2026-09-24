@@ -59,7 +59,7 @@ export function FamilyFaithAdmin() {
   const [guideDescription,setGuideDescription]=useState("");
   const [scriptureId,setScriptureId]=useState("");
   const [discussion,setDiscussion]=useState("");
-  const [prayer,setPrayer]=useState("");
+  const [prayer,setPrayer]=useState("Dear God, ");
   const [familyAction,setFamilyAction]=useState("");
   const [guideStatus,setGuideStatus]=useState("draft");
   const [guideAccess,setGuideAccess]=useState("free");
@@ -132,7 +132,7 @@ export function FamilyFaithAdmin() {
     setGuideKey("");
     setGuideDescription("");
     setDiscussion("");
-    setPrayer("");
+    setPrayer("Dear God, ");
     setFamilyAction("");
     setMessage("Family Faith guide created.");
     await load();
