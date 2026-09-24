@@ -10,6 +10,7 @@ import { GuardianPinSetup, GuardianUnlockDialog } from "./components/GuardianPin
 import { TrophyRoom } from "./components/TrophyRoom";
 import { BibleHub } from "./components/BibleHub";
 import { Bookshelf } from "./components/Bookshelf";
+import { ParentChildProgress } from "./components/ParentChildProgress";
 
 type Household = {
   id: string;
@@ -692,10 +693,13 @@ function FamilyPortal({
               </section>
 
               {selectedChild && (
-                <div className="family-detail-grid">
-                  <RewardsPanel childId={selectedChild.id} userId={user.id} />
-                  <NotificationsPanel userId={user.id} />
-                </div>
+                <>
+                  <ParentChildProgress childId={selectedChild.id} childName={selectedChild.display_name} />
+                  <div className="family-detail-grid">
+                    <RewardsPanel childId={selectedChild.id} userId={user.id} />
+                    <NotificationsPanel userId={user.id} />
+                  </div>
+                </>
               )}
             </>
           )}
