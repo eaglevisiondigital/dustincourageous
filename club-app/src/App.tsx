@@ -22,6 +22,7 @@ import { FamilyGroupsCard } from "./components/FamilyGroupsCard";
 import { FamilyEventsCard } from "./components/FamilyEventsCard";
 import { ReferralSupportCard } from "./components/ReferralSupportCard";
 import { LeaderGroupsHub } from "./components/LeaderGroupsHub";
+import { PrivacyDataControls } from "./components/PrivacyDataControls";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -226,17 +227,23 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
   const [name, setName] = useState(defaultName);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     setWorking(true);
     setError("");
 
+    if (!acceptedTerms) {
+      setError("Please confirm the Guardian Account Terms to create your family hub.");
+      setWorking(false);
+      return;
+    }
+
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago";
-    const { error: createError } = await supabase.from("households").insert({
-      name: name.trim(),
-      created_by: user.id,
-      timezone
+    const { error: createError } = await supabase.rpc("create_household_with_consent", {
+      p_name: name.trim(),
+      p_timezone: timezone
     });
 
     if (createError) {
@@ -264,6 +271,16 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
             Family hub name
             <input required value={name} onChange={(event) => setName(event.target.value)} />
           </label>
+          <label className="onboarding-consent">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(event) => setAcceptedTerms(event.target.checked)}
+            />
+            <span>
+              I am the parent/guardian account holder and agree to the current Guardian Account Terms for this family hub.
+            </span>
+          </label>
           {error && <div className="form-message">{error}</div>}
           <button className="primary-button" disabled={working}>
             {working ? "Creating..." : "Create family hub"}
@@ -287,6 +304,7 @@ function AddChildForm({
 }) {
   const [name, setName] = useState("");
   const [birthYear, setBirthYear] = useState("");
+  const [guardianConsent, setGuardianConsent] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
 
@@ -295,12 +313,17 @@ function AddChildForm({
     setWorking(true);
     setError("");
 
-    const parsedYear = birthYear ? Number(birthYear) : null;
-    const { error: childError } = await supabase.from("child_profiles").insert({
-      household_id: household.id,
-      display_name: name.trim(),
-      birth_year: parsedYear,
-      created_by: user.id
+    if (!guardianConsent) {
+      setError("Please confirm guardian approval for this child to participate in Adventure Club.");
+      setWorking(false);
+      return;
+    }
+
+    const parsedYear = birthYear ? Number(birthYear) : undefined;
+    const { error: childError } = await supabase.rpc("create_child_with_consent", {
+      p_household_id: household.id,
+      p_display_name: name.trim(),
+      p_birth_year: parsedYear
     });
 
     if (childError) {
@@ -311,6 +334,7 @@ function AddChildForm({
 
     setName("");
     setBirthYear("");
+    setGuardianConsent(false);
     await onAdded();
     setWorking(false);
   }
@@ -336,6 +360,16 @@ function AddChildForm({
           />
         </label>
       </div>
+      <label className="child-consent">
+        <input
+          type="checkbox"
+          checked={guardianConsent}
+          onChange={(event) => setGuardianConsent(event.target.checked)}
+        />
+        <span>
+          I am the parent/guardian and approve this protected child profile for Adventure Club participation.
+        </span>
+      </label>
       {error && <div className="form-message">{error}</div>}
       <button className="secondary-button" disabled={working}>
         {working ? "Adding..." : "Add child profile"}
@@ -715,6 +749,11 @@ function FamilyPortal({
                   <OrderHistoryCard householdId={household.id} />
                   <LeaderGroupsHub />
                   <ReferralSupportCard householdId={household.id} user={user} />
+                  <PrivacyDataControls
+                    householdId={household.id}
+                    user={user}
+                    onHouseholdUpdated={reload}
+                  />
                   <FamilySettings
                     user={user}
                     householdId={household.id}
