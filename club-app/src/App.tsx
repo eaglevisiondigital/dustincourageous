@@ -11,6 +11,7 @@ import { TrophyRoom } from "./components/TrophyRoom";
 import { BibleHub } from "./components/BibleHub";
 import { Bookshelf } from "./components/Bookshelf";
 import { ParentChildProgress } from "./components/ParentChildProgress";
+import { FamilySettings } from "./components/FamilySettings";
 
 type Household = {
   id: string;
@@ -390,6 +391,7 @@ function FamilyPortal({
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
   const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "trophies">("home");
+  const [parentSection, setParentSection] = useState<"overview" | "settings">("overview");
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
@@ -654,6 +656,33 @@ function FamilyPortal({
             </>
           ) : (
             <>
+              <nav className="kid-subnav" aria-label="Family Hub area">
+                <button
+                  type="button"
+                  className={parentSection === "overview" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("overview")}
+                >
+                  Family Overview
+                </button>
+                <button
+                  type="button"
+                  className={parentSection === "settings" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setParentSection("settings")}
+                >
+                  Membership & Settings
+                </button>
+              </nav>
+
+              {parentSection === "settings" ? (
+                <FamilySettings
+                  user={user}
+                  householdId={household.id}
+                  householdName={household.name}
+                  timezone={household.timezone}
+                  onHouseholdUpdated={reload}
+                />
+              ) : (
+                <>
               <section className="parent-hero">
                 <div>
                   <p className="eyebrow red">Family Hub</p>
@@ -699,6 +728,8 @@ function FamilyPortal({
                     <RewardsPanel childId={selectedChild.id} userId={user.id} />
                     <NotificationsPanel userId={user.id} />
                   </div>
+                </>
+              )}
                 </>
               )}
             </>
