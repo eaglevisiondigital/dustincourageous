@@ -185,7 +185,7 @@ export function WeeklySeriesAdmin() {
       p_access_level: "free",
       p_xp_reward: Number(xpReward) || 0,
       p_parent_approval_required: false,
-      p_status: publishNow ? "published" : "draft",
+      p_status: "draft",
       p_steps: stepPayload
     });
 
@@ -353,10 +353,9 @@ export function WeeklySeriesAdmin() {
                 XP reward
                 <input type="number" min="0" value={xpReward} onChange={(event) => setXpReward(event.target.value)} />
               </label>
-              <label className="admin-check">
-                <input type="checkbox" checked={publishNow} onChange={(event) => setPublishNow(event.target.checked)} />
-                Publish immediately
-              </label>
+              <div className="governance-editor-note">
+                Weekly challenges are created as drafts. Publish them through DC Governance after review.
+              </div>
               <label className="full">
                 Description
                 <textarea value={challengeDescription} onChange={(event) => setChallengeDescription(event.target.value)} />
