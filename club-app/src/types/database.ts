@@ -7049,6 +7049,16 @@ export type Database = {
           },
         ]
       }
+      public_site_pipeline_summary: {
+        Row: {
+          category: string | null
+          latest_activity_at: string | null
+          record_count: number | null
+          record_type: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       accept_household_invitation: {
