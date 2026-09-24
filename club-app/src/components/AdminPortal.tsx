@@ -6,6 +6,7 @@ import { FaithContentAdmin } from "./FaithContentAdmin";
 import { BookAdmin } from "./BookAdmin";
 import { MediaAdmin } from "./MediaAdmin";
 import { ContentAdmin } from "./ContentAdmin";
+import { FamilyFaithAdmin } from "./FamilyFaithAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -732,7 +733,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "content" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -814,6 +815,7 @@ export function AdminPortal({
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
+            ["familyfaith", "Family Faith"],
             ["books", "Books"],
             ["content", "Content Studio"],
             ["media", "Media Library"],
@@ -857,6 +859,8 @@ export function AdminPortal({
             <WeeklySeriesAdmin />
           ) : section === "faith" ? (
             <FaithContentAdmin />
+          ) : section === "familyfaith" ? (
+            <FamilyFaithAdmin />
           ) : section === "books" ? (
             <BookAdmin />
           ) : section === "content" ? (
