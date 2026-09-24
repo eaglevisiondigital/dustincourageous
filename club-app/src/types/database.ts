@@ -4333,6 +4333,7 @@ export type Database = {
           email: string
           id: string
           ip_hash: string | null
+          last_submitted_at: string
           lead_type: string
           marketing_consent: boolean
           metadata: Json
@@ -4340,6 +4341,7 @@ export type Database = {
           parent_guardian_name: string | null
           source_page: string | null
           status: string
+          submission_count: number
           user_agent_hash: string | null
         }
         Insert: {
@@ -4351,6 +4353,7 @@ export type Database = {
           email: string
           id?: string
           ip_hash?: string | null
+          last_submitted_at?: string
           lead_type: string
           marketing_consent?: boolean
           metadata?: Json
@@ -4358,6 +4361,7 @@ export type Database = {
           parent_guardian_name?: string | null
           source_page?: string | null
           status?: string
+          submission_count?: number
           user_agent_hash?: string | null
         }
         Update: {
@@ -4369,6 +4373,7 @@ export type Database = {
           email?: string
           id?: string
           ip_hash?: string | null
+          last_submitted_at?: string
           lead_type?: string
           marketing_consent?: boolean
           metadata?: Json
@@ -4376,6 +4381,7 @@ export type Database = {
           parent_guardian_name?: string | null
           source_page?: string | null
           status?: string
+          submission_count?: number
           user_agent_hash?: string | null
         }
         Relationships: []
@@ -6991,6 +6997,16 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_lead_summary: {
+        Row: {
+          latest_submission_at: string | null
+          lead_type: string | null
+          status: string | null
+          total_submissions: number | null
+          unique_leads: number | null
+        }
+        Relationships: []
+      }
       notification_delivery_health: {
         Row: {
           channel: string | null
@@ -7377,6 +7393,17 @@ export type Database = {
           verses_memorized_all_time: number
         }[]
       }
+      admin_get_production_launch_gate: {
+        Args: never
+        Returns: {
+          area: string
+          check_key: string
+          detail: string
+          passed: boolean
+          severity: string
+          title: string
+        }[]
+      }
       admin_link_book_experience: {
         Args: {
           p_book_id: string
@@ -7476,6 +7503,23 @@ export type Database = {
       cancel_organization_invitation: {
         Args: { p_invitation_id: string }
         Returns: undefined
+      }
+      capture_marketing_lead: {
+        Args: {
+          p_child_age: number
+          p_child_first_name: string
+          p_consent_text: string
+          p_email: string
+          p_ip_hash: string
+          p_lead_type: string
+          p_marketing_consent: boolean
+          p_metadata?: Json
+          p_parent_guardian_consent: boolean
+          p_parent_guardian_name: string
+          p_source_page: string
+          p_user_agent_hash: string
+        }
+        Returns: string
       }
       claim_notification_deliveries: {
         Args: { p_limit?: number }
