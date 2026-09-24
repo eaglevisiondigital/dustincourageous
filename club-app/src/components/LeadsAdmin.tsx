@@ -17,6 +17,7 @@ type Lead = {
   submission_count: number;
   last_submitted_at: string;
   created_at: string;
+  converted_household_id: string | null;
 };
 
 type Inquiry = {
@@ -27,13 +28,6 @@ type Inquiry = {
   source_page: string | null;
   status: string;
   created_at: string;
-};
-
-type ConversionSummary = {
-  lead_type: string;
-  unique_leads: number;
-  converted_households: number;
-  conversion_percent: number;
 };
 
 type Summary = {
@@ -48,16 +42,15 @@ export function LeadsAdmin() {
   const [leads,setLeads]=useState<Lead[]>([]);
   const [inquiries,setInquiries]=useState<Inquiry[]>([]);
   const [summary,setSummary]=useState<Summary[]>([]);
-  const [conversion,setConversion]=useState<ConversionSummary[]>([]);
   const [message,setMessage]=useState("");
   const [filter,setFilter]=useState<"all"|"waitlist"|"contact">("all");
 
   const load=useCallback(async()=>{
     setMessage("");
-    const [leadResult,inquiryResult,summaryResult,conversionResult]=await Promise.all([
+    const [leadResult,inquiryResult,summaryResult]=await Promise.all([
       supabase
         .from("marketing_leads")
-        .select("id,lead_type,source_page,parent_guardian_name,email,child_first_name,child_age,parent_guardian_consent,marketing_consent,consent_text,consented_at,status,submission_count,last_submitted_at,created_at")
+        .select("id,lead_type,source_page,parent_guardian_name,email,child_first_name,child_age,parent_guardian_consent,marketing_consent,consent_text,consented_at,status,submission_count,last_submitted_at,created_at,converted_household_id")
         .order("last_submitted_at",{ascending:false})
         .limit(250),
       supabase
@@ -67,13 +60,10 @@ export function LeadsAdmin() {
         .limit(250),
       supabase
         .from("public_site_pipeline_summary")
-        .select("*"),
-      supabase
-        .from("marketing_conversion_summary")
         .select("*")
     ]);
 
-    const error=leadResult.error||inquiryResult.error||summaryResult.error||conversionResult.error;
+    const error=leadResult.error||inquiryResult.error||summaryResult.error;
     if(error){
       setMessage(error.message);
       return;
@@ -82,7 +72,6 @@ export function LeadsAdmin() {
     setLeads((leadResult.data??[]) as Lead[]);
     setInquiries((inquiryResult.data??[]) as Inquiry[]);
     setSummary((summaryResult.data??[]) as Summary[]);
-    setConversion((conversionResult.data??[]) as ConversionSummary[]);
   },[]);
 
   useEffect(()=>{void load();},[load]);
@@ -111,9 +100,9 @@ export function LeadsAdmin() {
     .filter((row)=>row.record_type==="marketing_lead"&&row.status==="active")
     .reduce((sum,row)=>sum+Number(row.record_count||0),0);
 
-  const convertedCount=conversion.reduce((sum,row)=>sum+Number(row.converted_households||0),0);
-  const conversionPercent=conversion.length
-    ? Math.round((conversion.reduce((sum,row)=>sum+Number(row.conversion_percent||0),0)/conversion.length)*10)/10
+  const convertedCount=leads.filter((lead)=>lead.converted_household_id!==null).length;
+  const conversionPercent=leads.length
+    ? Math.round((convertedCount/leads.length)*1000)/10
     : 0;
 
   const newInquiryCount=summary
