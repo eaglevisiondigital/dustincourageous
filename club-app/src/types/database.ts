@@ -415,6 +415,65 @@ export type Database = {
         }
         Relationships: []
       }
+      app_installations: {
+        Row: {
+          app_channel: string
+          app_version: string | null
+          capabilities: Json
+          created_at: string
+          device_name: string | null
+          id: string
+          installation_key: string
+          is_active: boolean
+          last_seen_at: string
+          metadata: Json
+          platform: string | null
+          push_device_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          app_channel: string
+          app_version?: string | null
+          capabilities?: Json
+          created_at?: string
+          device_name?: string | null
+          id?: string
+          installation_key: string
+          is_active?: boolean
+          last_seen_at?: string
+          metadata?: Json
+          platform?: string | null
+          push_device_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          app_channel?: string
+          app_version?: string | null
+          capabilities?: Json
+          created_at?: string
+          device_name?: string | null
+          id?: string
+          installation_key?: string
+          is_active?: boolean
+          last_seen_at?: string
+          metadata?: Json
+          platform?: string | null
+          push_device_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_installations_push_device_id_fkey"
+            columns: ["push_device_id"]
+            isOneToOne: false
+            referencedRelation: "push_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automated_notification_log: {
         Row: {
           created_at: string
@@ -2891,6 +2950,48 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_worker_runs: {
+        Row: {
+          claimed_count: number
+          completed_at: string | null
+          error_message: string | null
+          failed_count: number
+          id: string
+          metadata: Json
+          sent_count: number
+          started_at: string
+          status: string
+          suppressed_count: number
+          worker_key: string
+        }
+        Insert: {
+          claimed_count?: number
+          completed_at?: string | null
+          error_message?: string | null
+          failed_count?: number
+          id?: string
+          metadata?: Json
+          sent_count?: number
+          started_at?: string
+          status?: string
+          suppressed_count?: number
+          worker_key: string
+        }
+        Update: {
+          claimed_count?: number
+          completed_at?: string | null
+          error_message?: string | null
+          failed_count?: number
+          id?: string
+          metadata?: Json
+          sent_count?: number
+          started_at?: string
+          status?: string
+          suppressed_count?: number
+          worker_key?: string
+        }
+        Relationships: []
+      }
       devotional_days: {
         Row: {
           action_step: string | null
@@ -3933,6 +4034,129 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      integration_events: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          direction: string
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          idempotency_key: string | null
+          last_error: string | null
+          next_attempt_at: string
+          processed_at: string | null
+          provider_id: string | null
+          request_payload: Json
+          response_payload: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          direction: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          idempotency_key?: string | null
+          last_error?: string | null
+          next_attempt_at?: string
+          processed_at?: string | null
+          provider_id?: string | null
+          request_payload?: Json
+          response_payload?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          direction?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          idempotency_key?: string | null
+          last_error?: string | null
+          next_attempt_at?: string
+          processed_at?: string | null
+          provider_id?: string | null
+          request_payload?: Json
+          response_payload?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "integration_health_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "integration_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_providers: {
+        Row: {
+          configuration_mode: string
+          created_at: string
+          display_name: string
+          health_status: string
+          id: string
+          last_error: string | null
+          last_error_at: string | null
+          last_health_check_at: string | null
+          last_success_at: string | null
+          metadata: Json
+          provider_key: string
+          provider_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          configuration_mode?: string
+          created_at?: string
+          display_name: string
+          health_status?: string
+          id?: string
+          last_error?: string | null
+          last_error_at?: string | null
+          last_health_check_at?: string | null
+          last_success_at?: string | null
+          metadata?: Json
+          provider_key: string
+          provider_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          configuration_mode?: string
+          created_at?: string
+          display_name?: string
+          health_status?: string
+          id?: string
+          last_error?: string | null
+          last_error_at?: string | null
+          last_health_check_at?: string | null
+          last_success_at?: string | null
+          metadata?: Json
+          provider_key?: string
+          provider_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       levels: {
         Row: {
@@ -6021,6 +6245,27 @@ export type Database = {
         }
         Relationships: []
       }
+      app_channel_health: {
+        Row: {
+          active_installations: number | null
+          app_channel: string | null
+          last_seen_at: string | null
+          platform: string | null
+          push_ready_installations: number | null
+        }
+        Relationships: []
+      }
+      app_installation_summary: {
+        Row: {
+          active_installations: number | null
+          app_channel: string | null
+          last_seen_at: string | null
+          platform: string | null
+          push_enabled_installations: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       child_active_streak_badges: {
         Row: {
           badge_family_key: string | null
@@ -6384,6 +6629,19 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_worker_health: {
+        Row: {
+          last_claimed_count: number | null
+          last_completed_at: string | null
+          last_failed_count: number | null
+          last_sent_count: number | null
+          last_started_at: string | null
+          last_status: string | null
+          last_suppressed_count: number | null
+          worker_key: string | null
+        }
+        Relationships: []
+      }
       household_membership_summary: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -6397,6 +6655,62 @@ export type Database = {
           plan_name: string | null
           subscription_id: string | null
           subscription_status: string | null
+        }
+        Relationships: []
+      }
+      integration_health_summary: {
+        Row: {
+          display_name: string | null
+          failed_events_24h: number | null
+          health_status: string | null
+          id: string | null
+          last_error: string | null
+          last_error_at: string | null
+          last_health_check_at: string | null
+          last_success_at: string | null
+          provider_key: string | null
+          provider_type: string | null
+          status: string | null
+          successful_events_24h: number | null
+        }
+        Insert: {
+          display_name?: string | null
+          failed_events_24h?: never
+          health_status?: string | null
+          id?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_health_check_at?: string | null
+          last_success_at?: string | null
+          provider_key?: string | null
+          provider_type?: string | null
+          status?: string | null
+          successful_events_24h?: never
+        }
+        Update: {
+          display_name?: string | null
+          failed_events_24h?: never
+          health_status?: string | null
+          id?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_health_check_at?: string | null
+          last_success_at?: string | null
+          provider_key?: string | null
+          provider_type?: string | null
+          status?: string | null
+          successful_events_24h?: never
+        }
+        Relationships: []
+      }
+      notification_delivery_health: {
+        Row: {
+          channel: string | null
+          delivery_count: number | null
+          delivery_count_24h: number | null
+          last_sent_at: string | null
+          last_updated_at: string | null
+          status: string | null
         }
         Relationships: []
       }
@@ -6863,9 +7177,31 @@ export type Database = {
         Args: { p_invitation_id: string }
         Returns: undefined
       }
+      claim_notification_deliveries: {
+        Args: { p_limit?: number }
+        Returns: {
+          attempt_count: number
+          channel: string
+          delivery_id: string
+          notification_id: string
+          user_id: string
+        }[]
+      }
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
         Returns: boolean
+      }
+      complete_notification_delivery: {
+        Args: {
+          p_delivery_id: string
+          p_last_error?: string
+          p_metadata?: Json
+          p_provider?: string
+          p_provider_message_id?: string
+          p_retry_minutes?: number
+          p_status: string
+        }
+        Returns: undefined
       }
       create_adventure_group: {
         Args: {
@@ -6937,6 +7273,10 @@ export type Database = {
           severity: string
         }[]
       }
+      deactivate_app_installation: {
+        Args: { p_installation_key: string }
+        Returns: undefined
+      }
       get_child_achievement_progress: {
         Args: { p_child_profile_id: string }
         Returns: {
@@ -7007,6 +7347,21 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_notification_delivery_payload: {
+        Args: { p_delivery_id: string }
+        Returns: {
+          body: string
+          channel: string
+          deep_link: string
+          delivery_id: string
+          metadata: Json
+          notification_id: string
+          notification_type: string
+          priority: string
+          title: string
+          user_id: string
+        }[]
+      }
       get_or_create_referral_code: {
         Args: { p_household_id: string }
         Returns: string
@@ -7066,6 +7421,35 @@ export type Database = {
         }
         Returns: string
       }
+      record_integration_event: {
+        Args: {
+          p_direction: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_type: string
+          p_idempotency_key: string
+          p_last_error?: string
+          p_provider_key: string
+          p_request_payload?: Json
+          p_response_payload?: Json
+          p_status: string
+        }
+        Returns: string
+      }
+      register_app_installation: {
+        Args: {
+          p_app_channel: string
+          p_app_version?: string
+          p_capabilities?: Json
+          p_device_name?: string
+          p_installation_key: string
+          p_metadata?: Json
+          p_platform?: string
+          p_push_provider?: string
+          p_push_token?: string
+        }
+        Returns: string
+      }
       register_for_event: {
         Args: {
           p_child_profile_id?: string
@@ -7109,6 +7493,16 @@ export type Database = {
       }
       set_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }
+        Returns: undefined
+      }
+      update_integration_provider_health: {
+        Args: {
+          p_error?: string
+          p_health_status?: string
+          p_provider_key: string
+          p_status?: string
+          p_success?: boolean
+        }
         Returns: undefined
       }
       verify_guardian_pin: {
