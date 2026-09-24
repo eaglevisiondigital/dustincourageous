@@ -39,6 +39,8 @@ type AchievementProgress = {
   badge_description: string | null;
   badge_scope: string;
   badge_tier: string | null;
+  badge_family_key: string | null;
+  rule_id: string;
   rule_type: string;
   threshold_value: number | null;
   current_value: number | null;
