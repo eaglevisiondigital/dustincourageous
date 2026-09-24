@@ -15,6 +15,7 @@ import { GovernanceAdmin } from "./GovernanceAdmin";
 import { AnalyticsPrivacyAdmin } from "./AnalyticsPrivacyAdmin";
 import { CommunicationsAdmin } from "./CommunicationsAdmin";
 import { IntegrationHealthAdmin } from "./IntegrationHealthAdmin";
+import { LaunchReadinessAdmin } from "./LaunchReadinessAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -745,7 +746,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"governance" | "operations" | "communications" | "integrations" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
+  const [section, setSection] = useState<"governance" | "launch" | "operations" | "communications" | "integrations" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -825,6 +826,7 @@ export function AdminPortal({
           <p className="eyebrow">Management</p>
           {[
             ["governance", "DC Governance"],
+            ["launch", "Launch Gate"],
             ["operations", "Analytics & Privacy"],
             ["communications", "Communications"],
             ["integrations", "Integrations & Delivery"],
@@ -875,6 +877,8 @@ export function AdminPortal({
             </section>
           ) : section === "governance" ? (
             <GovernanceAdmin />
+          ) : section === "launch" ? (
+            <LaunchReadinessAdmin />
           ) : section === "operations" ? (
             <AnalyticsPrivacyAdmin role={role} />
           ) : section === "communications" ? (
