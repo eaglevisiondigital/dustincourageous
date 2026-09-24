@@ -2326,6 +2326,175 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          attended_at: string | null
+          canceled_at: string | null
+          child_profile_id: string | null
+          created_at: string
+          event_id: string
+          household_id: string
+          id: string
+          metadata: Json
+          registered_at: string
+          registered_by: string
+          status: string
+        }
+        Insert: {
+          attended_at?: string | null
+          canceled_at?: string | null
+          child_profile_id?: string | null
+          created_at?: string
+          event_id: string
+          household_id: string
+          id?: string
+          metadata?: Json
+          registered_at?: string
+          registered_by: string
+          status?: string
+        }
+        Update: {
+          attended_at?: string | null
+          canceled_at?: string | null
+          child_profile_id?: string | null
+          created_at?: string
+          event_id?: string
+          household_id?: string
+          id?: string
+          metadata?: Json
+          registered_at?: string
+          registered_by?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "event_registrations_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_registrations_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_registrations_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "event_registrations_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          access_level: string
+          capacity: number | null
+          created_at: string
+          created_by: string
+          description: string | null
+          ends_at: string | null
+          event_key: string
+          event_type: string
+          group_id: string | null
+          id: string
+          location_address: string | null
+          location_name: string | null
+          metadata: Json
+          organization_id: string | null
+          starts_at: string
+          status: string
+          timezone: string
+          title: string
+          updated_at: string
+          virtual_url: string | null
+        }
+        Insert: {
+          access_level?: string
+          capacity?: number | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          ends_at?: string | null
+          event_key: string
+          event_type?: string
+          group_id?: string | null
+          id?: string
+          location_address?: string | null
+          location_name?: string | null
+          metadata?: Json
+          organization_id?: string | null
+          starts_at: string
+          status?: string
+          timezone?: string
+          title: string
+          updated_at?: string
+          virtual_url?: string | null
+        }
+        Update: {
+          access_level?: string
+          capacity?: number | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          ends_at?: string | null
+          event_key?: string
+          event_type?: string
+          group_id?: string | null
+          id?: string
+          location_address?: string | null
+          location_name?: string | null
+          metadata?: Json
+          organization_id?: string | null
+          starts_at?: string
+          status?: string
+          timezone?: string
+          title?: string
+          updated_at?: string
+          virtual_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_faith_guides: {
         Row: {
           access_level: string
@@ -4025,6 +4194,97 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_attributions: {
+        Row: {
+          attributed_at: string
+          id: string
+          metadata: Json
+          referral_code_id: string
+          referred_household_id: string
+          source: string | null
+        }
+        Insert: {
+          attributed_at?: string
+          id?: string
+          metadata?: Json
+          referral_code_id: string
+          referred_household_id: string
+          source?: string | null
+        }
+        Update: {
+          attributed_at?: string
+          id?: string
+          metadata?: Json
+          referral_code_id?: string
+          referred_household_id?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_attributions_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_referred_household_id_fkey"
+            columns: ["referred_household_id"]
+            isOneToOne: true
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_referred_household_id_fkey"
+            columns: ["referred_household_id"]
+            isOneToOne: true
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          household_id: string
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          household_id: string
+          id?: string
+          is_active?: boolean
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          household_id?: string
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_codes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: true
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "referral_codes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: true
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reward_redemptions: {
         Row: {
           fulfilled_at: string | null
@@ -4345,6 +4605,72 @@ export type Database = {
             columns: ["series_badge_rule_id"]
             isOneToOne: false
             referencedRelation: "series_badge_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          assigned_admin: string | null
+          category: string
+          created_at: string
+          household_id: string | null
+          id: string
+          message: string
+          metadata: Json
+          priority: string
+          resolved_at: string | null
+          status: string
+          subject: string
+          ticket_number: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_admin?: string | null
+          category?: string
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          message: string
+          metadata?: Json
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject: string
+          ticket_number?: never
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_admin?: string | null
+          category?: string
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          message?: string
+          metadata?: Json
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject?: string
+          ticket_number?: never
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "support_tickets_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
             referencedColumns: ["id"]
           },
         ]
@@ -5009,6 +5335,18 @@ export type Database = {
         Args: { p_order_id: string; p_status: string }
         Returns: undefined
       }
+      attribute_referral: {
+        Args: {
+          p_code: string
+          p_referred_household_id: string
+          p_source?: string
+        }
+        Returns: boolean
+      }
+      cancel_event_registration: {
+        Args: { p_registration_id: string }
+        Returns: undefined
+      }
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
         Returns: boolean
@@ -5115,6 +5453,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_or_create_referral_code: {
+        Args: { p_household_id: string }
+        Returns: string
+      }
       guardian_pin_status: {
         Args: { p_household_id: string }
         Returns: {
@@ -5136,6 +5478,14 @@ export type Database = {
           organization_type: string
           spots_remaining: number
         }[]
+      }
+      register_for_event: {
+        Args: {
+          p_child_profile_id?: string
+          p_event_id: string
+          p_household_id: string
+        }
+        Returns: string
       }
       remove_household_adult: {
         Args: { p_household_id: string; p_user_id: string }
