@@ -1085,3 +1085,395 @@ select:focus {
   .streak-history-list article { grid-template-columns: auto 1fr; }
   .streak-history-list time { grid-column: 2; }
 }
+
+
+/* Bible and Bookshelf */
+.bible-hub,
+.bookshelf {
+  display: grid;
+  gap: 18px;
+}
+.bible-hero,
+.bookshelf-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: clamp(28px,4vw,46px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 14%, rgba(240,198,91,.12), transparent 22rem),
+    linear-gradient(135deg,#18120b,#111 55%,#170d0d);
+}
+.bible-hero h1,
+.bookshelf-hero h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2.5rem,5vw,4.6rem);
+  line-height: .98;
+}
+.bible-hero p:not(.eyebrow),
+.bookshelf-hero p:not(.eyebrow) {
+  max-width: 650px;
+  margin-bottom: 0;
+  color: #b8b3ac;
+  line-height: 1.6;
+}
+.bible-hero-mark {
+  flex: 0 0 auto;
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(240,198,91,.2);
+  border-radius: 28px;
+  background: rgba(240,198,91,.08);
+  color: var(--gold);
+  font-size: 2rem;
+}
+.bible-tabs {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0d0d0d;
+}
+.bible-tab {
+  flex: 0 0 auto;
+  padding: 10px 13px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #9b9790;
+  font-size: .75rem;
+  font-weight: 850;
+}
+.bible-tab.active {
+  background: #1d1d1d;
+  color: white;
+}
+.power-verse-card {
+  padding: clamp(24px,4vw,38px);
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 24px;
+  background: linear-gradient(145deg,#17130d,#101010 55%,#170d0d);
+}
+.power-verse-reference {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.power-verse-reference span {
+  color: var(--gold);
+  font-size: .68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.power-verse-reference strong {
+  font-size: 1.15rem;
+}
+.power-verse-reference small {
+  color: #88837c;
+}
+.power-verse-card > blockquote {
+  max-width: 980px;
+  margin: 28px 0;
+  font-size: clamp(1.65rem,3.2vw,3.2rem);
+  line-height: 1.16;
+  letter-spacing: -.025em;
+  font-weight: 800;
+}
+.power-verse-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+}
+.power-verse-grid article,
+.memory-card,
+.identity-truth-card,
+.prayer-card {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: #0a0a0a;
+}
+.power-verse-grid span,
+.memory-card > span,
+.identity-truth-card > span,
+.prayer-card > span {
+  color: #ff6969;
+  font-size: .65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+.power-verse-grid p {
+  margin: 8px 0 0;
+  color: #b2ada6;
+  line-height: 1.55;
+}
+.bible-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 17px;
+}
+.bible-list-section {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.memory-grid,
+.identity-truth-grid,
+.prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+.memory-card h3,
+.identity-truth-card h3,
+.prayer-card h3 {
+  margin: 8px 0;
+  font-size: 1.25rem;
+}
+.memory-card p,
+.identity-truth-card p,
+.prayer-card p {
+  color: #96918a;
+  line-height: 1.5;
+}
+.memory-card.memorized,
+.identity-truth-card.learned,
+.prayer-card.complete {
+  border-color: rgba(111,184,121,.25);
+  background: linear-gradient(145deg,rgba(68,126,76,.09),#0a0a0a 60%);
+}
+.memory-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #77736d;
+}
+.memory-meta strong {
+  color: #c5c0b9;
+  font-size: .75rem;
+}
+.devotional-series-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #0b0b0b;
+}
+.devotional-day-list {
+  display: grid;
+  gap: 10px;
+}
+.devotional-day {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #111;
+}
+.devotional-day.complete {
+  border-color: rgba(111,184,121,.24);
+}
+.day-number {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #232323;
+  color: var(--gold);
+  font-weight: 900;
+}
+.devotional-day span {
+  color: #9c9892;
+  font-size: .68rem;
+  font-weight: 800;
+}
+.devotional-day h3 {
+  margin: 5px 0 8px;
+}
+.devotional-day p {
+  color: #97928b;
+  line-height: 1.5;
+}
+.devotional-callout,
+.identity-say-it {
+  margin-top: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgba(240,198,91,.13);
+  border-radius: 11px;
+  background: rgba(240,198,91,.05);
+  color: #bdb18d;
+  font-size: .78rem;
+  line-height: 1.45;
+}
+.identity-truth-card blockquote {
+  margin: 15px 0;
+  padding-left: 13px;
+  border-left: 2px solid var(--gold);
+  color: #d7d2ca;
+  line-height: 1.5;
+}
+.prayer-card small {
+  display: block;
+  margin: 12px 0;
+  color: #79756f;
+}
+.bookshelf-count {
+  flex: 0 0 auto;
+  min-width: 110px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #111;
+}
+.bookshelf-count strong,
+.bookshelf-count span {
+  display: block;
+}
+.bookshelf-count strong {
+  font-size: 2.5rem;
+}
+.bookshelf-count span {
+  color: #88837d;
+  font-size: .72rem;
+  text-transform: uppercase;
+}
+.book-shelf-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+}
+.book-spine-card {
+  flex: 0 0 180px;
+  padding: 11px;
+  color: #d7d2cb;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #101010;
+}
+.book-spine-card.active {
+  border-color: rgba(239,52,52,.4);
+  box-shadow: 0 0 0 3px rgba(239,52,52,.07);
+}
+.book-spine-card img {
+  width: 100%;
+  aspect-ratio: .82;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.book-spine-card span,
+.book-spine-card strong,
+.book-spine-card small {
+  display: block;
+}
+.book-spine-card span {
+  margin-top: 10px;
+  color: #ff6969;
+  font-size: .64rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.book-spine-card strong {
+  margin: 4px 0 7px;
+  font-size: .9rem;
+}
+.book-spine-card small {
+  color: #88837d;
+}
+.book-companion {
+  display: grid;
+  grid-template-columns: minmax(220px,320px) 1fr;
+  gap: 26px;
+  padding: clamp(22px,4vw,34px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: #101010;
+}
+.book-companion-cover img {
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: 0 22px 55px rgba(0,0,0,.4);
+}
+.book-companion-content > h2 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem,4vw,3.5rem);
+}
+.book-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0 12px;
+}
+.book-status-row small {
+  color: #7f7b75;
+}
+.book-progress-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.book-companion-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 11px;
+  margin-top: 22px;
+}
+.book-companion-grid article {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #090909;
+}
+.book-companion-grid article > span {
+  color: var(--gold);
+  font-size: .65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.book-companion-grid h3 {
+  margin: 7px 0;
+}
+.book-companion-grid p {
+  color: #908c85;
+  line-height: 1.45;
+}
+.book-challenge-card {
+  border-color: rgba(239,52,52,.2) !important;
+}
+
+@media (max-width:850px) {
+  .power-verse-grid,
+  .memory-grid,
+  .identity-truth-grid,
+  .prayer-grid,
+  .book-companion-grid { grid-template-columns:1fr; }
+  .book-companion { grid-template-columns:1fr; }
+  .book-companion-cover { max-width:280px; }
+}
+@media (max-width:650px) {
+  .bible-hero,
+  .bookshelf-hero { align-items:flex-start; }
+  .bible-hero-mark,
+  .bookshelf-count { display:none; }
+  .devotional-day { grid-template-columns:auto 1fr; }
+  .devotional-day > button { grid-column:1 / -1; }
+}
