@@ -2588,6 +2588,21 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_lifetime_badge_level: {
+        Args: {
+          p_badge_family_key?: string
+          p_badge_key: string
+          p_challenge_type?: string
+          p_description?: string
+          p_name: string
+          p_rarity?: string
+          p_rule_type: string
+          p_streak_key?: string
+          p_threshold_value?: number
+          p_tier?: string
+        }
+        Returns: string
+      }
       admin_create_reward: {
         Args: {
           p_access_level?: string
