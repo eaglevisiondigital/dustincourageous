@@ -4202,3 +4202,145 @@ select:focus {
   .guardian-session-chip { align-items:flex-start; flex-wrap:wrap; }
   .guardian-session-chip small { width:100%; margin-left:0; }
 }
+
+
+/* Integrations and delivery health */
+.integration-health-admin {
+  display: grid;
+  gap: 18px;
+}
+.integration-health-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 24px;
+  border: 1px solid rgba(240,198,91,.16);
+  border-radius: 22px;
+  background: linear-gradient(135deg,#15110a,#101010 60%,#160b0b);
+}
+.integration-health-hero h2 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem,4vw,3.2rem);
+}
+.integration-health-hero p:last-child {
+  max-width: 820px;
+  margin: 0;
+  color: #9b9690;
+  line-height: 1.5;
+}
+.integration-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 12px;
+}
+.integration-provider-grid > article {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0a0a0a;
+}
+.integration-provider-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.integration-provider-head span:first-child {
+  color: #8f8b85;
+  font-size: .64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.integration-provider-head h3 {
+  margin: 4px 0 0;
+}
+.integration-provider-grid dl {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0 0;
+}
+.integration-provider-grid dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 7px;
+  border-top: 1px solid var(--line);
+}
+.integration-provider-grid dt,
+.integration-provider-grid dd {
+  margin: 0;
+  font-size: .72rem;
+}
+.integration-provider-grid dt {
+  color: #77736e;
+}
+.integration-provider-grid dd {
+  color: #d2cdc6;
+}
+.integration-error {
+  margin: 12px 0 0;
+  color: #ff8484;
+  font-size: .72rem;
+  line-height: 1.4;
+}
+.worker-health-strip {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 9px;
+}
+.worker-health-strip > div {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.worker-health-strip span,
+.worker-health-strip strong {
+  display: block;
+}
+.worker-health-strip span {
+  color: #77736e;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.worker-health-strip strong {
+  margin-top: 4px;
+  text-transform: capitalize;
+}
+.worker-run-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.worker-run-list article {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.worker-run-list strong,
+.worker-run-list small {
+  display: block;
+}
+.worker-run-list small {
+  color: #77736e;
+  font-size: .68rem;
+}
+.integration-next-steps p:last-child {
+  margin-bottom: 0;
+  color: #9b9690;
+  line-height: 1.55;
+}
+@media (max-width: 1000px) {
+  .integration-provider-grid { grid-template-columns: 1fr; }
+  .worker-health-strip { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 650px) {
+  .integration-health-hero { flex-direction: column; }
+  .worker-run-list { grid-template-columns: 1fr; }
+}
