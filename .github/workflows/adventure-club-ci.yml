@@ -7,6 +7,8 @@ on:
     paths:
       - "club-app/**"
       - "supabase/functions/**"
+      - "supabase/migrations/**"
+      - "supabase/tests/**"
       - ".github/workflows/adventure-club-ci.yml"
   workflow_dispatch:
 
