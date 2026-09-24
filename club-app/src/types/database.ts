@@ -2280,6 +2280,56 @@ export type Database = {
           },
         ]
       }
+      fulfillments: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          id: string
+          metadata: Json
+          order_id: string
+          provider: string | null
+          shipped_at: string | null
+          status: string
+          tracking_number: string | null
+          tracking_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          id?: string
+          metadata?: Json
+          order_id: string
+          provider?: string | null
+          shipped_at?: string | null
+          status?: string
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          id?: string
+          metadata?: Json
+          order_id?: string
+          provider?: string | null
+          shipped_at?: string | null
+          status?: string
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fulfillments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_book_access: {
         Row: {
           book_id: string
@@ -3041,6 +3091,179 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          discount_cents: number
+          id: string
+          line_total_cents: number
+          metadata: Json
+          order_id: string
+          product_id: string
+          product_name_snapshot: string
+          product_variant_id: string | null
+          quantity: number
+          sku_snapshot: string | null
+          unit_price_cents: number
+          variant_name_snapshot: string | null
+        }
+        Insert: {
+          created_at?: string
+          discount_cents?: number
+          id?: string
+          line_total_cents: number
+          metadata?: Json
+          order_id: string
+          product_id: string
+          product_name_snapshot: string
+          product_variant_id?: string | null
+          quantity: number
+          sku_snapshot?: string | null
+          unit_price_cents: number
+          variant_name_snapshot?: string | null
+        }
+        Update: {
+          created_at?: string
+          discount_cents?: number
+          id?: string
+          line_total_cents?: number
+          metadata?: Json
+          order_id?: string
+          product_id?: string
+          product_name_snapshot?: string
+          product_variant_id?: string | null
+          quantity?: number
+          sku_snapshot?: string | null
+          unit_price_cents?: number
+          variant_name_snapshot?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          billing_email: string | null
+          canceled_at: string | null
+          created_at: string
+          currency: string
+          discount_cents: number
+          household_id: string | null
+          id: string
+          metadata: Json
+          order_number: number
+          paid_at: string | null
+          payment_provider: string | null
+          promo_code_id: string | null
+          provider_customer_id: string | null
+          provider_payment_id: string | null
+          purchaser_user_id: string | null
+          refunded_at: string | null
+          shipping_address: Json | null
+          shipping_cents: number
+          shipping_name: string | null
+          status: string
+          subtotal_cents: number
+          tax_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          billing_email?: string | null
+          canceled_at?: string | null
+          created_at?: string
+          currency?: string
+          discount_cents?: number
+          household_id?: string | null
+          id?: string
+          metadata?: Json
+          order_number?: never
+          paid_at?: string | null
+          payment_provider?: string | null
+          promo_code_id?: string | null
+          provider_customer_id?: string | null
+          provider_payment_id?: string | null
+          purchaser_user_id?: string | null
+          refunded_at?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          shipping_name?: string | null
+          status?: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          billing_email?: string | null
+          canceled_at?: string | null
+          created_at?: string
+          currency?: string
+          discount_cents?: number
+          household_id?: string | null
+          id?: string
+          metadata?: Json
+          order_number?: never
+          paid_at?: string | null
+          payment_provider?: string | null
+          promo_code_id?: string | null
+          provider_customer_id?: string | null
+          provider_payment_id?: string | null
+          purchaser_user_id?: string | null
+          refunded_at?: string | null
+          shipping_address?: Json | null
+          shipping_cents?: number
+          shipping_name?: string | null
+          status?: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "orders_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_entitlements: {
         Row: {
           created_at: string
@@ -3195,6 +3418,212 @@ export type Database = {
           },
         ]
       }
+      product_book_access_rules: {
+        Row: {
+          book_id: string
+          created_at: string
+          duration_days: number | null
+          id: string
+          is_active: boolean
+          product_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          duration_days?: number | null
+          id?: string
+          is_active?: boolean
+          product_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          duration_days?: number | null
+          id?: string
+          is_active?: boolean
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_book_access_rules_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_book_access_rules_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_entitlement_rules: {
+        Row: {
+          created_at: string
+          duration_days: number | null
+          entitlement_key: string
+          id: string
+          is_active: boolean
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_days?: number | null
+          entitlement_key: string
+          id?: string
+          is_active?: boolean
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_days?: number | null
+          entitlement_key?: string
+          id?: string
+          is_active?: boolean
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_entitlement_rules_entitlement_key_fkey"
+            columns: ["entitlement_key"]
+            isOneToOne: false
+            referencedRelation: "entitlement_definitions"
+            referencedColumns: ["entitlement_key"]
+          },
+          {
+            foreignKeyName: "product_entitlement_rules_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          attributes: Json
+          created_at: string
+          id: string
+          inventory_quantity: number | null
+          is_active: boolean
+          member_price_delta_cents: number
+          name: string
+          price_delta_cents: number
+          product_id: string
+          sku: string | null
+          sort_order: number
+          track_inventory: boolean
+          updated_at: string
+          variant_key: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          id?: string
+          inventory_quantity?: number | null
+          is_active?: boolean
+          member_price_delta_cents?: number
+          name: string
+          price_delta_cents?: number
+          product_id: string
+          sku?: string | null
+          sort_order?: number
+          track_inventory?: boolean
+          updated_at?: string
+          variant_key: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          id?: string
+          inventory_quantity?: number | null
+          is_active?: boolean
+          member_price_delta_cents?: number
+          name?: string
+          price_delta_cents?: number
+          product_id?: string
+          sku?: string | null
+          sort_order?: number
+          track_inventory?: boolean
+          updated_at?: string
+          variant_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          allow_backorder: boolean
+          base_price_cents: number
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          image_asset_key: string | null
+          inventory_quantity: number | null
+          is_featured: boolean
+          member_price_cents: number | null
+          metadata: Json
+          name: string
+          product_key: string
+          product_type: string
+          sku: string | null
+          status: string
+          track_inventory: boolean
+          updated_at: string
+        }
+        Insert: {
+          allow_backorder?: boolean
+          base_price_cents?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_asset_key?: string | null
+          inventory_quantity?: number | null
+          is_featured?: boolean
+          member_price_cents?: number | null
+          metadata?: Json
+          name: string
+          product_key: string
+          product_type: string
+          sku?: string | null
+          status?: string
+          track_inventory?: boolean
+          updated_at?: string
+        }
+        Update: {
+          allow_backorder?: boolean
+          base_price_cents?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_asset_key?: string | null
+          inventory_quantity?: number | null
+          is_featured?: boolean
+          member_price_cents?: number | null
+          metadata?: Json
+          name?: string
+          product_key?: string
+          product_type?: string
+          sku?: string | null
+          status?: string
+          track_inventory?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -3221,6 +3650,57 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          discount_type: string
+          discount_value: number
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          max_redemptions: number | null
+          metadata: Json
+          minimum_order_cents: number
+          redemption_count: number
+          starts_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_redemptions?: number | null
+          metadata?: Json
+          minimum_order_cents?: number
+          redemption_count?: number
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_redemptions?: number | null
+          metadata?: Json
+          minimum_order_cents?: number
+          redemption_count?: number
+          starts_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -4131,6 +4611,50 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_product: {
+        Args: {
+          p_allow_backorder?: boolean
+          p_base_price_cents?: number
+          p_description?: string
+          p_inventory_quantity?: number
+          p_is_featured?: boolean
+          p_member_price_cents?: number
+          p_name: string
+          p_product_key: string
+          p_product_type: string
+          p_sku?: string
+          p_status?: string
+          p_track_inventory?: boolean
+        }
+        Returns: string
+      }
+      admin_create_product_variant: {
+        Args: {
+          p_attributes?: Json
+          p_inventory_quantity?: number
+          p_member_price_delta_cents?: number
+          p_name: string
+          p_price_delta_cents?: number
+          p_product_id: string
+          p_sku?: string
+          p_sort_order?: number
+          p_variant_key: string
+        }
+        Returns: string
+      }
+      admin_create_promo_code: {
+        Args: {
+          p_code: string
+          p_description: string
+          p_discount_type: string
+          p_discount_value: number
+          p_ends_at?: string
+          p_max_redemptions?: number
+          p_minimum_order_cents?: number
+          p_starts_at?: string
+        }
+        Returns: string
+      }
       admin_create_reward: {
         Args: {
           p_access_level?: string
@@ -4194,6 +4718,10 @@ export type Database = {
       admin_link_book_reward: {
         Args: { p_book_id: string; p_milestone?: string; p_reward_id: string }
         Returns: string
+      }
+      admin_set_order_status: {
+        Args: { p_order_id: string; p_status: string }
+        Returns: undefined
       }
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
