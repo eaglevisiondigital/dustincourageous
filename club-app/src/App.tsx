@@ -12,6 +12,7 @@ import { BibleHub } from "./components/BibleHub";
 import { Bookshelf } from "./components/Bookshelf";
 import { ParentChildProgress } from "./components/ParentChildProgress";
 import { FamilySettings } from "./components/FamilySettings";
+import { ActivitiesHub } from "./components/ActivitiesHub";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -391,7 +392,7 @@ function FamilyPortal({
   const [view, setView] = useState<"kid" | "parent">(
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
-  const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "trophies">("home");
+  const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">("home");
   const [parentSection, setParentSection] = useState<"overview" | "settings">("overview");
 
   const selectedChild = useMemo(
@@ -572,7 +573,14 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
-                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  className={kidSection === "activities" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("activities")}
+                >
+                  Activities
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"
                   onClick={() => setKidSection("trophies")}
                 >
                   Trophy Room
@@ -593,6 +601,12 @@ function FamilyPortal({
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
                   onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+                />
+              ) : kidSection === "activities" && selectedChild ? (
+                <ActivitiesHub
+                  childId={selectedChild.id}
+                  childName={selectedChild.display_name}
+                  onProgress={loadChildDashboard}
                 />
               ) : (
                 <>
