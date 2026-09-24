@@ -872,7 +872,7 @@ export function AdminPortal({
 
           {error && <div className="form-message">{error}</div>}
 
-          {!canCreateContent && section !== "fulfillment" && section !== "support" && section !== "governance" && section !== "operations" && section !== "communications" ? (
+          {!canCreateContent && section !== "fulfillment" && section !== "support" && section !== "governance" && section !== "operations" && section !== "communications" && section !== "integrations" && section !== "leads" ? (
             <section className="admin-card">
               <h2>Read-only access</h2>
               <p className="muted">Your current admin role can review this area but cannot create or edit content.</p>
