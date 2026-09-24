@@ -1,6 +1,6 @@
 [build]
   base = "club-app"
-  command = "npm install --ignore-scripts && npm run build"
+  command = "npm ci --ignore-scripts && npm run build"
   publish = "dist"
 
 [build.environment]
