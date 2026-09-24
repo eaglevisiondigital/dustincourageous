@@ -32,6 +32,7 @@ type BadgeRow = {
         threshold_value: number | null;
         streak_key: string | null;
         challenge_type: string | null;
+        token_type: string | null;
         is_active: boolean;
       }[]
     | null;
@@ -321,6 +322,7 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
   const [threshold, setThreshold] = useState("500");
   const [streakKey, setStreakKey] = useState("challenge_completion");
   const [challengeType, setChallengeType] = useState("scripture");
+  const [tokenType, setTokenType] = useState("weekly_star");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -339,7 +341,8 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
       p_tier: badgeTier || undefined,
       p_rarity: rarity,
       p_streak_key: ruleType === "streak" ? streakKey : undefined,
-      p_challenge_type: ruleType === "challenge_type_count" ? challengeType : undefined
+      p_challenge_type: ruleType === "challenge_type_count" ? challengeType : undefined,
+      p_token_type: ruleType === "token_threshold" ? tokenType : undefined
     });
 
     setWorking(false);
@@ -420,6 +423,7 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
               <option value="adventure_count">Adventures completed</option>
               <option value="streak">Streak</option>
               <option value="challenge_type_count">Challenge type count</option>
+              <option value="token_threshold">Achievement token total</option>
               <option value="manual">Manual award</option>
             </select>
           </label>
@@ -446,6 +450,14 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
                 <option value="reading">Reading</option>
                 <option value="family">Family</option>
                 <option value="weekly">Weekly</option>
+              </select>
+            </label>
+          )}
+          {ruleType === "token_threshold" && (
+            <label>
+              Achievement token
+              <select value={tokenType} onChange={(event) => setTokenType(event.target.value)}>
+                <option value="weekly_star">Weekly Star</option>
               </select>
             </label>
           )}
@@ -724,7 +736,7 @@ export function AdminPortal({
         .order("created_at", { ascending: false }),
       supabase
         .from("badges")
-        .select("id,badge_key,name,description,rarity,badge_scope,badge_tier,badge_family_key,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,is_active)")
+        .select("id,badge_key,name,description,rarity,badge_scope,badge_tier,badge_family_key,is_active,badge_rules(id,rule_type,threshold_value,streak_key,challenge_type,token_type,is_active)")
         .order("created_at", { ascending: false }),
       supabase
         .from("rewards")
