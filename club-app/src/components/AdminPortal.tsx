@@ -886,7 +886,7 @@ export function AdminPortal({
           ) : section === "communications" ? (
             <CommunicationsAdmin role={role} />
           ) : section === "integrations" ? (
-            <IntegrationHealthAdmin />
+            <IntegrationHealthAdmin role={role} />
           ) : section === "leads" ? (
             <LeadsAdmin />
           ) : section === "challenges" ? (
