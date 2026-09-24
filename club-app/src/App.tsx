@@ -15,6 +15,8 @@ import { ParentProgressOverview } from "./components/ParentProgressOverview";
 import { FamilySettings } from "./components/FamilySettings";
 import { ActivitiesHub } from "./components/ActivitiesHub";
 import { KidHomeFocus } from "./components/KidHomeFocus";
+import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
+import { MembershipAccessCard } from "./components/MembershipAccessCard";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -703,13 +705,16 @@ function FamilyPortal({
               </nav>
 
               {parentSection === "settings" ? (
-                <FamilySettings
-                  user={user}
-                  householdId={household.id}
-                  householdName={household.name}
-                  timezone={household.timezone}
-                  onHouseholdUpdated={reload}
-                />
+                <>
+                  <MembershipAccessCard householdId={household.id} />
+                  <FamilySettings
+                    user={user}
+                    householdId={household.id}
+                    householdName={household.name}
+                    timezone={household.timezone}
+                    onHouseholdUpdated={reload}
+                  />
+                </>
               ) : (
                 <>
               <section className="parent-hero">
@@ -759,6 +764,13 @@ function FamilyPortal({
                   setKidSection("home");
                   setView("kid");
                 }}
+              />
+
+              <FamilyFaithAtHome
+                householdId={household.id}
+                user={user}
+                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                selectedChildId={selectedChild?.id ?? ""}
               />
 
               {selectedChild && (
