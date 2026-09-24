@@ -1,6 +1,9 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
+import { ChallengeDialog } from "./components/ChallengeDialog";
+import { RewardsPanel } from "./components/RewardsPanel";
+import { NotificationsPanel } from "./components/NotificationsPanel";
 
 type Household = {
   id: string;
@@ -30,6 +33,7 @@ type Challenge = {
   challenge_type: string;
   xp_reward: number;
   access_level: string;
+  parent_approval_required: boolean;
 };
 
 type ChildSnapshot = {
@@ -359,6 +363,7 @@ function FamilyPortal({
   });
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [addingChild, setAddingChild] = useState(false);
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
   const [view, setView] = useState<"kid" | "parent">("kid");
 
   const selectedChild = useMemo(
@@ -385,7 +390,7 @@ function FamilyPortal({
         .eq("status", "completed"),
       supabase
         .from("challenges")
-        .select("id,title,description,challenge_type,xp_reward,access_level")
+        .select("id,title,description,challenge_type,xp_reward,access_level,parent_approval_required")
         .eq("status", "published")
         .order("is_featured", { ascending: false })
         .order("created_at", { ascending: false })
@@ -497,7 +502,7 @@ function FamilyPortal({
                         </div>
                         <h3>{challenge.title}</h3>
                         <p>{challenge.description || "A new courage challenge is ready for you."}</p>
-                        <button className="secondary-button">Open challenge</button>
+                        <button className="secondary-button" type="button" onClick={() => setSelectedChallenge(challenge)}>Open challenge</button>
                       </article>
                     ))}
                   </div>
@@ -556,10 +561,28 @@ function FamilyPortal({
                 <article><span>Faith at Home</span><strong>Family devotionals and discussion guides will live here.</strong></article>
                 <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
               </section>
+
+              {selectedChild && (
+                <div className="family-detail-grid">
+                  <RewardsPanel childId={selectedChild.id} userId={user.id} />
+                  <NotificationsPanel userId={user.id} />
+                </div>
+              )}
             </>
           )}
         </main>
       </div>
+
+      {selectedChallenge && selectedChild && (
+        <ChallengeDialog
+          challenge={selectedChallenge}
+          childId={selectedChild.id}
+          onClose={() => setSelectedChallenge(null)}
+          onCompleted={async () => {
+            await loadChildDashboard();
+          }}
+        />
+      )}
     </div>
   );
 }
