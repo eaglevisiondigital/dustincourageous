@@ -62,6 +62,16 @@ type CommerceWebhook = {
   processed_at: string | null;
 };
 
+type IntegrationTest = {
+  provider_key: string;
+  test_type: string;
+  status: string;
+  started_at: string;
+  completed_at: string | null;
+  response_summary: string | null;
+  error_message: string | null;
+};
+
 type AppChannel = {
   app_channel: string;
   platform: string | null;
@@ -70,7 +80,7 @@ type AppChannel = {
   last_seen_at: string | null;
 };
 
-export function IntegrationHealthAdmin() {
+export function IntegrationHealthAdmin({ role }: { role: string }) {
   const [providers,setProviders]=useState<Provider[]>([]);
   const [deliveries,setDeliveries]=useState<DeliveryHealth[]>([]);
   const [workers,setWorkers]=useState<WorkerHealth[]>([]);
@@ -78,12 +88,16 @@ export function IntegrationHealthAdmin() {
   const [runs,setRuns]=useState<any[]>([]);
   const [commerce,setCommerce]=useState<CommerceReadiness|null>(null);
   const [commerceWebhooks,setCommerceWebhooks]=useState<CommerceWebhook[]>([]);
+  const [latestTests,setLatestTests]=useState<IntegrationTest[]>([]);
+  const [testing,setTesting]=useState("");
   const [message,setMessage]=useState("");
+
+  const canTestProviders=["super_admin","operations_admin"].includes(role);
 
   const load=useCallback(async()=>{
     setMessage("");
 
-    const [providerResult,deliveryResult,workerResult,channelResult,runResult,commerceResult,webhookResult]=await Promise.all([
+    const [providerResult,deliveryResult,workerResult,channelResult,runResult,commerceResult,webhookResult,testResult]=await Promise.all([
       supabase.from("integration_health_summary").select("*").order("provider_type"),
       supabase.from("notification_delivery_health").select("*").order("channel").order("status"),
       supabase.from("delivery_worker_health").select("*").order("worker_key"),
@@ -100,7 +114,11 @@ export function IntegrationHealthAdmin() {
       supabase
         .from("commerce_recent_webhooks")
         .select("*")
-        .limit(12)
+        .limit(12),
+      supabase
+        .from("integration_latest_tests")
+        .select("*")
+        .order("provider_key")
     ]);
 
     const error=
@@ -110,7 +128,8 @@ export function IntegrationHealthAdmin() {
       channelResult.error||
       runResult.error||
       commerceResult.error||
-      webhookResult.error;
+      webhookResult.error||
+      testResult.error;
     if(error){
       setMessage(error.message);
       return;
@@ -123,9 +142,31 @@ export function IntegrationHealthAdmin() {
     setRuns(runResult.data??[]);
     setCommerce((commerceResult.data??null) as CommerceReadiness|null);
     setCommerceWebhooks((webhookResult.data??[]) as CommerceWebhook[]);
+    setLatestTests((testResult.data??[]) as IntegrationTest[]);
   },[]);
 
   useEffect(()=>{void load();},[load]);
+
+  async function runProviderTest(providerKey:string){
+    if(!canTestProviders)return;
+    setTesting(providerKey);
+    setMessage("");
+
+    const {data,error}=await supabase.functions.invoke("integration-provider-test",{
+      body:{provider_key:providerKey}
+    });
+
+    setTesting("");
+
+    if(error||data?.error){
+      setMessage(data?.error||error?.message||"Provider test failed.");
+      await load();
+      return;
+    }
+
+    setMessage(data?.summary||"Safe provider test completed.");
+    await load();
+  }
 
   return (
     <div className="integration-health-admin">
@@ -161,6 +202,30 @@ export function IntegrationHealthAdmin() {
               <div><dt>Last success</dt><dd>{provider.last_success_at?new Date(provider.last_success_at).toLocaleString():"Never"}</dd></div>
             </dl>
             {provider.last_error&&<p className="integration-error">{provider.last_error}</p>}
+
+            {(() => {
+              const test=latestTests.find((item)=>item.provider_key===provider.provider_key);
+              return (
+                <div className="integration-test-box">
+                  <div>
+                    <span>Safe test</span>
+                    <strong>{test?.status?.replaceAll("_"," ")||"not run"}</strong>
+                    {test?.response_summary&&<small>{test.response_summary}</small>}
+                    {test?.error_message&&<small className="integration-error">{test.error_message}</small>}
+                  </div>
+                  {canTestProviders&&(
+                    <button
+                      type="button"
+                      className="text-button small"
+                      disabled={Boolean(testing)}
+                      onClick={()=>void runProviderTest(provider.provider_key)}
+                    >
+                      {testing===provider.provider_key?"Testing...":"Run safe test"}
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
           </article>
         ))}
       </div>
