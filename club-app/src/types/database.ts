@@ -1862,7 +1862,46 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      admin_create_badge_with_rule: {
+        Args: {
+          p_badge_key: string
+          p_challenge_type?: string
+          p_description?: string
+          p_name: string
+          p_rarity?: string
+          p_rule_type?: string
+          p_streak_key?: string
+          p_threshold_value?: number
+        }
+        Returns: string
+      }
+      admin_create_challenge: {
+        Args: {
+          p_access_level?: string
+          p_challenge_type: string
+          p_description?: string
+          p_instructions?: string
+          p_parent_approval_required?: boolean
+          p_slug: string
+          p_status?: string
+          p_steps?: Json
+          p_title: string
+          p_xp_reward?: number
+        }
+        Returns: string
+      }
+      admin_create_reward: {
+        Args: {
+          p_access_level?: string
+          p_description?: string
+          p_inventory_quantity?: number
+          p_name: string
+          p_reward_key: string
+          p_reward_type?: string
+          p_xp_required?: number
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
