@@ -60,6 +60,7 @@ export function KidHomeFocus({
 }) {
   const [book, setBook] = useState<Book | null>(null);
   const [summary, setSummary] = useState<AdventureSummary | null>(null);
+  const [bookProgressStatus, setBookProgressStatus] = useState<string | null>(null);
   const [steps, setSteps] = useState<AdventureStep[]>([]);
   const [powerVerse, setPowerVerse] = useState<PowerVerse | null>(null);
   const [error, setError] = useState("");
@@ -98,10 +99,11 @@ export function KidHomeFocus({
     if (!nextBook) {
       setSummary(null);
       setSteps([]);
+      setBookProgressStatus(null);
       return;
     }
 
-    const [summaryResult, stepsResult] = await Promise.all([
+    const [summaryResult, stepsResult, progressResult] = await Promise.all([
       supabase.rpc("get_child_book_adventure_summary", {
         p_child_profile_id: childId,
         p_book_id: nextBook.id
@@ -109,16 +111,19 @@ export function KidHomeFocus({
       supabase.rpc("get_child_book_adventure_steps", {
         p_child_profile_id: childId,
         p_book_id: nextBook.id
-      })
+      }),
+      supabase.from("child_book_progress").select("status")
+        .eq("child_profile_id", childId).eq("book_id", nextBook.id).maybeSingle()
     ]);
 
-    if (summaryResult.error || stepsResult.error) {
-      setError(summaryResult.error?.message || stepsResult.error?.message || "Unable to load adventure.");
+    if (summaryResult.error || stepsResult.error || progressResult.error) {
+      setError(summaryResult.error?.message || stepsResult.error?.message || progressResult.error?.message || "Unable to load adventure.");
       return;
     }
 
     setSummary(((summaryResult.data ?? [])[0] ?? null) as AdventureSummary | null);
     setSteps((stepsResult.data ?? []) as AdventureStep[]);
+    setBookProgressStatus(progressResult.data?.status ?? null);
   }, [childId]);
 
   useEffect(() => {
@@ -132,8 +137,8 @@ export function KidHomeFocus({
   }, [load]);
 
   const nextStep = useMemo(
-    () => steps.find((step) => step.is_required && !step.completed) ?? null,
-    [steps]
+    () => bookProgressStatus === "adventure_completed" ? null : steps.find((step) => step.is_required && !step.completed) ?? null,
+    [steps, bookProgressStatus]
   );
 
   function openNext() {
@@ -169,20 +174,20 @@ export function KidHomeFocus({
           {book && <img src={coverUrl(book.cover_asset_key)} alt={book.title} />}
         </div>
         <div className="continue-adventure-copy">
-          <p className="eyebrow red">Continue Adventure</p>
+          <p className="eyebrow red">{bookProgressStatus === "adventure_completed" ? "Adventure Complete" : "Continue Adventure"}</p>
           <h2>{book ? "Book #" + (book.book_number ?? "") + ": " + book.title : "Your next adventure"}</h2>
           {summary ? (
             <>
               <p>
                 {summary.completed_required_steps} of {summary.required_steps} required steps complete.
-                {nextStep ? " Next: " + nextStep.title + "." : " You are ready to finish the full Book Adventure!"}
+                {bookProgressStatus === "adventure_completed" ? " Full Book Adventure completed!" : nextStep ? " Next: " + nextStep.title + "." : " You are ready to finish the full Book Adventure!"}
               </p>
               <div className="level-progress-track continue-adventure-meter">
                 <span style={{width: summary.progress_percent + "%"}} />
               </div>
               <div className="continue-adventure-meta">
                 <strong>{summary.progress_percent}%</strong>
-                <span>{nextStep ? nextStep.step_type.replaceAll("_"," ") : "ready to complete"}</span>
+                <span>{bookProgressStatus === "adventure_completed" ? "adventure complete" : nextStep ? nextStep.step_type.replaceAll("_"," ") : "ready to complete"}</span>
               </div>
             </>
           ) : (
