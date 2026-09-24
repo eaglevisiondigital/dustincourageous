@@ -244,6 +244,62 @@ export type Database = {
           },
         ]
       }
+      adventure_groups: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          group_key: string
+          group_type: string
+          id: string
+          maximum_age: number | null
+          metadata: Json
+          minimum_age: number | null
+          name: string
+          organization_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          group_key: string
+          group_type?: string
+          id?: string
+          maximum_age?: number | null
+          metadata?: Json
+          minimum_age?: number | null
+          name: string
+          organization_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          group_key?: string
+          group_type?: string
+          id?: string
+          maximum_age?: number | null
+          metadata?: Json
+          minimum_age?: number | null
+          name?: string
+          organization_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adventure_groups_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       adventures: {
         Row: {
           access_level: string
@@ -1502,6 +1558,71 @@ export type Database = {
           },
         ]
       }
+      child_group_memberships: {
+        Row: {
+          child_profile_id: string
+          ended_at: string | null
+          group_id: string
+          guardian_approved_at: string
+          guardian_approved_by: string
+          id: string
+          joined_at: string
+          metadata: Json
+          status: string
+        }
+        Insert: {
+          child_profile_id: string
+          ended_at?: string | null
+          group_id: string
+          guardian_approved_at?: string
+          guardian_approved_by: string
+          id?: string
+          joined_at?: string
+          metadata?: Json
+          status?: string
+        }
+        Update: {
+          child_profile_id?: string
+          ended_at?: string | null
+          group_id?: string
+          guardian_approved_at?: string
+          guardian_approved_by?: string
+          id?: string
+          joined_at?: string
+          metadata?: Json
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_group_memberships_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_group_memberships_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_group_memberships_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_group_memberships_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_identity_progress: {
         Row: {
           child_profile_id: string
@@ -2326,6 +2447,86 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_challenge_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string
+          challenge_id: string
+          due_at: string | null
+          group_id: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by: string
+          challenge_id: string
+          due_at?: string | null
+          group_id: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string
+          challenge_id?: string
+          due_at?: string | null
+          group_id?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_challenge_assignments_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_challenge_assignments_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_leaders: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          role?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_leaders_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
             referencedColumns: ["id"]
           },
         ]
@@ -3263,6 +3464,83 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          branding: Json
+          created_at: string
+          created_by: string
+          id: string
+          logo_asset_key: string | null
+          metadata: Json
+          name: string
+          organization_key: string
+          organization_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          branding?: Json
+          created_at?: string
+          created_by: string
+          id?: string
+          logo_asset_key?: string | null
+          metadata?: Json
+          name: string
+          organization_key: string
+          organization_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          branding?: Json
+          created_at?: string
+          created_by?: string
+          id?: string
+          logo_asset_key?: string | null
+          metadata?: Json
+          name?: string
+          organization_key?: string
+          organization_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       plan_entitlements: {
         Row: {
@@ -4727,6 +5005,14 @@ export type Database = {
         Args: { p_book_id: string; p_child_profile_id: string }
         Returns: boolean
       }
+      create_group_join_code: {
+        Args: {
+          p_expires_in_days?: number
+          p_group_id: string
+          p_max_uses?: number
+        }
+        Returns: string
+      }
       create_household_invitation: {
         Args: {
           p_email: string
@@ -4782,6 +5068,23 @@ export type Database = {
           total_steps: number
         }[]
       }
+      get_group_progress_summary: {
+        Args: { p_challenge_id: string; p_group_id: string }
+        Returns: {
+          active_children: number
+          completed_children: number
+          completion_percent: number
+        }[]
+      }
+      get_group_roster: {
+        Args: { p_group_id: string }
+        Returns: {
+          child_profile_id: string
+          display_name: string
+          joined_at: string
+          membership_status: string
+        }[]
+      }
       get_household_adults: {
         Args: { p_household_id: string }
         Returns: {
@@ -4799,6 +5102,21 @@ export type Database = {
           locked_until: string
         }[]
       }
+      join_child_to_group: {
+        Args: { p_child_profile_id: string; p_code: string }
+        Returns: string
+      }
+      preview_group_join_code: {
+        Args: { p_code: string }
+        Returns: {
+          expires_at: string
+          group_id: string
+          group_name: string
+          organization_name: string
+          organization_type: string
+          spots_remaining: number
+        }[]
+      }
       remove_household_adult: {
         Args: { p_household_id: string; p_user_id: string }
         Returns: undefined
@@ -4814,6 +5132,10 @@ export type Database = {
       verify_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }
         Returns: boolean
+      }
+      withdraw_child_from_group: {
+        Args: { p_child_profile_id: string; p_group_id: string }
+        Returns: undefined
       }
     }
     Enums: {
