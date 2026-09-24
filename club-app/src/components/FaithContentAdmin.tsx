@@ -246,7 +246,7 @@ export function FaithContentAdmin() {
             <label className="full">Live It<textarea value={liveIt} onChange={e=>setLiveIt(e.target.value)} /></label>
             <label className="full">Give It Away<textarea value={giveItAway} onChange={e=>setGiveItAway(e.target.value)} /></label>
             <label>Memorize XP<input type="number" min="0" value={memorizeXp} onChange={e=>setMemorizeXp(e.target.value)} /></label>
-            <label>Status<select value={powerStatus} onChange={e=>setPowerStatus(e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
+            <label>Status<select value={powerStatus} onChange={e=>setPowerStatus(e.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
             <label className="admin-check full"><input type="checkbox" checked={powerFeatured} onChange={e=>setPowerFeatured(e.target.checked)} /> Featured Power Verse</label>
             <button className="primary-button full" disabled={working}>Create Power Verse</button>
           </form>
@@ -261,7 +261,7 @@ export function FaithContentAdmin() {
               <label>Title<input required value={seriesTitle} onChange={e=>{setSeriesTitle(e.target.value); if(!seriesSlug)setSeriesSlug(slugify(e.target.value));}} /></label>
               <label>Slug<input required value={seriesSlug} onChange={e=>setSeriesSlug(slugify(e.target.value))} /></label>
               <label className="full">Description<textarea value={seriesDescription} onChange={e=>setSeriesDescription(e.target.value)} /></label>
-              <label>Status<select value={seriesStatus} onChange={e=>setSeriesStatus(e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
+              <label>Status<select value={seriesStatus} onChange={e=>setSeriesStatus(e.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
               <button className="primary-button full" disabled={working}>Create Series</button>
             </form>
           </section>
@@ -274,7 +274,7 @@ export function FaithContentAdmin() {
               <label className="full">Title<input required value={dayTitle} onChange={e=>setDayTitle(e.target.value)} /></label>
               <label className="full">Scripture<select value={dayScriptureId} onChange={e=>setDayScriptureId(e.target.value)}>{scriptureOptions}</select></label>
               <label className="full">Body<textarea required value={dayBody} onChange={e=>setDayBody(e.target.value)} /></label>
-              <label className="full">Prayer prompt<textarea value={dayPrayer} onChange={e=>setDayPrayer(e.target.value)} /></label>
+              <label className="full">Prayer prompt <span className="optional">(must begin “Dear God,”)</span><textarea value={dayPrayer} onChange={e=>setDayPrayer(e.target.value)} placeholder="Dear God, ..." /></label>
               <label className="full">Action step<textarea value={dayAction} onChange={e=>setDayAction(e.target.value)} /></label>
               <button className="secondary-button full" disabled={working}>Add Devotional Day</button>
             </form>
@@ -291,8 +291,8 @@ export function FaithContentAdmin() {
             <label>Category<input value={prayerCategory} onChange={e=>setPrayerCategory(e.target.value)} /></label>
             <label>XP<input type="number" min="0" value={prayerXp} onChange={e=>setPrayerXp(e.target.value)} /></label>
             <label className="full">Scripture<select value={prayerScriptureId} onChange={e=>setPrayerScriptureId(e.target.value)}>{scriptureOptions}</select></label>
-            <label className="full">Prompt<textarea required value={prayerText} onChange={e=>setPrayerText(e.target.value)} /></label>
-            <label>Status<select value={prayerStatus} onChange={e=>setPrayerStatus(e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
+            <label className="full">Prayer <span className="optional">(must begin “Dear God,”)</span><textarea required value={prayerText} onChange={e=>setPrayerText(e.target.value)} placeholder="Dear God, ..." /></label>
+            <label>Status<select value={prayerStatus} onChange={e=>setPrayerStatus(e.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
             <button className="primary-button full" disabled={working}>Create Prayer Prompt</button>
           </form>
         </section>
@@ -309,7 +309,7 @@ export function FaithContentAdmin() {
             <label className="full">Explanation<textarea value={identityExplanation} onChange={e=>setIdentityExplanation(e.target.value)} /></label>
             <label className="full">Say It<textarea value={identitySayIt} onChange={e=>setIdentitySayIt(e.target.value)} /></label>
             <label>Sort order<input type="number" value={identitySort} onChange={e=>setIdentitySort(e.target.value)} /></label>
-            <label>Status<select value={identityStatus} onChange={e=>setIdentityStatus(e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
+            <label>Status<select value={identityStatus} onChange={e=>setIdentityStatus(e.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
             <button className="primary-button full" disabled={working}>Create Identity Truth</button>
           </form>
         </section>
