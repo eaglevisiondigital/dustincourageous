@@ -4055,6 +4055,22 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_family_faith_guide: {
+        Args: {
+          p_access_level?: string
+          p_book_id?: string
+          p_description?: string
+          p_discussion_prompt?: string
+          p_family_action?: string
+          p_guide_key: string
+          p_prayer_prompt?: string
+          p_scripture_passage_id?: string
+          p_sort_order?: number
+          p_status?: string
+          p_title: string
+        }
+        Returns: string
+      }
       admin_create_identity_truth: {
         Args: {
           p_access_level?: string
@@ -4174,6 +4190,10 @@ export type Database = {
           p_sort_order?: number
         }
         Returns: undefined
+      }
+      admin_link_book_reward: {
+        Args: { p_book_id: string; p_milestone?: string; p_reward_id: string }
+        Returns: string
       }
       complete_child_book_adventure: {
         Args: { p_book_id: string; p_child_profile_id: string }
