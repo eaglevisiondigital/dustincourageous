@@ -415,6 +415,68 @@ export type Database = {
         }
         Relationships: []
       }
+      automated_notification_log: {
+        Row: {
+          created_at: string
+          household_id: string | null
+          id: string
+          notification_id: string | null
+          rule_id: string
+          source_id: string
+          source_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          notification_id?: string | null
+          rule_id: string
+          source_id: string
+          source_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          notification_id?: string | null
+          rule_id?: string
+          source_id?: string
+          source_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automated_notification_log_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "automated_notification_log_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automated_notification_log_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "user_notifications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automated_notification_log_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "notification_reminder_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       badge_awards: {
         Row: {
           awarded_at: string
@@ -4351,6 +4413,79 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_reminder_rules: {
+        Row: {
+          created_at: string
+          created_by: string
+          delivery_channels: string[]
+          group_id: string | null
+          id: string
+          lead_minutes: number
+          metadata: Json
+          name: string
+          organization_id: string | null
+          rule_key: string
+          rule_type: string
+          status: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          delivery_channels?: string[]
+          group_id?: string | null
+          id?: string
+          lead_minutes: number
+          metadata?: Json
+          name: string
+          organization_id?: string | null
+          rule_key: string
+          rule_type: string
+          status?: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          delivery_channels?: string[]
+          group_id?: string | null
+          id?: string
+          lead_minutes?: number
+          metadata?: Json
+          name?: string
+          organization_id?: string | null
+          rule_key?: string
+          rule_type?: string
+          status?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_reminder_rules_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_reminder_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_reminder_rules_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_templates: {
         Row: {
           body: string
@@ -6379,6 +6514,19 @@ export type Database = {
           p_threshold_value?: number
           p_tier?: string
           p_token_type?: string
+        }
+        Returns: string
+      }
+      admin_create_notification_reminder_rule: {
+        Args: {
+          p_delivery_channels?: string[]
+          p_group_id?: string
+          p_lead_minutes: number
+          p_name: string
+          p_organization_id?: string
+          p_rule_key: string
+          p_rule_type: string
+          p_template_id: string
         }
         Returns: string
       }
