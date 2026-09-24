@@ -5708,6 +5708,14 @@ export type Database = {
           invitation_token: string
         }[]
       }
+      dc_preflight_scan: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: {
+          issue_code: string
+          message: string
+          severity: string
+        }[]
+      }
       get_child_achievement_progress: {
         Args: { p_child_profile_id: string }
         Returns: {
