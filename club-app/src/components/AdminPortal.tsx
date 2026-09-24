@@ -9,6 +9,8 @@ import { ContentAdmin } from "./ContentAdmin";
 import { FamilyFaithAdmin } from "./FamilyFaithAdmin";
 import { CommerceAdmin } from "./CommerceAdmin";
 import { OrganizationsAdmin } from "./OrganizationsAdmin";
+import { EventsAdmin } from "./EventsAdmin";
+import { SupportAdmin } from "./SupportAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -735,7 +737,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "store" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -822,9 +824,11 @@ export function AdminPortal({
             ["content", "Content Studio"],
             ["media", "Media Library"],
             ["organizations", "Organizations"],
+            ["events", "Events"],
             ["store", "Store & Orders"],
             ["badges", "Badges"],
             ["rewards", "Rewards"],
+            ["support", "Support"],
             ["fulfillment", "Fulfillment"]
           ].map(([key, label]) => (
             <button
@@ -852,7 +856,7 @@ export function AdminPortal({
 
           {error && <div className="form-message">{error}</div>}
 
-          {!canCreateContent && section !== "fulfillment" ? (
+          {!canCreateContent && section !== "fulfillment" && section !== "support" ? (
             <section className="admin-card">
               <h2>Read-only access</h2>
               <p className="muted">Your current admin role can review this area but cannot create or edit content.</p>
@@ -873,12 +877,16 @@ export function AdminPortal({
             <MediaAdmin />
           ) : section === "organizations" ? (
             <OrganizationsAdmin />
+          ) : section === "events" ? (
+            <EventsAdmin />
           ) : section === "store" ? (
             <CommerceAdmin canOperate={canFulfill} />
           ) : section === "badges" ? (
             <BadgeAdmin badges={badges} refresh={refresh} />
           ) : section === "rewards" ? (
             <RewardAdmin rewards={rewards} refresh={refresh} />
+          ) : section === "support" ? (
+            <SupportAdmin />
           ) : (
             <RedemptionAdmin redemptions={redemptions} canFulfill={canFulfill} refresh={refresh} />
           )}
