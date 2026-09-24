@@ -1577,3 +1577,42 @@ select:focus {
 @media (max-width:800px) {
   .parent-progress-grid { grid-template-columns:repeat(2,1fr); }
 }
+
+
+/* Media library admin */
+.media-admin-row {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #0a0a0a;
+}
+.media-admin-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #1b1b1b;
+  color: var(--gold);
+  font-size: .68rem;
+  font-weight: 950;
+}
+.media-admin-row strong,
+.media-admin-row small,
+.media-admin-row a {
+  display: block;
+}
+.media-admin-row small {
+  margin-top: 4px;
+  color: #7f7a74;
+  overflow-wrap: anywhere;
+}
+.media-admin-row a {
+  margin-top: 7px;
+  color: #e0bf62;
+  font-size: .72rem;
+}
