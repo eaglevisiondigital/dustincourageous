@@ -27,6 +27,7 @@ import { ParentApprovals } from "./components/ParentApprovals";
 import { InviteAccept } from "./components/InviteAccept";
 import { OrganizationInviteAccept } from "./components/OrganizationInviteAccept";
 import { LeaderOnlyPortal } from "./components/LeaderOnlyPortal";
+import { registerCurrentInstallation } from "./lib/installations";
 
 type Household = {
   id: string;
@@ -1009,6 +1010,7 @@ export default function App() {
     supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
       if (data.session?.user) {
+        void registerCurrentInstallation();
         try {
           await loadFamily(data.session.user);
         } catch (error) {
@@ -1031,6 +1033,7 @@ export default function App() {
         return;
       }
 
+      void registerCurrentInstallation();
       setLoading(true);
       void loadFamily(nextSession.user)
         .catch((error) => console.error("Unable to load account", error))
