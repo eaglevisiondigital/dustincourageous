@@ -42,6 +42,7 @@ type Challenge = {
 type ChildSnapshot = {
   xp: number;
   badges: number;
+  weeklyStars: number;
   streak: number;
   completedChallenges: number;
 };
@@ -370,6 +371,7 @@ function FamilyPortal({
   const [snapshot, setSnapshot] = useState<ChildSnapshot>({
     xp: 0,
     badges: 0,
+    weeklyStars: 0,
     streak: 0,
     completedChallenges: 0
   });
@@ -392,9 +394,20 @@ function FamilyPortal({
   const loadChildDashboard = useCallback(async () => {
     if (!selectedChild) return;
 
-    const [xpResult, badgeResult, streakResult, progressResult, challengeResult] = await Promise.all([
+    const [xpResult, badgeResult, activeStreakBadgeResult, tokenResult, streakResult, progressResult, challengeResult] = await Promise.all([
       supabase.from("child_xp_totals").select("total_xp").eq("child_profile_id", selectedChild.id).maybeSingle(),
       supabase.from("badge_awards").select("id", { count: "exact", head: true }).eq("child_profile_id", selectedChild.id),
+      supabase
+        .from("child_active_streak_badges")
+        .select("badge_id", { count: "exact", head: true })
+        .eq("child_profile_id", selectedChild.id)
+        .eq("is_active", true),
+      supabase
+        .from("child_token_totals")
+        .select("total")
+        .eq("child_profile_id", selectedChild.id)
+        .eq("token_type", "weekly_star")
+        .maybeSingle(),
       supabase
         .from("child_streaks")
         .select("current_count")
@@ -417,7 +430,8 @@ function FamilyPortal({
 
     setSnapshot({
       xp: Number(xpResult.data?.total_xp ?? 0),
-      badges: badgeResult.count ?? 0,
+      badges: (badgeResult.count ?? 0) + (activeStreakBadgeResult.count ?? 0),
+      weeklyStars: Number(tokenResult.data?.total ?? 0),
       streak: streakResult.data?.current_count ?? 0,
       completedChallenges: progressResult.count ?? 0
     });
@@ -517,8 +531,9 @@ function FamilyPortal({
                 <img src={shieldUrl} alt="" />
               </section>
 
-              <section className="stats-grid">
+              <section className="stats-grid five-up">
                 <article><strong>{snapshot.xp}</strong><span>XP earned</span></article>
+                <article><strong>{snapshot.weeklyStars}</strong><span>Weekly stars</span></article>
                 <article><strong>{snapshot.badges}</strong><span>Badges</span></article>
                 <article><strong>{snapshot.streak}</strong><span>Day streak</span></article>
                 <article><strong>{snapshot.completedChallenges}</strong><span>Challenges won</span></article>
