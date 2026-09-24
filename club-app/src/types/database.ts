@@ -2358,6 +2358,7 @@ export type Database = {
           child_profile_id: string | null
           completed_at: string | null
           created_at: string
+          export_expires_at: string | null
           export_reference: string | null
           household_id: string
           id: string
@@ -2376,6 +2377,7 @@ export type Database = {
           child_profile_id?: string | null
           completed_at?: string | null
           created_at?: string
+          export_expires_at?: string | null
           export_reference?: string | null
           household_id: string
           id?: string
@@ -2394,6 +2396,7 @@ export type Database = {
           child_profile_id?: string | null
           completed_at?: string | null
           created_at?: string
+          export_expires_at?: string | null
           export_reference?: string | null
           household_id?: string
           id?: string
@@ -6519,6 +6522,7 @@ export type Database = {
           spots_remaining: number
         }[]
       }
+      privacy_export_payload: { Args: { p_request_id: string }; Returns: Json }
       publish_dc_entity: {
         Args: {
           p_entity_id: string
