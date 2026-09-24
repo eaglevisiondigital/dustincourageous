@@ -137,7 +137,7 @@ export function BookAdmin() {
           <label className="full">Description<textarea value={description} onChange={e=>setDescription(e.target.value)} /></label>
           <label>Cover asset key<input value={coverAssetKey} onChange={e=>setCoverAssetKey(e.target.value)} placeholder="book2-front.jpeg" /></label>
           <label>Release date<input type="date" value={releaseDate} onChange={e=>setReleaseDate(e.target.value)} /></label>
-          <label>Status<select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="coming_soon">Coming Soon</option><option value="published">Published</option></select></label>
+          <label>Status<select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="coming_soon">Coming Soon</option><option value="published" disabled>Publish through DC Governance</option></select></label>
           <button className="primary-button full" disabled={working}>Create Book</button>
         </form>
       </section>
