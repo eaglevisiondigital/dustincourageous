@@ -59,6 +59,12 @@ type EntityStatus = {
   approval_current: boolean | null;
 };
 
+type PreflightIssue = {
+  issue_code: string;
+  severity: string;
+  message: string;
+};
+
 type Review = {
   id: string;
   entity_type: string;
@@ -100,6 +106,7 @@ export function GovernanceAdmin() {
   const [characters,setCharacters]=useState<Character[]>([]);
   const [entities,setEntities]=useState<EntityStatus[]>([]);
   const [reviews,setReviews]=useState<Review[]>([]);
+  const [preflight,setPreflight]=useState<PreflightIssue[]>([]);
   const [selectedEntityKey,setSelectedEntityKey]=useState("");
   const [notes,setNotes]=useState("");
   const [reviewNotes,setReviewNotes]=useState("");
@@ -176,6 +183,26 @@ export function GovernanceAdmin() {
     ()=>entities.find((item)=>item.entity_type+":"+item.entity_id===selectedEntityKey)??null,
     [entities,selectedEntityKey]
   );
+
+  useEffect(()=>{
+    if(!selectedEntity){
+      setPreflight([]);
+      return;
+    }
+
+    void supabase
+      .rpc("dc_preflight_scan",{
+        p_entity_type:selectedEntity.entity_type,
+        p_entity_id:selectedEntity.entity_id
+      })
+      .then(({data,error})=>{
+        if(error){
+          setPreflight([{issue_code:"preflight_error",severity:"error",message:error.message}]);
+          return;
+        }
+        setPreflight((data??[]) as PreflightIssue[]);
+      });
+  },[selectedEntity?.entity_type,selectedEntity?.entity_id,selectedEntity?.entity_updated_at]);
 
   const selectedReview=useMemo(
     ()=>selectedEntity
@@ -321,13 +348,38 @@ export function GovernanceAdmin() {
             </div>
           )}
 
+          <div className="governance-preflight">
+            <div className="section-heading compact-heading">
+              <div>
+                <p className="eyebrow gold">Automatic Preflight</p>
+                <h3>{preflight.length ? "Review these items" : "Preflight passed"}</h3>
+              </div>
+              <span className={preflight.some((item)=>item.severity==="error")?"status-chip":"status-chip done"}>
+                {preflight.filter((item)=>item.severity==="error").length} errors
+              </span>
+            </div>
+
+            {preflight.length ? (
+              <div className="governance-preflight-list">
+                {preflight.map((item)=>(
+                  <article className={item.severity==="error"?"error":"warning"} key={item.issue_code+item.message}>
+                    <strong>{item.severity}</strong>
+                    <span>{item.message}</span>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="muted">No automatic DC preflight issues were found. Human governance review is still required.</p>
+            )}
+          </div>
+
           {!selectedReview||selectedReview.status==="approved"?(
             <>
               <label>
                 Review request note <span className="optional">(optional)</span>
                 <textarea value={notes} onChange={(event)=>setNotes(event.target.value)} placeholder="What changed or what should the reviewer pay attention to?"/>
               </label>
-              <button className="secondary-button" disabled={!selectedEntity||working} onClick={()=>void requestReview()}>
+              <button className="secondary-button" disabled={!selectedEntity||working||preflight.some((item)=>item.severity==="error")} onClick={()=>void requestReview()}>
                 Request new DC review
               </button>
             </>
