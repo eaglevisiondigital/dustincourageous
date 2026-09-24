@@ -984,6 +984,10 @@ export default function App() {
 
     setHousehold(currentHousehold);
 
+    void supabase.rpc("claim_marketing_leads_for_household", {
+      p_household_id: currentHousehold.id
+    });
+
     const storedReferralCode = localStorage.getItem("dc_referral_code");
     if (storedReferralCode) {
       void supabase
