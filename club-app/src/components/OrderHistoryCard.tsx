@@ -36,8 +36,10 @@ function money(cents:number,currency:string){
 export function OrderHistoryCard({ householdId }: { householdId: string }) {
   const [orders,setOrders]=useState<Order[]>([]);
   const [error,setError]=useState("");
+  const [refreshing,setRefreshing]=useState(false);
 
   const load=useCallback(async()=>{
+    setRefreshing(true);
     setError("");
     const {data,error:loadError}=await supabase
       .from("orders")
@@ -48,10 +50,12 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
 
     if(loadError){
       setError(loadError.message);
+      setRefreshing(false);
       return;
     }
 
     setOrders((data??[]) as Order[]);
+    setRefreshing(false);
   },[householdId]);
 
   useEffect(()=>{void load();},[load]);
@@ -63,7 +67,9 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
           <p className="eyebrow gold">Purchases</p>
           <h2>Orders & fulfillment</h2>
         </div>
-        <span className="pill">{orders.length} order{orders.length===1?"":"s"}</span>
+        <button className="secondary-button" type="button" disabled={refreshing} onClick={()=>void load()}>
+          {refreshing?"Checking...":"Refresh orders"}
+        </button>
       </div>
 
       {error&&<div className="form-message">{error}</div>}
@@ -79,7 +85,9 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
                     <strong>Order #{order.order_number}</strong>
                     <span>{new Date(order.created_at).toLocaleDateString()} · {money(order.total_cents,order.currency)}</span>
                   </div>
-                  <span className={order.status==="fulfilled"?"status-chip done":"status-chip"}>{order.status.replaceAll("_"," ")}</span>
+                  <span className={["paid","fulfilled"].includes(order.status)?"status-chip done":"status-chip"}>
+                    {order.status==="pending_payment"?"Payment pending":order.status==="draft"?"Checkout started":order.status.replaceAll("_"," ")}
+                  </span>
                 </div>
 
                 <div className="order-item-list">

@@ -48,6 +48,18 @@ function checkoutStorageKey(householdId: string) {
   return `dc-store-checkout:${householdId}`;
 }
 
+function rememberedCheckout(householdId: string) {
+  try { return sessionStorage.getItem(checkoutStorageKey(householdId)); }
+  catch { return null; }
+}
+
+function rememberCheckout(householdId: string, sessionId: string | null) {
+  try {
+    if (sessionId) sessionStorage.setItem(checkoutStorageKey(householdId), sessionId);
+    else sessionStorage.removeItem(checkoutStorageKey(householdId));
+  } catch { /* The order remains available in the household order history. */ }
+}
+
 function readCart(householdId: string): CartLine[] {
   try {
     const saved: unknown = JSON.parse(localStorage.getItem(cartStorageKey(householdId)) || "[]");
@@ -107,13 +119,15 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   const [message, setMessage] = useState("");
   const [checkoutSummary, setCheckoutSummary] = useState<CheckoutResult | null>(null);
   const [checkoutReadiness, setCheckoutReadiness] = useState<CheckoutReadiness | null>(null);
+  const [checkoutUncertain, setCheckoutUncertain] = useState(() => !!rememberedCheckout(householdId));
   const [returnStatus, setReturnStatus] = useState<ReturnStatus | null>(() =>
+    rememberedCheckout(householdId) ||
     ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
       ? "checking" : null
   );
 
   const checkReturnedCheckout = useCallback(async () => {
-    const sessionId = sessionStorage.getItem(checkoutStorageKey(householdId));
+    const sessionId = rememberedCheckout(householdId);
     if (!sessionId) {
       setReturnStatus("unavailable");
       return;
@@ -131,11 +145,13 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       setReturnStatus("unavailable");
     } else if (["paid", "fulfilled", "partially_fulfilled"].includes(data.order_status ?? "")) {
       setReturnStatus("paid");
+      setCheckoutUncertain(false);
       setCart([]);
-      sessionStorage.removeItem(checkoutStorageKey(householdId));
+      rememberCheckout(householdId, null);
     } else if (["canceled", "expired", "failed"].includes(data.checkout_status ?? "") ||
       ["canceled", "failed"].includes(data.order_status ?? "")) {
       setReturnStatus("canceled");
+      setCheckoutUncertain(false);
     } else {
       setReturnStatus("pending");
     }
@@ -351,22 +367,20 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       });
 
     if (functionError || functionData?.error) {
-      await supabase.rpc("cancel_checkout_session", {
-        p_checkout_session_id: summary.checkout_session_id
-      });
-
       setWorking(false);
 
       if (functionData?.code === "provider_not_configured") {
-        setMessage(
-          "The Dustin Courageous store is ready, but live payment processing has not been activated yet. No charge occurred and the temporary inventory reservation was released."
-        );
+        const { error: cancelError } = await supabase.rpc("cancel_checkout_session", {
+          p_checkout_session_id: summary.checkout_session_id
+        });
+        setMessage(cancelError
+          ? "Live payment is not connected. Your order could not start; check Orders & fulfillment for its status."
+          : "Live payment is not connected. No charge occurred and the temporary inventory reservation was released.");
       } else {
-        setMessage(
-          functionData?.error ||
-            functionError?.message ||
-            "Checkout could not be started. No charge occurred."
-        );
+        rememberCheckout(householdId, summary.checkout_session_id);
+        setCheckoutUncertain(true);
+        setReturnStatus("pending");
+        setMessage("Checkout could not be confirmed. Check the order status before starting another payment. The reservation will expire automatically if payment does not complete.");
       }
       return;
     }
@@ -377,15 +391,15 @@ export function FamilyStore({ householdId }: { householdId: string }) {
         : "";
 
     if (!checkoutUrl) {
-      await supabase.rpc("cancel_checkout_session", {
-        p_checkout_session_id: summary.checkout_session_id
-      });
       setWorking(false);
-      setMessage("The payment provider did not return a checkout page. No charge occurred.");
+      rememberCheckout(householdId, summary.checkout_session_id);
+      setCheckoutUncertain(true);
+      setReturnStatus("pending");
+      setMessage("A payment page was not returned. Check the order status before starting another payment.");
       return;
     }
 
-    sessionStorage.setItem(checkoutStorageKey(householdId), summary.checkout_session_id);
+    rememberCheckout(householdId, summary.checkout_session_id);
     window.location.assign(checkoutUrl);
   }
 
@@ -602,11 +616,13 @@ export function FamilyStore({ householdId }: { householdId: string }) {
               <button
                 className="primary-button store-checkout-button"
                 type="button"
-                disabled={working || !checkoutReadiness?.provider_configured}
+                disabled={working || checkoutUncertain || !checkoutReadiness?.provider_configured}
                 onClick={() => void checkout()}
               >
                 {working
                   ? "Preparing secure checkout..."
+                  : checkoutUncertain
+                    ? "Check current order first"
                   : checkoutReadiness?.provider_configured
                     ? "Continue to secure checkout"
                     : "Checkout coming soon"}
