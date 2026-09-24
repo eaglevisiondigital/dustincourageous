@@ -3761,3 +3761,21 @@ select:focus {
   .privacy-request-history > div { grid-template-columns: 1fr auto; }
   .privacy-request-history .text-button { grid-column: 1 / -1; justify-self: start; }
 }
+
+
+/* Privacy export actions */
+.privacy-request-history .secondary-button.compact {
+  padding: 8px 10px;
+  font-size: .7rem;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .privacy-request-history > div {
+    grid-template-columns: 1fr auto;
+  }
+  .privacy-request-history .secondary-button,
+  .privacy-request-history .text-button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
