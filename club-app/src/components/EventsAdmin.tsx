@@ -119,7 +119,7 @@ export function EventsAdmin(){
           <label>Virtual URL<input type="url" value={virtualUrl} onChange={(event)=>setVirtualUrl(event.target.value)}/></label>
           <label className="full">Location address<input value={locationAddress} onChange={(event)=>setLocationAddress(event.target.value)}/></label>
           <label className="full">Description<textarea value={description} onChange={(event)=>setDescription(event.target.value)}/></label>
-          <label>Status<select value={status} onChange={(event)=>setStatus(event.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
+          <label>Status<select value={status} onChange={(event)=>setStatus(event.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
           <button className="primary-button full" disabled={working}>Create event</button>
         </form>
         {message&&<div className="form-message" style={{marginTop:14}}>{message}</div>}
@@ -134,7 +134,7 @@ export function EventsAdmin(){
               <span className={event.status==="published"?"status-chip done":"status-chip"}>{event.status}</span>
               <select value={event.status} onChange={(e)=>void changeStatus(event.id,e.target.value)}>
                 <option value="draft">Draft</option>
-                <option value="published">Published</option>
+                <option value="published" disabled>Publish through DC Governance</option>
                 <option value="canceled">Canceled</option>
                 <option value="completed">Completed</option>
                 <option value="archived">Archived</option>
