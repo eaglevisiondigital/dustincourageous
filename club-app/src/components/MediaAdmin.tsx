@@ -190,8 +190,8 @@ export function MediaAdmin() {
             <label>
               Access
               <select value={visibility} onChange={(event) => setVisibility(event.target.value)}>
-                <option value="member">Member</option>
-                <option value="premium">Premium</option>
+                <option value="member">All signed-in families</option>
+                <option value="premium">Paid membership</option>
                 <option value="private">Admin only</option>
               </select>
             </label>

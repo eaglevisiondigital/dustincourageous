@@ -19,7 +19,9 @@ const labels: Record<string,string> = {
   member_downloads: "Member downloads",
   rewards_redemption: "Reward redemption",
   family_faith: "Faith at Home",
-  book_companions: "Book companion adventures"
+  book_companions: "Book companion adventures",
+  digital_books: "Digital book library",
+  full_challenge_library: "Complete challenge library"
 };
 
 export function MembershipAccessCard({ householdId }: { householdId: string }) {

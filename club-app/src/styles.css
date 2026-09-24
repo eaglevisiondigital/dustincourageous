@@ -1722,6 +1722,27 @@ select:focus {
 .membership-plan-card > small {
   display: block;
 }
+.membership-plan-features {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+.membership-plan-features li {
+  position: relative;
+  padding-left: 18px;
+  color: #b4b0aa;
+  font-size: .78rem;
+  line-height: 1.4;
+}
+.membership-plan-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-weight: 900;
+}
 .membership-plan-card > strong {
   margin: 12px 0 5px;
   color: var(--gold);

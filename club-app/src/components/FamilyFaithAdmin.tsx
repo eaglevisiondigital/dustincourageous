@@ -228,9 +228,9 @@ export function FamilyFaithAdmin() {
             <label>
               Access
               <select value={guideAccess} onChange={(event)=>setGuideAccess(event.target.value)}>
-                <option value="free">Free</option>
-                <option value="member">Member</option>
-                <option value="premium">Premium</option>
+                <option value="free">Free access</option>
+                <option value="member">All signed-in families</option>
+                <option value="premium">Paid membership</option>
               </select>
             </label>
 

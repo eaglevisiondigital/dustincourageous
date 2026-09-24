@@ -108,7 +108,7 @@ export function EventsAdmin(){
           <label>Title<input required value={title} onChange={(event)=>{setTitle(event.target.value);if(!key)setKey(slugify(event.target.value));}}/></label>
           <label>Key<input required value={key} onChange={(event)=>setKey(slugify(event.target.value))}/></label>
           <label>Type<select value={type} onChange={(event)=>setType(event.target.value)}><option value="family">Family</option><option value="kids">Kids</option><option value="launch">Launch</option><option value="reading">Reading</option><option value="church">Church</option><option value="school">School</option><option value="homeschool">Homeschool</option><option value="online">Online</option><option value="general">General</option><option value="other">Other</option></select></label>
-          <label>Access<select value={access} onChange={(event)=>setAccess(event.target.value)}><option value="free">Free</option><option value="member">Member</option><option value="premium">Premium</option></select></label>
+          <label>Access<select value={access} onChange={(event)=>setAccess(event.target.value)}><option value="free">Free access</option><option value="member">All signed-in families</option><option value="premium">Paid membership</option></select></label>
           <label>Starts<input required type="datetime-local" value={startsAt} onChange={(event)=>setStartsAt(event.target.value)}/></label>
           <label>Ends<input type="datetime-local" value={endsAt} onChange={(event)=>setEndsAt(event.target.value)}/></label>
           <label>Timezone<input value={timezone} onChange={(event)=>setTimezone(event.target.value)}/></label>

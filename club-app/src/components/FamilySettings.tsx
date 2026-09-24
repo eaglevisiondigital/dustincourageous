@@ -60,6 +60,25 @@ function price(cents: number | null, period: string) {
   return `$${(cents / 100).toFixed(2)}/${period}`;
 }
 
+const planFeatures: Record<string,string[]> = {
+  free: [
+    "Core Adventure Club and protected child profiles",
+    "Rotating free Courage Challenges",
+    "Power Verses and Scripture practice",
+    "Selected activities, coloring pages, and printables",
+    "Family Faith discussion and prayer resources",
+    "Book news, previews, giveaways, and release updates"
+  ],
+  premium: [
+    "Everything included with Free",
+    "Digital copies of included Dustin Courageous books",
+    "Complete Adventure Club challenge library",
+    "Premium activity packs, devotionals, crafts, and Courage Missions",
+    "Exclusive videos, audio, and book extras",
+    "Member downloads, guides, certificates, and eligible rewards"
+  ]
+};
+
 export function FamilySettings({
   user,
   householdId,
@@ -287,6 +306,9 @@ export function FamilySettings({
                 <span>{plan.plan_key}</span>
                 <h3>{plan.name}</h3>
                 <p>{plan.description}</p>
+                <ul className="membership-plan-features">
+                  {(planFeatures[plan.plan_key]??[]).map(feature=><li key={feature}>{feature}</li>)}
+                </ul>
                 <strong>{price(plan.monthly_price_cents,"mo")}</strong>
                 {plan.annual_price_cents!==null&&plan.annual_price_cents>0&&<small>{price(plan.annual_price_cents,"yr")}</small>}
                 {currentPlan?.id===plan.id?(
@@ -297,7 +319,7 @@ export function FamilySettings({
               </article>
             ))}
           </div>
-          <p className="settings-note">Premium pricing and the payment processor are intentionally not locked yet. The entitlement system is already ready for them.</p>
+          <p className="settings-note">Free and paid access are structurally defined. Final public level names, monthly pricing, annual pricing, and the payment processor remain pending approval.</p>
         </div>
       )}
 

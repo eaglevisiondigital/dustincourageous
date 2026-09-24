@@ -90,7 +90,7 @@ export function ContentAdmin() {
           <label className="full">Summary<textarea value={summary} onChange={e=>setSummary(e.target.value)}/></label>
           <label className="full">Adventure Club media asset<select value={assetKey} onChange={e=>setAssetKey(e.target.value)}><option value="">No uploaded asset</option>{assets.map(asset=><option key={asset.asset_key} value={asset.asset_key}>{asset.title||asset.asset_key} · {asset.visibility}</option>)}</select></label>
           <label className="full">Or external URL<input type="url" value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} placeholder="https://..."/></label>
-          <label>Access<select value={access} onChange={e=>setAccess(e.target.value)}><option value="free">Free</option><option value="member">Member</option><option value="premium">Premium</option></select></label>
+          <label>Access<select value={access} onChange={e=>setAccess(e.target.value)}><option value="free">Free access</option><option value="member">All signed-in families</option><option value="premium">Paid membership</option></select></label>
           <label>Status<select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="published" disabled>Publish through DC Governance</option></select></label>
           <label>Completion XP<input type="number" min="0" value={xp} onChange={e=>setXp(e.target.value)}/></label>
           <label className="admin-check"><input type="checkbox" checked={featured} onChange={e=>setFeatured(e.target.checked)}/> Featured</label>
