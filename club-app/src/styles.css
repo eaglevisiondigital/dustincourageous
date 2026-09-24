@@ -1477,3 +1477,33 @@ select:focus {
   .devotional-day { grid-template-columns:auto 1fr; }
   .devotional-day > button { grid-column:1 / -1; }
 }
+
+
+/* Faith and book admin studios */
+.faith-admin {
+  display: grid;
+  gap: 18px;
+}
+.admin-inline-tabs {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #0c0c0c;
+}
+.admin-inline-tabs button {
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #99958f;
+  font-size: .73rem;
+  font-weight: 850;
+}
+.admin-inline-tabs button.active {
+  background: #1d1d1d;
+  color: white;
+}
