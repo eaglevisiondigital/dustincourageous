@@ -23,6 +23,7 @@ import { FamilyEventsCard } from "./components/FamilyEventsCard";
 import { ReferralSupportCard } from "./components/ReferralSupportCard";
 import { LeaderGroupsHub } from "./components/LeaderGroupsHub";
 import { PrivacyDataControls } from "./components/PrivacyDataControls";
+import { ParentApprovals } from "./components/ParentApprovals";
 import { InviteAccept } from "./components/InviteAccept";
 import { OrganizationInviteAccept } from "./components/OrganizationInviteAccept";
 import { LeaderOnlyPortal } from "./components/LeaderOnlyPortal";
@@ -526,7 +527,18 @@ function FamilyPortal({
   }
 
   async function signOut() {
+    sessionStorage.removeItem("dc_guardian_session_token");
     await supabase.auth.signOut();
+  }
+
+  async function lockKidView() {
+    sessionStorage.removeItem("dc_guardian_session_token");
+    await supabase.rpc("revoke_guardian_unlock_sessions", {
+      p_household_id: household.id
+    });
+    localStorage.setItem("dc_adventure_club_kid_locked", "1");
+    setKidLocked(true);
+    setView("kid");
   }
 
   return (
@@ -545,11 +557,7 @@ function FamilyPortal({
             <>
               <button
                 className={view === "kid" ? "mode active" : "mode"}
-                onClick={() => {
-                  localStorage.setItem("dc_adventure_club_kid_locked", "1");
-                  setKidLocked(true);
-                  setView("kid");
-                }}
+                onClick={() => void lockKidView()}
               >
                 Lock Kid View
               </button>
@@ -815,6 +823,11 @@ function FamilyPortal({
                 <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
               </section>
 
+              <ParentApprovals
+                householdId={household.id}
+                childIds={children.map((child) => child.id)}
+              />
+
               <ParentProgressOverview
                 householdId={household.id}
                 selectedChildId={selectedChild?.id ?? ""}
@@ -877,13 +890,15 @@ function FamilyPortal({
         <GuardianUnlockDialog
           householdId={household.id}
           onClose={() => setUnlockOpen(false)}
-          onUnlock={() => {
+          onUnlock={(token) => {
+            sessionStorage.setItem("dc_guardian_session_token", token);
             localStorage.removeItem("dc_adventure_club_kid_locked");
             setKidLocked(false);
             setUnlockOpen(false);
             setView("parent");
           }}
           onSignOut={async () => {
+            sessionStorage.removeItem("dc_guardian_session_token");
             await supabase.auth.signOut();
           }}
         />
