@@ -80,3 +80,20 @@ The payment adapter calls commerce-payment-webhook-v2 with:
 - shipping_address object (optional)
 
 No payment provider is selected or activated merely by this code. Provider credentials stay in Supabase Edge Function secrets/environment and never in GitHub or the browser.
+
+
+### integration-provider-test
+Authenticated operations-only safe connectivity checker.
+
+It never sends a family notification or creates a charge.
+
+Supported safe checks:
+- email-primary: read-only provider credential validation where supported
+- push-primary: adapter must explicitly return `ok=true` and `test_mode=true`
+- commerce-primary: adapter must explicitly return `ok=true` and `test_mode=true`, with no checkout or charge created
+- goodbarber-app: confirms that at least one active GoodBarber installation has registered against Supabase
+
+Test results are written to `integration_test_runs` and displayed in Integrations & Delivery.
+
+## Safety rule for adapter tests
+A provider-neutral push or commerce adapter must treat `event = dc.integration.test` as a dry run. It must not send a notification, create a hosted checkout, authorize a card, capture funds, or mutate production customer data.
