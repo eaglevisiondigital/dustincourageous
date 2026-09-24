@@ -216,8 +216,8 @@ export function FamilyFaithAdmin() {
             </label>
 
             <label className="full">
-              Pray Together
-              <textarea value={prayer} onChange={(event)=>setPrayer(event.target.value)}/>
+              Pray Together <span className="optional">(must begin “Dear God,”)</span>
+              <textarea value={prayer} onChange={(event)=>setPrayer(event.target.value)} placeholder="Dear God, ..."/>
             </label>
 
             <label className="full">
@@ -238,7 +238,7 @@ export function FamilyFaithAdmin() {
               Status
               <select value={guideStatus} onChange={(event)=>setGuideStatus(event.target.value)}>
                 <option value="draft">Draft</option>
-                <option value="published">Published</option>
+                <option value="published" disabled>Publish through DC Governance</option>
               </select>
             </label>
 
