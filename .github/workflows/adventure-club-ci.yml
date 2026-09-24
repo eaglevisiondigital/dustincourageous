@@ -6,11 +6,12 @@ on:
       - build/adventure-club-app
     paths:
       - "club-app/**"
+      - "supabase/functions/**"
       - ".github/workflows/adventure-club-ci.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -28,23 +29,16 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Generate lockfile
-        run: npm install --package-lock-only --ignore-scripts
-
       - name: Install locked dependencies
         run: npm ci --ignore-scripts
 
       - name: Typecheck and build
         run: npm run build
 
-      - name: Commit lockfile if changed
+      - name: Check Edge Function syntax
         working-directory: .
         shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add club-app/package-lock.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Lock Adventure Club dependencies"
-            git push
-          fi
+          for file in supabase/functions/*/index.ts; do
+            node --check "$file"
+          done
