@@ -3406,3 +3406,50 @@ select:focus {
   .governance-selected { grid-template-columns: 1fr; }
   .governance-rule-list article { grid-template-columns: 1fr; }
 }
+
+
+/* DC governance preflight */
+.governance-preflight {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.governance-preflight-list {
+  display: grid;
+  gap: 8px;
+}
+.governance-preflight-list article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+}
+.governance-preflight-list article.error {
+  border-color: rgba(239,52,52,.26);
+  background: rgba(198,40,40,.08);
+}
+.governance-preflight-list article.warning {
+  border-color: rgba(240,198,91,.20);
+  background: rgba(240,198,91,.05);
+}
+.governance-preflight-list strong {
+  font-size: .64rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.governance-preflight-list .error strong {
+  color: #ff7777;
+}
+.governance-preflight-list .warning strong {
+  color: var(--gold);
+}
+.governance-preflight-list span {
+  color: #a39e97;
+  font-size: .76rem;
+  line-height: 1.45;
+}
