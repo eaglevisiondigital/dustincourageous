@@ -731,7 +731,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "content" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -814,6 +814,7 @@ export function AdminPortal({
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
             ["books", "Books"],
+            ["content", "Content Studio"],
             ["media", "Media Library"],
             ["badges", "Badges"],
             ["rewards", "Rewards"],
@@ -857,6 +858,8 @@ export function AdminPortal({
             <FaithContentAdmin />
           ) : section === "books" ? (
             <BookAdmin />
+          ) : section === "content" ? (
+            <ContentAdmin />
           ) : section === "media" ? (
             <MediaAdmin />
           ) : section === "badges" ? (
