@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import { registerCurrentInstallation } from "./lib/installations";
+import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
 
 const AdminPortal = lazy(() =>
   import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
@@ -63,14 +64,6 @@ type Challenge = {
   xp_reward: number;
   access_level: string;
   parent_approval_required: boolean;
-};
-
-type ChildSnapshot = {
-  xp: number;
-  badges: number;
-  weeklyStars: number;
-  streak: number;
-  completedChallenges: number;
 };
 
 const shieldUrl = "https://dustincourageous.com/assets/images/dc-shield.jpeg";
@@ -547,8 +540,14 @@ function FamilyPortal({
     completedChallenges: 0
   });
   const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [dashboardChildId, setDashboardChildId] = useState("");
+  const [dashboardLoading, setDashboardLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState("");
+  const dashboardVersion = useRef(0);
+  const challengeRequestVersion = useRef(0);
+  const [challengeError, setChallengeError] = useState("");
   const [addingChild, setAddingChild] = useState(false);
-  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<{ childId: string; challenge: Challenge } | null>(null);
   const [kidLocked, setKidLocked] = useState(
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1"
   );
@@ -566,73 +565,75 @@ function FamilyPortal({
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
     [children, selectedChildId]
   );
+  const currentChildId = useRef(selectedChild?.id);
+  currentChildId.current = selectedChild?.id;
+
+  function selectChild(childId: string) {
+    if (childId === currentChildId.current) return;
+    challengeRequestVersion.current += 1;
+    dashboardVersion.current += 1;
+    currentChildId.current = childId;
+    setSelectedChallenge(null);
+    setChallengeError("");
+    setDashboardError("");
+    setSelectedChildId(childId);
+  }
+
+  function showChallenge(challenge: Challenge) {
+    if (!selectedChild || currentChildId.current !== selectedChild.id) return;
+    challengeRequestVersion.current += 1;
+    setChallengeError("");
+    setSelectedChallenge({ childId: selectedChild.id, challenge });
+  }
 
   const loadChildDashboard = useCallback(async () => {
-    if (!selectedChild) return;
-
-    const [xpResult, badgeResult, activeStreakBadgeResult, tokenResult, streakResult, progressResult, challengeResult] = await Promise.all([
-      supabase.from("child_xp_totals").select("total_xp").eq("child_profile_id", selectedChild.id).maybeSingle(),
-      supabase.from("badge_awards").select("id", { count: "exact", head: true }).eq("child_profile_id", selectedChild.id),
-      supabase
-        .from("child_active_streak_badges")
-        .select("badge_id", { count: "exact", head: true })
-        .eq("child_profile_id", selectedChild.id)
-        .eq("is_active", true),
-      supabase
-        .from("child_token_totals")
-        .select("total")
-        .eq("child_profile_id", selectedChild.id)
-        .eq("token_type", "weekly_star")
-        .maybeSingle(),
-      supabase
-        .from("child_streaks")
-        .select("current_count")
-        .eq("child_profile_id", selectedChild.id)
-        .eq("streak_key", "challenge_completion")
-        .maybeSingle(),
-      supabase
-        .from("child_challenge_progress")
-        .select("id", { count: "exact", head: true })
-        .eq("child_profile_id", selectedChild.id)
-        .eq("status", "completed"),
-      supabase
-        .from("challenges")
-        .select("id,title,description,challenge_type,xp_reward,access_level,parent_approval_required")
-        .eq("status", "published")
-        .order("is_featured", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(6)
-    ]);
-
-    setSnapshot({
-      xp: Number(xpResult.data?.total_xp ?? 0),
-      badges: (badgeResult.count ?? 0) + (activeStreakBadgeResult.count ?? 0),
-      weeklyStars: Number(tokenResult.data?.total ?? 0),
-      streak: streakResult.data?.current_count ?? 0,
-      completedChallenges: progressResult.count ?? 0
-    });
-    setChallenges((challengeResult.data ?? []) as Challenge[]);
+    if (!selectedChild || currentChildId.current !== selectedChild.id) return;
+    const version = ++dashboardVersion.current;
+    setDashboardLoading(true);
+    setDashboardError("");
+    try {
+      const result = await readChildDashboard(supabase, selectedChild.id);
+      if (version !== dashboardVersion.current || currentChildId.current !== selectedChild.id) return;
+      setSnapshot(result.snapshot);
+      setChallenges(result.challenges);
+      setDashboardChildId(selectedChild.id);
+    } catch {
+      if (version === dashboardVersion.current && currentChildId.current === selectedChild.id) {
+        setDashboardError("Your progress could not be loaded. Please try again.");
+      }
+    } finally {
+      if (version === dashboardVersion.current && currentChildId.current === selectedChild.id) setDashboardLoading(false);
+    }
   }, [selectedChild]);
 
   useEffect(() => {
     void loadChildDashboard();
+    return () => { dashboardVersion.current += 1; challengeRequestVersion.current += 1; };
   }, [loadChildDashboard]);
 
   async function openChallengeById(challengeId: string) {
-    const existing = challenges.find((challenge) => challenge.id === challengeId);
+    if (!selectedChild || currentChildId.current !== selectedChild.id) return;
+    const childId = selectedChild.id;
+    const version = ++challengeRequestVersion.current;
+    setChallengeError("");
+    const existing = dashboardChildId === childId ? challenges.find((challenge) => challenge.id === challengeId) : null;
     if (existing) {
-      setSelectedChallenge(existing);
+      showChallenge(existing);
       return;
     }
 
+    try {
     const { data, error: challengeError } = await supabase
       .from("challenges")
       .select("id,title,description,challenge_type,xp_reward,access_level,parent_approval_required")
       .eq("id", challengeId)
       .single();
 
-    if (!challengeError && data) {
-      setSelectedChallenge(data as Challenge);
+    if (version !== challengeRequestVersion.current || currentChildId.current !== childId) return;
+    if (challengeError || !data) throw new Error("Challenge unavailable");
+    showChallenge(data as Challenge);
+    } catch {
+      if (version === challengeRequestVersion.current && currentChildId.current === childId) setChallengeError("This challenge could not be opened. Please try again.");
     }
   }
 
@@ -695,7 +696,7 @@ function FamilyPortal({
               <button
                 key={child.id}
                 className={selectedChild?.id === child.id ? "child-switcher active" : "child-switcher"}
-                onClick={() => setSelectedChildId(child.id)}
+                onClick={() => selectChild(child.id)}
               >
                 <span className="avatar">{child.display_name.slice(0, 1).toUpperCase()}</span>
                 <span>{child.display_name}</span>
@@ -723,6 +724,7 @@ function FamilyPortal({
         </aside>
 
         <main className="portal-main">
+          {challengeError && <p className="form-message" role="alert">{challengeError}</p>}
           <Suspense fallback={<div className="loader" aria-label="Loading section" />}>
           {view === "kid" ? (
             <>
@@ -765,15 +767,17 @@ function FamilyPortal({
               </nav>
 
               {kidSection === "trophies" && selectedChild ? (
-                <TrophyRoom childId={selectedChild.id} childName={selectedChild.display_name} />
+                <TrophyRoom key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
               ) : kidSection === "bible" && selectedChild ? (
                 <BibleHub
+                  key={selectedChild.id}
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
                 />
               ) : kidSection === "books" && selectedChild ? (
                 <Bookshelf
+                  key={selectedChild.id}
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
@@ -783,6 +787,7 @@ function FamilyPortal({
                 />
               ) : kidSection === "activities" && selectedChild ? (
                 <ActivitiesHub
+                  key={selectedChild.id}
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
@@ -800,6 +805,7 @@ function FamilyPortal({
 
               {selectedChild && (
                 <KidHomeFocus
+                  key={selectedChild.id}
                   childId={selectedChild.id}
                   onOpenBooks={() => setKidSection("books")}
                   onOpenBible={() => setKidSection("bible")}
@@ -808,6 +814,11 @@ function FamilyPortal({
                 />
               )}
 
+              {dashboardError ? (
+                <div className="empty-state"><p role="alert">{dashboardError}</p><button className="secondary-button" onClick={()=>void loadChildDashboard()}>Try again</button></div>
+              ) : dashboardLoading || dashboardChildId !== selectedChild?.id ? (
+                <p role="status">Loading your progress...</p>
+              ) : (<>
               <section className="stats-grid five-up">
                 <article><strong>{snapshot.xp}</strong><span>XP earned</span></article>
                 <article><strong>{snapshot.weeklyStars}</strong><span>Weekly stars</span></article>
@@ -835,7 +846,7 @@ function FamilyPortal({
                         </div>
                         <h3>{challenge.title}</h3>
                         <p>{challenge.description || "A new courage challenge is ready for you."}</p>
-                        <button className="secondary-button" type="button" onClick={() => setSelectedChallenge(challenge)}>Open challenge</button>
+                        <button className="secondary-button" type="button" onClick={() => showChallenge(challenge)}>Open challenge</button>
                       </article>
                     ))}
                   </div>
@@ -844,12 +855,12 @@ function FamilyPortal({
                     <div className="empty-icon">★</div>
                     <h3>Your Adventure Club is ready.</h3>
                     <p>
-                      Once challenges are published from the Courageous Kids admin area, they will appear here automatically.
+                      New adventures are on the way. Explore Bible Basecamp or your Bookshelf while you wait.
                     </p>
                   </div>
                 )}
               </section>
-
+              </>)}
               <section className="identity-banner">
                 <p className="eyebrow gold">Identity Connection</p>
                 <h2>You can be courageous because God is with you.</h2>
@@ -967,7 +978,7 @@ function FamilyPortal({
                     <button
                       className="text-button small"
                       onClick={() => {
-                        setSelectedChildId(child.id);
+                        selectChild(child.id);
                         setKidSection("home");
                         setView("kid");
                       }}
@@ -993,9 +1004,9 @@ function FamilyPortal({
               <ParentProgressOverview
                 householdId={household.id}
                 selectedChildId={selectedChild?.id ?? ""}
-                onSelectChild={(childId) => setSelectedChildId(childId)}
+                onSelectChild={selectChild}
                 onOpenChild={(childId) => {
-                  setSelectedChildId(childId);
+                  selectChild(childId);
                   setKidSection("home");
                   setView("kid");
                 }}
@@ -1003,9 +1014,9 @@ function FamilyPortal({
 
               {selectedChild && (
                 <>
-                  <ParentChildProgress childId={selectedChild.id} childName={selectedChild.display_name} />
+                  <ParentChildProgress key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
                   <div className="family-detail-grid">
-                    <RewardsPanel childId={selectedChild.id} userId={user.id} />
+                    <RewardsPanel key={selectedChild.id} childId={selectedChild.id} userId={user.id} />
                     <NotificationsPanel userId={user.id} />
                   </div>
                 </>
@@ -1018,10 +1029,11 @@ function FamilyPortal({
         </main>
       </div>
 
-      {selectedChallenge && selectedChild && (
+      {selectedChallenge && selectedChild && selectedChallenge.childId === selectedChild.id && (
         <Suspense fallback={null}>
         <ChallengeDialog
-          challenge={selectedChallenge}
+          key={`${selectedChild.id}:${selectedChallenge.challenge.id}`}
+          challenge={selectedChallenge.challenge}
           childId={selectedChild.id}
           onClose={() => setSelectedChallenge(null)}
           onCompleted={async () => {

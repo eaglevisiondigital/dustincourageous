@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { saveChallengeCompletion } from "../lib/challengeProgress";
 
 type Challenge = {
   id: string;
@@ -37,6 +38,9 @@ export function ChallengeDialog({
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reloadCount, setReloadCount] = useState(0);
+  const mutationBusy = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +48,13 @@ export function ChallengeDialog({
     async function load() {
       setLoading(true);
       setError("");
+      setLoadFailed(false);
+      setSteps([]);
+      setProgressId(null);
+      setStatus("not_started");
+      setCompletedSteps(new Set());
 
+      try {
       const [stepsResult, progressResult] = await Promise.all([
         supabase
           .from("challenge_steps")
@@ -61,19 +71,11 @@ export function ChallengeDialog({
 
       if (cancelled) return;
 
-      if (stepsResult.error) {
-        setError(stepsResult.error.message);
-        setLoading(false);
-        return;
-      }
+      if (stepsResult.error) throw stepsResult.error;
 
       setSteps((stepsResult.data ?? []) as Step[]);
 
-      if (progressResult.error) {
-        setError(progressResult.error.message);
-        setLoading(false);
-        return;
-      }
+      if (progressResult.error) throw progressResult.error;
 
       if (progressResult.data) {
         setProgressId(progressResult.data.id);
@@ -85,25 +87,52 @@ export function ChallengeDialog({
           .eq("child_challenge_progress_id", progressResult.data.id)
           .eq("completed", true);
 
-        if (!cancelled && !stepProgress.error) {
+        if (stepProgress.error) throw stepProgress.error;
+        if (!cancelled) {
           setCompletedSteps(
             new Set((stepProgress.data ?? []).map((item) => item.challenge_step_id))
           );
         }
       }
 
-      if (!cancelled) setLoading(false);
+      if (!cancelled && reloadCount > 0) {
+        void onCompleted().catch(() => {});
+      }
+      } catch {
+        if (!cancelled) {
+          setLoadFailed(true);
+          setError("Your challenge progress could not be loaded. Please try again.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
     void load();
     return () => {
       cancelled = true;
     };
-  }, [challenge.id, childId]);
+  }, [challenge.id, childId, reloadCount]);
 
-  async function startChallenge() {
+  async function save(action: () => Promise<void>) {
+    if (mutationBusy.current || loading || loadFailed) return;
+    mutationBusy.current = true;
     setWorking(true);
     setError("");
+    try {
+      await action();
+    } catch {
+      setLoadFailed(true);
+      setError("We could not confirm your save. Reload your progress before trying again.");
+    } finally {
+      mutationBusy.current = false;
+      setWorking(false);
+    }
+  }
+
+  async function startChallenge() {
+    if (progressId || status !== "not_started") return;
+    await save(async () => {
 
     const { data, error: startError } = await supabase
       .from("child_challenge_progress")
@@ -116,25 +145,21 @@ export function ChallengeDialog({
       .select("id,status")
       .single();
 
-    setWorking(false);
-
-    if (startError) {
-      setError(startError.message);
-      return;
-    }
+    if (startError) throw startError;
+    if (!data) throw new Error("Missing saved progress");
 
     setProgressId(data.id);
     setStatus(data.status);
+    });
   }
 
   async function toggleStep(stepId: string) {
     if (!progressId || status === "completed" || status === "pending_parent") return;
 
     const nextCompleted = !completedSteps.has(stepId);
-    setWorking(true);
-    setError("");
+    await save(async () => {
 
-    const { error: stepError } = await supabase
+    const { data, error: stepError } = await supabase
       .from("child_step_progress")
       .upsert(
         {
@@ -144,14 +169,9 @@ export function ChallengeDialog({
           completed_at: nextCompleted ? new Date().toISOString() : null
         },
         { onConflict: "child_challenge_progress_id,challenge_step_id" }
-      );
-
-    setWorking(false);
-
-    if (stepError) {
-      setError(stepError.message);
-      return;
-    }
+      ).select("challenge_step_id,completed").single();
+    if (stepError) throw stepError;
+    if (!data || data.challenge_step_id !== stepId || data.completed !== nextCompleted) throw new Error("Step save not confirmed");
 
     setCompletedSteps((current) => {
       const next = new Set(current);
@@ -159,10 +179,11 @@ export function ChallengeDialog({
       else next.delete(stepId);
       return next;
     });
+    });
   }
 
   async function completeChallenge() {
-    if (!progressId || status === "completed") return;
+    if (!progressId || status === "completed" || status === "pending_parent") return;
 
     const requiredIncomplete = steps.some(
       (step) => step.is_required && !completedSteps.has(step.id)
@@ -173,34 +194,21 @@ export function ChallengeDialog({
       return;
     }
 
-    setWorking(true);
-    setError("");
-
+    await save(async () => {
     const nextStatus = challenge.parent_approval_required
       ? "pending_parent"
       : "completed";
 
-    const { error: completeError } = await supabase
-      .from("child_challenge_progress")
-      .update({
-        status: nextStatus,
-        submitted_at: new Date().toISOString()
-      })
-      .eq("id", progressId);
-
-    setWorking(false);
-
-    if (completeError) {
-      setError(completeError.message);
-      return;
+    const saved = await saveChallengeCompletion(supabase, progressId, childId, status, nextStatus);
+    setStatus(saved.status);
+    try { await onCompleted(); } catch {
+      setError("Your challenge was saved. Reopen your adventure to refresh the progress display.");
     }
-
-    setStatus(nextStatus);
-    await onCompleted();
+    });
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+    <div className="modal-backdrop" role="presentation" onMouseDown={() => { if (!mutationBusy.current) onClose(); }}>
       <section
         className="challenge-dialog"
         role="dialog"
@@ -208,7 +216,7 @@ export function ChallengeDialog({
         aria-labelledby="challenge-dialog-title"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button className="modal-close" type="button" onClick={onClose} aria-label="Close challenge">
+        <button className="modal-close" type="button" disabled={working} onClick={onClose} aria-label="Close challenge">
           ×
         </button>
 
@@ -223,6 +231,8 @@ export function ChallengeDialog({
 
         {loading ? (
           <div className="dialog-loading"><div className="loader" /> Loading challenge...</div>
+        ) : loadFailed ? (
+          <div className="empty-state"><p role="alert">{error}</p><button className="secondary-button" onClick={() => setReloadCount(value => value + 1)}>Reload progress</button></div>
         ) : (
           <>
             {steps.length > 0 && (
