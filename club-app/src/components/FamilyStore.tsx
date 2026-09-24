@@ -40,6 +40,13 @@ type CartLine = {
   quantity: number;
 };
 
+type CheckoutReadiness = {
+  provider_configured: boolean;
+  provider_status: string;
+  health_status: string;
+  message: string;
+};
+
 type CheckoutResult = {
   checkout_session_id: string;
   order_id: string;
@@ -73,11 +80,12 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
   const [checkoutSummary, setCheckoutSummary] = useState<CheckoutResult | null>(null);
+  const [checkoutReadiness, setCheckoutReadiness] = useState<CheckoutReadiness | null>(null);
 
   const load = useCallback(async () => {
     setMessage("");
 
-    const [productResult, membershipResult] = await Promise.all([
+    const [productResult, membershipResult, readinessResult] = await Promise.all([
       supabase
         .from("products")
         .select("id,product_key,name,product_type,description,base_price_cents,member_price_cents,currency,image_asset_key,track_inventory,inventory_quantity,allow_backorder,is_featured,product_variants(id,name,price_delta_cents,member_price_delta_cents,inventory_quantity,attributes,is_active)")
@@ -88,10 +96,11 @@ export function FamilyStore({ householdId }: { householdId: string }) {
         .from("household_membership_summary")
         .select("plan_key,plan_name,subscription_status")
         .eq("household_id", householdId)
-        .maybeSingle()
+        .maybeSingle(),
+      supabase.rpc("get_checkout_readiness")
     ]);
 
-    const error = productResult.error || membershipResult.error;
+    const error = productResult.error || membershipResult.error || readinessResult.error;
     if (error) {
       setMessage(error.message);
       return;
@@ -105,6 +114,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
 
     setProducts(nextProducts);
     setMembership((membershipResult.data ?? null) as Membership | null);
+    setCheckoutReadiness(((readinessResult.data ?? [])[0] ?? null) as CheckoutReadiness | null);
 
     setSelectedVariants((current) => {
       const next = { ...current };
@@ -211,6 +221,11 @@ export function FamilyStore({ householdId }: { householdId: string }) {
 
   async function checkout() {
     if (!cart.length) return;
+
+    if (!checkoutReadiness?.provider_configured) {
+      setMessage(checkoutReadiness?.message || "Online checkout is not connected yet.");
+      return;
+    }
 
     setWorking(true);
     setMessage("");
@@ -483,11 +498,21 @@ export function FamilyStore({ householdId }: { householdId: string }) {
               <button
                 className="primary-button store-checkout-button"
                 type="button"
-                disabled={working}
+                disabled={working || !checkoutReadiness?.provider_configured}
                 onClick={() => void checkout()}
               >
-                {working ? "Preparing secure checkout..." : "Continue to secure checkout"}
+                {working
+                  ? "Preparing secure checkout..."
+                  : checkoutReadiness?.provider_configured
+                    ? "Continue to secure checkout"
+                    : "Checkout coming soon"}
               </button>
+
+              {!checkoutReadiness?.provider_configured && (
+                <p className="store-provider-note">
+                  The catalog and cart are ready. Live payment stays disabled until the approved hosted checkout provider is connected.
+                </p>
+              )}
 
               <p className="privacy-note">
                 Adventure Club does not collect or store your card number or CVV. Payment is
