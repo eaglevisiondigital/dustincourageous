@@ -6772,6 +6772,66 @@ export type Database = {
           },
         ]
       }
+      commerce_readiness_summary: {
+        Row: {
+          active_products: number | null
+          approved_products_ready_to_activate: number | null
+          open_checkouts: number | null
+          paid_orders_24h: number | null
+          product_drafts_needing_governance: number | null
+          provider_health: string | null
+          provider_last_error: string | null
+          provider_last_success_at: string | null
+          provider_status: string | null
+          stale_pending_orders: number | null
+          webhook_failures_24h: number | null
+        }
+        Relationships: []
+      }
+      commerce_recent_webhooks: {
+        Row: {
+          error_message: string | null
+          event_type: string | null
+          id: string | null
+          order_id: string | null
+          processed_at: string | null
+          provider: string | null
+          provider_event_id: string | null
+          received_at: string | null
+          status: string | null
+        }
+        Insert: {
+          error_message?: string | null
+          event_type?: string | null
+          id?: string | null
+          order_id?: string | null
+          processed_at?: string | null
+          provider?: string | null
+          provider_event_id?: string | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          error_message?: string | null
+          event_type?: string | null
+          id?: string | null
+          order_id?: string | null
+          processed_at?: string | null
+          provider?: string | null
+          provider_event_id?: string | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_webhook_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       current_household_consents: {
         Row: {
           action: string | null
@@ -7530,6 +7590,15 @@ export type Database = {
         Args: { p_installation_key: string }
         Returns: undefined
       }
+      get_checkout_readiness: {
+        Args: never
+        Returns: {
+          health_status: string
+          message: string
+          provider_configured: boolean
+          provider_status: string
+        }[]
+      }
       get_child_achievement_progress: {
         Args: { p_child_profile_id: string }
         Returns: {
@@ -7639,6 +7708,8 @@ export type Database = {
           p_provider_customer_id?: string
           p_provider_event_id?: string
           p_provider_payment_id: string
+          p_shipping_address?: Json
+          p_shipping_name?: string
         }
         Returns: undefined
       }
