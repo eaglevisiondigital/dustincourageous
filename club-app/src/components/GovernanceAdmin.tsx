@@ -36,6 +36,25 @@ type BrandAsset = {
   usage_notes: string | null;
 };
 
+type Blueprint = {
+  id: string;
+  blueprint_key: string;
+  title: string;
+  applies_to: string;
+  version: string;
+  description: string;
+  dc_blueprint_requirements:
+    | {
+        id: string;
+        requirement_key: string;
+        title: string;
+        requirement_text: string;
+        severity: string;
+        sort_order: number;
+      }[]
+    | null;
+};
+
 type Character = {
   id: string;
   character_key: string;
@@ -104,6 +123,7 @@ export function GovernanceAdmin() {
   const [rules,setRules]=useState<Rule[]>([]);
   const [assets,setAssets]=useState<BrandAsset[]>([]);
   const [characters,setCharacters]=useState<Character[]>([]);
+  const [blueprints,setBlueprints]=useState<Blueprint[]>([]);
   const [entities,setEntities]=useState<EntityStatus[]>([]);
   const [reviews,setReviews]=useState<Review[]>([]);
   const [preflight,setPreflight]=useState<PreflightIssue[]>([]);
@@ -119,7 +139,7 @@ export function GovernanceAdmin() {
   const load=useCallback(async()=>{
     setMessage("");
 
-    const [standardResult,ruleResult,assetResult,characterResult,entityResult,reviewResult]=await Promise.all([
+    const [standardResult,ruleResult,assetResult,characterResult,blueprintResult,entityResult,reviewResult]=await Promise.all([
       supabase
         .from("dc_governance_standards")
         .select("id,standard_key,title,version,authority_scope,description,is_locked")
@@ -139,6 +159,11 @@ export function GovernanceAdmin() {
         .select("id,character_key,display_name,visual_age,role,locked_traits,prohibited_traits,status")
         .order("display_name"),
       supabase
+        .from("dc_content_blueprints")
+        .select("id,blueprint_key,title,applies_to,version,description,dc_blueprint_requirements(id,requirement_key,title,requirement_text,severity,sort_order)")
+        .eq("is_active",true)
+        .order("title"),
+      supabase
         .from("dc_governance_review_status")
         .select("*")
         .order("entity_type")
@@ -155,6 +180,7 @@ export function GovernanceAdmin() {
       ruleResult.error||
       assetResult.error||
       characterResult.error||
+      blueprintResult.error||
       entityResult.error||
       reviewResult.error;
 
@@ -169,6 +195,7 @@ export function GovernanceAdmin() {
     setRules((ruleResult.data??[]) as Rule[]);
     setAssets((assetResult.data??[]) as BrandAsset[]);
     setCharacters((characterResult.data??[]) as Character[]);
+    setBlueprints((blueprintResult.data??[]) as Blueprint[]);
     setEntities(nextEntities);
     setReviews((reviewResult.data??[]) as Review[]);
 
@@ -451,6 +478,39 @@ export function GovernanceAdmin() {
           </div>
         </section>
       </div>
+
+      <section className="admin-card">
+        <div className="section-heading compact-heading">
+          <div><p className="eyebrow gold">Creative Blueprints</p><h2>How DC content is built</h2></div>
+          <span className="pill">{blueprints.length}</span>
+        </div>
+
+        <div className="governance-blueprints">
+          {blueprints.map((blueprint)=>(
+            <article key={blueprint.id}>
+              <div className="governance-blueprint-head">
+                <div>
+                  <span>{blueprint.applies_to.replaceAll("_"," ")}</span>
+                  <h3>{blueprint.title}</h3>
+                  <small>v{blueprint.version}</small>
+                </div>
+              </div>
+              <p>{blueprint.description}</p>
+              <div className="governance-blueprint-requirements">
+                {[...(blueprint.dc_blueprint_requirements??[])]
+                  .sort((a,b)=>a.sort_order-b.sort_order)
+                  .map((requirement)=>(
+                    <div key={requirement.id}>
+                      <strong>{requirement.title}</strong>
+                      <span>{requirement.requirement_text}</span>
+                      <small>{requirement.severity.replaceAll("_"," ")}</small>
+                    </div>
+                  ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="admin-card">
         <div className="section-heading compact-heading">
