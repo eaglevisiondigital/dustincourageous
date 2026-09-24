@@ -1,5 +1,6 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { nextMondayDate, weeklyDraftArgs } from "../lib/weeklyChallengeDraft";
 
 type Series = {
   id: string;
@@ -19,6 +20,8 @@ type WeeklyChallenge = {
   status: string;
   xp_reward: number;
   challenge_series_id: string | null;
+  access_level: string;
+  parent_approval_required: boolean;
 };
 
 type StreakRule = {
@@ -43,15 +46,6 @@ function firstRelation<T>(value: T | T[] | null): T | null {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
 
-function nextMonday() {
-  const today = new Date();
-  const date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const day = date.getDay();
-  const daysUntilMonday = day === 0 ? 1 : 8 - day;
-  date.setDate(date.getDate() + daysUntilMonday);
-  return date.toISOString().slice(0, 10);
-}
-
 export function WeeklySeriesAdmin() {
   const [series, setSeries] = useState<Series[]>([]);
   const [weeklyChallenges, setWeeklyChallenges] = useState<WeeklyChallenge[]>([]);
@@ -66,12 +60,14 @@ export function WeeklySeriesAdmin() {
 
   const [challengeTitle, setChallengeTitle] = useState("");
   const [challengeSlug, setChallengeSlug] = useState("");
-  const [periodStart, setPeriodStart] = useState(nextMonday());
+  const [periodStart, setPeriodStart] = useState(() => nextMondayDate());
   const [challengeDescription, setChallengeDescription] = useState("");
   const [challengeType, setChallengeType] = useState("weekly");
   const [xpReward, setXpReward] = useState("100");
   const [steps, setSteps] = useState("");
-  const [publishNow, setPublishNow] = useState(false);
+  const [accessLevel, setAccessLevel] = useState<"free" | "premium">("free");
+  const [parentApprovalRequired, setParentApprovalRequired] = useState(false);
+  const savingWeekly = useRef(false);
 
   const [badgeName, setBadgeName] = useState("");
   const [badgeKey, setBadgeKey] = useState("");
@@ -88,7 +84,7 @@ export function WeeklySeriesAdmin() {
         .order("created_at", { ascending: true }),
       supabase
         .from("challenges")
-        .select("id,title,period_start,period_end,status,xp_reward,challenge_series_id")
+        .select("id,title,period_start,period_end,status,xp_reward,challenge_series_id,access_level,parent_approval_required")
         .not("challenge_series_id", "is", null)
         .order("period_start", { ascending: false }),
       supabase
@@ -156,58 +152,38 @@ export function WeeklySeriesAdmin() {
 
   async function createWeeklyChallenge(event: FormEvent) {
     event.preventDefault();
-    if (!selectedSeriesId) {
-      setMessage("Create or select a weekly challenge series first.");
-      return;
-    }
-
+    if (working || savingWeekly.current) return;
+    savingWeekly.current = true;
     setWorking(true);
     setMessage("");
-
-    const stepPayload = steps
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((title) => ({
-        title,
-        instructions: null,
-        is_required: true,
-        xp_reward: 0
-      }));
-
-    const { error } = await supabase.rpc("admin_create_weekly_challenge", {
-      p_series_id: selectedSeriesId,
-      p_title: challengeTitle.trim(),
-      p_slug: challengeSlug || slugify(challengeTitle),
-      p_period_start: periodStart,
-      p_description: challengeDescription.trim() || undefined,
-      p_challenge_type: challengeType,
-      p_access_level: "free",
-      p_xp_reward: Number(xpReward) || 0,
-      p_parent_approval_required: false,
-      p_status: "draft",
-      p_steps: stepPayload
-    });
-
-    setWorking(false);
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
+    try {
+      const args = weeklyDraftArgs({
+        seriesId: selectedSeriesId, title: challengeTitle,
+        slug: challengeSlug || slugify(challengeTitle), periodStart,
+        description: challengeDescription, challengeType, accessLevel,
+        xpReward, parentApprovalRequired, steps
+      });
+      const { data, error } = await supabase.rpc("admin_create_weekly_challenge", args);
+      if (error) throw new Error(error.message);
+      if (!data) throw new Error("The draft save could not be confirmed. Refresh the calendar before trying again.");
 
     setChallengeTitle("");
     setChallengeSlug("");
     setChallengeDescription("");
     setSteps("");
-    setPublishNow(false);
 
-    const next = new Date(periodStart + "T12:00:00");
-    next.setDate(next.getDate() + 7);
+    const next = new Date(periodStart + "T00:00:00Z");
+    next.setUTCDate(next.getUTCDate() + 7);
     setPeriodStart(next.toISOString().slice(0, 10));
 
-    setMessage("Weekly challenge scheduled.");
+    setMessage("Weekly challenge draft saved. Review and publish it through DC Governance before it becomes available to families.");
     await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "The draft could not be confirmed. Refresh the calendar before trying again.");
+    } finally {
+      savingWeekly.current = false;
+      setWorking(false);
+    }
   }
 
   async function createStreakBadge(event: FormEvent) {
@@ -350,11 +326,25 @@ export function WeeklySeriesAdmin() {
                 </select>
               </label>
               <label>
+                Membership access
+                <select value={accessLevel} onChange={event => setAccessLevel(event.target.value as "free" | "premium")}>
+                  <option value="free">Free access</option>
+                  <option value="premium">Paid membership</option>
+                </select>
+              </label>
+              <label>
+                Guardian review
+                <select value={parentApprovalRequired ? "required" : "not_required"} onChange={event => setParentApprovalRequired(event.target.value === "required")}>
+                  <option value="not_required">Child can complete independently</option>
+                  <option value="required">Guardian approval required for XP</option>
+                </select>
+              </label>
+              <label>
                 XP reward
-                <input type="number" min="0" value={xpReward} onChange={(event) => setXpReward(event.target.value)} />
+                <input required type="number" min="0" max="2147483647" step="1" value={xpReward} onChange={(event) => setXpReward(event.target.value)} />
               </label>
               <div className="governance-editor-note">
-                Weekly challenges are created as drafts. Publish them through DC Governance after review.
+                Weekly challenges are created as drafts. Publish them through DC Governance after review. Keep free challenges available when planning the paid library. Paid enrollment remains closed.
               </div>
               <label className="full">
                 Description
@@ -369,7 +359,7 @@ export function WeeklySeriesAdmin() {
                 />
               </label>
               <button className="primary-button full" disabled={working}>
-                Schedule weekly challenge
+                {working ? "Saving..." : "Save weekly challenge draft"}
               </button>
             </form>
           </section>
@@ -435,7 +425,7 @@ export function WeeklySeriesAdmin() {
             <div className="section-heading compact-heading">
               <div>
                 <p className="eyebrow red">Calendar</p>
-                <h2>Scheduled weeks</h2>
+                <h2>Weekly calendar and drafts</h2>
               </div>
               <span className="pill">{seriesChallenges.length}</span>
             </div>
@@ -446,6 +436,10 @@ export function WeeklySeriesAdmin() {
                     <strong>{challenge.title}</strong>
                     <small>
                       {challenge.period_start || "No date"} · {challenge.xp_reward} XP
+                    </small>
+                    <small>
+                      {challenge.access_level === "premium" ? "Paid membership" : challenge.access_level === "member" ? "All signed-in families" : "Free access"}
+                      {challenge.parent_approval_required ? " · Guardian approval required" : " · Independent completion"}
                     </small>
                   </div>
                   <span className={challenge.status === "published" ? "status-chip done" : "status-chip"}>
