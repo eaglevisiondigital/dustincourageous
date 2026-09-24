@@ -36,9 +36,7 @@ jobs:
         run: npm run build
 
       - name: Check Edge Function syntax
-        working-directory: .
-        shell: bash
-        run: |
-          for file in supabase/functions/*/index.ts; do
-            node --check "$file"
-          done
+        run: >-
+          ./node_modules/.bin/tsc --ignoreConfig --noEmit --noCheck --noResolve
+          --skipLibCheck --target es2022 --module esnext
+          ../supabase/functions/*/index.ts
