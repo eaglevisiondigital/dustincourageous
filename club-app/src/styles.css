@@ -4778,3 +4778,40 @@ select:focus {
   .lead-record,
   .lead-record.inquiry { grid-template-columns: 1fr; }
 }
+
+
+/* Safe provider integration tests */
+.integration-test-box {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.integration-test-box span,
+.integration-test-box strong,
+.integration-test-box small {
+  display: block;
+}
+.integration-test-box span {
+  color: #77736e;
+  font-size: .61rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.integration-test-box strong {
+  margin-top: 3px;
+  text-transform: capitalize;
+}
+.integration-test-box small {
+  max-width: 260px;
+  margin-top: 4px;
+  color: #817d77;
+  font-size: .67rem;
+  line-height: 1.35;
+}
+.integration-test-box .integration-error {
+  color: #ff8585;
+}
