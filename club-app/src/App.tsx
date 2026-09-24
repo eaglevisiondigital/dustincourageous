@@ -18,6 +18,7 @@ import { KidHomeFocus } from "./components/KidHomeFocus";
 import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
 import { MembershipAccessCard } from "./components/MembershipAccessCard";
 import { OrderHistoryCard } from "./components/OrderHistoryCard";
+import { FamilyGroupsCard } from "./components/FamilyGroupsCard";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -773,6 +774,12 @@ function FamilyPortal({
                 user={user}
                 children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
                 selectedChildId={selectedChild?.id ?? ""}
+              />
+
+              <FamilyGroupsCard
+                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                selectedChildId={selectedChild?.id ?? ""}
+                onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
               />
 
               {selectedChild && (
