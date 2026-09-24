@@ -14,6 +14,7 @@ import { ParentChildProgress } from "./components/ParentChildProgress";
 import { ParentProgressOverview } from "./components/ParentProgressOverview";
 import { FamilySettings } from "./components/FamilySettings";
 import { ActivitiesHub } from "./components/ActivitiesHub";
+import { KidHomeFocus } from "./components/KidHomeFocus";
 import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
@@ -621,6 +622,16 @@ function FamilyPortal({
                 </div>
                 <img src={shieldUrl} alt="" />
               </section>
+
+              {selectedChild && (
+                <KidHomeFocus
+                  childId={selectedChild.id}
+                  onOpenBooks={() => setKidSection("books")}
+                  onOpenBible={() => setKidSection("bible")}
+                  onOpenActivities={() => setKidSection("activities")}
+                  onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+                />
+              )}
 
               <section className="stats-grid five-up">
                 <article><strong>{snapshot.xp}</strong><span>XP earned</span></article>
