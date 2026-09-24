@@ -2150,6 +2150,56 @@ export type Database = {
           },
         ]
       }
+      household_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          household_id: string
+          id: string
+          invited_by: string
+          role: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          household_id: string
+          id?: string
+          invited_by: string
+          role: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          household_id?: string
+          id?: string
+          invited_by?: string
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_invitations_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_members: {
         Row: {
           created_at: string
@@ -3387,6 +3437,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_household_invitation: {
+        Args: { p_invitation_id: string; p_token: string }
+        Returns: string
+      }
       admin_add_devotional_day: {
         Args: {
           p_action_step?: string
@@ -3582,6 +3636,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      create_household_invitation: {
+        Args: {
+          p_email: string
+          p_expires_days?: number
+          p_household_id: string
+          p_role?: string
+        }
+        Returns: {
+          invitation_id: string
+          invitation_token: string
+        }[]
+      }
       get_child_achievement_progress: {
         Args: { p_child_profile_id: string }
         Returns: {
@@ -3599,12 +3665,30 @@ export type Database = {
           threshold_value: number
         }[]
       }
+      get_household_adults: {
+        Args: { p_household_id: string }
+        Returns: {
+          display_name: string
+          email: string
+          role: string
+          status: string
+          user_id: string
+        }[]
+      }
       guardian_pin_status: {
         Args: { p_household_id: string }
         Returns: {
           configured: boolean
           locked_until: string
         }[]
+      }
+      remove_household_adult: {
+        Args: { p_household_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      revoke_household_invitation: {
+        Args: { p_invitation_id: string }
+        Returns: undefined
       }
       set_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }
