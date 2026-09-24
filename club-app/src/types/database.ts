@@ -6835,6 +6835,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      approve_parent_challenge: {
+        Args: { p_guardian_session_token: string; p_progress_id: string }
+        Returns: undefined
+      }
       archive_child_profile: {
         Args: { p_child_profile_id: string }
         Returns: undefined
@@ -6889,6 +6893,10 @@ export type Database = {
           p_group_id: string
           p_max_uses?: number
         }
+        Returns: string
+      }
+      create_guardian_unlock_session: {
+        Args: { p_household_id: string; p_pin: string }
         Returns: string
       }
       create_household_invitation: {
@@ -7085,6 +7093,14 @@ export type Database = {
       }
       restore_child_profile: {
         Args: { p_child_profile_id: string }
+        Returns: undefined
+      }
+      return_parent_challenge: {
+        Args: { p_guardian_session_token: string; p_progress_id: string }
+        Returns: undefined
+      }
+      revoke_guardian_unlock_sessions: {
+        Args: { p_household_id: string }
         Returns: undefined
       }
       revoke_household_invitation: {
