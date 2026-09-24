@@ -128,7 +128,7 @@ export function ChallengeDialog({
   }
 
   async function toggleStep(stepId: string) {
-    if (!progressId || status === "completed") return;
+    if (!progressId || status === "completed" || status === "pending_parent") return;
 
     const nextCompleted = !completedSteps.has(stepId);
     setWorking(true);
@@ -176,10 +176,14 @@ export function ChallengeDialog({
     setWorking(true);
     setError("");
 
+    const nextStatus = challenge.parent_approval_required
+      ? "pending_parent"
+      : "completed";
+
     const { error: completeError } = await supabase
       .from("child_challenge_progress")
       .update({
-        status: "completed",
+        status: nextStatus,
         submitted_at: new Date().toISOString()
       })
       .eq("id", progressId);
@@ -191,7 +195,7 @@ export function ChallengeDialog({
       return;
     }
 
-    setStatus("completed");
+    setStatus(nextStatus);
     await onCompleted();
   }
 
@@ -230,7 +234,7 @@ export function ChallengeDialog({
                       type="button"
                       className={checked ? "step-row complete" : "step-row"}
                       key={step.id}
-                      disabled={!progressId || status === "completed" || working}
+                      disabled={!progressId || status === "completed" || status === "pending_parent" || working}
                       onClick={() => void toggleStep(step.id)}
                     >
                       <span className="step-check">{checked ? "✓" : index + 1}</span>
@@ -247,7 +251,7 @@ export function ChallengeDialog({
 
             {challenge.parent_approval_required && (
               <div className="guardian-note">
-                Guardian approval is required to finish this challenge.
+                When you finish the required steps, this challenge goes to your parent or guardian for approval before XP is awarded.
               </div>
             )}
 
@@ -263,9 +267,20 @@ export function ChallengeDialog({
                   <strong>Challenge complete!</strong>
                   <span>Your progress and rewards have been updated.</span>
                 </div>
+              ) : status === "pending_parent" ? (
+                <div className="success-banner pending">
+                  <strong>Sent to your guardian!</strong>
+                  <span>Your required steps are finished. XP will be awarded after guardian approval.</span>
+                </div>
               ) : (
                 <button className="primary-button" type="button" disabled={working} onClick={() => void completeChallenge()}>
-                  {working ? "Completing..." : "Complete challenge"}
+                  {working
+                    ? challenge.parent_approval_required
+                      ? "Submitting..."
+                      : "Completing..."
+                    : challenge.parent_approval_required
+                      ? "Submit to guardian"
+                      : "Complete challenge"}
                 </button>
               )}
             </div>
