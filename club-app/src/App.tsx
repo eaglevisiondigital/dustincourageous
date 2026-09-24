@@ -12,6 +12,7 @@ import { BibleHub } from "./components/BibleHub";
 import { Bookshelf } from "./components/Bookshelf";
 import { ParentChildProgress } from "./components/ParentChildProgress";
 import { FamilySettings } from "./components/FamilySettings";
+import { InviteAccept } from "./components/InviteAccept";
 
 type Household = {
   id: string;
@@ -95,7 +96,7 @@ function AuthScreen() {
             email,
             password,
             options: {
-              emailRedirectTo: window.location.origin + "/",
+              emailRedirectTo: window.location.origin + window.location.pathname + window.location.search,
               data: {
                 first_name: firstName.trim(),
                 display_name: firstName.trim()
@@ -865,6 +866,37 @@ export default function App() {
 
   if (loading) return <LoadingScreen />;
   if (!session?.user) return <AuthScreen />;
+
+  if (location.pathname.startsWith("/invite")) {
+    const params = new URLSearchParams(location.search);
+    const invitationId = params.get("id");
+    const token = params.get("token");
+
+    if (!invitationId || !token) {
+      return (
+        <main className="setup-page">
+          <div className="setup-card">
+            <Brand />
+            <p className="eyebrow red">Invitation</p>
+            <h1>Invalid invitation link</h1>
+            <p className="muted">This family invitation link is incomplete.</p>
+            <button className="secondary-button" onClick={() => navigate("/")}>Return to Adventure Club</button>
+          </div>
+        </main>
+      );
+    }
+
+    return (
+      <InviteAccept
+        invitationId={invitationId}
+        token={token}
+        onAccepted={async () => {
+          await loadFamily(session.user);
+          navigate("/");
+        }}
+      />
+    );
+  }
 
   if (location.pathname.startsWith("/admin")) {
     if (!adminRole) {
