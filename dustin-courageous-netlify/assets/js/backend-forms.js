@@ -1,5 +1,5 @@
 (() => {
-  const endpoint = "https://vrixketvinzhsfwwcqiu.supabase.co/functions/v1/public-site-form";
+  const endpoint = "https://vrixketvinzhsfwwcqiu.supabase.co/functions/v1/public-site-form-v2";
 
   function statusNode(form) {
     let node = form.querySelector(".dc-form-status");
