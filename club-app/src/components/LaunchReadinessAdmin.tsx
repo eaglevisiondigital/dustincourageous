@@ -13,15 +13,25 @@ type LaunchCheck = {
 export function LaunchReadinessAdmin() {
   const [checks,setChecks]=useState<LaunchCheck[]>([]);
   const [message,setMessage]=useState("");
+  const [loading,setLoading]=useState(true);
+  const [verified,setVerified]=useState(false);
 
   const load=useCallback(async()=>{
+    setLoading(true);
+    setVerified(false);
     setMessage("");
     const {data,error}=await supabase.rpc("admin_get_production_launch_gate");
     if(error){
       setMessage(error.message);
+      setChecks([]);
+      setLoading(false);
       return;
     }
-    setChecks((data??[]) as LaunchCheck[]);
+    const nextChecks=(data??[]) as LaunchCheck[];
+    setChecks(nextChecks);
+    setVerified(nextChecks.length>0);
+    if(!nextChecks.length) setMessage("Launch checks returned no results. Production readiness cannot be verified.");
+    setLoading(false);
   },[]);
 
   useEffect(()=>{void load();},[load]);
@@ -48,15 +58,16 @@ export function LaunchReadinessAdmin() {
     }
     return Array.from(map.entries());
   },[checks]);
+  const ready=verified&&blockers.length===0;
 
   return (
     <div className="launch-gate-admin">
       {message&&<div className="form-message">{message}</div>}
 
-      <section className={blockers.length===0?"launch-gate-hero ready":"launch-gate-hero blocked"}>
+      <section className={ready?"launch-gate-hero ready":"launch-gate-hero blocked"}>
         <div>
           <p className="eyebrow gold">Production Readiness</p>
-          <h2>{blockers.length===0?"Launch blockers cleared":"Not ready for production launch"}</h2>
+          <h2>{loading?"Checking production readiness":!verified?"Production readiness unverified":ready?"Launch blockers cleared":"Not ready for production launch"}</h2>
           <p>
             This gate checks DC Governance, theology/prayer compliance, guardian safety, privacy operations,
             communications delivery, scheduled workers, commerce, and stale operational failures.
@@ -68,21 +79,25 @@ export function LaunchReadinessAdmin() {
         </div>
       </section>
 
+      <button className="secondary-button launch-gate-recheck" type="button" disabled={loading} onClick={()=>void load()}>
+        {loading?"Checking...":"Recheck launch readiness"}
+      </button>
+
       <div className="launch-gate-summary">
-        <article className={blockers.length?"bad":"good"}>
+        <article className={!verified||blockers.length?"bad":"good"}>
           <span>Blockers</span>
-          <strong>{blockers.length}</strong>
-          <small>{blockers.length?"Must be cleared before production":"Clear"}</small>
+          <strong>{verified?blockers.length:"?"}</strong>
+          <small>{!verified?"Checks not verified":blockers.length?"Must be cleared before production":"Clear"}</small>
         </article>
-        <article className={warnings.length?"warn":"good"}>
+        <article className={!verified||warnings.length?"warn":"good"}>
           <span>Warnings</span>
-          <strong>{warnings.length}</strong>
-          <small>{warnings.length?"Recommended before launch":"Clear"}</small>
+          <strong>{verified?warnings.length:"?"}</strong>
+          <small>{!verified?"Not checked":warnings.length?"Recommended before launch":"Clear"}</small>
         </article>
-        <article className="good">
+        <article className={verified?"good":"warn"}>
           <span>Passing</span>
-          <strong>{passed.length}</strong>
-          <small>Current checks</small>
+          <strong>{verified?passed.length:"?"}</strong>
+          <small>{verified?"Current checks":"Not checked"}</small>
         </article>
       </div>
 
@@ -93,9 +108,6 @@ export function LaunchReadinessAdmin() {
               <p className="eyebrow red">Production Blockers</p>
               <h2>Clear these before going live</h2>
             </div>
-            <button className="secondary-button" type="button" onClick={()=>void load()}>
-              Recheck
-            </button>
           </div>
           <div className="launch-priority-list">
             {blockers.map((check)=>(

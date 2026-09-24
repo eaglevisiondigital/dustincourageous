@@ -4660,6 +4660,7 @@ select:focus {
 
 /* Production Launch Gate */
 .launch-gate-admin{display:grid;gap:18px}
+.launch-gate-recheck{justify-self:start}
 .launch-gate-hero{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:28px;border-radius:24px;border:1px solid var(--line)}
 .launch-gate-hero.blocked{border-color:rgba(239,52,52,.26);background:radial-gradient(circle at 92% 10%,rgba(198,40,40,.14),transparent 21rem),linear-gradient(135deg,#1c0d0d,#111 62%)}
 .launch-gate-hero.ready{border-color:rgba(111,184,121,.24);background:radial-gradient(circle at 92% 10%,rgba(68,126,76,.14),transparent 21rem),linear-gradient(135deg,#0d180f,#111 62%)}
