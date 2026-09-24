@@ -3944,3 +3944,9 @@ select:focus {
   .communications-campaign-status { justify-items:start; }
   .quiet-hours-settings { grid-template-columns: 1fr; }
 }
+
+
+/* Automatic reminder rules */
+.communications-reminder-section {
+  margin-top: 0;
+}
