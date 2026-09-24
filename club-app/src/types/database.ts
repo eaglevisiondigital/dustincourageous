@@ -1902,6 +1902,21 @@ export type Database = {
         }
         Returns: string
       }
+      guardian_pin_status: {
+        Args: { p_household_id: string }
+        Returns: {
+          configured: boolean
+          locked_until: string
+        }[]
+      }
+      set_guardian_pin: {
+        Args: { p_household_id: string; p_pin: string }
+        Returns: undefined
+      }
+      verify_guardian_pin: {
+        Args: { p_household_id: string; p_pin: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
