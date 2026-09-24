@@ -298,6 +298,53 @@ export type Database = {
           },
         ]
       }
+      badge_rules: {
+        Row: {
+          badge_id: string
+          challenge_type: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          metadata: Json
+          rule_type: string
+          streak_key: string | null
+          threshold_value: number | null
+          updated_at: string
+        }
+        Insert: {
+          badge_id: string
+          challenge_type?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          rule_type: string
+          streak_key?: string | null
+          threshold_value?: number | null
+          updated_at?: string
+        }
+        Update: {
+          badge_id?: string
+          challenge_type?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          rule_type?: string
+          streak_key?: string | null
+          threshold_value?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badge_rules_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       badges: {
         Row: {
           badge_key: string
