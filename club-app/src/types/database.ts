@@ -3384,6 +3384,19 @@ export type Database = {
       }
     }
     Functions: {
+      admin_add_devotional_day: {
+        Args: {
+          p_action_step?: string
+          p_body: string
+          p_day_number: number
+          p_prayer_prompt?: string
+          p_scripture_id?: string
+          p_series_id: string
+          p_title: string
+          p_xp_reward?: number
+        }
+        Returns: string
+      }
       admin_create_badge_with_rule: {
         Args: {
           p_badge_key: string
@@ -3394,6 +3407,19 @@ export type Database = {
           p_rule_type?: string
           p_streak_key?: string
           p_threshold_value?: number
+        }
+        Returns: string
+      }
+      admin_create_book: {
+        Args: {
+          p_book_number: number
+          p_completion_xp?: number
+          p_cover_asset_key?: string
+          p_description?: string
+          p_release_date?: string
+          p_slug: string
+          p_status?: string
+          p_title: string
         }
         Returns: string
       }
@@ -3422,6 +3448,31 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_devotional_series: {
+        Args: {
+          p_access_level?: string
+          p_description?: string
+          p_is_featured?: boolean
+          p_slug: string
+          p_status?: string
+          p_title: string
+        }
+        Returns: string
+      }
+      admin_create_identity_truth: {
+        Args: {
+          p_access_level?: string
+          p_explanation?: string
+          p_say_it?: string
+          p_scripture_id?: string
+          p_slug: string
+          p_sort_order?: number
+          p_statement: string
+          p_status?: string
+          p_title: string
+        }
+        Returns: string
+      }
       admin_create_lifetime_badge_level: {
         Args: {
           p_badge_family_key?: string
@@ -3438,6 +3489,35 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_power_verse: {
+        Args: {
+          p_access_level?: string
+          p_explanation?: string
+          p_give_it_away?: string
+          p_is_featured?: boolean
+          p_live_it?: string
+          p_memorize_xp?: number
+          p_say_it?: string
+          p_scripture_id: string
+          p_slug: string
+          p_status?: string
+          p_title: string
+        }
+        Returns: string
+      }
+      admin_create_prayer_prompt: {
+        Args: {
+          p_access_level?: string
+          p_category?: string
+          p_prompt_text: string
+          p_scripture_id?: string
+          p_slug: string
+          p_status?: string
+          p_title: string
+          p_xp_reward?: number
+        }
+        Returns: string
+      }
       admin_create_reward: {
         Args: {
           p_access_level?: string
@@ -3447,6 +3527,16 @@ export type Database = {
           p_reward_key: string
           p_reward_type?: string
           p_xp_required?: number
+        }
+        Returns: string
+      }
+      admin_create_scripture: {
+        Args: {
+          p_reference: string
+          p_status?: string
+          p_theme_key?: string
+          p_translation: string
+          p_verse_text: string
         }
         Returns: string
       }
@@ -3478,6 +3568,15 @@ export type Database = {
           p_xp_reward?: number
         }
         Returns: string
+      }
+      admin_link_book_experience: {
+        Args: {
+          p_book_id: string
+          p_item_id: string
+          p_item_type: string
+          p_sort_order?: number
+        }
+        Returns: undefined
       }
       get_child_achievement_progress: {
         Args: { p_child_profile_id: string }
