@@ -20,6 +20,23 @@ type Subscription = {
   membership_plans: Plan | Plan[] | null;
 };
 
+type HouseholdAdult = {
+  user_id: string;
+  role: string;
+  status: string;
+  email: string;
+  display_name: string | null;
+};
+
+type HouseholdInvitation = {
+  id: string;
+  email: string;
+  role: string;
+  status: string;
+  expires_at: string;
+  created_at: string;
+};
+
 type Preference = {
   email_enabled: boolean;
   push_enabled: boolean;
@@ -61,6 +78,11 @@ export function FamilySettings({
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [planEntitlements, setPlanEntitlements] = useState<string[]>([]);
   const [grants, setGrants] = useState<string[]>([]);
+  const [adults, setAdults] = useState<HouseholdAdult[]>([]);
+  const [invitations, setInvitations] = useState<HouseholdInvitation[]>([]);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("adult");
+  const [inviteLink, setInviteLink] = useState("");
   const [preferences, setPreferences] = useState<Preference>({
     email_enabled:true,
     push_enabled:true,
@@ -83,7 +105,7 @@ export function FamilySettings({
   const load = useCallback(async () => {
     setMessage("");
 
-    const [plansResult,subResult,grantResult,prefResult] = await Promise.all([
+    const [plansResult,subResult,grantResult,prefResult,adultResult,inviteResult] = await Promise.all([
       supabase
         .from("membership_plans")
         .select("id,plan_key,name,description,monthly_price_cents,annual_price_cents")
@@ -106,10 +128,16 @@ export function FamilySettings({
         .from("notification_preferences")
         .select("email_enabled,push_enabled,product_updates,child_progress,rewards,family_reminders,marketing,quiet_hours_start,quiet_hours_end,timezone")
         .eq("user_id",user.id)
-        .maybeSingle()
+        .maybeSingle(),
+      supabase.rpc("get_household_adults",{p_household_id:householdId}),
+      supabase
+        .from("household_invitations")
+        .select("id,email,role,status,expires_at,created_at")
+        .eq("household_id",householdId)
+        .order("created_at",{ascending:false})
     ]);
 
-    const error=plansResult.error||subResult.error||grantResult.error||prefResult.error;
+    const error=plansResult.error||subResult.error||grantResult.error||prefResult.error||adultResult.error||inviteResult.error;
     if(error){
       setMessage(error.message);
       return;
@@ -131,6 +159,8 @@ export function FamilySettings({
     }
 
     if(prefResult.data) setPreferences(prefResult.data as Preference);
+    setAdults((adultResult.data??[]) as HouseholdAdult[]);
+    setInvitations((inviteResult.data??[]) as HouseholdInvitation[]);
   },[householdId,user.id]);
 
   useEffect(()=>{void load();},[load]);
@@ -173,6 +203,49 @@ export function FamilySettings({
     if(error)return setMessage(error.message);
     setPin("");setConfirmPin("");
     setMessage("Guardian PIN updated.");
+  }
+
+  async function createInvitation(event:FormEvent){
+    event.preventDefault();
+    setWorking(true);setMessage("");setInviteLink("");
+
+    const {data,error}=await supabase.rpc("create_household_invitation",{
+      p_household_id:householdId,
+      p_email:inviteEmail.trim(),
+      p_role:inviteRole,
+      p_expires_days:7
+    });
+
+    setWorking(false);
+    if(error)return setMessage(error.message);
+
+    const row=data?.[0];
+    if(row){
+      const link=`${window.location.origin}/invite?id=${encodeURIComponent(row.invitation_id)}&token=${encodeURIComponent(row.invitation_token)}`;
+      setInviteLink(link);
+      setMessage("Invitation created. Copy the secure link and send it to the invited adult.");
+    }
+    setInviteEmail("");
+    await load();
+  }
+
+  async function copyInvite(){
+    if(!inviteLink)return;
+    try{
+      await navigator.clipboard.writeText(inviteLink);
+      setMessage("Invitation link copied.");
+    }catch{
+      setMessage("Copy the invitation link manually.");
+    }
+  }
+
+  async function revokeInvitation(invitationId:string){
+    setWorking(true);setMessage("");
+    const {error}=await supabase.rpc("revoke_household_invitation",{p_invitation_id:invitationId});
+    setWorking(false);
+    if(error)return setMessage(error.message);
+    setMessage("Invitation revoked.");
+    await load();
   }
 
   const toggle=(key:keyof Preference)=>{
@@ -253,15 +326,79 @@ export function FamilySettings({
       )}
 
       {tab==="household"&&(
-        <section className="settings-card">
-          <p className="eyebrow gold">Family Hub</p>
-          <h2>Household settings</h2>
-          <form className="form-stack" onSubmit={saveHousehold}>
-            <label>Family Hub name<input required value={name} onChange={e=>setName(e.target.value)}/></label>
-            <label>Timezone<input required value={householdTimezone} onChange={e=>setHouseholdTimezone(e.target.value)}/></label>
-            <button className="primary-button" disabled={working}>Save Household</button>
-          </form>
-        </section>
+        <div className="settings-stack">
+          <section className="settings-card">
+            <p className="eyebrow gold">Family Hub</p>
+            <h2>Household settings</h2>
+            <form className="form-stack" onSubmit={saveHousehold}>
+              <label>Family Hub name<input required value={name} onChange={e=>setName(e.target.value)}/></label>
+              <label>Timezone<input required value={householdTimezone} onChange={e=>setHouseholdTimezone(e.target.value)}/></label>
+              <button className="primary-button" disabled={working}>Save Household</button>
+            </form>
+          </section>
+
+          <section className="settings-card">
+            <div className="section-heading compact-heading">
+              <div>
+                <p className="eyebrow red">Approved Adults</p>
+                <h2>Family access</h2>
+              </div>
+              <span className="pill">{adults.length} adult{adults.length===1?"":"s"}</span>
+            </div>
+
+            <div className="adult-list">
+              {adults.map(adult=>(
+                <article className="adult-row" key={adult.user_id}>
+                  <div className="avatar">{(adult.display_name||adult.email).slice(0,1).toUpperCase()}</div>
+                  <div>
+                    <strong>{adult.display_name||adult.email}</strong>
+                    <small>{adult.email}</small>
+                  </div>
+                  <span className="status-chip done">{adult.role}</span>
+                </article>
+              ))}
+            </div>
+
+            <form className="invite-form" onSubmit={createInvitation}>
+              <label>
+                Adult email
+                <input required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="parent@example.com"/>
+              </label>
+              <label>
+                Role
+                <select value={inviteRole} onChange={e=>setInviteRole(e.target.value)}>
+                  <option value="parent">Parent</option>
+                  <option value="guardian">Guardian</option>
+                  <option value="adult">Approved Adult</option>
+                </select>
+              </label>
+              <button className="secondary-button" disabled={working}>Create Invite Link</button>
+            </form>
+
+            {inviteLink&&(
+              <div className="invite-link-box">
+                <span>Secure invite link</span>
+                <code>{inviteLink}</code>
+                <button className="primary-button compact" type="button" onClick={()=>void copyInvite()}>Copy Link</button>
+              </div>
+            )}
+
+            {invitations.some(invite=>invite.status==="pending")&&(
+              <div className="pending-invites">
+                <p className="eyebrow gold">Pending Invites</p>
+                {invitations.filter(invite=>invite.status==="pending").map(invite=>(
+                  <article key={invite.id}>
+                    <div>
+                      <strong>{invite.email}</strong>
+                      <small>{invite.role} · expires {new Date(invite.expires_at).toLocaleDateString()}</small>
+                    </div>
+                    <button className="text-button small" type="button" onClick={()=>void revokeInvitation(invite.id)}>Revoke</button>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       )}
 
       {tab==="security"&&(
