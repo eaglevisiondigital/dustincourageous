@@ -1,5 +1,6 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { ModalDialog } from "./ModalDialog";
 
 export function GuardianPinSetup({
   householdId,
@@ -112,18 +113,19 @@ export function GuardianUnlockDialog({
   const [pin, setPin] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const busyRef = useRef(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busyRef.current) return;
+    busyRef.current = true;
     setWorking(true);
     setMessage("");
-
+    try {
     const { data, error } = await supabase.rpc("create_guardian_unlock_session", {
       p_household_id: householdId,
       p_pin: pin
     });
-
-    setWorking(false);
 
     if (error) {
       setMessage(error.message);
@@ -138,18 +140,36 @@ export function GuardianUnlockDialog({
 
     setPin("");
     onUnlock(String(data));
+    } catch {
+      setMessage("We could not check your guardian PIN. Please try again.");
+      setPin("");
+    } finally {
+      busyRef.current = false;
+      setWorking(false);
+    }
+  }
+
+  async function recover() {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setWorking(true);
+    setMessage("");
+    try { await onSignOut(); } catch {
+      setMessage("Sign-out could not be completed. Please try again.");
+    } finally {
+      busyRef.current = false;
+      setWorking(false);
+    }
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
+      <ModalDialog
         className="guardian-unlock-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="guardian-unlock-title"
-        onMouseDown={(event) => event.stopPropagation()}
+        labelledBy="guardian-unlock-title"
+        busy={working}
+        onClose={() => { if (!busyRef.current) onClose(); }}
       >
-        <button className="modal-close" type="button" onClick={onClose} aria-label="Close">
+        <button className="modal-close" type="button" disabled={working} onClick={onClose} aria-label="Close">
           ×
         </button>
         <div className="guardian-lock-icon small">◆</div>
@@ -173,16 +193,15 @@ export function GuardianUnlockDialog({
               onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
             />
           </label>
-          {message && <div className="form-message">{message}</div>}
+          {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
             {working ? "Checking..." : "Unlock Family Hub"}
           </button>
         </form>
 
-        <button className="text-button recovery-button" type="button" onClick={() => void onSignOut()}>
+        <button className="text-button recovery-button" type="button" disabled={working} onClick={() => void recover()}>
           Forgot the PIN? Sign out and sign back in as the guardian
         </button>
-      </section>
-    </div>
+      </ModalDialog>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { saveChallengeCompletion } from "../lib/challengeProgress";
+import { ModalDialog } from "./ModalDialog";
 
 type Challenge = {
   id: string;
@@ -208,13 +209,11 @@ export function ChallengeDialog({
   }
 
   return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={() => { if (!mutationBusy.current) onClose(); }}>
-      <section
+      <ModalDialog
         className="challenge-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="challenge-dialog-title"
-        onMouseDown={(event) => event.stopPropagation()}
+        labelledBy="challenge-dialog-title"
+        busy={working}
+        onClose={() => { if (!mutationBusy.current) onClose(); }}
       >
         <button className="modal-close" type="button" disabled={working} onClick={onClose} aria-label="Close challenge">
           ×
@@ -265,7 +264,7 @@ export function ChallengeDialog({
               </div>
             )}
 
-            {error && <div className="form-message">{error}</div>}
+            {error && <div className="form-message" role="alert">{error}</div>}
 
             <div className="dialog-actions">
               {status === "not_started" && !progressId ? (
@@ -296,7 +295,6 @@ export function ChallengeDialog({
             </div>
           </>
         )}
-      </section>
-    </div>
+      </ModalDialog>
   );
 }

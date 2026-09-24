@@ -209,6 +209,24 @@ input:focus { border-color: var(--red-bright); box-shadow: 0 0 0 4px rgba(239,52
   font-size: 1.5rem;
   line-height: 1;
 }
+dialog.native-modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  color: inherit;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+dialog.native-modal::backdrop {
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(12px);
+}
+dialog.native-modal :focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
 .challenge-dialog-head {
   display: flex;
   justify-content: space-between;
