@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import type { Database } from "../types/database";
+
+type PaymentReview = Pick<Database["public"]["Tables"]["integration_events"]["Row"], "id" | "entity_id" | "last_error" | "created_at">;
 
 type Provider = {
   id: string;
@@ -88,6 +91,9 @@ export function IntegrationHealthAdmin({ role }: { role: string }) {
   const [runs,setRuns]=useState<any[]>([]);
   const [commerce,setCommerce]=useState<CommerceReadiness|null>(null);
   const [commerceWebhooks,setCommerceWebhooks]=useState<CommerceWebhook[]>([]);
+  const [paymentReviews,setPaymentReviews]=useState<PaymentReview[]>([]);
+  const [reviewError,setReviewError]=useState("");
+  const [reviewsLoading,setReviewsLoading]=useState(true);
   const [latestTests,setLatestTests]=useState<IntegrationTest[]>([]);
   const [testing,setTesting]=useState("");
   const [message,setMessage]=useState("");
@@ -146,6 +152,27 @@ export function IntegrationHealthAdmin({ role }: { role: string }) {
   },[]);
 
   useEffect(()=>{void load();},[load]);
+
+  useEffect(()=>{
+    let active=true;
+    async function loadReviews(){
+      setReviewsLoading(true);
+      try {
+        const {data,error}=await supabase.from("integration_events")
+          .select("id,entity_id,last_error,created_at")
+          .eq("event_type","payment_reconciliation_required")
+          .order("created_at",{ascending:false}).limit(20);
+        if(error)throw error;
+        if(active)setPaymentReviews(data??[]);
+      } catch {
+        if(active)setReviewError("Payment review history could not be loaded. Reload this page to try again.");
+      } finally {
+        if(active)setReviewsLoading(false);
+      }
+    }
+    void loadReviews();
+    return ()=>{active=false;};
+  },[]);
 
   async function runProviderTest(providerKey:string){
     if(!canTestProviders)return;
@@ -352,6 +379,24 @@ export function IntegrationHealthAdmin({ role }: { role: string }) {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="admin-card">
+        <p className="eyebrow gold">Payment Operations</p>
+        <h2>Recent payment review history</h2>
+        <p className="privacy-note">These callbacks could not be applied automatically. Compare the order with the provider payment record before retrying, refunding, or fulfilling. A historical entry may have been resolved by a later callback.</p>
+        {reviewsLoading?<p role="status">Loading payment review history...</p>:reviewError?<p role="alert">{reviewError}</p>:paymentReviews.length?(
+          <div className="commerce-webhook-list">
+            {paymentReviews.map((review)=>(
+              <article key={review.id}>
+                <div>
+                  <strong>{review.last_error||"Payment review required"}</strong>
+                  <small>Order {review.entity_id} · {new Date(review.created_at).toLocaleString()}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        ):<p className="muted">No payment review events recorded.</p>}
       </section>
 
       <section className="admin-card integration-next-steps">

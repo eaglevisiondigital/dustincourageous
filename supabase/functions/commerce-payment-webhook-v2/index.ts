@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.1";
+import { isCommittedReplay, parsePaymentEvent } from "./validation.ts";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -32,49 +33,43 @@ Deno.serve(async (req: Request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const body = await req.json().catch(() => ({}));
+  const body = await req.json().catch(() => null);
+  let event;
+  try {
+    event = parsePaymentEvent(body);
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : "Invalid payment event" }, 400);
+  }
+  // Unsupported events must not consume the successful-payment idempotency key.
+  if (!event) return json({ ok: true, ignored: true });
+  const { provider, eventId, eventType, orderId, paymentId, providerCheckoutId,
+    amountCents, currency, customerId, shippingName, shippingAddress } = event;
 
-  const provider = String(body?.provider ?? "");
-  const eventId = String(body?.event_id ?? "");
-  const eventType = String(body?.event_type ?? "payment_succeeded");
-  const orderId = String(body?.order_id ?? "");
-  const paymentId = String(body?.payment_id ?? "");
-  const providerCheckoutId = String(body?.provider_checkout_id ?? "");
-  const amountCents = body?.amount_cents;
-  const currency = String(body?.currency ?? "").toUpperCase();
-  const customerId = body?.customer_id ? String(body.customer_id) : null;
-  const shippingName = body?.shipping_name ? String(body.shipping_name) : null;
-  const shippingAddress =
-    body?.shipping_address && typeof body.shipping_address === "object"
-      ? body.shipping_address
-      : null;
-  const status = String(body?.status ?? "");
-
-  if (!provider || !eventId || !orderId || !paymentId) {
-    return json({ error: "Missing required payment event fields" }, 400);
+  async function reconciliationRequired(reason: string) {
+    const { error: logError } = await admin.rpc("record_integration_event", {
+      p_provider_key: "commerce-primary",
+      p_event_type: "payment_reconciliation_required",
+      p_direction: "inbound",
+      p_entity_type: "order",
+      p_entity_id: orderId,
+      p_status: "failed",
+      p_idempotency_key: `payment-review:${provider}:${eventId}`,
+      p_request_payload: { provider, event_id: eventId, order_id: orderId,
+        payment_id: paymentId, provider_checkout_id: providerCheckoutId,
+        amount_cents: amountCents, currency },
+      p_last_error: reason,
+    });
+    // A failed audit write must be retried by the adapter.
+    return json({ error: reason, reconciliation_required: true }, logError ? 503 : 409);
   }
 
-  if (status !== "paid") {
-    await admin
-      .from("payment_webhook_events")
-      .upsert(
-        {
-          provider,
-          provider_event_id: eventId,
-          event_type: eventType,
-          order_id: orderId,
-          status: "ignored",
-          payload: body,
-          processed_at: new Date().toISOString(),
-        },
-        { onConflict: "provider,provider_event_id", ignoreDuplicates: true },
-      );
-
-    return json({ ok: true, ignored: true });
-  }
-
-  if (!providerCheckoutId || !Number.isSafeInteger(amountCents) || amountCents < 0 || !currency) {
-    return json({ error: "Missing checkout or payment amount verification fields" }, 400);
+  const { data: receipt, error: receiptError } = await admin.from("payment_webhook_events")
+    .select("order_id,status,payload")
+    .eq("provider", provider).eq("provider_event_id", eventId).maybeSingle();
+  if (receiptError) return json({ error: "Payment receipt lookup unavailable" }, 503);
+  if (receipt) {
+    if (isCommittedReplay(event, receipt)) return json({ ok: true, replay: true });
+    return reconciliationRequired("Payment event identifier conflicts with an existing receipt");
   }
 
   const { data: checkout, error: checkoutError } = await admin
@@ -83,14 +78,15 @@ Deno.serve(async (req: Request) => {
     .eq("order_id", orderId)
     .maybeSingle();
 
-  if (checkoutError || !checkout ||
+  if (checkoutError) return json({ error: "Checkout lookup unavailable" }, 503);
+  if (!checkout ||
     checkout.payment_provider !== provider ||
     checkout.provider_checkout_id !== providerCheckoutId ||
     checkout.total_cents !== amountCents ||
     checkout.currency !== currency ||
     !["provider_pending", "completed"].includes(checkout.checkout_status ?? "") ||
     !["pending_payment", "paid"].includes(checkout.order_status ?? "")) {
-    return json({ error: "Payment event does not match an active checkout" }, 409);
+    return reconciliationRequired("Payment event does not match an active checkout");
   }
 
   const { error } = await admin.rpc("mark_order_paid_from_provider", {
@@ -114,7 +110,17 @@ Deno.serve(async (req: Request) => {
       p_error: error.message,
     });
 
-    return json({ error: error.message }, 409);
+    return reconciliationRequired("Payment could not be applied to the order. Operations review is required.");
+  }
+
+  // Re-read after the transaction: another delivery can claim the same event
+  // between the initial lookup and the database's atomic idempotency check.
+  const { data: committed, error: committedError } = await admin.from("payment_webhook_events")
+    .select("order_id,status,payload")
+    .eq("provider", provider).eq("provider_event_id", eventId).maybeSingle();
+  if (committedError) return json({ error: "Payment confirmation lookup unavailable" }, 503);
+  if (!committed || !isCommittedReplay(event, committed)) {
+    return reconciliationRequired("Payment receipt was not confirmed for this event");
   }
 
   await admin.rpc("update_integration_provider_health", {

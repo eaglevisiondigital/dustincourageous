@@ -87,6 +87,13 @@ No payment provider is selected or activated merely by this code. Provider crede
 The webhook rejects paid events whose provider checkout ID, amount, currency, or checkout state does not match the authoritative Supabase order.
 The adapter should retry a 409 response after a short delay, since a very fast provider callback can arrive before checkout handoff has committed. It must send stable event and payment IDs on every retry.
 
+Payment callback recovery:
+- A matching, previously processed event returns success without changing the order again, including after fulfillment or refund handling.
+- Non-paid callbacks are ignored without consuming the paid-event idempotency key.
+- Reused event IDs with different payment details, late payments against expired/canceled checkouts, and failed payment transitions create a `payment_reconciliation_required` integration event. That record excludes shipping/customer details.
+- A database lookup or audit-write failure returns 503 so the adapter retries. A 409 requires bounded retries and operations escalation, never a fresh charge.
+- Before live activation, the provider adapter must reconcile expiry/cancellation with the actual provider payment state. Local expiry alone does not prove that funds were not captured. This integration remains a launch requirement.
+
 
 ### integration-provider-test
 Authenticated operations-only safe connectivity checker.
