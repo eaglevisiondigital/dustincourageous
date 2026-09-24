@@ -14,6 +14,7 @@ import { SupportAdmin } from "./SupportAdmin";
 import { GovernanceAdmin } from "./GovernanceAdmin";
 import { AnalyticsPrivacyAdmin } from "./AnalyticsPrivacyAdmin";
 import { CommunicationsAdmin } from "./CommunicationsAdmin";
+import { IntegrationHealthAdmin } from "./IntegrationHealthAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -744,7 +745,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"governance" | "operations" | "communications" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
+  const [section, setSection] = useState<"governance" | "operations" | "communications" | "integrations" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -826,6 +827,7 @@ export function AdminPortal({
             ["governance", "DC Governance"],
             ["operations", "Analytics & Privacy"],
             ["communications", "Communications"],
+            ["integrations", "Integrations & Delivery"],
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
