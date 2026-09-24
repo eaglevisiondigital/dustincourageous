@@ -2505,3 +2505,98 @@ select:focus {
   .book-adventure-step { grid-template-columns: auto 1fr; }
   .book-step-action { grid-column: 1 / -1; text-align: left; }
 }
+
+
+/* Kid home focus */
+.kid-home-focus {
+  display: grid;
+  grid-template-columns: minmax(0,1.35fr) minmax(320px,.65fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+.continue-adventure-card,
+.featured-power-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #111;
+}
+.continue-adventure-card {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 20px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 0% 100%, rgba(198,40,40,.11), transparent 20rem),
+    #111;
+}
+.continue-book-cover img {
+  width: 100%;
+  aspect-ratio: .76;
+  object-fit: cover;
+  border-radius: 13px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+}
+.continue-adventure-copy h2 {
+  margin-bottom: 8px;
+  font-size: clamp(1.7rem,3vw,2.5rem);
+}
+.continue-adventure-copy > p:not(.eyebrow) {
+  color: #9d9891;
+  line-height: 1.5;
+}
+.continue-adventure-meter {
+  margin: 13px 0 8px;
+}
+.continue-adventure-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: #817d77;
+  font-size: .69rem;
+  text-transform: capitalize;
+}
+.continue-adventure-meta strong {
+  color: #d8d3cc;
+}
+.featured-power-card {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(240,198,91,.10), transparent 17rem),
+    #111;
+}
+.featured-power-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: rgba(240,198,91,.10);
+  color: var(--gold);
+  border: 1px solid rgba(240,198,91,.16);
+}
+.featured-power-card h3 {
+  margin-bottom: 9px;
+  font-size: 1.35rem;
+}
+.featured-power-card blockquote {
+  margin: 0 0 10px;
+  color: #e8e3db;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.featured-power-card p:not(.eyebrow) {
+  color: #8f8b85;
+  font-size: .78rem;
+  line-height: 1.45;
+}
+@media (max-width: 980px) {
+  .kid-home-focus { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .continue-adventure-card { grid-template-columns: 105px 1fr; gap: 14px; }
+}
