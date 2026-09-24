@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievement_token_ledger: {
+        Row: {
+          amount: number
+          challenge_series_id: string | null
+          child_profile_id: string
+          created_at: string
+          description: string | null
+          event_type: string
+          id: string
+          period_start: string | null
+          source_id: string | null
+          source_type: string | null
+          token_type: string
+        }
+        Insert: {
+          amount: number
+          challenge_series_id?: string | null
+          child_profile_id: string
+          created_at?: string
+          description?: string | null
+          event_type: string
+          id?: string
+          period_start?: string | null
+          source_id?: string | null
+          source_type?: string | null
+          token_type: string
+        }
+        Update: {
+          amount?: number
+          challenge_series_id?: string | null
+          child_profile_id?: string
+          created_at?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          period_start?: string | null
+          source_id?: string | null
+          source_type?: string | null
+          token_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievement_token_ledger_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_audit_log: {
         Row: {
           action: string
@@ -347,7 +404,10 @@ export type Database = {
       }
       badges: {
         Row: {
+          badge_family_key: string | null
           badge_key: string
+          badge_scope: string
+          badge_tier: string | null
           created_at: string
           description: string | null
           icon_asset_key: string | null
@@ -359,7 +419,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          badge_family_key?: string | null
           badge_key: string
+          badge_scope?: string
+          badge_tier?: string | null
           created_at?: string
           description?: string | null
           icon_asset_key?: string | null
@@ -371,7 +434,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          badge_family_key?: string | null
           badge_key?: string
+          badge_scope?: string
+          badge_tier?: string | null
           created_at?: string
           description?: string | null
           icon_asset_key?: string | null
@@ -526,6 +592,48 @@ export type Database = {
           },
         ]
       }
+      challenge_series: {
+        Row: {
+          cadence: string
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json
+          name: string
+          series_key: string
+          status: string
+          token_amount: number
+          token_type: string
+          updated_at: string
+        }
+        Insert: {
+          cadence?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          name: string
+          series_key: string
+          status?: string
+          token_amount?: number
+          token_type?: string
+          updated_at?: string
+        }
+        Update: {
+          cadence?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          name?: string
+          series_key?: string
+          status?: string
+          token_amount?: number
+          token_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       challenge_steps: {
         Row: {
           challenge_id: string
@@ -585,6 +693,7 @@ export type Database = {
           access_level: string
           available_from: string | null
           available_until: string | null
+          challenge_series_id: string | null
           challenge_type: string
           created_at: string
           description: string | null
@@ -595,6 +704,8 @@ export type Database = {
           metadata: Json
           minimum_age: number | null
           parent_approval_required: boolean
+          period_end: string | null
+          period_start: string | null
           recurrence_rule: Json
           schedule_mode: string
           slug: string
@@ -607,6 +718,7 @@ export type Database = {
           access_level?: string
           available_from?: string | null
           available_until?: string | null
+          challenge_series_id?: string | null
           challenge_type: string
           created_at?: string
           description?: string | null
@@ -617,6 +729,8 @@ export type Database = {
           metadata?: Json
           minimum_age?: number | null
           parent_approval_required?: boolean
+          period_end?: string | null
+          period_start?: string | null
           recurrence_rule?: Json
           schedule_mode?: string
           slug: string
@@ -629,6 +743,7 @@ export type Database = {
           access_level?: string
           available_from?: string | null
           available_until?: string | null
+          challenge_series_id?: string | null
           challenge_type?: string
           created_at?: string
           description?: string | null
@@ -639,6 +754,8 @@ export type Database = {
           metadata?: Json
           minimum_age?: number | null
           parent_approval_required?: boolean
+          period_end?: string | null
+          period_start?: string | null
           recurrence_rule?: Json
           schedule_mode?: string
           slug?: string
@@ -647,7 +764,15 @@ export type Database = {
           updated_at?: string
           xp_reward?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "challenges_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       child_activity_events: {
         Row: {
@@ -858,6 +983,116 @@ export type Database = {
           },
         ]
       }
+      child_series_streaks: {
+        Row: {
+          best_weeks: number
+          challenge_series_id: string
+          child_profile_id: string
+          current_cycle: number
+          current_weeks: number
+          last_completed_period: string | null
+          streak_started_period: string | null
+          updated_at: string
+        }
+        Insert: {
+          best_weeks?: number
+          challenge_series_id: string
+          child_profile_id: string
+          current_cycle?: number
+          current_weeks?: number
+          last_completed_period?: string | null
+          streak_started_period?: string | null
+          updated_at?: string
+        }
+        Update: {
+          best_weeks?: number
+          challenge_series_id?: string
+          child_profile_id?: string
+          current_cycle?: number
+          current_weeks?: number
+          last_completed_period?: string | null
+          streak_started_period?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_series_streaks_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_series_weekly_completions: {
+        Row: {
+          challenge_id: string
+          challenge_series_id: string
+          child_profile_id: string
+          completed_at: string
+          created_at: string
+          id: string
+          period_start: string
+          progress_id: string
+        }
+        Insert: {
+          challenge_id: string
+          challenge_series_id: string
+          child_profile_id: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          period_start: string
+          progress_id: string
+        }
+        Update: {
+          challenge_id?: string
+          challenge_series_id?: string
+          child_profile_id?: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          period_start?: string
+          progress_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_series_weekly_completions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_weekly_completions_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_weekly_completions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_weekly_completions_progress_id_fkey"
+            columns: ["progress_id"]
+            isOneToOne: false
+            referencedRelation: "child_challenge_progress"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_step_progress: {
         Row: {
           challenge_step_id: string
@@ -937,6 +1172,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      contact_inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_hash: string | null
+          message: string
+          metadata: Json
+          name: string
+          source_page: string | null
+          status: string
+          user_agent_hash: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_hash?: string | null
+          message: string
+          metadata?: Json
+          name: string
+          source_page?: string | null
+          status?: string
+          user_agent_hash?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_hash?: string | null
+          message?: string
+          metadata?: Json
+          name?: string
+          source_page?: string | null
+          status?: string
+          user_agent_hash?: string | null
+        }
+        Relationships: []
       }
       content_items: {
         Row: {
@@ -1342,6 +1616,63 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_leads: {
+        Row: {
+          child_age: number | null
+          child_first_name: string | null
+          consent_text: string | null
+          consented_at: string | null
+          created_at: string
+          email: string
+          id: string
+          ip_hash: string | null
+          lead_type: string
+          marketing_consent: boolean
+          metadata: Json
+          parent_guardian_consent: boolean
+          parent_guardian_name: string | null
+          source_page: string | null
+          status: string
+          user_agent_hash: string | null
+        }
+        Insert: {
+          child_age?: number | null
+          child_first_name?: string | null
+          consent_text?: string | null
+          consented_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          ip_hash?: string | null
+          lead_type: string
+          marketing_consent?: boolean
+          metadata?: Json
+          parent_guardian_consent?: boolean
+          parent_guardian_name?: string | null
+          source_page?: string | null
+          status?: string
+          user_agent_hash?: string | null
+        }
+        Update: {
+          child_age?: number | null
+          child_first_name?: string | null
+          consent_text?: string | null
+          consented_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          ip_hash?: string | null
+          lead_type?: string
+          marketing_consent?: boolean
+          metadata?: Json
+          parent_guardian_consent?: boolean
+          parent_guardian_name?: string | null
+          source_page?: string | null
+          status?: string
+          user_agent_hash?: string | null
+        }
+        Relationships: []
+      }
       media_assets: {
         Row: {
           asset_key: string
@@ -1733,6 +2064,129 @@ export type Database = {
         }
         Relationships: []
       }
+      series_badge_rules: {
+        Row: {
+          active_only_while_current_streak: boolean
+          badge_id: string
+          challenge_series_id: string
+          consecutive_weeks_required: number
+          created_at: string
+          id: string
+          is_active: boolean
+          metadata: Json
+          updated_at: string
+        }
+        Insert: {
+          active_only_while_current_streak?: boolean
+          badge_id: string
+          challenge_series_id: string
+          consecutive_weeks_required: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          updated_at?: string
+        }
+        Update: {
+          active_only_while_current_streak?: boolean
+          badge_id?: string
+          challenge_series_id?: string
+          consecutive_weeks_required?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_badge_rules_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_badge_rules_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      streak_badge_earnings: {
+        Row: {
+          badge_id: string
+          challenge_series_id: string
+          child_profile_id: string
+          created_at: string
+          earned_at: string
+          id: string
+          series_badge_rule_id: string
+          streak_cycle: number
+          streak_weeks_at_earn: number
+        }
+        Insert: {
+          badge_id: string
+          challenge_series_id: string
+          child_profile_id: string
+          created_at?: string
+          earned_at?: string
+          id?: string
+          series_badge_rule_id: string
+          streak_cycle: number
+          streak_weeks_at_earn: number
+        }
+        Update: {
+          badge_id?: string
+          challenge_series_id?: string
+          child_profile_id?: string
+          created_at?: string
+          earned_at?: string
+          id?: string
+          series_badge_rule_id?: string
+          streak_cycle?: number
+          streak_weeks_at_earn?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "streak_badge_earnings_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_series_badge_rule_id_fkey"
+            columns: ["series_badge_rule_id"]
+            isOneToOne: false
+            referencedRelation: "child_active_streak_badges"
+            referencedColumns: ["series_badge_rule_id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_series_badge_rule_id_fkey"
+            columns: ["series_badge_rule_id"]
+            isOneToOne: false
+            referencedRelation: "series_badge_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_notifications: {
         Row: {
           body: string
@@ -1845,6 +2299,59 @@ export type Database = {
       }
     }
     Views: {
+      child_active_streak_badges: {
+        Row: {
+          badge_id: string | null
+          best_weeks: number | null
+          challenge_series_id: string | null
+          child_profile_id: string | null
+          consecutive_weeks_required: number | null
+          current_cycle: number | null
+          current_weeks: number | null
+          is_active: boolean | null
+          last_completed_period: string | null
+          series_badge_rule_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_series_streaks_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_badge_rules_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_token_totals: {
+        Row: {
+          child_profile_id: string | null
+          token_type: string | null
+          total: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_xp_totals: {
         Row: {
           child_profile_id: string | null
