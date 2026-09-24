@@ -1,4 +1,4 @@
-import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
@@ -1070,6 +1070,8 @@ export default function App() {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accountError, setAccountError] = useState("");
+  const familyLoadVersion = useRef(0);
   const [household, setHousehold] = useState<Household | null>(null);
   const [children, setChildren] = useState<Child[]>([]);
   const [adminRole, setAdminRole] = useState<string | null>(null);
@@ -1088,6 +1090,8 @@ export default function App() {
   }, []);
 
   const loadFamily = useCallback(async (user: User) => {
+    const version = ++familyLoadVersion.current;
+    try {
     const { data: adminData, error: adminError } = await supabase
       .from("app_admins")
       .select("role,status")
@@ -1096,7 +1100,6 @@ export default function App() {
       .maybeSingle();
 
     if (adminError) throw adminError;
-    setAdminRole(adminData?.role ?? null);
 
     const { data: orgMembershipData, error: orgMembershipError } = await supabase
       .from("organization_members")
@@ -1107,7 +1110,6 @@ export default function App() {
       .maybeSingle();
 
     if (orgMembershipError) throw orgMembershipError;
-    setHasOrganizationAccess(Boolean(orgMembershipData));
 
     const { data: membershipData, error: membershipError } = await supabase
       .from("household_members")
@@ -1122,15 +1124,43 @@ export default function App() {
     const membership = membershipData as HouseholdMembershipRow | null;
     const joined = membership?.households;
     const currentHousehold = Array.isArray(joined) ? joined[0] : joined;
+    if (version !== familyLoadVersion.current) return;
+    if (membership && !currentHousehold) throw new Error("Household unavailable");
 
     if (!currentHousehold) {
+      setAdminRole(adminData?.role ?? null);
+      setHasOrganizationAccess(Boolean(orgMembershipData));
       setHousehold(null);
       setChildren([]);
       setGuardianPinConfigured(null);
+      setAccountError("");
       return;
     }
 
+    const [childResult, pinResult] = await Promise.all([
+      supabase
+        .from("child_profiles")
+        .select("id,household_id,display_name,birth_year,avatar_key")
+        .eq("household_id", currentHousehold.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true }),
+      supabase.rpc("guardian_pin_status", {
+        p_household_id: currentHousehold.id
+      })
+    ]);
+
+    if (version !== familyLoadVersion.current) return;
+    if (childResult.error) throw childResult.error;
+    if (pinResult.error) throw pinResult.error;
+    const pinStatus = pinResult.data?.[0];
+    if (!pinStatus) throw new Error("Guardian PIN status unavailable");
+
+    setAdminRole(adminData?.role ?? null);
+    setHasOrganizationAccess(Boolean(orgMembershipData));
     setHousehold(currentHousehold);
+    setChildren((childResult.data ?? []) as Child[]);
+    setGuardianPinConfigured(pinStatus.configured);
+    setAccountError("");
 
     void supabase.rpc("claim_marketing_leads_for_household", {
       p_household_id: currentHousehold.id
@@ -1149,66 +1179,74 @@ export default function App() {
         });
     }
 
-    const [childResult, pinResult] = await Promise.all([
-      supabase
-        .from("child_profiles")
-        .select("id,household_id,display_name,birth_year,avatar_key")
-        .eq("household_id", currentHousehold.id)
-        .eq("status", "active")
-        .order("created_at", { ascending: true }),
-      supabase.rpc("guardian_pin_status", {
-        p_household_id: currentHousehold.id
-      })
-    ]);
-
-    if (childResult.error) throw childResult.error;
-    if (pinResult.error) throw pinResult.error;
-
-    setChildren((childResult.data ?? []) as Child[]);
-    setGuardianPinConfigured(pinResult.data?.[0]?.configured ?? false);
+    } catch (error) {
+      if (version !== familyLoadVersion.current) return;
+      setAccountError("We could not load your family account. Please try again. Your saved progress has not been changed.");
+      throw error;
+    }
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      setSession(data.session);
-      if (data.session?.user) {
-        void registerCurrentInstallation();
-        try {
-          await loadFamily(data.session.user);
-        } catch (error) {
-          console.error("Unable to load account", error);
-        }
-      }
-      setLoading(false);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
+    let disposed = false;
+    let authVersion = 0;
+    let pendingLoad: ReturnType<typeof setTimeout> | undefined;
+    const acceptSession = (nextSession: Session | null) => {
+      const version = ++authVersion;
+      familyLoadVersion.current += 1;
+      clearTimeout(pendingLoad);
       setSession(nextSession);
-
+      setAccountError("");
       if (!nextSession) {
         setHousehold(null);
         setChildren([]);
         setAdminRole(null);
         setHasOrganizationAccess(false);
         setGuardianPinConfigured(null);
+        setPasswordRecovery(false);
         setLoading(false);
         return;
       }
 
-      void registerCurrentInstallation();
       setLoading(true);
-      void loadFamily(nextSession.user)
-        .catch((error) => console.error("Unable to load account", error))
-        .finally(() => setLoading(false));
+      // Run database calls after the auth callback releases its session lock.
+      pendingLoad = setTimeout(() => {
+        if (disposed || version !== authVersion) return;
+        void registerCurrentInstallation().catch(() => {});
+        void loadFamily(nextSession.user)
+          .catch(() => {}) // loadFamily presents the recoverable error state.
+          .finally(() => {
+            if (!disposed && version === authVersion) setLoading(false);
+          });
+      }, 0);
+    };
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (disposed) return;
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
+      acceptSession(nextSession);
     });
 
-    return () => listener.subscription.unsubscribe();
+    const initialVersion = authVersion;
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (disposed || authVersion !== initialVersion) return;
+      if (error) throw error;
+      acceptSession(data.session);
+    }).catch(() => {
+      if (disposed || authVersion !== initialVersion) return;
+      setAccountError("We could not restore your sign-in. Please reload and try again.");
+      setLoading(false);
+    });
+
+    return () => {
+      disposed = true;
+      familyLoadVersion.current += 1;
+      clearTimeout(pendingLoad);
+      listener.subscription.unsubscribe();
+    };
   }, [loadFamily]);
 
   if (loading) return <LoadingScreen />;
-  if (!session?.user) return <AuthScreen initialMessage={authRedirectMessage} />;
-  if (passwordRecovery) {
+  if (session?.user && passwordRecovery) {
     return (
       <ResetPasswordScreen
         onComplete={() => {
@@ -1219,6 +1257,20 @@ export default function App() {
       />
     );
   }
+
+  if (accountError) {
+    return (
+      <main className="setup-page">
+        <div className="setup-card">
+          <Brand />
+          <h1>Let’s reconnect</h1>
+          <p role="alert" className="muted">{accountError}</p>
+          <button className="primary-button" onClick={() => window.location.reload()}>Try again</button>
+        </div>
+      </main>
+    );
+  }
+  if (!session?.user) return <AuthScreen initialMessage={authRedirectMessage} />;
 
   if (location.pathname.startsWith("/org-invite")) {
     const params = new URLSearchParams(location.search);
