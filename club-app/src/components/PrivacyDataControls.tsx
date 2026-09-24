@@ -34,6 +34,8 @@ type PrivacyRequest = {
   request_type: string;
   status: string;
   reason: string | null;
+  export_reference: string | null;
+  export_expires_at: string | null;
   created_at: string;
 };
 
@@ -97,7 +99,7 @@ export function PrivacyDataControls({
         .eq("household_id",householdId),
       supabase
         .from("data_privacy_requests")
-        .select("id,child_profile_id,request_type,status,reason,created_at")
+        .select("id,child_profile_id,request_type,status,reason,export_reference,export_expires_at,created_at")
         .eq("household_id",householdId)
         .order("created_at",{ascending:false})
         .limit(50),
@@ -175,6 +177,52 @@ export function PrivacyDataControls({
     setReason("");
     setMessage("Privacy request submitted for review.");
     await load();
+  }
+
+  async function openExport(request:PrivacyRequest){
+    const exportStillAvailable =
+      Boolean(request.export_reference)
+      && Boolean(request.export_expires_at)
+      && new Date(request.export_expires_at!).getTime() > Date.now();
+
+    const action=exportStillAvailable?"download":"generate";
+    setWorking("export:"+request.id);
+    setMessage("");
+
+    const {data,error}=await supabase.functions.invoke("privacy-export",{
+      body:{
+        action,
+        request_id:request.id
+      }
+    });
+
+    setWorking("");
+
+    if(error){
+      setMessage(error.message);
+      return;
+    }
+
+    if(data?.error){
+      setMessage(String(data.error));
+      return;
+    }
+
+    if(data?.signed_url){
+      const anchor=document.createElement("a");
+      anchor.href=String(data.signed_url);
+      anchor.target="_blank";
+      anchor.rel="noopener noreferrer";
+      anchor.download="dustin-courageous-adventure-club-data.json";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setMessage("Your private export download link is ready for 15 minutes.");
+      await load();
+      return;
+    }
+
+    setMessage("The export is not ready yet.");
   }
 
   async function cancelRequest(id:string){
@@ -364,7 +412,22 @@ export function PrivacyDataControls({
                 <strong>{request.request_type.replaceAll("_"," ")}</strong>
                 <span>{new Date(request.created_at).toLocaleString()}</span>
               </div>
-              <span className={request.status==="completed"?"status-chip done":"status-chip"}>{request.status.replaceAll("_"," ")}</span>
+              <span className={request.status==="completed"||request.status==="ready"?"status-chip done":"status-chip"}>{request.status.replaceAll("_"," ")}</span>
+              {request.request_type.startsWith("export_")&&!["canceled","rejected","completed"].includes(request.status)&&(
+                <button
+                  className="secondary-button compact"
+                  disabled={working==="export:"+request.id}
+                  onClick={()=>void openExport(request)}
+                >
+                  {working==="export:"+request.id
+                    ?"Preparing..."
+                    : request.export_reference
+                      && request.export_expires_at
+                      && new Date(request.export_expires_at).getTime()>Date.now()
+                        ?"Download export"
+                        :"Generate export"}
+                </button>
+              )}
               {["requested","identity_confirmed"].includes(request.status)&&(
                 <button className="text-button small" disabled={working==="cancel:"+request.id} onClick={()=>void cancelRequest(request.id)}>
                   Cancel
