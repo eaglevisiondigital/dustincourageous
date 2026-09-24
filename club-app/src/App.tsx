@@ -580,6 +580,20 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
+                  className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("bible")}
+                >
+                  Bible
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("books")}
+                >
+                  Books
+                </button>
+                <button
+                  type="button"
                   className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("trophies")}
                 >
