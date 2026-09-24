@@ -24,6 +24,8 @@ import { ReferralSupportCard } from "./components/ReferralSupportCard";
 import { LeaderGroupsHub } from "./components/LeaderGroupsHub";
 import { PrivacyDataControls } from "./components/PrivacyDataControls";
 import { InviteAccept } from "./components/InviteAccept";
+import { OrganizationInviteAccept } from "./components/OrganizationInviteAccept";
+import { LeaderOnlyPortal } from "./components/LeaderOnlyPortal";
 
 type Household = {
   id: string;
@@ -89,6 +91,7 @@ function LoadingScreen() {
 }
 
 function AuthScreen() {
+  const leaderInvitation = window.location.pathname.startsWith("/org-invite");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
@@ -154,10 +157,20 @@ function AuthScreen() {
 
       <section className="auth-panel">
         <div className="auth-card">
-          <p className="eyebrow red">Adventure Club Family Access</p>
-          <h2>{mode === "signin" ? "Welcome back" : "Create your family account"}</h2>
+          <p className="eyebrow red">
+            {leaderInvitation ? "Adventure Club Adult Access" : "Adventure Club Family Access"}
+          </p>
+          <h2>
+            {mode === "signin"
+              ? "Welcome back"
+              : leaderInvitation
+                ? "Create your adult account"
+                : "Create your family account"}
+          </h2>
           <p className="muted">
-            Parents and guardians manage the account. Children participate through protected family profiles.
+            {leaderInvitation
+              ? "Use the exact email address that received the organization invitation. Leader access does not require a child or family household."
+              : "Parents and guardians manage the account. Children participate through protected family profiles."}
           </p>
 
           <form onSubmit={submit} className="form-stack">
@@ -897,6 +910,7 @@ export default function App() {
   const [household, setHousehold] = useState<Household | null>(null);
   const [children, setChildren] = useState<Child[]>([]);
   const [adminRole, setAdminRole] = useState<string | null>(null);
+  const [hasOrganizationAccess, setHasOrganizationAccess] = useState(false);
   const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
 
   const loadFamily = useCallback(async (user: User) => {
@@ -909,6 +923,18 @@ export default function App() {
 
     if (adminError) throw adminError;
     setAdminRole(adminData?.role ?? null);
+
+    const { data: orgMembershipData, error: orgMembershipError } = await supabase
+      .from("organization_members")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (orgMembershipError) throw orgMembershipError;
+    setHasOrganizationAccess(Boolean(orgMembershipData));
+
     const { data: membershipData, error: membershipError } = await supabase
       .from("household_members")
       .select("household_id,role,households(id,name,timezone,status)")
@@ -984,6 +1010,7 @@ export default function App() {
         setHousehold(null);
         setChildren([]);
         setAdminRole(null);
+        setHasOrganizationAccess(false);
         setGuardianPinConfigured(null);
         setLoading(false);
         return;
@@ -1000,6 +1027,40 @@ export default function App() {
 
   if (loading) return <LoadingScreen />;
   if (!session?.user) return <AuthScreen />;
+
+  if (location.pathname.startsWith("/org-invite")) {
+    const params = new URLSearchParams(location.search);
+    const invitationId = params.get("id");
+    const token = params.get("token");
+
+    if (!invitationId || !token) {
+      return (
+        <main className="setup-page">
+          <div className="setup-card">
+            <Brand />
+            <p className="eyebrow red">Leader Invitation</p>
+            <h1>Invalid invitation link</h1>
+            <p className="muted">This organization invitation link is incomplete.</p>
+            <button className="secondary-button" onClick={() => navigate("/")}>
+              Return to Adventure Club
+            </button>
+          </div>
+        </main>
+      );
+    }
+
+    return (
+      <OrganizationInviteAccept
+        invitationId={invitationId}
+        token={token}
+        onCancel={() => navigate("/")}
+        onAccepted={async () => {
+          await loadFamily(session.user);
+          navigate("/");
+        }}
+      />
+    );
+  }
 
   if (location.pathname.startsWith("/invite")) {
     const params = new URLSearchParams(location.search);
@@ -1048,6 +1109,16 @@ export default function App() {
     }
 
     return <AdminPortal user={session.user} role={adminRole} onExit={() => navigate("/")} />;
+  }
+
+  if (!household && hasOrganizationAccess) {
+    return (
+      <LeaderOnlyPortal
+        user={session.user}
+        adminRole={adminRole}
+        onAdmin={() => navigate("/admin")}
+      />
+    );
   }
 
   if (!household) {
