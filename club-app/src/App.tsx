@@ -7,6 +7,7 @@ import { RewardsPanel } from "./components/RewardsPanel";
 import { NotificationsPanel } from "./components/NotificationsPanel";
 import { AdminPortal } from "./components/AdminPortal";
 import { GuardianPinSetup, GuardianUnlockDialog } from "./components/GuardianPin";
+import { TrophyRoom } from "./components/TrophyRoom";
 
 type Household = {
   id: string;
@@ -385,6 +386,7 @@ function FamilyPortal({
   const [view, setView] = useState<"kid" | "parent">(
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
+  const [kidSection, setKidSection] = useState<"home" | "trophies">("home");
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
@@ -522,6 +524,27 @@ function FamilyPortal({
         <main className="portal-main">
           {view === "kid" ? (
             <>
+              <nav className="kid-subnav" aria-label="Kid area">
+                <button
+                  type="button"
+                  className={kidSection === "home" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("home")}
+                >
+                  Adventure Home
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("trophies")}
+                >
+                  Trophy Room
+                </button>
+              </nav>
+
+              {kidSection === "trophies" && selectedChild ? (
+                <TrophyRoom childId={selectedChild.id} childName={selectedChild.display_name} />
+              ) : (
+                <>
               <section className="welcome-card">
                 <div>
                   <p className="eyebrow gold">Adventure Club</p>
@@ -578,6 +601,8 @@ function FamilyPortal({
                 <h2>You can be courageous because God is with you.</h2>
                 <p>Learn it. Say it. Live it. Give it away.</p>
               </section>
+                </>
+              )}
             </>
           ) : (
             <>
