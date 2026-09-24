@@ -106,6 +106,12 @@ export function ParentProgressOverview({
     void load();
   }, [load]);
 
+  useEffect(() => {
+    const handler = () => void load();
+    window.addEventListener("dc-progress-updated", handler);
+    return () => window.removeEventListener("dc-progress-updated", handler);
+  }, [load]);
+
   const selected = useMemo(
     () => summaries.find((item) => item.child_profile_id === selectedChildId) ?? summaries[0] ?? null,
     [summaries, selectedChildId]
