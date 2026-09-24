@@ -774,7 +774,7 @@ function FamilyPortal({
               </nav>
 
               {parentSection === "store" ? (
-                <FamilyStore householdId={household.id} />
+                <FamilyStore key={household.id} householdId={household.id} />
               ) : parentSection === "settings" ? (
                 <>
                   <MembershipAccessCard householdId={household.id} />

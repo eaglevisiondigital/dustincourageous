@@ -40,6 +40,25 @@ type CartLine = {
   quantity: number;
 };
 
+function cartStorageKey(householdId: string) {
+  return `dc-store-cart:${householdId}`;
+}
+
+function readCart(householdId: string): CartLine[] {
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(cartStorageKey(householdId)) || "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.slice(0, 50).filter((line): line is CartLine =>
+      typeof line === "object" && line !== null &&
+      typeof line.productId === "string" &&
+      (line.variantId === null || typeof line.variantId === "string") &&
+      Number.isInteger(line.quantity) && line.quantity >= 1 && line.quantity <= 20
+    );
+  } catch {
+    return [];
+  }
+}
+
 type CheckoutReadiness = {
   provider_configured: boolean;
   provider_status: string;
@@ -73,8 +92,9 @@ function productImage(assetKey: string | null) {
 
 export function FamilyStore({ householdId }: { householdId: string }) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
   const [membership, setMembership] = useState<Membership | null>(null);
-  const [cart, setCart] = useState<CartLine[]>([]);
+  const [cart, setCart] = useState<CartLine[]>(() => readCart(householdId));
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [promoCode, setPromoCode] = useState("");
   const [working, setWorking] = useState(false);
@@ -113,6 +133,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     }));
 
     setProducts(nextProducts);
+    setCatalogLoaded(true);
     setMembership((membershipResult.data ?? null) as Membership | null);
     setCheckoutReadiness(((readinessResult.data ?? [])[0] ?? null) as CheckoutReadiness | null);
 
@@ -130,6 +151,25 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(cartStorageKey(householdId), JSON.stringify(cart));
+    } catch {
+      // Browsers with storage disabled can still use the cart for this session.
+    }
+  }, [householdId, cart]);
+
+  useEffect(() => {
+    if (!catalogLoaded) return;
+    setCart((current) => current.filter((line) => {
+      const product = products.find((item) => item.id === line.productId);
+      if (!product) return false;
+      const variants = product.product_variants ?? [];
+      if (variants.length) return variants.some((variant) => variant.id === line.variantId);
+      return line.variantId === null;
+    }));
+  }, [catalogLoaded, products]);
 
   const isPaidMember =
     membership?.subscription_status &&
@@ -435,7 +475,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                     <div>
                       <strong>{item.product?.name || "Product"}</strong>
                       {item.variant && <small>{item.variant.name}</small>}
-                      <span>{money(item.unitPrice)} each</span>
+                      <span>{money(item.unitPrice, item.product?.currency)} each</span>
                     </div>
 
                     <div className="store-quantity">
@@ -474,7 +514,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
 
               <div className="store-total-preview">
                 <span>Estimated merchandise subtotal</span>
-                <strong>{money(previewSubtotal)}</strong>
+                <strong>{money(previewSubtotal, cartPreview[0]?.product?.currency)}</strong>
                 <small>
                   Final member pricing, promo discount, inventory, tax, and shipping are
                   validated server-side before payment.
