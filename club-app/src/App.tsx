@@ -8,6 +8,8 @@ import { NotificationsPanel } from "./components/NotificationsPanel";
 import { AdminPortal } from "./components/AdminPortal";
 import { GuardianPinSetup, GuardianUnlockDialog } from "./components/GuardianPin";
 import { TrophyRoom } from "./components/TrophyRoom";
+import { BibleHub } from "./components/BibleHub";
+import { Bookshelf } from "./components/Bookshelf";
 
 type Household = {
   id: string;
@@ -386,7 +388,7 @@ function FamilyPortal({
   const [view, setView] = useState<"kid" | "parent">(
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
-  const [kidSection, setKidSection] = useState<"home" | "trophies">("home");
+  const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "trophies">("home");
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
@@ -443,6 +445,24 @@ function FamilyPortal({
   useEffect(() => {
     void loadChildDashboard();
   }, [loadChildDashboard]);
+
+  async function openChallengeById(challengeId: string) {
+    const existing = challenges.find((challenge) => challenge.id === challengeId);
+    if (existing) {
+      setSelectedChallenge(existing);
+      return;
+    }
+
+    const { data, error: challengeError } = await supabase
+      .from("challenges")
+      .select("id,title,description,challenge_type,xp_reward,access_level,parent_approval_required")
+      .eq("id", challengeId)
+      .single();
+
+    if (!challengeError && data) {
+      setSelectedChallenge(data as Challenge);
+    }
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -530,7 +550,21 @@ function FamilyPortal({
                   className={kidSection === "home" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("home")}
                 >
-                  Adventure Home
+                  Home
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("bible")}
+                >
+                  Bible
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("books")}
+                >
+                  Books
                 </button>
                 <button
                   type="button"
@@ -543,6 +577,19 @@ function FamilyPortal({
 
               {kidSection === "trophies" && selectedChild ? (
                 <TrophyRoom childId={selectedChild.id} childName={selectedChild.display_name} />
+              ) : kidSection === "bible" && selectedChild ? (
+                <BibleHub
+                  childId={selectedChild.id}
+                  childName={selectedChild.display_name}
+                  onProgress={loadChildDashboard}
+                />
+              ) : kidSection === "books" && selectedChild ? (
+                <Bookshelf
+                  childId={selectedChild.id}
+                  childName={selectedChild.display_name}
+                  onProgress={loadChildDashboard}
+                  onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+                />
               ) : (
                 <>
               <section className="welcome-card">
@@ -627,6 +674,7 @@ function FamilyPortal({
                       className="text-button small"
                       onClick={() => {
                         setSelectedChildId(child.id);
+                        setKidSection("home");
                         setView("kid");
                       }}
                     >
