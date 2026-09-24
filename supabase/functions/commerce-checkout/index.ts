@@ -1,15 +1,17 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.1";
 
+function allowedOrigin(origin: string | null) {
+  if (!origin) return false;
+  return origin === "https://dustincourageous.com" ||
+    origin === "https://www.dustincourageous.com" ||
+    origin === "http://localhost:5173" ||
+    origin === "https://dustincourageous.netlify.app" ||
+    /^https:\/\/[a-z0-9-]+--dustincourageous\.netlify\.app$/.test(origin);
+}
+
 function cors(origin: string | null) {
-  const allowed =
-    !!origin &&
-    (
-      origin === "https://dustincourageous.com" ||
-      origin === "https://www.dustincourageous.com" ||
-      origin === "http://localhost:5173" ||
-      origin.endsWith(".netlify.app")
-    );
+  const allowed = allowedOrigin(origin);
 
   return {
     "Access-Control-Allow-Origin": allowed ? origin! : "https://dustincourageous.com",
@@ -144,8 +146,8 @@ Deno.serve(async (req: Request) => {
     },
     items: items ?? [],
     return_urls: {
-      success: origin ? origin + "/?checkout=success" : null,
-      cancel: origin ? origin + "/?checkout=canceled" : null,
+      success: (allowedOrigin(origin) ? origin : "https://dustincourageous.com") + "/?checkout=success",
+      cancel: (allowedOrigin(origin) ? origin : "https://dustincourageous.com") + "/?checkout=canceled",
     },
   };
 
