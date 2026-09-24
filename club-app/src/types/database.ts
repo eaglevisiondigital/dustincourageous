@@ -1805,6 +1805,8 @@ export type Database = {
           available_from: string | null
           available_until: string | null
           body: Json
+          category: string
+          completion_xp: number
           content_type: string
           created_at: string
           id: string
@@ -1825,6 +1827,8 @@ export type Database = {
           available_from?: string | null
           available_until?: string | null
           body?: Json
+          category?: string
+          completion_xp?: number
           content_type: string
           created_at?: string
           id?: string
@@ -1845,6 +1849,8 @@ export type Database = {
           available_from?: string | null
           available_until?: string | null
           body?: Json
+          category?: string
+          completion_xp?: number
           content_type?: string
           created_at?: string
           id?: string
@@ -3502,6 +3508,23 @@ export type Database = {
           p_series_key: string
           p_token_amount?: number
           p_token_type?: string
+        }
+        Returns: string
+      }
+      admin_create_content_item: {
+        Args: {
+          p_access_level?: string
+          p_asset_key?: string
+          p_body?: Json
+          p_category?: string
+          p_completion_xp?: number
+          p_content_type: string
+          p_is_featured?: boolean
+          p_slug: string
+          p_status?: string
+          p_summary?: string
+          p_thumbnail_asset_key?: string
+          p_title: string
         }
         Returns: string
       }
