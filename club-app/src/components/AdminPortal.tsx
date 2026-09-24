@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { WeeklySeriesAdmin } from "./WeeklySeriesAdmin";
 import { FaithContentAdmin } from "./FaithContentAdmin";
 import { BookAdmin } from "./BookAdmin";
+import { MediaAdmin } from "./MediaAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -730,7 +731,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "media" | "badges" | "rewards" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -813,6 +814,7 @@ export function AdminPortal({
             ["series", "Weekly Series"],
             ["faith", "Faith Content"],
             ["books", "Books"],
+            ["media", "Media Library"],
             ["badges", "Badges"],
             ["rewards", "Rewards"],
             ["fulfillment", "Fulfillment"]
@@ -855,6 +857,8 @@ export function AdminPortal({
             <FaithContentAdmin />
           ) : section === "books" ? (
             <BookAdmin />
+          ) : section === "media" ? (
+            <MediaAdmin />
           ) : section === "badges" ? (
             <BadgeAdmin badges={badges} refresh={refresh} />
           ) : section === "rewards" ? (
