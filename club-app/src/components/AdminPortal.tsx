@@ -2,6 +2,8 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { WeeklySeriesAdmin } from "./WeeklySeriesAdmin";
+import { FaithContentAdmin } from "./FaithContentAdmin";
+import { BookAdmin } from "./BookAdmin";
 
 type ChallengeRow = {
   id: string;
@@ -711,7 +713,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"challenges" | "series" | "badges" | "rewards" | "fulfillment">("challenges");
+  const [section, setSection] = useState<"challenges" | "series" | "faith" | "books" | "badges" | "rewards" | "fulfillment">("challenges");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
@@ -792,6 +794,8 @@ export function AdminPortal({
           {[
             ["challenges", "Challenges"],
             ["series", "Weekly Series"],
+            ["faith", "Faith Content"],
+            ["books", "Books"],
             ["badges", "Badges"],
             ["rewards", "Rewards"],
             ["fulfillment", "Fulfillment"]
@@ -830,6 +834,10 @@ export function AdminPortal({
             <ChallengeAdmin challenges={challenges} refresh={refresh} />
           ) : section === "series" ? (
             <WeeklySeriesAdmin />
+          ) : section === "faith" ? (
+            <FaithContentAdmin />
+          ) : section === "books" ? (
+            <BookAdmin />
           ) : section === "badges" ? (
             <BadgeAdmin badges={badges} refresh={refresh} />
           ) : section === "rewards" ? (
