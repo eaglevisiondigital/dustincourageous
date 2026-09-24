@@ -6,6 +6,7 @@ import { ChallengeDialog } from "./components/ChallengeDialog";
 import { RewardsPanel } from "./components/RewardsPanel";
 import { NotificationsPanel } from "./components/NotificationsPanel";
 import { AdminPortal } from "./components/AdminPortal";
+import { GuardianPinSetup, GuardianUnlockDialog } from "./components/GuardianPin";
 
 type Household = {
   id: string;
@@ -101,6 +102,10 @@ function AuthScreen() {
     if (result.error) {
       setMessage(result.error.message);
       return;
+    }
+
+    if (result.data.session) {
+      localStorage.removeItem("dc_adventure_club_kid_locked");
     }
 
     if (mode === "signup" && !result.data.session) {
@@ -370,7 +375,13 @@ function FamilyPortal({
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [addingChild, setAddingChild] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
-  const [view, setView] = useState<"kid" | "parent">("kid");
+  const [kidLocked, setKidLocked] = useState(
+    () => localStorage.getItem("dc_adventure_club_kid_locked") === "1"
+  );
+  const [unlockOpen, setUnlockOpen] = useState(false);
+  const [view, setView] = useState<"kid" | "parent">(
+    () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
+  );
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
@@ -425,20 +436,38 @@ function FamilyPortal({
       <header className="app-header">
         <Brand />
         <div className="header-actions">
-          <button className={view === "kid" ? "mode active" : "mode"} onClick={() => setView("kid")}>
-            Kid view
-          </button>
-          <button className={view === "parent" ? "mode active" : "mode"} onClick={() => setView("parent")}>
-            Family hub
-          </button>
-          {adminRole && (
-            <button className="text-button small" onClick={onAdmin}>
-              Admin
-            </button>
+          {kidLocked ? (
+            <>
+              <span className="kid-lock-status">Kid View Locked</span>
+              <button className="mode active" onClick={() => setUnlockOpen(true)}>
+                Unlock Family Hub
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className={view === "kid" ? "mode active" : "mode"}
+                onClick={() => {
+                  localStorage.setItem("dc_adventure_club_kid_locked", "1");
+                  setKidLocked(true);
+                  setView("kid");
+                }}
+              >
+                Lock Kid View
+              </button>
+              <button className={view === "parent" ? "mode active" : "mode"} onClick={() => setView("parent")}>
+                Family hub
+              </button>
+              {adminRole && (
+                <button className="text-button small" onClick={onAdmin}>
+                  Admin
+                </button>
+              )}
+              <button className="text-button small" onClick={signOut}>
+                Sign out
+              </button>
+            </>
           )}
-          <button className="text-button small" onClick={signOut}>
-            Sign out
-          </button>
         </div>
       </header>
 
@@ -594,6 +623,22 @@ function FamilyPortal({
           }}
         />
       )}
+
+      {unlockOpen && (
+        <GuardianUnlockDialog
+          householdId={household.id}
+          onClose={() => setUnlockOpen(false)}
+          onUnlock={() => {
+            localStorage.removeItem("dc_adventure_club_kid_locked");
+            setKidLocked(false);
+            setUnlockOpen(false);
+            setView("parent");
+          }}
+          onSignOut={async () => {
+            await supabase.auth.signOut();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -606,6 +651,7 @@ export default function App() {
   const [household, setHousehold] = useState<Household | null>(null);
   const [children, setChildren] = useState<Child[]>([]);
   const [adminRole, setAdminRole] = useState<string | null>(null);
+  const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
 
   const loadFamily = useCallback(async (user: User) => {
     const { data: adminData, error: adminError } = await supabase
@@ -634,19 +680,29 @@ export default function App() {
     if (!currentHousehold) {
       setHousehold(null);
       setChildren([]);
+      setGuardianPinConfigured(null);
       return;
     }
 
     setHousehold(currentHousehold);
-    const { data: childData, error: childError } = await supabase
-      .from("child_profiles")
-      .select("id,household_id,display_name,birth_year,avatar_key")
-      .eq("household_id", currentHousehold.id)
-      .eq("status", "active")
-      .order("created_at", { ascending: true });
 
-    if (childError) throw childError;
-    setChildren((childData ?? []) as Child[]);
+    const [childResult, pinResult] = await Promise.all([
+      supabase
+        .from("child_profiles")
+        .select("id,household_id,display_name,birth_year,avatar_key")
+        .eq("household_id", currentHousehold.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true }),
+      supabase.rpc("guardian_pin_status", {
+        p_household_id: currentHousehold.id
+      })
+    ]);
+
+    if (childResult.error) throw childResult.error;
+    if (pinResult.error) throw pinResult.error;
+
+    setChildren((childResult.data ?? []) as Child[]);
+    setGuardianPinConfigured(pinResult.data?.[0]?.configured ?? false);
   }, []);
 
   useEffect(() => {
@@ -669,6 +725,7 @@ export default function App() {
         setHousehold(null);
         setChildren([]);
         setAdminRole(null);
+        setGuardianPinConfigured(null);
         setLoading(false);
         return;
       }
@@ -709,6 +766,15 @@ export default function App() {
 
   if (!children.length) {
     return <EmptyFamily household={household} user={session.user} onAdded={() => loadFamily(session.user)} />;
+  }
+
+  if (guardianPinConfigured === false) {
+    return (
+      <GuardianPinSetup
+        householdId={household.id}
+        onComplete={() => setGuardianPinConfigured(true)}
+      />
+    );
   }
 
   return (
