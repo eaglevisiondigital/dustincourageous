@@ -29,9 +29,11 @@ export function SupportAdmin(){
   useEffect(()=>{void load();},[load]);
 
   async function updateTicket(id:string,status:string,priority?:string){
-    const payload:Record<string,unknown>={status};
-    if(priority)payload.priority=priority;
-    if(status==="resolved")payload.resolved_at=new Date().toISOString();
+    const payload = {
+      status,
+      ...(priority ? { priority } : {}),
+      ...(status === "resolved" ? { resolved_at: new Date().toISOString() } : {})
+    };
     const {error}=await supabase.from("support_tickets").update(payload).eq("id",id);
     if(error){setMessage(error.message);return;}
     await load();
