@@ -387,6 +387,7 @@ export type Database = {
           rule_type: string
           streak_key: string | null
           threshold_value: number | null
+          token_type: string | null
           updated_at: string
         }
         Insert: {
@@ -399,6 +400,7 @@ export type Database = {
           rule_type: string
           streak_key?: string | null
           threshold_value?: number | null
+          token_type?: string | null
           updated_at?: string
         }
         Update: {
@@ -411,6 +413,7 @@ export type Database = {
           rule_type?: string
           streak_key?: string | null
           threshold_value?: number | null
+          token_type?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2600,6 +2603,7 @@ export type Database = {
           p_streak_key?: string
           p_threshold_value?: number
           p_tier?: string
+          p_token_type?: string
         }
         Returns: string
       }
