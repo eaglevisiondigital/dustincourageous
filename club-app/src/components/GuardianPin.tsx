@@ -105,7 +105,7 @@ export function GuardianUnlockDialog({
   onSignOut
 }: {
   householdId: string;
-  onUnlock: () => void;
+  onUnlock: (token: string) => void;
   onClose: () => void;
   onSignOut: () => Promise<void>;
 }) {
@@ -118,7 +118,7 @@ export function GuardianUnlockDialog({
     setWorking(true);
     setMessage("");
 
-    const { data, error } = await supabase.rpc("verify_guardian_pin", {
+    const { data, error } = await supabase.rpc("create_guardian_unlock_session", {
       p_household_id: householdId,
       p_pin: pin
     });
@@ -137,7 +137,7 @@ export function GuardianUnlockDialog({
     }
 
     setPin("");
-    onUnlock();
+    onUnlock(String(data));
   }
 
   return (
