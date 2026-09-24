@@ -1,9 +1,11 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import { ChallengeDialog } from "./components/ChallengeDialog";
 import { RewardsPanel } from "./components/RewardsPanel";
 import { NotificationsPanel } from "./components/NotificationsPanel";
+import { AdminPortal } from "./components/AdminPortal";
 
 type Household = {
   id: string;
@@ -347,12 +349,16 @@ function FamilyPortal({
   user,
   household,
   children,
-  reload
+  reload,
+  adminRole,
+  onAdmin
 }: {
   user: User;
   household: Household;
   children: Child[];
   reload: () => Promise<void>;
+  adminRole: string | null;
+  onAdmin: () => void;
 }) {
   const [selectedChildId, setSelectedChildId] = useState(children[0]?.id ?? "");
   const [snapshot, setSnapshot] = useState<ChildSnapshot>({
@@ -425,6 +431,11 @@ function FamilyPortal({
           <button className={view === "parent" ? "mode active" : "mode"} onClick={() => setView("parent")}>
             Family hub
           </button>
+          {adminRole && (
+            <button className="text-button small" onClick={onAdmin}>
+              Admin
+            </button>
+          )}
           <button className="text-button small" onClick={signOut}>
             Sign out
           </button>
@@ -588,12 +599,24 @@ function FamilyPortal({
 }
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [household, setHousehold] = useState<Household | null>(null);
   const [children, setChildren] = useState<Child[]>([]);
+  const [adminRole, setAdminRole] = useState<string | null>(null);
 
   const loadFamily = useCallback(async (user: User) => {
+    const { data: adminData, error: adminError } = await supabase
+      .from("app_admins")
+      .select("role,status")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (adminError) throw adminError;
+    setAdminRole(adminData?.role ?? null);
     const { data: membershipData, error: membershipError } = await supabase
       .from("household_members")
       .select("household_id,role,households(id,name,timezone,status)")
@@ -633,7 +656,7 @@ export default function App() {
         try {
           await loadFamily(data.session.user);
         } catch (error) {
-          console.error("Unable to load family", error);
+          console.error("Unable to load account", error);
         }
       }
       setLoading(false);
@@ -641,12 +664,19 @@ export default function App() {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
+
       if (!nextSession) {
         setHousehold(null);
         setChildren([]);
-      } else {
-        void loadFamily(nextSession.user);
+        setAdminRole(null);
+        setLoading(false);
+        return;
       }
+
+      setLoading(true);
+      void loadFamily(nextSession.user)
+        .catch((error) => console.error("Unable to load account", error))
+        .finally(() => setLoading(false));
     });
 
     return () => listener.subscription.unsubscribe();
@@ -654,6 +684,24 @@ export default function App() {
 
   if (loading) return <LoadingScreen />;
   if (!session?.user) return <AuthScreen />;
+
+  if (location.pathname.startsWith("/admin")) {
+    if (!adminRole) {
+      return (
+        <main className="setup-page">
+          <div className="setup-card">
+            <Brand />
+            <p className="eyebrow red">Restricted Area</p>
+            <h1>Admin access required</h1>
+            <p className="muted">This account is not currently assigned an Adventure Club admin role.</p>
+            <button className="secondary-button" onClick={() => navigate("/")}>Return to family area</button>
+          </div>
+        </main>
+      );
+    }
+
+    return <AdminPortal user={session.user} role={adminRole} onExit={() => navigate("/")} />;
+  }
 
   if (!household) {
     return <HouseholdSetup user={session.user} onComplete={() => loadFamily(session.user)} />;
@@ -669,6 +717,8 @@ export default function App() {
       household={household}
       children={children}
       reload={() => loadFamily(session.user)}
+      adminRole={adminRole}
+      onAdmin={() => navigate("/admin")}
     />
   );
 }
