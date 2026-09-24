@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { secureExternalUrl } from "../lib/storeCheckout";
 
 type Order = {
   id: string;
@@ -36,11 +37,15 @@ function money(cents:number,currency:string){
 export function OrderHistoryCard({ householdId }: { householdId: string }) {
   const [orders,setOrders]=useState<Order[]>([]);
   const [error,setError]=useState("");
-  const [refreshing,setRefreshing]=useState(false);
+  const [refreshing,setRefreshing]=useState(true);
+  const loadVersion=useRef(0);
 
   const load=useCallback(async()=>{
+    const version=++loadVersion.current;
     setRefreshing(true);
     setError("");
+    setOrders([]);
+    try {
     const {data,error:loadError}=await supabase
       .from("orders")
       .select("id,order_number,status,total_cents,currency,created_at,order_items(id,quantity,product_name_snapshot,variant_name_snapshot,line_total_cents),fulfillments(id,status,tracking_number,tracking_url,shipped_at,delivered_at)")
@@ -48,17 +53,17 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
       .order("created_at",{ascending:false})
       .limit(25);
 
-    if(loadError){
-      setError(loadError.message);
-      setRefreshing(false);
-      return;
-    }
-
+    if(version!==loadVersion.current)return;
+    if(loadError)throw loadError;
     setOrders((data??[]) as Order[]);
-    setRefreshing(false);
+    } catch {
+      if(version===loadVersion.current)setError("Your orders could not be loaded. Please refresh to try again.");
+    } finally {
+      if(version===loadVersion.current)setRefreshing(false);
+    }
   },[householdId]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{void load();return ()=>{loadVersion.current+=1;};},[load]);
 
   return (
     <section className="order-history-card">
@@ -72,12 +77,10 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
         </button>
       </div>
 
-      {error&&<div className="form-message">{error}</div>}
-
-      {orders.length?(
+      {error&&<div className="form-message" role="alert">{error}</div>}
+      {refreshing?<p className="muted" role="status">Loading your orders...</p>:error?null:orders.length?(
         <div className="order-history-list">
           {orders.map((order)=>{
-            const fulfillment=(order.fulfillments??[])[0];
             return (
               <article className="order-history-row" key={order.id}>
                 <div className="order-history-main">
@@ -85,7 +88,7 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
                     <strong>Order #{order.order_number}</strong>
                     <span>{new Date(order.created_at).toLocaleDateString()} · {money(order.total_cents,order.currency)}</span>
                   </div>
-                  <span className={["paid","fulfilled"].includes(order.status)?"status-chip done":"status-chip"}>
+                  <span className={["paid","fulfilled","partially_fulfilled"].includes(order.status)?"status-chip done":"status-chip"}>
                     {order.status==="pending_payment"?"Payment pending":order.status==="draft"?"Checkout started":order.status.replaceAll("_"," ")}
                   </span>
                 </div>
@@ -99,16 +102,17 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
                   ))}
                 </div>
 
-                {fulfillment&&(
-                  <div className="order-fulfillment-note">
+                {(order.fulfillments??[]).map((fulfillment)=>{
+                  const trackingUrl=secureExternalUrl(fulfillment.tracking_url);
+                  return <div className="order-fulfillment-note" key={fulfillment.id}>
                     <span>Fulfillment: {fulfillment.status.replaceAll("_"," ")}</span>
-                    {fulfillment.tracking_url?(
-                      <a href={fulfillment.tracking_url} target="_blank" rel="noreferrer">Track shipment</a>
+                    {trackingUrl?(
+                      <a href={trackingUrl} target="_blank" rel="noopener noreferrer">Track shipment</a>
                     ):fulfillment.tracking_number?(
                       <span>Tracking {fulfillment.tracking_number}</span>
                     ):null}
-                  </div>
-                )}
+                  </div>;
+                })}
               </article>
             );
           })}

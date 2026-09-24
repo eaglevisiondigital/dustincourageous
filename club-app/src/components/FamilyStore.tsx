@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import type { Database } from "../types/database";
+import { hasCurrentMemberPricing, prepareHostedCheckout } from "../lib/storeCheckout";
 
 type Variant = {
   id: string;
@@ -32,6 +34,7 @@ type Membership = {
   plan_key: string | null;
   plan_name: string | null;
   subscription_status: string | null;
+  current_period_end: string | null;
 };
 
 type CartLine = {
@@ -51,6 +54,10 @@ function checkoutStorageKey(householdId: string) {
 function rememberedCheckout(householdId: string) {
   try { return sessionStorage.getItem(checkoutStorageKey(householdId)); }
   catch { return null; }
+}
+
+function isCheckoutReturn() {
+  return ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "");
 }
 
 function rememberCheckout(householdId: string, sessionId: string | null) {
@@ -82,16 +89,7 @@ type CheckoutReadiness = {
   message: string;
 };
 
-type CheckoutResult = {
-  checkout_session_id: string;
-  order_id: string;
-  order_number: number;
-  subtotal_cents: number;
-  discount_cents: number;
-  total_cents: number;
-  currency: string;
-  expires_at: string;
-};
+type CheckoutResult = Database["public"]["Functions"]["create_checkout_order"]["Returns"][number];
 
 type ReturnStatus = "checking" | "paid" | "pending" | "canceled" | "unavailable";
 
@@ -111,6 +109,11 @@ function productImage(assetKey: string | null) {
 export function FamilyStore({ householdId }: { householdId: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [catalogLoaded, setCatalogLoaded] = useState(false);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
+  const loadVersion = useRef(0);
+  const statusVersion = useRef(0);
+  const actionBusy = useRef(false);
   const [membership, setMembership] = useState<Membership | null>(null);
   const [cart, setCart] = useState<CartLine[]>(() => readCart(householdId));
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
@@ -119,14 +122,15 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   const [message, setMessage] = useState("");
   const [checkoutSummary, setCheckoutSummary] = useState<CheckoutResult | null>(null);
   const [checkoutReadiness, setCheckoutReadiness] = useState<CheckoutReadiness | null>(null);
-  const [checkoutUncertain, setCheckoutUncertain] = useState(() => !!rememberedCheckout(householdId));
+  const [checkoutUncertain, setCheckoutUncertain] = useState(() => !!rememberedCheckout(householdId) || isCheckoutReturn());
   const [returnStatus, setReturnStatus] = useState<ReturnStatus | null>(() =>
     rememberedCheckout(householdId) ||
-    ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
+    isCheckoutReturn()
       ? "checking" : null
   );
 
   const checkReturnedCheckout = useCallback(async () => {
+    const version = ++statusVersion.current;
     const sessionId = rememberedCheckout(householdId);
     if (!sessionId) {
       setReturnStatus("unavailable");
@@ -134,6 +138,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     }
 
     setReturnStatus("checking");
+    try {
     const { data, error } = await supabase
       .from("checkout_session_summary")
       .select("checkout_status,order_status")
@@ -141,6 +146,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       .eq("household_id", householdId)
       .maybeSingle();
 
+    if (version !== statusVersion.current) return;
     if (error || !data) {
       setReturnStatus("unavailable");
     } else if (["paid", "fulfilled", "partially_fulfilled"].includes(data.order_status ?? "")) {
@@ -156,45 +162,25 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     } else {
       setReturnStatus("pending");
     }
+    } catch {
+      if (version === statusVersion.current) setReturnStatus("unavailable");
+    }
   }, [householdId]);
-
-  async function cancelRememberedCheckout() {
-    const sessionId = rememberedCheckout(householdId);
-    if (!sessionId) {
-      setCheckoutUncertain(false);
-      setReturnStatus(null);
-      return;
-    }
-
-    setWorking(true);
-    setMessage("");
-    const { error } = await supabase.rpc("cancel_checkout_session", {
-      p_checkout_session_id: sessionId
-    });
-    setWorking(false);
-
-    if (error) {
-      await checkReturnedCheckout();
-      setMessage("This checkout could not be canceled. Its current order status was checked again.");
-      return;
-    }
-
-    rememberCheckout(householdId, null);
-    setCheckoutUncertain(false);
-    setCheckoutSummary(null);
-    setReturnStatus("canceled");
-    setMessage("The unfinished checkout was canceled and its temporary inventory reservation was released.");
-  }
 
   useEffect(() => {
     if (returnStatus === "checking") void checkReturnedCheckout();
+    return () => { statusVersion.current += 1; };
     // Run once for the provider return; refreshes use the button below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [householdId]);
 
   const load = useCallback(async () => {
-    setMessage("");
-
+    const version = ++loadVersion.current;
+    setCatalogLoading(true);
+    setCatalogLoaded(false);
+    setCatalogError("");
+    setCheckoutReadiness(null);
+    try {
     const [productResult, membershipResult, readinessResult] = await Promise.all([
       supabase
         .from("products")
@@ -204,17 +190,15 @@ export function FamilyStore({ householdId }: { householdId: string }) {
         .order("created_at", { ascending: true }),
       supabase
         .from("household_membership_summary")
-        .select("plan_key,plan_name,subscription_status")
+        .select("plan_key,plan_name,subscription_status,current_period_end")
         .eq("household_id", householdId)
         .maybeSingle(),
       supabase.rpc("get_checkout_readiness")
     ]);
 
     const error = productResult.error || membershipResult.error || readinessResult.error;
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
+    if (version !== loadVersion.current) return;
+    if (error) throw error;
 
     const nextProducts = ((productResult.data ?? []) as Product[]).map((product) => ({
       ...product,
@@ -236,10 +220,16 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       }
       return next;
     });
+    } catch {
+      if (version === loadVersion.current) setCatalogError("The store could not be loaded. Your saved cart is still here. Please try again.");
+    } finally {
+      if (version === loadVersion.current) setCatalogLoading(false);
+    }
   }, [householdId]);
 
   useEffect(() => {
     void load();
+    return () => { loadVersion.current += 1; };
   }, [load]);
 
   useEffect(() => {
@@ -261,11 +251,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     }));
   }, [catalogLoaded, products]);
 
-  const isPaidMember =
-    membership?.subscription_status &&
-    ["trialing", "active", "comped"].includes(membership.subscription_status) &&
-    membership.plan_key &&
-    membership.plan_key !== "free";
+  const isPaidMember = hasCurrentMemberPricing(membership);
 
   function displayUnitPrice(product: Product, variantId: string | null) {
     const variant = variantId
@@ -287,6 +273,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   }
 
   function addToCart(product: Product) {
+    if (actionBusy.current || checkoutUncertain) return;
     const variantId = product.product_variants?.length
       ? selectedVariants[product.id] ?? product.product_variants[0].id
       : null;
@@ -311,6 +298,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   }
 
   function updateQuantity(index: number, quantity: number) {
+    if (actionBusy.current || checkoutUncertain) return;
     setCheckoutSummary(null);
     if (quantity <= 0) {
       setCart((current) => current.filter((_, lineIndex) => lineIndex !== index));
@@ -350,17 +338,19 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   );
 
   async function checkout() {
-    if (!cart.length) return;
+    if (actionBusy.current || checkoutUncertain || !catalogLoaded || !cart.length) return;
 
     if (!checkoutReadiness?.provider_configured) {
       setMessage(checkoutReadiness?.message || "Online checkout is not connected yet.");
       return;
     }
 
+    actionBusy.current = true;
     setWorking(true);
     setMessage("");
     setCheckoutSummary(null);
 
+    try {
     const { data: checkoutRows, error: checkoutError } = await supabase.rpc(
       "create_checkout_order",
       {
@@ -375,7 +365,11 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     );
 
     if (checkoutError) {
-      setWorking(false);
+      // Network failures can arrive after the order has been committed.
+      if (!checkoutError.code || !/^[A-Z0-9]{5}$/.test(checkoutError.code)) {
+        setCheckoutUncertain(true);
+        setReturnStatus("unavailable");
+      }
       setMessage(checkoutError.message);
       return;
     }
@@ -383,53 +377,24 @@ export function FamilyStore({ householdId }: { householdId: string }) {
     const summary = (checkoutRows ?? [])[0] as CheckoutResult | undefined;
 
     if (!summary) {
-      setWorking(false);
-      setMessage("Adventure Club could not create this checkout.");
-      return;
+      throw new Error("The checkout response could not be confirmed. Check Orders & fulfillment before trying again.");
     }
 
     setCheckoutSummary(summary);
-
-    const { data: functionData, error: functionError } =
-      await supabase.functions.invoke("commerce-checkout", {
-        body: { checkout_session_id: summary.checkout_session_id }
-      });
-
-    if (functionError || functionData?.error) {
-      setWorking(false);
-
-      if (functionData?.code === "provider_not_configured") {
-        const { error: cancelError } = await supabase.rpc("cancel_checkout_session", {
-          p_checkout_session_id: summary.checkout_session_id
-        });
-        setMessage(cancelError
-          ? "Live payment is not connected. Your order could not start; check Orders & fulfillment for its status."
-          : "Live payment is not connected. No charge occurred and the temporary inventory reservation was released.");
-      } else {
-        rememberCheckout(householdId, summary.checkout_session_id);
-        setCheckoutUncertain(true);
-        setReturnStatus("pending");
-        setMessage("Checkout could not be confirmed. Check the order status before starting another payment. The reservation will expire automatically if payment does not complete.");
-      }
-      return;
-    }
-
-    const checkoutUrl =
-      typeof functionData?.checkout_url === "string"
-        ? functionData.checkout_url
-        : "";
-
-    if (!checkoutUrl) {
-      setWorking(false);
-      rememberCheckout(householdId, summary.checkout_session_id);
+    const checkoutUrl = await prepareHostedCheckout(supabase, summary.checkout_session_id, (sessionId) => {
+      rememberCheckout(householdId, sessionId);
       setCheckoutUncertain(true);
       setReturnStatus("pending");
-      setMessage("A payment page was not returned. Check the order status before starting another payment.");
-      return;
-    }
-
-    rememberCheckout(householdId, summary.checkout_session_id);
+    });
     window.location.assign(checkoutUrl);
+    } catch (error) {
+      setCheckoutUncertain(true);
+      setReturnStatus(rememberedCheckout(householdId) ? "pending" : "unavailable");
+      setMessage(error instanceof Error ? error.message : "Checkout could not be confirmed. Check Orders & fulfillment before trying again.");
+    } finally {
+      actionBusy.current = false;
+      setWorking(false);
+    }
   }
 
   return (
@@ -439,17 +404,17 @@ export function FamilyStore({ householdId }: { householdId: string }) {
           <p className="eyebrow gold">Courageous Kids Store</p>
           <h1>Books, gear & adventure extras</h1>
           <p>
-            Only DC Governance-approved products appear here. Member pricing, promo codes,
-            inventory, and digital unlocks are calculated by the Dustin backend.
+            Explore approved Dustin Courageous books and adventure extras for your family.
+            Available discounts and your final total are confirmed before payment.
           </p>
         </div>
         <div className="store-member-chip">
-          <span>{isPaidMember ? "Member pricing" : "Household access"}</span>
-          <strong>{membership?.plan_name || "Adventure Club Free"}</strong>
+          <span>{catalogLoaded && isPaidMember ? "Member pricing" : "Household access"}</span>
+          <strong>{catalogLoaded ? membership?.plan_name || "Membership details unavailable" : "Checking membership..."}</strong>
         </div>
       </section>
 
-      {message && <div className="form-message">{message}</div>}
+      {message && <div className="form-message" role="alert">{message}</div>}
 
       {returnStatus && (
         <section className="store-return-status" role="status" aria-live="polite">
@@ -466,17 +431,17 @@ export function FamilyStore({ householdId }: { householdId: string }) {
               <button type="button" className="secondary-button" disabled={working} onClick={() => void checkReturnedCheckout()}>
                 Check order status
               </button>
-              {checkoutUncertain && (
-                <button type="button" className="text-button" disabled={working} onClick={() => void cancelRememberedCheckout()}>
-                  Cancel unfinished checkout
-                </button>
-              )}
             </div>
           )}
         </section>
       )}
 
-      <div className="family-store-layout">
+      {catalogLoading ? <p className="muted" role="status">Loading the family store...</p> : catalogError ? (
+        <div className="empty-state">
+          <p role="alert">{catalogError}</p>
+          <button type="button" className="secondary-button" onClick={() => void load()}>Retry store</button>
+        </div>
+      ) : <div className="family-store-layout">
         <section className="store-catalog">
           <div className="section-heading">
             <div>
@@ -497,10 +462,10 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                 const unitPrice = displayUnitPrice(product, variantId);
                 const regularPrice =
                   product.base_price_cents + (variant?.price_delta_cents ?? 0);
-                const soldOut =
+                const soldOut = product.track_inventory && (
                   variant
                     ? variant.inventory_quantity === 0 && !product.allow_backorder
-                    : product.inventory_quantity === 0 && !product.allow_backorder;
+                    : product.inventory_quantity === 0 && !product.allow_backorder);
 
                 return (
                   <article className="store-product-card" key={product.id}>
@@ -545,7 +510,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                         <button
                           className="secondary-button"
                           type="button"
-                          disabled={soldOut}
+                          disabled={soldOut || working || checkoutUncertain}
                           onClick={() => addToCart(product)}
                         >
                           {soldOut ? "Sold out" : "Add to cart"}
@@ -595,6 +560,8 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                     <div className="store-quantity">
                       <button
                         type="button"
+                        disabled={working || checkoutUncertain}
+                        aria-label={`Decrease quantity of ${item.product?.name || "product"}`}
                         onClick={() =>
                           updateQuantity(index, item.line.quantity - 1)
                         }
@@ -604,6 +571,8 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                       <strong>{item.line.quantity}</strong>
                       <button
                         type="button"
+                        disabled={working || checkoutUncertain || item.line.quantity >= 20}
+                        aria-label={`Increase quantity of ${item.product?.name || "product"}`}
                         onClick={() =>
                           updateQuantity(index, item.line.quantity + 1)
                         }
@@ -618,6 +587,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
               <label className="store-promo">
                 Promo code <span className="optional">(optional)</span>
                 <input
+                  disabled={working || checkoutUncertain}
                   value={promoCode}
                   onChange={(event) =>
                     setPromoCode(event.target.value.toUpperCase().trim())
@@ -643,7 +613,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
                   </strong>
                   {checkoutSummary.discount_cents > 0 && (
                     <small>
-                      Includes {money(checkoutSummary.discount_cents)} discount
+                      Includes {money(checkoutSummary.discount_cents, checkoutSummary.currency)} discount
                     </small>
                   )}
                 </div>
@@ -679,7 +649,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
             <p className="muted">Your cart is empty.</p>
           )}
         </aside>
-      </div>
+      </div>}
     </div>
   );
 }

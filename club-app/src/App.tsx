@@ -921,7 +921,7 @@ function FamilyPortal({
               ) : parentSection === "settings" ? (
                 <>
                   <MembershipAccessCard householdId={household.id} />
-                  <OrderHistoryCard householdId={household.id} />
+                  <OrderHistoryCard key={household.id} householdId={household.id} />
                   <LeaderGroupsHub />
                   <ReferralSupportCard householdId={household.id} user={user} />
                   <PrivacyDataControls
