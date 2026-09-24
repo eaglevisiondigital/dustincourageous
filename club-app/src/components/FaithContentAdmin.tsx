@@ -162,7 +162,7 @@ export function FaithContentAdmin() {
     });
     setWorking(false);
     if (error) return setMessage(error.message);
-    setDayTitle(""); setDayBody(""); setDayPrayer(""); setDayAction(""); setDayNumber(String(Number(dayNumber)+1));
+    setDayTitle(""); setDayBody(""); setDayPrayer("Dear God, "); setDayAction(""); setDayNumber(String(Number(dayNumber)+1));
     setMessage("Devotional day added.");
   }
 
@@ -180,7 +180,7 @@ export function FaithContentAdmin() {
     });
     setWorking(false);
     if (error) return setMessage(error.message);
-    setPrayerTitle(""); setPrayerSlug(""); setPrayerText("");
+    setPrayerTitle(""); setPrayerSlug(""); setPrayerText("Dear God, ");
     setMessage("Prayer prompt created.");
   }
 
