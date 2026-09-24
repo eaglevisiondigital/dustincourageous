@@ -2194,6 +2194,291 @@ export type Database = {
         }
         Relationships: []
       }
+      dc_brand_assets: {
+        Row: {
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
+          approved_version: string | null
+          asset_key: string
+          asset_type: string
+          created_at: string
+          id: string
+          media_asset_id: string | null
+          metadata: Json
+          source_url: string | null
+          title: string
+          updated_at: string
+          usage_notes: string | null
+        }
+        Insert: {
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_version?: string | null
+          asset_key: string
+          asset_type: string
+          created_at?: string
+          id?: string
+          media_asset_id?: string | null
+          metadata?: Json
+          source_url?: string | null
+          title: string
+          updated_at?: string
+          usage_notes?: string | null
+        }
+        Update: {
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_version?: string | null
+          asset_key?: string
+          asset_type?: string
+          created_at?: string
+          id?: string
+          media_asset_id?: string | null
+          metadata?: Json
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          usage_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dc_brand_assets_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dc_character_profiles: {
+        Row: {
+          approved_asset_key: string | null
+          character_key: string
+          created_at: string
+          display_name: string
+          id: string
+          locked_traits: Json
+          metadata: Json
+          prohibited_traits: Json
+          role: string | null
+          status: string
+          updated_at: string
+          visual_age: number | null
+        }
+        Insert: {
+          approved_asset_key?: string | null
+          character_key: string
+          created_at?: string
+          display_name: string
+          id?: string
+          locked_traits?: Json
+          metadata?: Json
+          prohibited_traits?: Json
+          role?: string | null
+          status?: string
+          updated_at?: string
+          visual_age?: number | null
+        }
+        Update: {
+          approved_asset_key?: string | null
+          character_key?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          locked_traits?: Json
+          metadata?: Json
+          prohibited_traits?: Json
+          role?: string | null
+          status?: string
+          updated_at?: string
+          visual_age?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dc_character_profiles_approved_asset_key_fkey"
+            columns: ["approved_asset_key"]
+            isOneToOne: false
+            referencedRelation: "dc_brand_assets"
+            referencedColumns: ["asset_key"]
+          },
+        ]
+      }
+      dc_content_reviews: {
+        Row: {
+          approved_assets_only: boolean | null
+          character_continuity: boolean | null
+          child_age_appropriate: boolean | null
+          church_affirming: boolean | null
+          content_fingerprint: string | null
+          created_at: string
+          creative_alignment: boolean | null
+          entity_id: string
+          entity_type: string
+          id: string
+          identity_in_christ_alignment: boolean | null
+          language_style_pass: boolean | null
+          metadata: Json
+          notes: string | null
+          requested_at: string
+          requested_by: string
+          reviewed_at: string | null
+          reviewer_user_id: string | null
+          scripture_verified: boolean | null
+          standard_versions: Json
+          status: string
+          updated_at: string
+          word_of_faith_alignment: boolean | null
+        }
+        Insert: {
+          approved_assets_only?: boolean | null
+          character_continuity?: boolean | null
+          child_age_appropriate?: boolean | null
+          church_affirming?: boolean | null
+          content_fingerprint?: string | null
+          created_at?: string
+          creative_alignment?: boolean | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          identity_in_christ_alignment?: boolean | null
+          language_style_pass?: boolean | null
+          metadata?: Json
+          notes?: string | null
+          requested_at?: string
+          requested_by: string
+          reviewed_at?: string | null
+          reviewer_user_id?: string | null
+          scripture_verified?: boolean | null
+          standard_versions?: Json
+          status?: string
+          updated_at?: string
+          word_of_faith_alignment?: boolean | null
+        }
+        Update: {
+          approved_assets_only?: boolean | null
+          character_continuity?: boolean | null
+          child_age_appropriate?: boolean | null
+          church_affirming?: boolean | null
+          content_fingerprint?: string | null
+          created_at?: string
+          creative_alignment?: boolean | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          identity_in_christ_alignment?: boolean | null
+          language_style_pass?: boolean | null
+          metadata?: Json
+          notes?: string | null
+          requested_at?: string
+          requested_by?: string
+          reviewed_at?: string | null
+          reviewer_user_id?: string | null
+          scripture_verified?: boolean | null
+          standard_versions?: Json
+          status?: string
+          updated_at?: string
+          word_of_faith_alignment?: boolean | null
+        }
+        Relationships: []
+      }
+      dc_governance_rules: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          metadata: Json
+          rule_key: string
+          rule_text: string
+          severity: string
+          sort_order: number
+          standard_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          rule_key: string
+          rule_text: string
+          severity?: string
+          sort_order?: number
+          standard_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          rule_key?: string
+          rule_text?: string
+          severity?: string
+          sort_order?: number
+          standard_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dc_governance_rules_standard_id_fkey"
+            columns: ["standard_id"]
+            isOneToOne: false
+            referencedRelation: "dc_governance_standards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dc_governance_standards: {
+        Row: {
+          authority_scope: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          is_locked: boolean
+          metadata: Json
+          standard_key: string
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          authority_scope: string
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean
+          is_locked?: boolean
+          metadata?: Json
+          standard_key: string
+          title: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          authority_scope?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          is_locked?: boolean
+          metadata?: Json
+          standard_key?: string
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       devotional_days: {
         Row: {
           action_step: string | null
@@ -4994,6 +5279,30 @@ export type Database = {
           },
         ]
       }
+      dc_governance_entity_catalog: {
+        Row: {
+          entity_type: string | null
+          id: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      dc_governance_review_status: {
+        Row: {
+          approval_current: boolean | null
+          entity_id: string | null
+          entity_status: string | null
+          entity_type: string | null
+          entity_updated_at: string | null
+          review_id: string | null
+          review_status: string | null
+          reviewed_at: string | null
+          title: string | null
+        }
+        Relationships: []
+      }
       household_membership_summary: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -5335,6 +5644,22 @@ export type Database = {
         Args: { p_order_id: string; p_status: string }
         Returns: undefined
       }
+      approve_dc_content_review: {
+        Args: {
+          p_approved_assets_only: boolean
+          p_character_continuity: boolean
+          p_child_age_appropriate: boolean
+          p_church_affirming: boolean
+          p_creative_alignment: boolean
+          p_identity_in_christ_alignment: boolean
+          p_language_style_pass: boolean
+          p_notes?: string
+          p_review_id: string
+          p_scripture_verified: boolean
+          p_word_of_faith_alignment: boolean
+        }
+        Returns: undefined
+      }
       attribute_referral: {
         Args: {
           p_code: string
@@ -5479,6 +5804,14 @@ export type Database = {
           spots_remaining: number
         }[]
       }
+      publish_dc_entity: {
+        Args: {
+          p_entity_id: string
+          p_entity_type: string
+          p_target_status?: string
+        }
+        Returns: undefined
+      }
       register_for_event: {
         Args: {
           p_child_profile_id?: string
@@ -5490,6 +5823,10 @@ export type Database = {
       remove_household_adult: {
         Args: { p_household_id: string; p_user_id: string }
         Returns: undefined
+      }
+      request_dc_content_review: {
+        Args: { p_entity_id: string; p_entity_type: string; p_notes?: string }
+        Returns: string
       }
       revoke_household_invitation: {
         Args: { p_invitation_id: string }
