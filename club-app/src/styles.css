@@ -1977,3 +1977,318 @@ select:focus {
   .activity-grid {grid-template-columns:1fr;}
   .activities-mark {display:none;}
 }
+
+
+/* Bible Basecamp and interactive Bookshelf */
+.bible-hub,
+.bookshelf-hub {
+  display: grid;
+  gap: 20px;
+}
+.bible-hero,
+.bookshelf-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(28px,4vw,48px);
+  border: 1px solid rgba(240,198,91,.14);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(240,198,91,.12), transparent 22rem),
+    linear-gradient(135deg,#17120a,#111 55%,#1d0d0d);
+}
+.bible-hero h1,
+.bookshelf-hero h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2.5rem,5vw,4.6rem);
+  line-height: .96;
+}
+.bible-hero p:last-child,
+.bookshelf-hero p:last-child {
+  max-width: 680px;
+  margin-bottom: 0;
+  color: #bcb7af;
+}
+.bible-summary-chip {
+  min-width: 150px;
+  padding: 18px;
+  text-align: center;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 18px;
+  background: rgba(240,198,91,.06);
+}
+.bible-summary-chip strong,
+.bible-summary-chip span { display:block; }
+.bible-summary-chip strong { font-size:2.3rem; color:var(--gold); }
+.bible-summary-chip span { margin-top:4px; color:#99948d; font-size:.7rem; text-transform:uppercase; letter-spacing:.07em; }
+
+.bible-section {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.power-verse-layout {
+  display:grid;
+  grid-template-columns: 280px minmax(0,1fr);
+  gap:16px;
+}
+.power-verse-list { display:grid; gap:8px; align-content:start; }
+.power-verse-tab {
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:10px;
+  align-items:center;
+  width:100%;
+  padding:13px;
+  text-align:left;
+  color:#bcb7b0;
+  background:#0a0a0a;
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+.power-verse-tab.active {
+  color:white;
+  border-color:rgba(239,52,52,.3);
+  background:rgba(198,40,40,.10);
+}
+.power-verse-tab > span {
+  display:grid;
+  place-items:center;
+  width:30px;
+  height:30px;
+  border-radius:9px;
+  background:#1c1c1c;
+  color:var(--gold);
+}
+.power-verse-tab strong,
+.power-verse-tab small { display:block; }
+.power-verse-tab small { margin-top:4px; color:#817d77; text-transform:capitalize; }
+.power-verse-card {
+  padding:clamp(22px,3vw,34px);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;
+  background:linear-gradient(145deg,#151515,#0d0d0d);
+}
+.power-verse-card-top,
+.verse-progress-actions,
+.book-status-row,
+.book-action-row {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.power-verse-card-top { justify-content:space-between; margin-bottom:20px; }
+.power-verse-card h3 { font-size:1.8rem; margin-bottom:14px; }
+.power-verse-card blockquote {
+  margin:0 0 20px;
+  padding:20px;
+  border-left:3px solid var(--gold);
+  border-radius:0 14px 14px 0;
+  background:rgba(240,198,91,.06);
+  color:#f4efe7;
+  font-size:clamp(1.25rem,2.4vw,1.8rem);
+  line-height:1.5;
+}
+.power-verse-card > p { color:#aaa59e; line-height:1.6; }
+.identity-actions-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:22px 0;
+}
+.identity-actions-grid div {
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#0b0b0b;
+}
+.identity-actions-grid span,
+.identity-actions-grid strong { display:block; }
+.identity-actions-grid span {
+  margin-bottom:7px;
+  color:#ff7070;
+  font-size:.67rem;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.identity-actions-grid strong { font-size:.86rem; line-height:1.45; }
+.devotional-series-card {
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#0a0a0a;
+}
+.devotional-series-head {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:16px;
+}
+.devotional-series-head h3 { margin-bottom:6px; font-size:1.5rem; }
+.devotional-series-head p { margin:0; color:#8e8983; }
+.devotional-days-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.devotional-day {
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#111;
+}
+.devotional-day.complete {
+  border-color:rgba(111,184,121,.22);
+  background:rgba(68,126,76,.08);
+}
+.devotional-day-number {
+  display:inline-block;
+  margin-bottom:8px;
+  color:var(--gold);
+  font-size:.67rem;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.devotional-day h4 { margin:0 0 5px; font-size:1.05rem; }
+.devotional-day small { color:#88837d; }
+.devotional-day > p { margin:12px 0; color:#9d9891; line-height:1.5; font-size:.82rem; }
+.devotional-callout {
+  margin:8px 0;
+  padding:10px;
+  border-radius:11px;
+  background:#090909;
+  color:#aaa59e;
+  font-size:.76rem;
+  line-height:1.45;
+}
+.devotional-callout span {
+  display:block;
+  margin-bottom:3px;
+  color:#ff6a6a;
+  font-size:.63rem;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.devotional-day button { width:100%; margin-top:10px; }
+
+.bookshelf-layout {
+  display:grid;
+  grid-template-columns:270px minmax(0,1fr);
+  gap:16px;
+}
+.book-spines {
+  display:grid;
+  gap:8px;
+  align-content:start;
+}
+.book-spine {
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:11px;
+  align-items:center;
+  padding:13px;
+  text-align:left;
+  color:#b7b2ab;
+  background:#0a0a0a;
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+.book-spine.active {
+  color:white;
+  border-color:rgba(240,198,91,.24);
+  background:rgba(240,198,91,.06);
+}
+.book-spine > span {
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:42px;
+  border-radius:8px;
+  background:linear-gradient(145deg,#c52a2a,#7b1212);
+  color:white;
+  font-size:.72rem;
+  font-weight:900;
+}
+.book-spine strong,
+.book-spine small { display:block; }
+.book-spine small { margin-top:4px; color:#817d77; text-transform:capitalize; }
+.book-detail-card {
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#101010;
+}
+.book-detail-top {
+  display:grid;
+  grid-template-columns:minmax(150px,220px) 1fr;
+  gap:24px;
+}
+.book-detail-top > img {
+  width:100%;
+  border-radius:15px;
+  box-shadow:0 20px 55px rgba(0,0,0,.35);
+}
+.book-detail-top h2 { margin-bottom:8px; font-size:clamp(2rem,4vw,3.4rem); }
+.book-detail-top h3 { margin-bottom:12px; color:#bcb7af; font-weight:600; }
+.book-detail-top p { color:#a09b94; line-height:1.6; }
+.book-status-row { margin:18px 0; }
+.book-companion-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:24px;
+}
+.book-companion-grid > article {
+  min-width:0;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#090909;
+}
+.book-companion-item,
+.book-companion-button {
+  display:grid;
+  gap:5px;
+  width:100%;
+  margin-top:8px;
+  padding:12px;
+  text-align:left;
+  color:#d8d3cc;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#111;
+}
+.book-companion-button { cursor:pointer; }
+.book-companion-item span,
+.book-companion-button span,
+.book-companion-button small {
+  color:#85817b;
+  font-size:.68rem;
+  text-transform:capitalize;
+}
+.book-companion-button:hover { border-color:rgba(239,52,52,.25); }
+
+@media (max-width: 980px) {
+  .power-verse-layout,
+  .bookshelf-layout { grid-template-columns:1fr; }
+  .power-verse-list,
+  .book-spines { grid-template-columns:repeat(2,1fr); }
+  .devotional-days-grid,
+  .book-companion-grid { grid-template-columns:1fr; }
+}
+@media (max-width: 650px) {
+  .bible-hero,
+  .bookshelf-hero { align-items:flex-start; }
+  .bible-summary-chip { min-width:110px; }
+  .power-verse-list,
+  .book-spines { grid-template-columns:1fr; }
+  .identity-actions-grid { grid-template-columns:1fr; }
+  .book-detail-top { grid-template-columns:1fr; }
+  .book-detail-top > img { max-width:220px; }
+}
