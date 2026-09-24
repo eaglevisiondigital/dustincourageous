@@ -48,7 +48,7 @@ export function GuardianPinSetup({
     <main className="setup-page">
       <div className="setup-card">
         <div className="guardian-lock-icon">◆</div>
-        <p className="eyebrow red">Family Protection</p>
+        <p className="eyebrow red">Step 3 of 3 · Family Protection</p>
         <h1>Create your guardian PIN</h1>
         <p className="muted">
           When you hand the Adventure Club to a child, this PIN unlocks the Family Hub,

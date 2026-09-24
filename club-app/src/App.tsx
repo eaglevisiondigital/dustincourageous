@@ -276,7 +276,7 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
     <main className="setup-page">
       <div className="setup-card">
         <Brand />
-        <p className="eyebrow red">Step 1 of 2</p>
+        <p className="eyebrow red">Step 1 of 3</p>
         <h1>Create your family hub</h1>
         <p className="muted">
           Your household keeps every child's progress, badges, adventures, rewards, and membership access together.
@@ -407,7 +407,7 @@ function EmptyFamily({
     <main className="setup-page">
       <div className="setup-card wide">
         <Brand />
-        <p className="eyebrow red">Step 2 of 2</p>
+        <p className="eyebrow red">Step 2 of 3</p>
         <h1>Add your first adventurer</h1>
         <p className="muted">
           Children do not need an email address or separate internet account. You create and manage their protected profile.
@@ -597,10 +597,12 @@ function FamilyPortal({
               </button>
             ))}
           </div>
-          <button className="add-link" onClick={() => setAddingChild((value) => !value)}>
-            + Add another child
-          </button>
-          {addingChild && (
+          {view === "parent" && !kidLocked && (
+            <button className="add-link" onClick={() => setAddingChild((value) => !value)}>
+              + Add another child
+            </button>
+          )}
+          {view === "parent" && !kidLocked && addingChild && (
             <div className="side-form">
               <AddChildForm
                 compact
@@ -941,6 +943,7 @@ export default function App() {
   const [adminRole, setAdminRole] = useState<string | null>(null);
   const [hasOrganizationAccess, setHasOrganizationAccess] = useState(false);
   const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
+  const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
 
   const loadFamily = useCallback(async (user: User) => {
     const { data: adminData, error: adminError } = await supabase
@@ -1139,6 +1142,49 @@ export default function App() {
             <p className="muted">This account is not currently assigned an Adventure Club admin role.</p>
             <button className="secondary-button" onClick={() => navigate("/")}>Return to family area</button>
           </div>
+        </main>
+      );
+    }
+
+    if (household && guardianPinConfigured === false) {
+      return (
+        <GuardianPinSetup
+          householdId={household.id}
+          onComplete={() => setGuardianPinConfigured(true)}
+        />
+      );
+    }
+
+    if (household && localStorage.getItem("dc_adventure_club_kid_locked") === "1") {
+      return (
+        <main className="setup-page">
+          <div className="setup-card">
+            <Brand />
+            <p className="eyebrow red">Guardian Only</p>
+            <h1>Unlock Family Hub first</h1>
+            <p className="muted">Admin controls are available only after the guardian PIN unlocks Kid View.</p>
+            <button className="primary-button" type="button" onClick={() => setAdminUnlockOpen(true)}>
+              Enter guardian PIN
+            </button>
+            <button className="text-button" type="button" onClick={() => navigate("/")}>
+              Return to Kid View
+            </button>
+          </div>
+          {adminUnlockOpen && (
+            <GuardianUnlockDialog
+              householdId={household.id}
+              onClose={() => setAdminUnlockOpen(false)}
+              onUnlock={(token) => {
+                sessionStorage.setItem("dc_guardian_session_token", token);
+                localStorage.removeItem("dc_adventure_club_kid_locked");
+                setAdminUnlockOpen(false);
+              }}
+              onSignOut={async () => {
+                sessionStorage.removeItem("dc_guardian_session_token");
+                await supabase.auth.signOut();
+              }}
+            />
+          )}
         </main>
       );
     }
