@@ -154,6 +154,13 @@ export type Database = {
             foreignKeyName: "admin_audit_log_household_id_fkey"
             columns: ["household_id"]
             isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "admin_audit_log_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
@@ -735,6 +742,51 @@ export type Database = {
           },
         ]
       }
+      book_reward_rules: {
+        Row: {
+          book_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          metadata: Json
+          milestone: string
+          reward_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          milestone: string
+          reward_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          milestone?: string
+          reward_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_reward_rules_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_reward_rules_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       books: {
         Row: {
           adventure_completion_xp: number
@@ -848,6 +900,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "parent_child_progress_summary"
             referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "challenge_assignments_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
           },
           {
             foreignKeyName: "challenge_assignments_household_id_fkey"
@@ -1101,6 +1160,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "parent_child_progress_summary"
             referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_activity_events_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
           },
           {
             foreignKeyName: "child_activity_events_household_id_fkey"
@@ -1583,6 +1649,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "child_profiles_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
           {
             foreignKeyName: "child_profiles_household_id_fkey"
             columns: ["household_id"]
@@ -2132,6 +2205,81 @@ export type Database = {
         }
         Relationships: []
       }
+      family_faith_guides: {
+        Row: {
+          access_level: string
+          available_from: string | null
+          available_until: string | null
+          book_id: string | null
+          created_at: string
+          description: string | null
+          discussion_prompt: string | null
+          family_action: string | null
+          guide_key: string
+          id: string
+          metadata: Json
+          prayer_prompt: string | null
+          scripture_passage_id: string | null
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          book_id?: string | null
+          created_at?: string
+          description?: string | null
+          discussion_prompt?: string | null
+          family_action?: string | null
+          guide_key: string
+          id?: string
+          metadata?: Json
+          prayer_prompt?: string | null
+          scripture_passage_id?: string | null
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access_level?: string
+          available_from?: string | null
+          available_until?: string | null
+          book_id?: string | null
+          created_at?: string
+          description?: string | null
+          discussion_prompt?: string | null
+          family_action?: string | null
+          guide_key?: string
+          id?: string
+          metadata?: Json
+          prayer_prompt?: string | null
+          scripture_passage_id?: string | null
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_faith_guides_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_faith_guides_scripture_passage_id_fkey"
+            columns: ["scripture_passage_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_passages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_book_access: {
         Row: {
           book_id: string
@@ -2170,6 +2318,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "books"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_book_access_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
           },
           {
             foreignKeyName: "household_book_access_household_id_fkey"
@@ -2240,6 +2395,13 @@ export type Database = {
             foreignKeyName: "household_consents_household_id_fkey"
             columns: ["household_id"]
             isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "household_consents_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
@@ -2289,6 +2451,89 @@ export type Database = {
           },
           {
             foreignKeyName: "household_entitlement_grants_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "household_entitlement_grants_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_faith_sessions: {
+        Row: {
+          child_profile_id: string | null
+          completed_at: string
+          completed_by: string
+          created_at: string
+          family_faith_guide_id: string
+          household_id: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          child_profile_id?: string | null
+          completed_at?: string
+          completed_by: string
+          created_at?: string
+          family_faith_guide_id: string
+          household_id: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          child_profile_id?: string | null
+          completed_at?: string
+          completed_by?: string
+          created_at?: string
+          family_faith_guide_id?: string
+          household_id?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_faith_sessions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_faith_sessions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_faith_sessions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "household_faith_sessions_family_faith_guide_id_fkey"
+            columns: ["family_faith_guide_id"]
+            isOneToOne: false
+            referencedRelation: "family_faith_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_faith_sessions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "household_faith_sessions_household_id_fkey"
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "households"
@@ -2341,6 +2586,13 @@ export type Database = {
             foreignKeyName: "household_invitations_household_id_fkey"
             columns: ["household_id"]
             isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "household_invitations_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
@@ -2372,6 +2624,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
           {
             foreignKeyName: "household_members_household_id_fkey"
             columns: ["household_id"]
@@ -2428,6 +2687,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "household_subscriptions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
           {
             foreignKeyName: "household_subscriptions_household_id_fkey"
             columns: ["household_id"]
@@ -3403,6 +3669,13 @@ export type Database = {
             foreignKeyName: "user_notifications_household_id_fkey"
             columns: ["household_id"]
             isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "user_notifications_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
@@ -3637,6 +3910,22 @@ export type Database = {
           },
         ]
       }
+      household_membership_summary: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          current_period_end: string | null
+          current_period_start: string | null
+          granted_entitlements: string[] | null
+          household_id: string | null
+          plan_description: string | null
+          plan_entitlements: string[] | null
+          plan_key: string | null
+          plan_name: string | null
+          subscription_id: string | null
+          subscription_status: string | null
+        }
+        Relationships: []
+      }
       parent_child_progress_summary: {
         Row: {
           books_completed: number | null
@@ -3652,6 +3941,13 @@ export type Database = {
           weekly_stars: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "child_profiles_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
           {
             foreignKeyName: "child_profiles_household_id_fkey"
             columns: ["household_id"]
