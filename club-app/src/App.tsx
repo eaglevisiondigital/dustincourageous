@@ -19,6 +19,8 @@ import { FamilyFaithAtHome } from "./components/FamilyFaithAtHome";
 import { MembershipAccessCard } from "./components/MembershipAccessCard";
 import { OrderHistoryCard } from "./components/OrderHistoryCard";
 import { FamilyGroupsCard } from "./components/FamilyGroupsCard";
+import { FamilyEventsCard } from "./components/FamilyEventsCard";
+import { ReferralSupportCard } from "./components/ReferralSupportCard";
 import { LeaderGroupsHub } from "./components/LeaderGroupsHub";
 import { InviteAccept } from "./components/InviteAccept";
 
@@ -712,6 +714,7 @@ function FamilyPortal({
                   <MembershipAccessCard householdId={household.id} />
                   <OrderHistoryCard householdId={household.id} />
                   <LeaderGroupsHub />
+                  <ReferralSupportCard householdId={household.id} user={user} />
                   <FamilySettings
                     user={user}
                     householdId={household.id}
@@ -782,6 +785,12 @@ function FamilyPortal({
                 children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
                 selectedChildId={selectedChild?.id ?? ""}
                 onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
+              />
+
+              <FamilyEventsCard
+                householdId={household.id}
+                children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
+                selectedChildId={selectedChild?.id ?? ""}
               />
 
               {selectedChild && (
