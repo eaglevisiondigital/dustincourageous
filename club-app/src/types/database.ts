@@ -1304,6 +1304,73 @@ export type Database = {
           },
         ]
       }
+      checkout_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          expires_at: string
+          household_id: string
+          id: string
+          metadata: Json
+          order_id: string
+          payment_provider: string | null
+          provider_checkout_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          household_id: string
+          id?: string
+          metadata?: Json
+          order_id: string
+          payment_provider?: string | null
+          provider_checkout_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          household_id?: string
+          id?: string
+          metadata?: Json
+          order_id?: string
+          payment_provider?: string | null
+          provider_checkout_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkout_sessions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "checkout_sessions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_sessions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_activity_events: {
         Row: {
           child_profile_id: string
@@ -4158,6 +4225,68 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory_reservations: {
+        Row: {
+          checkout_session_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          product_id: string
+          product_variant_id: string | null
+          quantity: number
+          released_at: string | null
+        }
+        Insert: {
+          checkout_session_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          product_id: string
+          product_variant_id?: string | null
+          quantity: number
+          released_at?: string | null
+        }
+        Update: {
+          checkout_session_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          product_id?: string
+          product_variant_id?: string | null
+          quantity?: number
+          released_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_reservations_checkout_session_id_fkey"
+            columns: ["checkout_session_id"]
+            isOneToOne: false
+            referencedRelation: "checkout_session_summary"
+            referencedColumns: ["checkout_session_id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_checkout_session_id_fkey"
+            columns: ["checkout_session_id"]
+            isOneToOne: false
+            referencedRelation: "checkout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       levels: {
         Row: {
           created_at: string
@@ -5073,6 +5202,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      payment_webhook_events: {
+        Row: {
+          error_message: string | null
+          event_type: string | null
+          id: string
+          order_id: string | null
+          payload: Json
+          processed_at: string | null
+          provider: string
+          provider_event_id: string
+          received_at: string
+          status: string
+        }
+        Insert: {
+          error_message?: string | null
+          event_type?: string | null
+          id?: string
+          order_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          provider: string
+          provider_event_id: string
+          received_at?: string
+          status?: string
+        }
+        Update: {
+          error_message?: string | null
+          event_type?: string | null
+          id?: string
+          order_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          provider?: string
+          provider_event_id?: string
+          received_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_webhook_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plan_entitlements: {
         Row: {
@@ -6266,6 +6442,58 @@ export type Database = {
         }
         Relationships: []
       }
+      checkout_session_summary: {
+        Row: {
+          checkout_session_id: string | null
+          checkout_status: string | null
+          created_at: string | null
+          currency: string | null
+          discount_cents: number | null
+          expires_at: string | null
+          household_id: string | null
+          order_id: string | null
+          order_number: number | null
+          order_status: string | null
+          payment_provider: string | null
+          promo_code_id: string | null
+          provider_checkout_id: string | null
+          shipping_cents: number | null
+          subtotal_cents: number | null
+          tax_cents: number | null
+          total_cents: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkout_sessions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "checkout_sessions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_sessions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_active_streak_badges: {
         Row: {
           badge_family_key: string | null
@@ -7165,6 +7393,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      begin_checkout_provider_handoff: {
+        Args: {
+          p_checkout_session_id: string
+          p_provider: string
+          p_provider_checkout_id: string
+        }
+        Returns: undefined
+      }
+      cancel_checkout_session: {
+        Args: { p_checkout_session_id: string }
+        Returns: undefined
+      }
       cancel_data_privacy_request: {
         Args: { p_request_id: string }
         Returns: undefined
@@ -7214,6 +7454,19 @@ export type Database = {
           p_organization_id: string
         }
         Returns: string
+      }
+      create_checkout_order: {
+        Args: { p_household_id: string; p_items: Json; p_promo_code?: string }
+        Returns: {
+          checkout_session_id: string
+          currency: string
+          discount_cents: number
+          expires_at: string
+          order_id: string
+          order_number: number
+          subtotal_cents: number
+          total_cents: number
+        }[]
       }
       create_child_with_consent: {
         Args: {
@@ -7377,6 +7630,18 @@ export type Database = {
         Args: { p_child_profile_id: string; p_code: string }
         Returns: string
       }
+      mark_order_paid_from_provider: {
+        Args: {
+          p_event_type?: string
+          p_order_id: string
+          p_payload?: Json
+          p_provider: string
+          p_provider_customer_id?: string
+          p_provider_event_id?: string
+          p_provider_payment_id: string
+        }
+        Returns: undefined
+      }
       preview_group_join_code: {
         Args: { p_code: string }
         Returns: {
@@ -7504,6 +7769,10 @@ export type Database = {
           p_success?: boolean
         }
         Returns: undefined
+      }
+      validate_worker_token: {
+        Args: { p_token: string; p_token_key: string }
+        Returns: boolean
       }
       verify_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }
