@@ -66,6 +66,13 @@ export type Database = {
             foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -115,6 +122,13 @@ export type Database = {
           request_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "admin_audit_log_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -350,6 +364,13 @@ export type Database = {
             foreignKeyName: "badge_awards_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "badge_awards_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -575,6 +596,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "challenges"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_assignments_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "challenge_assignments_child_profile_id_fkey"
@@ -819,6 +847,13 @@ export type Database = {
             foreignKeyName: "child_activity_events_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_activity_events_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -869,6 +904,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "adventures"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_adventure_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "child_adventure_progress_child_profile_id_fkey"
@@ -929,6 +971,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "challenges"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_challenge_progress_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "child_challenge_progress_child_profile_id_fkey"
@@ -1026,6 +1075,13 @@ export type Database = {
             foreignKeyName: "child_series_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -1076,6 +1132,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "challenge_series"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_weekly_completions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
           },
           {
             foreignKeyName: "child_series_weekly_completions_child_profile_id_fkey"
@@ -1164,6 +1227,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "child_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "child_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -1385,6 +1455,13 @@ export type Database = {
           policy_version?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "household_consents_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "household_consents_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -2004,6 +2081,13 @@ export type Database = {
             foreignKeyName: "reward_unlocks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "reward_unlocks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2168,6 +2252,13 @@ export type Database = {
             foreignKeyName: "streak_badge_earnings_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "streak_badge_earnings_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2244,6 +2335,13 @@ export type Database = {
             foreignKeyName: "user_notifications_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "user_notifications_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2292,6 +2390,13 @@ export type Database = {
             foreignKeyName: "xp_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "xp_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2301,7 +2406,10 @@ export type Database = {
     Views: {
       child_active_streak_badges: {
         Row: {
+          badge_family_key: string | null
           badge_id: string | null
+          badge_name: string | null
+          badge_tier: string | null
           best_weeks: number | null
           challenge_series_id: string | null
           child_profile_id: string | null
@@ -2324,6 +2432,13 @@ export type Database = {
             foreignKeyName: "child_series_streaks_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2332,6 +2447,58 @@ export type Database = {
             columns: ["badge_id"]
             isOneToOne: false
             referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_level_progress: {
+        Row: {
+          child_profile_id: string | null
+          current_level_minimum_xp: number | null
+          current_level_name: string | null
+          current_level_number: number | null
+          level_progress_percent: number | null
+          next_level_minimum_xp: number | null
+          next_level_name: string | null
+          next_level_number: number | null
+          total_xp: number | null
+          xp_to_next_level: number | null
+        }
+        Relationships: []
+      }
+      child_series_streak_status: {
+        Row: {
+          active_weeks: number | null
+          best_weeks: number | null
+          challenge_series_id: string | null
+          child_profile_id: string | null
+          current_cycle: number | null
+          is_active: boolean | null
+          last_completed_period: string | null
+          series_key: string | null
+          series_name: string | null
+          streak_started_period: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_series_streaks_challenge_series_id_fkey"
+            columns: ["challenge_series_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_series_streaks_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2347,6 +2514,13 @@ export type Database = {
             foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
             isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "achievement_token_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
             referencedRelation: "child_profiles"
             referencedColumns: ["id"]
           },
@@ -2358,6 +2532,13 @@ export type Database = {
           total_xp: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "xp_ledger_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
           {
             foreignKeyName: "xp_ledger_child_profile_id_fkey"
             columns: ["child_profile_id"]
@@ -2397,6 +2578,16 @@ export type Database = {
         }
         Returns: string
       }
+      admin_create_challenge_series: {
+        Args: {
+          p_description?: string
+          p_name: string
+          p_series_key: string
+          p_token_amount?: number
+          p_token_type?: string
+        }
+        Returns: string
+      }
       admin_create_reward: {
         Args: {
           p_access_level?: string
@@ -2408,6 +2599,52 @@ export type Database = {
           p_xp_required?: number
         }
         Returns: string
+      }
+      admin_create_series_streak_badge: {
+        Args: {
+          p_active_only_while_current_streak?: boolean
+          p_badge_key: string
+          p_consecutive_weeks: number
+          p_description?: string
+          p_name: string
+          p_rarity?: string
+          p_series_id: string
+          p_tier?: string
+        }
+        Returns: string
+      }
+      admin_create_weekly_challenge: {
+        Args: {
+          p_access_level?: string
+          p_challenge_type?: string
+          p_description?: string
+          p_parent_approval_required?: boolean
+          p_period_start: string
+          p_series_id: string
+          p_slug: string
+          p_status?: string
+          p_steps?: Json
+          p_title: string
+          p_xp_reward?: number
+        }
+        Returns: string
+      }
+      get_child_achievement_progress: {
+        Args: { p_child_profile_id: string }
+        Returns: {
+          badge_description: string
+          badge_family_key: string
+          badge_id: string
+          badge_name: string
+          badge_scope: string
+          badge_tier: string
+          current_value: number
+          earned: boolean
+          progress_percent: number
+          rule_id: string
+          rule_type: string
+          threshold_value: number
+        }[]
       }
       guardian_pin_status: {
         Args: { p_household_id: string }
