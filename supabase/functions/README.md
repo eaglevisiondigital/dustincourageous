@@ -73,13 +73,17 @@ The payment adapter calls commerce-payment-webhook-v2 with:
 - event_id
 - event_type
 - order_id
+- provider_checkout_id returned during the checkout handoff
 - payment_id
+- amount_cents and currency matching the server-priced order
 - customer_id (optional)
 - status = paid
 - shipping_name (optional)
 - shipping_address object (optional)
 
 No payment provider is selected or activated merely by this code. Provider credentials stay in Supabase Edge Function secrets/environment and never in GitHub or the browser.
+The webhook rejects paid events whose provider checkout ID, amount, currency, or checkout state does not match the authoritative Supabase order.
+The adapter should retry a 409 response after a short delay, since a very fast provider callback can arrive before checkout handoff has committed. It must send stable event and payment IDs on every retry.
 
 
 ### integration-provider-test

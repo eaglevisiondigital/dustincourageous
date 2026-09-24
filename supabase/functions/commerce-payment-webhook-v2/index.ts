@@ -39,6 +39,9 @@ Deno.serve(async (req: Request) => {
   const eventType = String(body?.event_type ?? "payment_succeeded");
   const orderId = String(body?.order_id ?? "");
   const paymentId = String(body?.payment_id ?? "");
+  const providerCheckoutId = String(body?.provider_checkout_id ?? "");
+  const amountCents = body?.amount_cents;
+  const currency = String(body?.currency ?? "").toUpperCase();
   const customerId = body?.customer_id ? String(body.customer_id) : null;
   const shippingName = body?.shipping_name ? String(body.shipping_name) : null;
   const shippingAddress =
@@ -68,6 +71,26 @@ Deno.serve(async (req: Request) => {
       );
 
     return json({ ok: true, ignored: true });
+  }
+
+  if (!providerCheckoutId || !Number.isSafeInteger(amountCents) || amountCents < 0 || !currency) {
+    return json({ error: "Missing checkout or payment amount verification fields" }, 400);
+  }
+
+  const { data: checkout, error: checkoutError } = await admin
+    .from("checkout_session_summary")
+    .select("checkout_status,order_status,payment_provider,provider_checkout_id,total_cents,currency")
+    .eq("order_id", orderId)
+    .maybeSingle();
+
+  if (checkoutError || !checkout ||
+    checkout.payment_provider !== provider ||
+    checkout.provider_checkout_id !== providerCheckoutId ||
+    checkout.total_cents !== amountCents ||
+    checkout.currency !== currency ||
+    !["provider_pending", "completed"].includes(checkout.checkout_status ?? "") ||
+    !["pending_payment", "paid"].includes(checkout.order_status ?? "")) {
+    return json({ error: "Payment event does not match an active checkout" }, 409);
   }
 
   const { error } = await admin.rpc("mark_order_paid_from_provider", {
