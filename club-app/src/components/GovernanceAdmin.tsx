@@ -294,8 +294,10 @@ export function GovernanceAdmin() {
     setWorking(true);setMessage("");
 
     let targetStatus="published";
-    if(selectedEntity.entity_type==="book"&&selectedEntity.entity_status==="draft"){
-      targetStatus="published";
+    if (selectedEntity.entity_type === "notification_template") {
+      targetStatus = "active";
+    } else if (selectedEntity.entity_type === "book" && selectedEntity.entity_status === "draft") {
+      targetStatus = "published";
     }
 
     const {error}=await supabase.rpc("publish_dc_entity",{
@@ -440,9 +442,9 @@ export function GovernanceAdmin() {
             </>
           )}
 
-          {selectedEntity?.approval_current&&selectedEntity.entity_status==="draft"&&(
+          {selectedEntity?.approval_current&&["draft"].includes(selectedEntity.entity_status)&&(
             <button className="primary-button governance-publish" disabled={working} onClick={()=>void publishEntity()}>
-              Publish approved content
+              {selectedEntity?.entity_type === "notification_template" ? "Activate approved template" : "Publish approved content"}
             </button>
           )}
         </section>
