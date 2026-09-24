@@ -49,6 +49,20 @@ type Progress = {
   completion_percent:number;
 };
 
+type OrgInvitation = {
+  id:string;
+  email:string;
+  organization_role:string;
+  group_id:string|null;
+  group_role:string|null;
+  status:string;
+  expires_at:string;
+  adventure_groups:
+    | { name:string }
+    | { name:string }[]
+    | null;
+};
+
 function firstRelation<T>(value:T|T[]|null):T|null{
   return Array.isArray(value)?value[0]??null:value;
 }
@@ -68,6 +82,12 @@ export function LeaderGroupsHub(){
   const [message,setMessage]=useState("");
   const [joinCode,setJoinCode]=useState("");
   const [working,setWorking]=useState(false);
+  const [invitations,setInvitations]=useState<OrgInvitation[]>([]);
+  const [inviteEmail,setInviteEmail]=useState("");
+  const [inviteRole,setInviteRole]=useState("leader");
+  const [inviteGroupId,setInviteGroupId]=useState("");
+  const [inviteGroupRole,setInviteGroupRole]=useState("leader");
+  const [inviteLink,setInviteLink]=useState("");
 
   const [groupName,setGroupName]=useState("");
   const [groupKey,setGroupKey]=useState("");
@@ -132,6 +152,27 @@ export function LeaderGroupsHub(){
     if(selectedGroupId&&!next.some((g)=>g.id===selectedGroupId))setSelectedGroupId(next[0]?.id??"");
   },[selectedOrgId,selectedGroupId]);
 
+  const loadInvitations=useCallback(async()=>{
+    if(!selectedOrgId||!canManageOrg){
+      setInvitations([]);
+      return;
+    }
+
+    const {data,error}=await supabase
+      .from("organization_invitations")
+      .select("id,email,organization_role,group_id,group_role,status,expires_at,adventure_groups(name)")
+      .eq("organization_id",selectedOrgId)
+      .order("created_at",{ascending:false})
+      .limit(50);
+
+    if(error){
+      setMessage(error.message);
+      return;
+    }
+
+    setInvitations((data??[]) as OrgInvitation[]);
+  },[selectedOrgId,canManageOrg]);
+
   const loadGroupDetail=useCallback(async()=>{
     if(!selectedGroupId){
       setAssignments([]);setRoster([]);setProgress({});return;
@@ -165,6 +206,7 @@ export function LeaderGroupsHub(){
 
   useEffect(()=>{void loadBase();},[loadBase]);
   useEffect(()=>{void loadGroups();},[loadGroups]);
+  useEffect(()=>{void loadInvitations();},[loadInvitations]);
   useEffect(()=>{void loadGroupDetail();},[loadGroupDetail]);
 
   async function createGroup(event:FormEvent){
@@ -189,6 +231,69 @@ export function LeaderGroupsHub(){
     setMessage("Adventure Club group created.");
     await loadGroups();
     if(typeof data==="string")setSelectedGroupId(data);
+  }
+
+  async function createAdultInvitation(event:FormEvent){
+    event.preventDefault();
+    if(!selectedOrgId)return;
+
+    if(inviteRole==="leader"&&!inviteGroupId){
+      setMessage("Choose the specific group this leader will be approved to lead.");
+      return;
+    }
+
+    setWorking(true);
+    setMessage("");
+    setInviteLink("");
+
+    const {data,error}=await supabase.rpc("create_organization_invitation",{
+      p_organization_id:selectedOrgId,
+      p_email:inviteEmail.trim(),
+      p_organization_role:inviteRole,
+      p_group_id:inviteRole==="leader"?inviteGroupId||undefined:undefined,
+      p_group_role:inviteRole==="leader"?inviteGroupRole:undefined,
+      p_expires_in_days:7
+    });
+
+    setWorking(false);
+
+    if(error){
+      setMessage(error.message);
+      return;
+    }
+
+    const row=(data??[])[0];
+    if(row?.invitation_id&&row?.invitation_token){
+      const link=
+        window.location.origin+
+        "/org-invite?id="+
+        encodeURIComponent(row.invitation_id)+
+        "&token="+
+        encodeURIComponent(row.invitation_token);
+      setInviteLink(link);
+      setInviteEmail("");
+      setMessage("Leader invitation created. Copy the secure link and send it to the invited adult.");
+      await loadInvitations();
+    }
+  }
+
+  async function cancelAdultInvitation(id:string){
+    setWorking(true);
+    setMessage("");
+
+    const {error}=await supabase.rpc("cancel_organization_invitation",{
+      p_invitation_id:id
+    });
+
+    setWorking(false);
+
+    if(error){
+      setMessage(error.message);
+      return;
+    }
+
+    setMessage("Organization invitation canceled.");
+    await loadInvitations();
   }
 
   async function generateCode(){
@@ -252,6 +357,121 @@ export function LeaderGroupsHub(){
           </select>
         </label>
       </div>
+
+      {canManageOrg&&(
+        <section className="leader-adult-invites">
+          <div className="section-heading compact-heading">
+            <div>
+              <p className="eyebrow red">Adult Access</p>
+              <h3>Invite an organization admin or group leader</h3>
+            </div>
+          </div>
+
+          <form className="admin-form" onSubmit={createAdultInvitation}>
+            <label>
+              Adult email
+              <input
+                required
+                type="email"
+                value={inviteEmail}
+                onChange={(event)=>setInviteEmail(event.target.value)}
+              />
+            </label>
+
+            <label>
+              Organization role
+              <select value={inviteRole} onChange={(event)=>setInviteRole(event.target.value)}>
+                <option value="leader">Group leader</option>
+                <option value="admin">Organization admin</option>
+              </select>
+            </label>
+
+            {inviteRole==="leader"&&(
+              <>
+                <label>
+                  Approved group
+                  <select
+                    required
+                    value={inviteGroupId}
+                    onChange={(event)=>setInviteGroupId(event.target.value)}
+                  >
+                    <option value="">Choose group</option>
+                    {groups.map((group)=>(
+                      <option key={group.id} value={group.id}>{group.name}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label>
+                  Group role
+                  <select value={inviteGroupRole} onChange={(event)=>setInviteGroupRole(event.target.value)}>
+                    <option value="lead">Lead</option>
+                    <option value="leader">Leader</option>
+                    <option value="assistant">Assistant</option>
+                  </select>
+                </label>
+              </>
+            )}
+
+            <button className="secondary-button full" disabled={working}>
+              Create secure adult invitation
+            </button>
+          </form>
+
+          {inviteLink&&(
+            <div className="leader-invite-link">
+              <strong>Invitation link</strong>
+              <code>{inviteLink}</code>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={()=>{
+                  void navigator.clipboard?.writeText(inviteLink);
+                  setMessage("Invitation link copied.");
+                }}
+              >
+                Copy invitation link
+              </button>
+            </div>
+          )}
+
+          {invitations.length>0&&(
+            <div className="leader-invitation-list">
+              {invitations.map((invitation)=>{
+                const group=firstRelation(invitation.adventure_groups);
+                return (
+                  <article key={invitation.id}>
+                    <div>
+                      <strong>{invitation.email}</strong>
+                      <span>
+                        {invitation.organization_role}
+                        {group?.name?" · "+group.name:""}
+                        {invitation.group_role?" · "+invitation.group_role:""}
+                      </span>
+                      <small>Expires {new Date(invitation.expires_at).toLocaleDateString()}</small>
+                    </div>
+                    <div>
+                      <span className={invitation.status==="accepted"?"status-chip done":"status-chip"}>
+                        {invitation.status}
+                      </span>
+                      {invitation.status==="invited"&&(
+                        <button
+                          type="button"
+                          className="text-button small"
+                          disabled={working}
+                          onClick={()=>void cancelAdultInvitation(invitation.id)}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
 
       {canManageOrg&&(
         <details className="leader-create-group">
