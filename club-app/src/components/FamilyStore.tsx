@@ -44,6 +44,10 @@ function cartStorageKey(householdId: string) {
   return `dc-store-cart:${householdId}`;
 }
 
+function checkoutStorageKey(householdId: string) {
+  return `dc-store-checkout:${householdId}`;
+}
+
 function readCart(householdId: string): CartLine[] {
   try {
     const saved: unknown = JSON.parse(localStorage.getItem(cartStorageKey(householdId)) || "[]");
@@ -77,6 +81,8 @@ type CheckoutResult = {
   expires_at: string;
 };
 
+type ReturnStatus = "checking" | "paid" | "pending" | "canceled" | "unavailable";
+
 function money(cents: number, currency = "USD") {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -101,6 +107,45 @@ export function FamilyStore({ householdId }: { householdId: string }) {
   const [message, setMessage] = useState("");
   const [checkoutSummary, setCheckoutSummary] = useState<CheckoutResult | null>(null);
   const [checkoutReadiness, setCheckoutReadiness] = useState<CheckoutReadiness | null>(null);
+  const [returnStatus, setReturnStatus] = useState<ReturnStatus | null>(() =>
+    ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
+      ? "checking" : null
+  );
+
+  const checkReturnedCheckout = useCallback(async () => {
+    const sessionId = sessionStorage.getItem(checkoutStorageKey(householdId));
+    if (!sessionId) {
+      setReturnStatus("unavailable");
+      return;
+    }
+
+    setReturnStatus("checking");
+    const { data, error } = await supabase
+      .from("checkout_session_summary")
+      .select("checkout_status,order_status")
+      .eq("checkout_session_id", sessionId)
+      .eq("household_id", householdId)
+      .maybeSingle();
+
+    if (error || !data) {
+      setReturnStatus("unavailable");
+    } else if (["paid", "fulfilled", "partially_fulfilled"].includes(data.order_status ?? "")) {
+      setReturnStatus("paid");
+      setCart([]);
+      sessionStorage.removeItem(checkoutStorageKey(householdId));
+    } else if (["canceled", "expired", "failed"].includes(data.checkout_status ?? "") ||
+      ["canceled", "failed"].includes(data.order_status ?? "")) {
+      setReturnStatus("canceled");
+    } else {
+      setReturnStatus("pending");
+    }
+  }, [householdId]);
+
+  useEffect(() => {
+    if (returnStatus === "checking") void checkReturnedCheckout();
+    // Run once for the provider return; refreshes use the button below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [householdId]);
 
   const load = useCallback(async () => {
     setMessage("");
@@ -340,6 +385,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       return;
     }
 
+    sessionStorage.setItem(checkoutStorageKey(householdId), summary.checkout_session_id);
     window.location.assign(checkoutUrl);
   }
 
@@ -361,6 +407,24 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       </section>
 
       {message && <div className="form-message">{message}</div>}
+
+      {returnStatus && (
+        <section className="store-return-status" role="status" aria-live="polite">
+          <strong>{returnStatus === "paid" ? "Payment confirmed" : "Checkout update"}</strong>
+          <p>
+            {returnStatus === "checking" && "Checking your order with Adventure Club..."}
+            {returnStatus === "paid" && "Your order is paid. You can find it under Membership & Settings → Orders & fulfillment."}
+            {returnStatus === "pending" && "Your payment has not been confirmed yet. It may take a moment for the provider to notify us. Please check again before placing another order."}
+            {returnStatus === "canceled" && "This checkout did not complete. Your cart is still here if you want to try again."}
+            {returnStatus === "unavailable" && "We could not verify this checkout in this browser. Check Orders & fulfillment or contact support before trying again."}
+          </p>
+          {returnStatus === "pending" && (
+            <button type="button" className="secondary-button" onClick={() => void checkReturnedCheckout()}>
+              Check order status
+            </button>
+          )}
+        </section>
+      )}
 
       <div className="family-store-layout">
         <section className="store-catalog">

@@ -452,7 +452,10 @@ function FamilyPortal({
     () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
   );
   const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">("home");
-  const [parentSection, setParentSection] = useState<"overview" | "store" | "settings">("overview");
+  const [parentSection, setParentSection] = useState<"overview" | "store" | "settings">(
+    () => ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
+      ? "store" : "overview"
+  );
 
   const selectedChild = useMemo(
     () => children.find((child) => child.id === selectedChildId) ?? children[0],
