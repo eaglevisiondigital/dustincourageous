@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
@@ -67,15 +67,13 @@ const planFeatures: Record<string,string[]> = {
     "Power Verses and Scripture practice",
     "Selected activities, coloring pages, and printables",
     "Family Faith discussion and prayer resources",
-    "Book news, previews, giveaways, and release updates"
+    "Selected book previews and release updates"
   ],
   premium: [
     "Everything included with Free",
     "Digital copies of included Dustin Courageous books",
     "Complete Adventure Club challenge library",
-    "Premium activity packs, devotionals, crafts, and Courage Missions",
-    "Exclusive videos, audio, and book extras",
-    "Member downloads, guides, certificates, and eligible rewards"
+    "Additional premium resources as the library grows"
   ]
 };
 
@@ -120,10 +118,21 @@ export function FamilySettings({
   const [confirmPin, setConfirmPin] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const loadVersion = useRef(0);
 
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
+    const now = new Date().toISOString();
+    setLoading(true);
+    setLoadError("");
     setMessage("");
+    setSubscription(null);
+    setPlanEntitlements([]);
+    setGrants([]);
 
+    try {
     const [plansResult,subResult,grantResult,prefResult,adultResult,inviteResult] = await Promise.all([
       supabase
         .from("membership_plans")
@@ -140,9 +149,9 @@ export function FamilySettings({
         .maybeSingle(),
       supabase
         .from("household_entitlement_grants")
-        .select("entitlement_key")
+        .select("entitlement_key,ends_at")
         .eq("household_id",householdId)
-        .lte("starts_at",new Date().toISOString()),
+        .lte("starts_at",now),
       supabase
         .from("notification_preferences")
         .select("email_enabled,push_enabled,product_updates,child_progress,rewards,family_reminders,marketing,quiet_hours_start,quiet_hours_end,timezone")
@@ -156,23 +165,28 @@ export function FamilySettings({
         .order("created_at",{ascending:false})
     ]);
 
+    if(version !== loadVersion.current) return;
     const error=plansResult.error||subResult.error||grantResult.error||prefResult.error||adultResult.error||inviteResult.error;
     if(error){
-      setMessage(error.message);
-      return;
+      throw error;
     }
 
     setPlans((plansResult.data??[]) as Plan[]);
     const sub=(subResult.data??null) as Subscription|null;
     setSubscription(sub);
-    setGrants((grantResult.data??[]).map(x=>x.entitlement_key));
+    setGrants((grantResult.data??[])
+      .filter(x=>x.ends_at===null || Date.parse(x.ends_at)>Date.parse(now))
+      .map(x=>x.entitlement_key));
 
-    if(sub?.plan_id){
+    if(sub?.plan_id && ["trialing","active","comped"].includes(sub.status)
+      && (sub.current_period_end===null || Date.parse(sub.current_period_end)>Date.parse(now))){
       const {data,error:entError}=await supabase
         .from("plan_entitlements")
         .select("entitlement_key")
         .eq("plan_id",sub.plan_id);
-      if(!entError) setPlanEntitlements((data??[]).map(x=>x.entitlement_key));
+      if(version !== loadVersion.current) return;
+      if(entError) throw entError;
+      setPlanEntitlements((data??[]).map(x=>x.entitlement_key));
     } else {
       setPlanEntitlements([]);
     }
@@ -180,9 +194,21 @@ export function FamilySettings({
     if(prefResult.data) setPreferences(prefResult.data as Preference);
     setAdults((adultResult.data??[]) as HouseholdAdult[]);
     setInvitations((inviteResult.data??[]) as HouseholdInvitation[]);
+    } catch {
+      if(version === loadVersion.current) {
+        setLoadError("We could not load your family settings. Please try again.");
+        setPlanEntitlements([]);
+        setGrants([]);
+      }
+    } finally {
+      if(version === loadVersion.current) setLoading(false);
+    }
   },[householdId,user.id]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{
+    void load();
+    return ()=>{loadVersion.current += 1;};
+  },[load]);
 
   const currentPlan=firstRelation(subscription?.membership_plans??null);
   const effectiveEntitlements=useMemo(
@@ -272,6 +298,9 @@ export function FamilySettings({
     setPreferences(current=>({...current,[key]:!current[key]}));
   };
 
+  if(loading) return <section className="family-settings" aria-busy="true"><p role="status">Loading family settings...</p></section>;
+  if(loadError) return <section className="family-settings"><p role="alert">{loadError}</p><button className="secondary-button" onClick={()=>void load()}>Try again</button></section>;
+
   return (
     <section className="family-settings">
       <nav className="family-settings-tabs">
@@ -291,13 +320,16 @@ export function FamilySettings({
                 <h2>{currentPlan?.name||"Adventure Club"}</h2>
                 <p>{currentPlan?.description||"Family Adventure Club access."}</p>
               </div>
-              <span className="status-chip done">{subscription?.status||"active"}</span>
+              <span className="status-chip">{subscription
+                ? (subscription.current_period_end && Date.parse(subscription.current_period_end)<=Date.now() ? "expired" : subscription.status)
+                : "No current subscription"}</span>
             </div>
             {effectiveEntitlements.length>0&&(
               <div className="entitlement-list">
                 {effectiveEntitlements.map(item=><span key={item}>{item.replaceAll("_"," ")}</span>)}
               </div>
             )}
+            <p className="settings-note">Access permissions are listed above. Individual content must also be published and available. Book companion activities are separate from full digital books.</p>
           </section>
 
           <div className="membership-plan-grid">
@@ -306,6 +338,7 @@ export function FamilySettings({
                 <span>{plan.plan_key}</span>
                 <h3>{plan.name}</h3>
                 <p>{plan.description}</p>
+                <p className="settings-note">{plan.plan_key==="premium" ? "Planned paid membership benefits. Enrollment is not open yet." : "Free membership includes selected published resources."}</p>
                 <ul className="membership-plan-features">
                   {(planFeatures[plan.plan_key]??[]).map(feature=><li key={feature}>{feature}</li>)}
                 </ul>
@@ -314,12 +347,12 @@ export function FamilySettings({
                 {currentPlan?.id===plan.id?(
                   <div className="status-chip done">Current plan</div>
                 ):(
-                  <button className="secondary-button" disabled>Upgrade checkout will connect here</button>
+                  <button className="secondary-button" disabled>{plan.plan_key==="premium" ? "Paid enrollment coming soon" : "Plan changes unavailable"}</button>
                 )}
               </article>
             ))}
           </div>
-          <p className="settings-note">Free and paid access are structurally defined. Final public level names, monthly pricing, annual pricing, and the payment processor remain pending approval.</p>
+          <p className="settings-note">There are two membership levels: Free and a planned paid monthly membership. Final public names, pricing, and checkout remain pending approval. Planned benefits are not a promise that every resource is available in this Alpha.</p>
         </div>
       )}
 
