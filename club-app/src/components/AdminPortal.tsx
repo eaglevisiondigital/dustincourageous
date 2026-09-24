@@ -149,8 +149,8 @@ function ChallengeAdmin({
       p_title: title.trim(),
       p_slug: (slug || slugify(title)).trim(),
       p_challenge_type: challengeType,
-      p_description: description.trim() || null,
-      p_instructions: null,
+      p_description: description.trim() || undefined,
+      p_instructions: undefined,
       p_access_level: accessLevel,
       p_xp_reward: Number(xp) || 0,
       p_parent_approval_required: parentApproval,
@@ -326,12 +326,12 @@ function BadgeAdmin({ badges, refresh }: { badges: BadgeRow[]; refresh: () => Pr
     const { error } = await supabase.rpc("admin_create_badge_with_rule", {
       p_badge_key: badgeKey || slugify(name),
       p_name: name.trim(),
-      p_description: description.trim() || null,
+      p_description: description.trim() || undefined,
       p_rarity: rarity,
       p_rule_type: ruleType,
-      p_threshold_value: ruleType === "manual" ? null : Number(threshold),
-      p_streak_key: ruleType === "streak" ? streakKey : null,
-      p_challenge_type: ruleType === "challenge_type_count" ? challengeType : null
+      p_threshold_value: ruleType === "manual" ? undefined : Number(threshold),
+      p_streak_key: ruleType === "streak" ? streakKey : undefined,
+      p_challenge_type: ruleType === "challenge_type_count" ? challengeType : undefined
     });
 
     setWorking(false);
@@ -478,11 +478,11 @@ function RewardAdmin({ rewards, refresh }: { rewards: RewardRow[]; refresh: () =
     const { error } = await supabase.rpc("admin_create_reward", {
       p_reward_key: rewardKey || slugify(name),
       p_name: name.trim(),
-      p_description: description.trim() || null,
+      p_description: description.trim() || undefined,
       p_reward_type: rewardType,
-      p_xp_required: xpRequired ? Number(xpRequired) : null,
+      p_xp_required: xpRequired ? Number(xpRequired) : undefined,
       p_access_level: accessLevel,
-      p_inventory_quantity: inventory ? Number(inventory) : null
+      p_inventory_quantity: inventory ? Number(inventory) : undefined
     });
 
     setWorking(false);
