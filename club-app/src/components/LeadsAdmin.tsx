@@ -29,6 +29,13 @@ type Inquiry = {
   created_at: string;
 };
 
+type ConversionSummary = {
+  lead_type: string;
+  unique_leads: number;
+  converted_households: number;
+  conversion_percent: number;
+};
+
 type Summary = {
   record_type: string;
   category: string;
@@ -41,12 +48,13 @@ export function LeadsAdmin() {
   const [leads,setLeads]=useState<Lead[]>([]);
   const [inquiries,setInquiries]=useState<Inquiry[]>([]);
   const [summary,setSummary]=useState<Summary[]>([]);
+  const [conversion,setConversion]=useState<ConversionSummary[]>([]);
   const [message,setMessage]=useState("");
   const [filter,setFilter]=useState<"all"|"waitlist"|"contact">("all");
 
   const load=useCallback(async()=>{
     setMessage("");
-    const [leadResult,inquiryResult,summaryResult]=await Promise.all([
+    const [leadResult,inquiryResult,summaryResult,conversionResult]=await Promise.all([
       supabase
         .from("marketing_leads")
         .select("id,lead_type,source_page,parent_guardian_name,email,child_first_name,child_age,parent_guardian_consent,marketing_consent,consent_text,consented_at,status,submission_count,last_submitted_at,created_at")
@@ -59,10 +67,13 @@ export function LeadsAdmin() {
         .limit(250),
       supabase
         .from("public_site_pipeline_summary")
+        .select("*"),
+      supabase
+        .from("marketing_conversion_summary")
         .select("*")
     ]);
 
-    const error=leadResult.error||inquiryResult.error||summaryResult.error;
+    const error=leadResult.error||inquiryResult.error||summaryResult.error||conversionResult.error;
     if(error){
       setMessage(error.message);
       return;
@@ -71,6 +82,7 @@ export function LeadsAdmin() {
     setLeads((leadResult.data??[]) as Lead[]);
     setInquiries((inquiryResult.data??[]) as Inquiry[]);
     setSummary((summaryResult.data??[]) as Summary[]);
+    setConversion((conversionResult.data??[]) as ConversionSummary[]);
   },[]);
 
   useEffect(()=>{void load();},[load]);
@@ -99,6 +111,11 @@ export function LeadsAdmin() {
     .filter((row)=>row.record_type==="marketing_lead"&&row.status==="active")
     .reduce((sum,row)=>sum+Number(row.record_count||0),0);
 
+  const convertedCount=conversion.reduce((sum,row)=>sum+Number(row.converted_households||0),0);
+  const conversionPercent=conversion.length
+    ? Math.round((conversion.reduce((sum,row)=>sum+Number(row.conversion_percent||0),0)/conversion.length)*10)/10
+    : 0;
+
   const newInquiryCount=summary
     .filter((row)=>row.record_type==="contact_inquiry"&&row.status==="new")
     .reduce((sum,row)=>sum+Number(row.record_count||0),0);
@@ -122,6 +139,11 @@ export function LeadsAdmin() {
           <span>Total waitlist submissions</span>
           <strong>{leads.reduce((sum,lead)=>sum+lead.submission_count,0)}</strong>
           <small>Repeat interest retained</small>
+        </article>
+        <article>
+          <span>Converted households</span>
+          <strong>{convertedCount}</strong>
+          <small>{conversionPercent}% conversion</small>
         </article>
       </section>
 
