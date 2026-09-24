@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type Unlock = {
@@ -31,9 +31,16 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
   const [redemptions, setRedemptions] = useState<Record<string, string>>({});
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const loadVersion = useRef(0);
+  const requestBusy = useRef(false);
 
   const load = useCallback(async () => {
-    setError("");
+    const version = ++loadVersion.current;
+    setLoading(true);
+    setLoadError("");
+    try {
 
     const { data, error: unlockError } = await supabase
       .from("reward_unlocks")
@@ -41,10 +48,8 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
       .eq("child_profile_id", childId)
       .order("unlocked_at", { ascending: false });
 
-    if (unlockError) {
-      setError(unlockError.message);
-      return;
-    }
+    if (version !== loadVersion.current) return;
+    if (unlockError) throw unlockError;
 
     const nextUnlocks = (data ?? []) as Unlock[];
     setUnlocks(nextUnlocks);
@@ -54,11 +59,13 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
       return;
     }
 
-    const { data: redemptionData } = await supabase
+    const { data: redemptionData, error: redemptionError } = await supabase
       .from("reward_redemptions")
       .select("reward_unlock_id,status")
       .in("reward_unlock_id", nextUnlocks.map((item) => item.id));
 
+    if (version !== loadVersion.current) return;
+    if (redemptionError) throw redemptionError;
     setRedemptions(
       Object.fromEntries(
         ((redemptionData ?? []) as Redemption[]).map((item) => [
@@ -67,31 +74,47 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
         ])
       )
     );
+    } catch {
+      if (version === loadVersion.current) setLoadError("Rewards could not be loaded. Please try again.");
+    } finally {
+      if (version === loadVersion.current) setLoading(false);
+    }
   }, [childId]);
 
   useEffect(() => {
     void load();
+    const refresh = () => void load();
+    window.addEventListener("dc-progress-updated", refresh);
+    return () => {
+      loadVersion.current += 1;
+      window.removeEventListener("dc-progress-updated", refresh);
+    };
   }, [load]);
 
   async function requestReward(unlockId: string) {
+    if (requestBusy.current || loading || loadError || redemptions[unlockId]) return;
+    requestBusy.current = true;
     setWorkingId(unlockId);
     setError("");
-
-    const { error: requestError } = await supabase.from("reward_redemptions").insert({
+    try {
+    const { data, error: requestError } = await supabase.from("reward_redemptions").insert({
       reward_unlock_id: unlockId,
       requested_by: userId,
       status: "requested"
-    });
-
-    setWorkingId(null);
-
-    if (requestError) {
-      setError(requestError.message);
-      return;
+    }).select("reward_unlock_id,status").single();
+    if (requestError) throw requestError;
+    if (data?.reward_unlock_id !== unlockId) throw new Error("Request not confirmed");
+    } catch {
+      setError("We could not confirm the request. Check the refreshed reward status before trying again.");
+    } finally {
+      await load();
+      requestBusy.current = false;
+      setWorkingId(null);
     }
-
-    await load();
   }
+
+  if (loading) return <section className="family-section-card" aria-busy="true"><p role="status">Loading rewards...</p></section>;
+  if (loadError) return <section className="family-section-card"><p role="alert">{loadError}</p>{error && <p>{error}</p>}<button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
 
   if (!unlocks.length) {
     return (
@@ -103,6 +126,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
           </div>
         </div>
         <p className="muted">Rewards earned through Adventure Club progress will appear here for guardian review.</p>
+        {error && <p role="alert">{error}</p>}
       </section>
     );
   }
@@ -139,7 +163,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
                   <button
                     className="secondary-button"
                     type="button"
-                    disabled={workingId === unlock.id}
+                    disabled={workingId !== null}
                     onClick={() => void requestReward(unlock.id)}
                   >
                     {workingId === unlock.id ? "Requesting..." : "Request reward"}

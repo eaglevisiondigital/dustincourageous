@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type Level = {
@@ -27,8 +27,14 @@ export function ParentChildProgress({
   const [bestWeeklyStreak, setBestWeeklyStreak] = useState(0);
   const [activeWeeklyStreak, setActiveWeeklyStreak] = useState(0);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const loadVersion = useRef(0);
 
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
+    setLoading(true);
+    setError("");
+    try {
     const [
       levelResult,
       starResult,
@@ -59,10 +65,8 @@ export function ParentChildProgress({
       bookResult.error ||
       streakResult.error;
 
-    if (firstError) {
-      setError(firstError.message);
-      return;
-    }
+    if (version !== loadVersion.current) return;
+    if (firstError) throw firstError;
 
     setLevel((levelResult.data ?? null) as Level | null);
     setWeeklyStars(Number(starResult.data?.total ?? 0));
@@ -75,11 +79,25 @@ export function ParentChildProgress({
     const streakRows = streakResult.data ?? [];
     setBestWeeklyStreak(Math.max(0, ...streakRows.map((row) => row.best_weeks ?? 0)));
     setActiveWeeklyStreak(Math.max(0, ...streakRows.map((row) => row.active_weeks ?? 0)));
+    } catch {
+      if (version === loadVersion.current) setError("This progress snapshot could not be loaded. Please try again.");
+    } finally {
+      if (version === loadVersion.current) setLoading(false);
+    }
   }, [childId]);
 
   useEffect(() => {
     void load();
+    const refresh = () => void load();
+    window.addEventListener("dc-progress-updated", refresh);
+    return () => {
+      loadVersion.current += 1;
+      window.removeEventListener("dc-progress-updated", refresh);
+    };
   }, [load]);
+
+  if (loading) return <section className="parent-progress-card" aria-busy="true"><p role="status">Loading {childName}'s progress...</p></section>;
+  if (error) return <section className="parent-progress-card"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
 
   return (
     <section className="parent-progress-card">

@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type PendingProgress = {
@@ -42,8 +42,16 @@ export function ParentApprovals({
   );
   const [working, setWorking] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const loadVersion = useRef(0);
+  const actionBusy = useRef(false);
 
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
+    setLoading(true);
+    setLoadError("");
+    try {
     if (!childIds.length) {
       setItems([]);
       return;
@@ -58,16 +66,20 @@ export function ParentApprovals({
       .eq("status", "pending_parent")
       .order("submitted_at", { ascending: true });
 
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
+    if (version !== loadVersion.current) return;
+    if (error) throw error;
 
     setItems((data ?? []) as PendingProgress[]);
-  }, [childIds.join("|")]);
+    } catch {
+      if (version === loadVersion.current) setLoadError("The approval queue could not be loaded. Please try again.");
+    } finally {
+      if (version === loadVersion.current) setLoading(false);
+    }
+  }, [householdId, childIds.join("|")]);
 
   useEffect(() => {
     void load();
+    return () => { loadVersion.current += 1; };
   }, [load]);
 
   useEffect(() => {
@@ -78,10 +90,11 @@ export function ParentApprovals({
 
   async function unlock(event: FormEvent) {
     event.preventDefault();
-
+    if (actionBusy.current) return;
+    actionBusy.current = true;
     setWorking("unlock");
     setMessage("");
-
+    try {
     const { data, error } = await supabase.rpc(
       "create_guardian_unlock_session",
       {
@@ -89,8 +102,6 @@ export function ParentApprovals({
         p_pin: pin
       }
     );
-
-    setWorking("");
 
     if (error || !data) {
       setMessage(error?.message ?? "Guardian PIN was not accepted.");
@@ -103,6 +114,13 @@ export function ParentApprovals({
     setGuardianToken(token);
     setPin("");
     setMessage("Guardian approval session unlocked for up to 30 minutes.");
+    } catch {
+      setMessage("The guardian PIN could not be checked. Please try again.");
+      setPin("");
+    } finally {
+      actionBusy.current = false;
+      setWorking("");
+    }
   }
 
   function clearExpiredSession(messageText: string) {
@@ -111,24 +129,23 @@ export function ParentApprovals({
     setMessage(messageText);
   }
 
-  async function approve(progressId: string) {
+  async function decide(progressId: string, decision: "approve" | "return") {
+    if (actionBusy.current || loading || loadError) return;
     if (!guardianToken) {
-      setMessage("Enter the guardian PIN before approving a challenge.");
+      setMessage("Enter the guardian PIN before reviewing a challenge.");
       return;
     }
-
-    setWorking("approve:" + progressId);
+    actionBusy.current = true;
+    setWorking(decision + ":" + progressId);
     setMessage("");
-
+    try {
     const { error } = await supabase.rpc(
-      "approve_parent_challenge",
+      decision === "approve" ? "approve_parent_challenge" : "return_parent_challenge",
       {
         p_progress_id: progressId,
         p_guardian_session_token: guardianToken
       }
     );
-
-    setWorking("");
 
     if (error) {
       if (/unlock session|expired/i.test(error.message)) {
@@ -136,53 +153,30 @@ export function ParentApprovals({
         return;
       }
 
-      setMessage(error.message);
-      return;
+      throw error;
     }
 
-    setMessage("Challenge approved. XP, badges, streaks, and rewards were updated.");
-    await load();
-    window.dispatchEvent(new Event("dc-progress-updated"));
-  }
-
-  async function returnToChild(progressId: string) {
-    if (!guardianToken) {
-      setMessage("Enter the guardian PIN before returning a challenge.");
-      return;
+    const { data, error: confirmationError } = await supabase.from("child_challenge_progress")
+      .select("id,status").eq("id", progressId).single();
+    const expectedStatus = decision === "approve" ? "completed" : "in_progress";
+    if (confirmationError || data?.status !== expectedStatus) throw new Error("Status not confirmed");
+    setMessage(decision === "approve" ? "Challenge approved. Your family's progress is refreshing." : "Challenge returned to the child for another look.");
+    } catch {
+      setMessage("We could not confirm that action. Check the refreshed queue before trying again.");
+    } finally {
+      actionBusy.current = false;
+      setWorking("");
+      window.dispatchEvent(new Event("dc-progress-updated"));
     }
-
-    setWorking("return:" + progressId);
-    setMessage("");
-
-    const { error } = await supabase.rpc(
-      "return_parent_challenge",
-      {
-        p_progress_id: progressId,
-        p_guardian_session_token: guardianToken
-      }
-    );
-
-    setWorking("");
-
-    if (error) {
-      if (/unlock session|expired/i.test(error.message)) {
-        clearExpiredSession("Your guardian approval session expired. Enter the PIN again.");
-        return;
-      }
-
-      setMessage(error.message);
-      return;
-    }
-
-    setMessage("Challenge returned to the child for another look.");
-    await load();
-    window.dispatchEvent(new Event("dc-progress-updated"));
   }
 
   const countLabel = useMemo(
     () => items.length + " waiting",
     [items.length]
   );
+
+  if (loading) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading guardian approvals...</p></section>;
+  if (loadError) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
 
   if (!items.length) {
     return (
@@ -191,6 +185,7 @@ export function ParentApprovals({
           <p className="eyebrow gold">Guardian Approvals</p>
           <h2>Nothing waiting right now</h2>
           <p>Challenges that require a parent or guardian will appear here before XP is awarded.</p>
+          {message && <p role="status">{message}</p>}
         </div>
         <span className="status-chip done">All clear</span>
       </section>
@@ -208,7 +203,7 @@ export function ParentApprovals({
       </div>
 
       <p className="muted">
-        A signed-in guardian session alone is not enough. Approval actions require the household PIN and a short-lived server unlock session.
+        Enter your guardian PIN to approve a challenge or return it to your child for another look.
       </p>
 
       {message && <div className="form-message">{message}</div>}
@@ -231,7 +226,7 @@ export function ParentApprovals({
               }
             />
           </label>
-          <button className="secondary-button" disabled={working === "unlock"}>
+          <button className="secondary-button" disabled={Boolean(working)}>
             {working === "unlock" ? "Checking..." : "Unlock approvals"}
           </button>
         </form>
@@ -240,8 +235,8 @@ export function ParentApprovals({
       {guardianToken && (
         <div className="guardian-session-chip">
           <span>◆</span>
-          <strong>Guardian approval session active</strong>
-          <small>Expires automatically</small>
+          <strong>Guardian PIN entered</strong>
+          <small>You may be asked to enter it again when approving.</small>
         </div>
       )}
 
@@ -272,9 +267,9 @@ export function ParentApprovals({
                   className="primary-button compact"
                   disabled={
                     !guardianToken ||
-                    working === "approve:" + item.id
+                    Boolean(working)
                   }
-                  onClick={() => void approve(item.id)}
+                  onClick={() => void decide(item.id, "approve")}
                 >
                   {working === "approve:" + item.id
                     ? "Approving..."
@@ -284,9 +279,9 @@ export function ParentApprovals({
                   className="text-button small"
                   disabled={
                     !guardianToken ||
-                    working === "return:" + item.id
+                    Boolean(working)
                   }
-                  onClick={() => void returnToChild(item.id)}
+                  onClick={() => void decide(item.id, "return")}
                 >
                   Return to child
                 </button>
