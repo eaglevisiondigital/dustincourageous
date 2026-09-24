@@ -2713,3 +2713,89 @@ select:focus {
   .family-faith-selector,
   .membership-feature-grid { grid-template-columns: 1fr; }
 }
+
+
+/* Family order history */
+.order-history-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.order-history-list {
+  display: grid;
+  gap: 11px;
+}
+.order-history-row {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.order-history-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+.order-history-main strong,
+.order-history-main span {
+  display: block;
+}
+.order-history-main span:not(.status-chip) {
+  margin-top: 4px;
+  color: #817d77;
+  font-size: .72rem;
+}
+.order-item-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.order-item-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  color: #aaa59e;
+  font-size: .77rem;
+}
+.order-item-list strong {
+  color: #d7d2cb;
+}
+.order-fulfillment-note {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: #817d77;
+  font-size: .72rem;
+}
+.order-fulfillment-note a {
+  color: var(--gold);
+}
+.commerce-order-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(180px,240px);
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #0b0b0b;
+}
+.commerce-order-row strong,
+.commerce-order-row small {
+  display: block;
+}
+.commerce-order-row small {
+  margin-top: 5px;
+  color: #8f8b85;
+  font-size: .72rem;
+}
+@media (max-width: 720px) {
+  .commerce-order-row { grid-template-columns: 1fr auto; }
+  .commerce-order-row select { grid-column: 1 / -1; }
+}
