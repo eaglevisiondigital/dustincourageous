@@ -747,7 +747,7 @@ export function AdminPortal({
   role: string;
   onExit: () => void;
 }) {
-  const [section, setSection] = useState<"governance" | "launch" | "operations" | "communications" | "integrations" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
+  const [section, setSection] = useState<"governance" | "launch" | "operations" | "communications" | "integrations" | "leads" | "challenges" | "series" | "faith" | "familyfaith" | "books" | "content" | "media" | "organizations" | "events" | "store" | "badges" | "rewards" | "support" | "fulfillment">("governance");
   const [challenges, setChallenges] = useState<ChallengeRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
   const [rewards, setRewards] = useState<RewardRow[]>([]);
