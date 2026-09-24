@@ -4069,6 +4069,181 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_campaign_recipients: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          household_id: string | null
+          id: string
+          notification_id: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          notification_id?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          household_id?: string | null
+          id?: string
+          notification_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "notification_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaign_recipients_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "notification_campaign_recipients_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaign_recipients_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "user_notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_campaigns: {
+        Row: {
+          audience_type: string
+          campaign_key: string
+          created_at: string
+          created_by: string
+          delivery_channels: string[]
+          error_message: string | null
+          event_id: string | null
+          group_id: string | null
+          household_id: string | null
+          id: string
+          membership_plan_id: string | null
+          metadata: Json
+          name: string
+          organization_id: string | null
+          recipients_count: number
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          audience_type: string
+          campaign_key: string
+          created_at?: string
+          created_by: string
+          delivery_channels?: string[]
+          error_message?: string | null
+          event_id?: string | null
+          group_id?: string | null
+          household_id?: string | null
+          id?: string
+          membership_plan_id?: string | null
+          metadata?: Json
+          name: string
+          organization_id?: string | null
+          recipients_count?: number
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          audience_type?: string
+          campaign_key?: string
+          created_at?: string
+          created_by?: string
+          delivery_channels?: string[]
+          error_message?: string | null
+          event_id?: string | null
+          group_id?: string | null
+          household_id?: string | null
+          id?: string
+          membership_plan_id?: string | null
+          metadata?: Json
+          name?: string
+          organization_id?: string | null
+          recipients_count?: number
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_campaigns_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "adventure_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "household_membership_summary"
+            referencedColumns: ["household_id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_membership_plan_id_fkey"
+            columns: ["membership_plan_id"]
+            isOneToOne: false
+            referencedRelation: "membership_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_campaigns_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_deliveries: {
         Row: {
           attempt_count: number
@@ -4173,6 +4348,57 @@ export type Database = {
           timezone?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      notification_templates: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string
+          deep_link: string | null
+          default_channels: string[]
+          id: string
+          metadata: Json
+          name: string
+          notification_type: string
+          priority: string
+          status: string
+          template_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by: string
+          deep_link?: string | null
+          default_channels?: string[]
+          id?: string
+          metadata?: Json
+          name: string
+          notification_type: string
+          priority?: string
+          status?: string
+          template_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string
+          deep_link?: string | null
+          default_channels?: string[]
+          id?: string
+          metadata?: Json
+          name?: string
+          notification_type?: string
+          priority?: string
+          status?: string
+          template_key?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -6026,6 +6252,10 @@ export type Database = {
         }
         Returns: string
       }
+      admin_cancel_notification_campaign: {
+        Args: { p_campaign_id: string }
+        Returns: undefined
+      }
       admin_create_badge_with_rule: {
         Args: {
           p_badge_key: string
@@ -6149,6 +6379,19 @@ export type Database = {
           p_threshold_value?: number
           p_tier?: string
           p_token_type?: string
+        }
+        Returns: string
+      }
+      admin_create_notification_template: {
+        Args: {
+          p_body: string
+          p_deep_link?: string
+          p_default_channels?: string[]
+          p_name: string
+          p_notification_type: string
+          p_priority?: string
+          p_template_key: string
+          p_title: string
         }
         Returns: string
       }
@@ -6328,6 +6571,33 @@ export type Database = {
       }
       admin_link_book_reward: {
         Args: { p_book_id: string; p_milestone?: string; p_reward_id: string }
+        Returns: string
+      }
+      admin_preview_notification_audience: {
+        Args: {
+          p_audience_type: string
+          p_event_id?: string
+          p_group_id?: string
+          p_household_id?: string
+          p_membership_plan_id?: string
+          p_organization_id?: string
+        }
+        Returns: number
+      }
+      admin_schedule_notification_campaign: {
+        Args: {
+          p_audience_type: string
+          p_campaign_key: string
+          p_delivery_channels?: string[]
+          p_event_id?: string
+          p_group_id?: string
+          p_household_id?: string
+          p_membership_plan_id?: string
+          p_name: string
+          p_organization_id?: string
+          p_scheduled_at: string
+          p_template_id: string
+        }
         Returns: string
       }
       admin_set_order_status: {
@@ -6580,6 +6850,10 @@ export type Database = {
       }
       verify_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }
+        Returns: boolean
+      }
+      verify_privacy_cleanup_secret: {
+        Args: { p_secret: string }
         Returns: boolean
       }
       withdraw_child_from_group: {
