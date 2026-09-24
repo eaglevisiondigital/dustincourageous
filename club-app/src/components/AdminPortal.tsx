@@ -5,6 +5,7 @@ import { WeeklySeriesAdmin } from "./WeeklySeriesAdmin";
 import { FaithContentAdmin } from "./FaithContentAdmin";
 import { BookAdmin } from "./BookAdmin";
 import { MediaAdmin } from "./MediaAdmin";
+import { ContentAdmin } from "./ContentAdmin";
 
 type ChallengeRow = {
   id: string;
