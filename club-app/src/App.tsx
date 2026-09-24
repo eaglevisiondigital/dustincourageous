@@ -580,7 +580,7 @@ function FamilyPortal({
                 </button>
                 <button
                   type="button"
-                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"
+                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("trophies")}
                 >
                   Trophy Room
