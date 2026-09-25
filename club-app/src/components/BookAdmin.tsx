@@ -1,5 +1,6 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { DigitalBookPreparation } from "./DigitalBookPreparation";
 
 type Book = {
   id: string;
@@ -32,6 +33,7 @@ export function BookAdmin() {
   const [linkItemId, setLinkItemId] = useState("");
   const [message, setMessage] = useState("");
   const [working, setWorking] = useState(false);
+  const [preparing, setPreparing] = useState(false);
 
   const [bookNumber, setBookNumber] = useState("2");
   const [title, setTitle] = useState("");
@@ -147,7 +149,7 @@ export function BookAdmin() {
         <h2>Link Book Experience</h2>
         {message && <div className="form-message">{message}</div>}
         <form className="admin-form" onSubmit={linkItem}>
-          <label className="full">Book<select required value={selectedBookId} onChange={e=>setSelectedBookId(e.target.value)}><option value="">Select book</option>{books.map(book=><option key={book.id} value={book.id}>#{book.book_number} · {book.title}</option>)}</select></label>
+          <label className="full">Book<select required disabled={preparing} value={selectedBookId} onChange={e=>setSelectedBookId(e.target.value)}><option value="">Select book</option>{books.map(book=><option key={book.id} value={book.id}>#{book.book_number} · {book.title}</option>)}</select></label>
           <label>Item type<select value={linkType} onChange={e=>setLinkType(e.target.value)}><option value="power_verse">Power Verse</option><option value="devotional">Devotional</option><option value="prayer">Prayer</option><option value="identity">Identity Truth</option><option value="challenge">Challenge</option><option value="content">Video / Download / Content</option></select></label>
           <label>Companion item<select required value={linkItemId} onChange={e=>setLinkItemId(e.target.value)}>{linkOptions.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
           <button className="secondary-button full" disabled={working || !linkItemId}>Link to Book</button>
@@ -161,6 +163,8 @@ export function BookAdmin() {
           ))}
         </div>
       </section>
+      {selectedBookId && <DigitalBookPreparation key={selectedBookId} bookId={selectedBookId}
+        title={books.find(book => book.id === selectedBookId)?.title ?? "digital book"} onPrepared={load} onBusyChange={setPreparing} />}
     </div>
   );
 }

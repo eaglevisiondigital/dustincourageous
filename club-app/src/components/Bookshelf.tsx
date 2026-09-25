@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { readBookAdventure, saveBookStatus, finishBookAdventure, completeBookStep } from "../lib/bookActions";
+import { DigitalBookEntry } from "./DigitalBookReader";
 
 type Book = {
   id: string;
@@ -492,6 +493,7 @@ export function Bookshelf({
               )}
             </div>
 
+            <DigitalBookEntry key={childId + ":" + selectedBook.id} childId={childId} bookId={selectedBook.id} title={selectedBook.title} />
             <div className="book-progress-actions">
               <button
                 className="secondary-button"

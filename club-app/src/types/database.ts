@@ -1597,6 +1597,66 @@ export type Database = {
           },
         ]
       }
+      child_book_reading_positions: {
+        Row: {
+          book_id: string
+          child_profile_id: string
+          page_number: number
+          revision: string
+          updated_at: string
+        }
+        Insert: {
+          book_id: string
+          child_profile_id: string
+          page_number: number
+          revision: string
+          updated_at?: string
+        }
+        Update: {
+          book_id?: string
+          child_profile_id?: string
+          page_number?: number
+          revision?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_book_reading_positions_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_book_reading_positions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_data_inventory"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_book_reading_positions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_level_progress"
+            referencedColumns: ["child_profile_id"]
+          },
+          {
+            foreignKeyName: "child_book_reading_positions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_book_reading_positions_child_profile_id_fkey"
+            columns: ["child_profile_id"]
+            isOneToOne: false
+            referencedRelation: "parent_child_progress_summary"
+            referencedColumns: ["child_profile_id"]
+          },
+        ]
+      }
       child_challenge_progress: {
         Row: {
           approved_at: string | null
@@ -7488,6 +7548,7 @@ export type Database = {
           verses_memorized: number
         }[]
       }
+      admin_get_digital_book: { Args: { p_book_id: string }; Returns: Json }
       admin_get_platform_snapshot: {
         Args: never
         Returns: {
@@ -7527,6 +7588,10 @@ export type Database = {
       }
       admin_link_book_reward: {
         Args: { p_book_id: string; p_milestone?: string; p_reward_id: string }
+        Returns: string
+      }
+      admin_prepare_digital_book: {
+        Args: { p_book_id: string; p_manifest: Json }
         Returns: string
       }
       admin_preview_notification_audience: {
@@ -7802,6 +7867,10 @@ export type Database = {
           total_steps: number
         }[]
       }
+      get_digital_book: {
+        Args: { p_book_id: string; p_child_profile_id: string }
+        Returns: Json
+      }
       get_group_progress_summary: {
         Args: { p_challenge_id: string; p_group_id: string }
         Returns: {
@@ -7987,6 +8056,15 @@ export type Database = {
       revoke_household_invitation: {
         Args: { p_invitation_id: string }
         Returns: undefined
+      }
+      save_digital_book_position: {
+        Args: {
+          p_book_id: string
+          p_child_profile_id: string
+          p_page_number: number
+          p_revision: string
+        }
+        Returns: number
       }
       set_guardian_pin: {
         Args: { p_household_id: string; p_pin: string }

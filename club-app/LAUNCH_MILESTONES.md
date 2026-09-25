@@ -1,7 +1,8 @@
 # Adventure Club launch milestones
 
 Status checkpoint: September 24, 2026, America/Chicago.
-Code reviewed through commit 8834035610b1b1dcdffed9155a834afdc2d66ee1.
+Latest milestone: protected digital-reader and Books Admin preparation foundation.
+See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification and source-file findings.
 
 ## What the latest work actually accomplished
 
@@ -10,7 +11,7 @@ represent twelve new product features. Distinct fixes covered event capacity,
 group approval and code reuse, account setup, support retries, progress loading,
 activity access, secure file links, and verified Book Adventure saves.
 
-The current 174 automated tests and green CI establish tested logic and build
+Automated tests and CI establish tested logic and build
 health. Most tests use mocked clients; SQL regression fixtures often replace
 authorization helpers. They do not establish signed-in browser, real-device,
 real-payment, or full cross-household RLS correctness.
@@ -20,7 +21,7 @@ real-payment, or full cross-household RLS correctness.
 | Milestone | Current evidence | Remaining work | Depends on Dave |
 | --- | --- | --- | --- |
 | Usable free web Alpha | Family and child screens implemented; build and unit tests pass | Signed-in guardian walkthrough: signup, household, child, PIN, complete challenge, reload and confirm saved progress; record failures and fixes | Authorized test sign-in if no testing session is available |
-| Protected digital books | Digital-book entitlement exists; Bookshelf provides companion progress | Implement protected reader/file delivery, resume behavior, and access-denial checks; test with approved assets before release | Approved book files |
+| Protected digital books | Reader, private image delivery, per-child resume, governed edition preparation/review, and isolated access tests implemented; supplied proof files checked | Signed-in reader/Storage and device walkthrough; finalize accessible text, source order, and corrected images; human approval before release | Corrected book images and final review |
 | Paid monthly membership | Free and premium plan records active; premium monthly price is null | Approved pricing, recurring billing integration, verified entitlement activation and cancellation behavior | Pricing and provider approval/configuration |
 | Store payments | Authoritative checkout and webhook foundation exists | Provider adapter integration; verify real sandbox lifecycle including capture after local expiry/cancel, retries, fulfillment and reconciliation | Provider approval/configuration |
 | Guardian communications | Queue, preferences, worker and scheduling implemented | Configure providers and prove delivery, suppression and failure recovery | Provider configuration |
@@ -33,10 +34,10 @@ Supabase Auth's own email delivery.
 
 ## Next implementation milestone
 
-Protected digital-book delivery and reader foundation, with no unapproved book
-content or invented pricing. Missing final files must not be presented as the
-only remaining work. Keep the release path unavailable until approved files,
-governance and access checks are in place.
+Finish private digital-book integration verification with final source images.
+The reader foundation now exists, but real signed-in Storage and device tests
+remain open. Keep the release path unavailable until corrected files, human
+governance review and access checks are in place. Do not invent pricing.
 
 Signed-in Alpha verification remains a parallel release gate. Record it as
 pending until it actually happens; do not infer it from unit tests or CI.
