@@ -1,3 +1,4 @@
+import { preservesFamilyWorkspace } from "./lib/sessionTransitions";
 import { authFeedback, authIsRateLimited, emailRetrySeconds, authRedirectFeedback } from "./lib/authFeedback";
 import { adultSignupMetadata } from "./lib/adultSignup";
 import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -1285,8 +1286,17 @@ export default function App() {
   useEffect(() => {
     let disposed = false;
     let authVersion = 0;
+    let eventVersion = 0;
+    let acceptedUserId: string | null = null;
     let pendingLoad: ReturnType<typeof setTimeout> | undefined;
-    const acceptSession = (nextSession: Session | null) => {
+    const acceptSession = (nextSession: Session | null, event = "INITIAL_SESSION") => {
+      const nextUserId = nextSession?.user.id ?? null;
+      if (preservesFamilyWorkspace(acceptedUserId, nextUserId, event)) {
+        // Retain pending family loads and mounted forms while updating auth metadata.
+        setSession(nextSession);
+        return;
+      }
+      acceptedUserId = nextUserId;
       const version = ++authVersion;
       familyLoadVersion.current += 1;
       clearTimeout(pendingLoad);
@@ -1318,17 +1328,18 @@ export default function App() {
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (disposed) return;
+      eventVersion += 1;
       if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
-      acceptSession(nextSession);
+      acceptSession(nextSession, event);
     });
 
-    const initialVersion = authVersion;
+    const initialVersion = eventVersion;
     void supabase.auth.getSession().then(({ data, error }) => {
-      if (disposed || authVersion !== initialVersion) return;
+      if (disposed || eventVersion !== initialVersion) return;
       if (error) throw error;
       acceptSession(data.session);
     }).catch(() => {
-      if (disposed || authVersion !== initialVersion) return;
+      if (disposed || eventVersion !== initialVersion) return;
       setAccountError("We could not restore your sign-in. Please reload and try again.");
       setLoading(false);
     });

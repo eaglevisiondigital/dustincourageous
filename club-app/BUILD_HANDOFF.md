@@ -16,6 +16,17 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Routine same-adult TOKEN_REFRESHED, USER_UPDATED and repeated
+SIGNED_IN events now update the session without replacing the mounted workspace
+or restarting an existing family load. This prevents automatic auth events from
+clearing family selections and account forms. Initial sessions, missing/different
+identities, sign-out, recovery and other events retain full transition behavior.
+An independent event counter prevents late getSession results from overwriting an
+auth event without invalidating ongoing family loads. Four decision-helper tests
+cover event/identity boundaries; all 255 tests and production build pass. Backend
+authorization remains enforced per request. No RLS, role or session lifetime changes.
+Real browser token-refresh/account-edit acceptance remains pending.
+
 September 25: Family Faith refreshes preserve the displayed guide and per-child
 save results. Loading/errors are shown inline when guides are already available;
 saves and participant/guide changes are disabled until progress is current. Added
