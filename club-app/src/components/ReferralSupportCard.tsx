@@ -1,6 +1,7 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { submitSupportRequest, type SupportRequest } from "../lib/supportTicket";
 
 type Ticket={
   id:string;
@@ -19,51 +20,90 @@ export function ReferralSupportCard({
   user:User;
 }){
   const [code,setCode]=useState("");
-  const [referralCount,setReferralCount]=useState(0);
+  const [referralCount,setReferralCount]=useState<number|null>(null);
   const [tickets,setTickets]=useState<Ticket[]>([]);
   const [category,setCategory]=useState("general");
   const [subject,setSubject]=useState("");
   const [body,setBody]=useState("");
   const [working,setWorking]=useState(false);
   const [message,setMessage]=useState("");
+  const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState("");
+  const [pendingRequest,setPendingRequest]=useState<SupportRequest|null>(null);
+  const [copyFallback,setCopyFallback]=useState("");
+  const actionBusy=useRef(false);
+  const loadVersion=useRef(0);
 
   const load=useCallback(async()=>{
+    const version=++loadVersion.current;
+    setLoading(true);setLoadError("");setReferralCount(null);
+    try {
     const [codeResult,ticketResult]=await Promise.all([
       supabase.from("referral_codes").select("id,code").eq("household_id",householdId).maybeSingle(),
       supabase.from("support_tickets").select("id,ticket_number,category,subject,status,created_at").eq("household_id",householdId).order("created_at",{ascending:false}).limit(20)
     ]);
 
-    if(codeResult.error||ticketResult.error){
-      setMessage(codeResult.error?.message||ticketResult.error?.message||"Unable to load.");
-      return;
-    }
+    if(version!==loadVersion.current)return;
+    if(codeResult.error||ticketResult.error)throw codeResult.error||ticketResult.error;
 
     setTickets((ticketResult.data??[]) as Ticket[]);
 
+    setCode(codeResult.data?.code??"");
     if(codeResult.data){
-      setCode(codeResult.data.code);
       const countResult=await supabase
         .from("referral_attributions")
         .select("id",{count:"exact",head:true})
         .eq("referral_code_id",codeResult.data.id);
-      setReferralCount(countResult.count??0);
+      if(version!==loadVersion.current)return;
+      if(countResult.error)throw countResult.error;
+      setReferralCount(countResult.count);
+    }
+    } catch {
+      if(version===loadVersion.current)setLoadError("Referral and support history could not be fully loaded. Please try again.");
+    } finally {
+      if(version===loadVersion.current)setLoading(false);
     }
   },[householdId]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{void load();return ()=>{loadVersion.current+=1;};},[load]);
 
   async function createCode(){
+    if(actionBusy.current||loading||loadError)return;
+    actionBusy.current=true;
     setWorking(true);setMessage("");
+    try {
     const {data,error}=await supabase.rpc("get_or_create_referral_code",{p_household_id:householdId});
-    setWorking(false);
-    if(error){setMessage(error.message);return;}
-    setCode(data||"");
+    if(error||!data)throw error||new Error("Code not returned");
+    setCode(data);await load();
+    } catch {
+      setMessage("Your referral code could not be confirmed. Refresh the details before trying again.");
+    } finally {
+      actionBusy.current=false;setWorking(false);
+    }
+  }
+
+  async function copyReferral(){
+    const link=window.location.origin+"/?ref="+encodeURIComponent(code);
+    setCopyFallback("");
+    try {
+      if(!navigator.clipboard)throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(link);
+      setMessage("Referral link copied.");
+    } catch {
+      setCopyFallback(link);
+      setMessage("Automatic copying is unavailable. Select and copy the link below.");
+    }
   }
 
   async function submitTicket(event:FormEvent){
     event.preventDefault();
+    if(actionBusy.current)return;
+    if(!pendingRequest&&(!subject.trim()||!body.trim())){setMessage("Enter a subject and message before sending.");return;}
+    actionBusy.current=true;
     setWorking(true);setMessage("");
-    const {error}=await supabase.from("support_tickets").insert({
+    try {
+    const request=pendingRequest??{
+      id:crypto.randomUUID(),
       household_id:householdId,
       user_id:user.id,
       category,
@@ -71,41 +111,45 @@ export function ReferralSupportCard({
       message:body.trim(),
       status:"open",
       priority:"normal"
-    });
-    setWorking(false);
-    if(error){setMessage(error.message);return;}
+    };
+    setPendingRequest(request);
+    const ticket=await submitSupportRequest(supabase,request);
+    setPendingRequest(null);
     setSubject("");setBody("");
-    setMessage("Support request sent.");
+    setMessage("Support request #"+ticket.ticket_number+" sent.");
     await load();
+    } catch {
+      setMessage("Your request could not be confirmed. Retry the saved request below. Your message is preserved and the same ticket identifier will be reused.");
+    } finally {
+      actionBusy.current=false;setWorking(false);
+    }
   }
 
   return (
     <section className="referral-support-card">
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="status">{message}</div>}
+      {loadError&&<div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={working||loading} onClick={()=>void load()}>Retry details</button></div>}
 
       <div className="family-detail-grid">
         <article className="family-section-card">
           <p className="eyebrow gold">Invite a Family</p>
           <h2>Adventure Club referral</h2>
           <p className="muted">Share a family referral code without sharing anyone's private account information.</p>
-          {code?(
+          {loading?<p role="status">Loading referral details...</p>:code?(
             <div className="referral-code-box">
               <strong>{code}</strong>
-              <span>{referralCount} joined household{referralCount===1?"":"s"}</span>
+              <span>{referralCount===null?"Referral count unavailable":`${referralCount} joined household${referralCount===1?"":"s"}`}</span>
               <button
                 type="button"
                 className="text-button small"
-                onClick={() => {
-                  const link = window.location.origin + "/?ref=" + code;
-                  void navigator.clipboard?.writeText(link);
-                  setMessage("Referral link copied.");
-                }}
+                onClick={() => void copyReferral()}
               >
                 Copy referral link
               </button>
+              {copyFallback&&<label>Referral link<input readOnly value={copyFallback} onFocus={event=>event.target.select()}/></label>}
             </div>
           ):(
-            <button className="secondary-button" disabled={working} onClick={()=>void createCode()}>
+            <button type="button" className="secondary-button" disabled={working||!!loadError} onClick={()=>void createCode()}>
               Create family referral code
             </button>
           )}
@@ -117,7 +161,7 @@ export function ReferralSupportCard({
           <form className="form-stack" onSubmit={submitTicket}>
             <label>
               Category
-              <select value={category} onChange={(event)=>setCategory(event.target.value)}>
+              <select disabled={working||!!pendingRequest} value={category} onChange={(event)=>setCategory(event.target.value)}>
                 <option value="general">General</option>
                 <option value="account">Account</option>
                 <option value="membership">Membership</option>
@@ -129,14 +173,14 @@ export function ReferralSupportCard({
                 <option value="other">Other</option>
               </select>
             </label>
-            <label>Subject<input required value={subject} onChange={(event)=>setSubject(event.target.value)}/></label>
-            <label>Message<textarea required value={body} onChange={(event)=>setBody(event.target.value)}/></label>
-            <button className="primary-button" disabled={working}>Send support request</button>
+            <label>Subject<input required disabled={working||!!pendingRequest} value={subject} onChange={(event)=>setSubject(event.target.value)}/></label>
+            <label>Message<textarea required disabled={working||!!pendingRequest} value={body} onChange={(event)=>setBody(event.target.value)}/></label>
+            <button className="primary-button" disabled={working}>{working?"Checking request...":pendingRequest?"Retry saved request":"Send support request"}</button>
           </form>
         </article>
       </div>
 
-      {tickets.length>0&&(
+      {loading?<p role="status">Loading support history...</p>:loadError?null:tickets.length>0?(
         <div className="support-ticket-list">
           {tickets.map((ticket)=>(
             <article key={ticket.id}>
@@ -145,7 +189,7 @@ export function ReferralSupportCard({
             </article>
           ))}
         </div>
-      )}
+      ):<p className="muted">No support requests are connected to this family yet.</p>}
     </section>
   );
 }

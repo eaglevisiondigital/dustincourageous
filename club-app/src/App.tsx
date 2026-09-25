@@ -923,7 +923,7 @@ function FamilyPortal({
                   <MembershipAccessCard householdId={household.id} />
                   <OrderHistoryCard key={household.id} householdId={household.id} />
                   <LeaderGroupsHub />
-                  <ReferralSupportCard householdId={household.id} user={user} />
+                  <ReferralSupportCard key={household.id+":"+user.id} householdId={household.id} user={user} />
                   <PrivacyDataControls
                     householdId={household.id}
                     user={user}
