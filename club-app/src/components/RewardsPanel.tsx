@@ -1,3 +1,4 @@
+import { requestUnlockedReward, rewardStatusLabel } from "../lib/rewardRequests";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -29,6 +30,8 @@ type Redemption = {
 export function RewardsPanel({ childId, userId }: { childId: string; userId: string }) {
   const [unlocks, setUnlocks] = useState<Unlock[]>([]);
   const [redemptions, setRedemptions] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -52,10 +55,9 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
     if (unlockError) throw unlockError;
 
     const nextUnlocks = (data ?? []) as Unlock[];
-    setUnlocks(nextUnlocks);
 
     if (!nextUnlocks.length) {
-      setRedemptions({});
+      setUnlocks([]); setLoaded(true); setRedemptions({});
       return;
     }
 
@@ -66,6 +68,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
 
     if (version !== loadVersion.current) return;
     if (redemptionError) throw redemptionError;
+    setUnlocks(nextUnlocks); setLoaded(true);
     setRedemptions(
       Object.fromEntries(
         ((redemptionData ?? []) as Redemption[]).map((item) => [
@@ -83,7 +86,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
 
   useEffect(() => {
     void load();
-    const refresh = () => void load();
+    const refresh = () => { if (!requestBusy.current) void load(); };
     window.addEventListener("dc-progress-updated", refresh);
     return () => {
       loadVersion.current += 1;
@@ -93,17 +96,15 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
 
   async function requestReward(unlockId: string) {
     if (requestBusy.current || loading || loadError || redemptions[unlockId]) return;
+    const unlock = unlocks.find(item => item.id === unlockId);
+    if (!unlock || unlock.redeemed_at || !unlock.rewards || (Array.isArray(unlock.rewards) && !unlock.rewards.length)) return;
     requestBusy.current = true;
     setWorkingId(unlockId);
-    setError("");
+    setError(""); setMessage("");
     try {
-    const { data, error: requestError } = await supabase.from("reward_redemptions").insert({
-      reward_unlock_id: unlockId,
-      requested_by: userId,
-      status: "requested"
-    }).select("reward_unlock_id,status").single();
-    if (requestError) throw requestError;
-    if (data?.reward_unlock_id !== unlockId) throw new Error("Request not confirmed");
+    await requestUnlockedReward(supabase, unlockId, userId);
+    setMessage("Reward requested. You can follow its status here.");
+
     } catch {
       setError("We could not confirm the request. Check the refreshed reward status before trying again.");
     } finally {
@@ -113,10 +114,10 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
     }
   }
 
-  if (loading) return <section className="family-section-card" aria-busy="true"><p role="status">Loading rewards...</p></section>;
-  if (loadError) return <section className="family-section-card"><p role="alert">{loadError}</p>{error && <p>{error}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
+  if (loading && !loaded) return <section className="family-section-card" aria-busy="true"><p role="status">Loading rewards...</p></section>;
+  if (loadError && !loaded) return <section className="family-section-card"><p role="alert">{loadError}</p>{error && <p>{error}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
-  if (!unlocks.length) {
+  if (!unlocks.length && !loading && !loadError) {
     return (
       <section className="family-section-card">
         <div className="section-heading compact-heading">
@@ -127,6 +128,8 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
         </div>
         <p className="muted">Rewards earned through Adventure Club progress will appear here for guardian review.</p>
         {error && <p role="alert">{error}</p>}
+        {message && <p role="status">{message}</p>}
+        <button type="button" className="text-button" onClick={() => void load()}>Refresh Rewards</button>
       </section>
     );
   }
@@ -140,7 +143,11 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
         </div>
       </div>
 
-      {error && <div className="form-message">{error}</div>}
+      <button type="button" className="text-button" disabled={loading || workingId !== null} onClick={() => void load()}>Refresh Rewards</button>
+      {loading && <p role="status">Refreshing rewards...</p>}
+      {loadError && <p role="alert">{loadError} Displayed rewards may be out of date.</p>}
+      {message && <p role="status">{message}</p>}
+      {error && <div className="form-message" role="alert">{error}</div>}
 
       <div className="reward-list">
         {unlocks.map((unlock) => {
@@ -151,22 +158,22 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
             <article className="reward-row" key={unlock.id}>
               <div className="reward-icon">★</div>
               <div>
-                <strong>{reward?.name || "Adventure Club reward"}</strong>
+                <strong>{reward?.name || "Reward Unavailable"}</strong>
                 <p>{reward?.description || "A reward earned through courageous progress."}</p>
               </div>
               <div className="reward-action">
                 {unlock.redeemed_at ? (
                   <span className="status-chip done">Fulfilled</span>
                 ) : redemption ? (
-                  <span className="status-chip">{redemption.replaceAll("_", " ")}</span>
+                  <span className="status-chip">{rewardStatusLabel(redemption)}</span>
                 ) : (
                   <button
                     className="secondary-button"
                     type="button"
-                    disabled={workingId !== null}
+                    disabled={workingId !== null || loading || Boolean(loadError) || !reward}
                     onClick={() => void requestReward(unlock.id)}
                   >
-                    {workingId === unlock.id ? "Requesting..." : "Request reward"}
+                    {workingId === unlock.id ? "Requesting..." : "Request Reward"}
                   </button>
                 )}
               </div>

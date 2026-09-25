@@ -6,6 +6,24 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Reward request recovery now spans families and staff. Family rewards
+stay visible through reloads, block requests while stale, and commit the displayed
+unlock/status snapshot only after both reads succeed. Added refresh controls in
+normal and empty states, confirmed-request feedback, unavailable-reward blocking,
+and explicit title-cased status labels. Requests require both the exact unlock ID
+and requested status in the returned confirmation.
+
+Staff fulfillment actions now block overlapping clicks, compare the displayed
+status in the UPDATE predicate, validate allowed UI transitions and require the
+exact returned request ID/status before confirming success. Zero-row/stale updates
+cannot silently succeed. A strict refresh path keeps staff actions blocked after
+refresh failures and offers Refresh Reward Requests; other admin callers retain
+their existing refresh behavior. Six tests cover transitions, stale/missing rows,
+request identity and safe labels. All 275 tests and production build pass. Backend
+RLS/transition permissions remain unchanged; no real rewards were requested,
+approved, denied or fulfilled during this batch. Signed-in family/staff device and
+concurrent-update acceptance remain pending.
+
 September 25: Parent approval queues now preserve loaded rows and action feedback
 during refreshes, show stale-data errors inline, and disable decisions/PIN entry
 until the queue is current. Refresh Approvals is available in both populated and

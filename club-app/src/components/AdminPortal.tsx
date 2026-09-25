@@ -1,4 +1,5 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { moveRewardRequest, rewardStatusLabel } from "../lib/rewardRequests";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { WeeklySeriesAdmin } from "./WeeklySeriesAdmin";
@@ -676,15 +677,29 @@ function RedemptionAdmin({
   refresh: () => Promise<void>;
 }) {
   const [message, setMessage] = useState("");
-
+  const [working, setWorking] = useState(false);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
+  const busy = useRef(false);
+  async function reload() {
+    if (busy.current) return;
+    busy.current = true; setWorking(true);
+    try { await refresh(); setNeedsRefresh(false); }
+    catch { setNeedsRefresh(true); setMessage("Reward requests could not be refreshed. Please try again."); }
+    finally { busy.current = false; setWorking(false); }
+  }
   async function move(id: string, status: string) {
-    setMessage("");
-    const { error } = await supabase.from("reward_redemptions").update({ status }).eq("id", id);
-    if (error) {
-      setMessage(error.message);
-      return;
+    const row = redemptions.find(item => item.id === id);
+    if (!canFulfill || !row || busy.current || needsRefresh) return;
+    busy.current = true; setWorking(true); setMessage("");
+    try {
+      await moveRewardRequest(supabase, id, row.status, status);
+      setMessage("Reward request updated to " + rewardStatusLabel(status) + ".");
+    } catch { setMessage("The update could not be confirmed. Another staff member may have changed this request. Review the refreshed status before retrying."); }
+    finally {
+      try { await refresh(); setNeedsRefresh(false); }
+      catch { setNeedsRefresh(true); setMessage(current => current + " Refresh failed. Refresh requests before continuing."); }
+      busy.current = false; setWorking(false);
     }
-    await refresh();
   }
 
   return (
@@ -692,11 +707,12 @@ function RedemptionAdmin({
       <div className="section-heading compact-heading">
         <div>
           <p className="eyebrow red">Operations</p>
-          <h2>Reward fulfillment</h2>
+          <h2>Reward Fulfillment</h2>
         </div>
-        <span className="pill">{redemptions.length} requests</span>
+        <span className="pill">{redemptions.length} Requests</span>
       </div>
-      {message && <div className="form-message">{message}</div>}
+      {message && <div className="form-message" role="status">{message}</div>}
+      <button type="button" className="text-button" disabled={working} onClick={() => void reload()}>Refresh Reward Requests</button>
       <div className="admin-list">
         {redemptions.map((row) => {
           const unlock = firstRelation(row.reward_unlocks);
@@ -711,22 +727,22 @@ function RedemptionAdmin({
                   {child?.display_name || "Child"} · requested {new Date(row.requested_at).toLocaleDateString()}
                 </small>
               </div>
-              <span className="status-chip">{row.status}</span>
+              <span className="status-chip">{rewardStatusLabel(row.status)}</span>
               {canFulfill && row.status === "requested" && (
                 <div className="admin-row-actions">
-                  <button className="secondary-button" onClick={() => void move(row.id, "approved")}>Approve</button>
-                  <button className="text-button small" onClick={() => void move(row.id, "denied")}>Deny</button>
+                  <button className="secondary-button" disabled={working || needsRefresh} onClick={() => void move(row.id, "approved")}>Approve</button>
+                  <button className="text-button small" disabled={working || needsRefresh} onClick={() => void move(row.id, "denied")}>Deny</button>
                 </div>
               )}
               {canFulfill && row.status === "approved" && (
                 <div className="admin-row-actions">
-                  <button className="secondary-button" onClick={() => void move(row.id, "processing")}>Processing</button>
-                  <button className="primary-button compact" onClick={() => void move(row.id, "fulfilled")}>Fulfill</button>
+                  <button className="secondary-button" disabled={working || needsRefresh} onClick={() => void move(row.id, "processing")}>Processing</button>
+                  <button className="primary-button compact" disabled={working || needsRefresh} onClick={() => void move(row.id, "fulfilled")}>Fulfill</button>
                 </div>
               )}
               {canFulfill && row.status === "processing" && (
                 <div className="admin-row-actions">
-                  <button className="primary-button compact" onClick={() => void move(row.id, "fulfilled")}>Mark fulfilled</button>
+                  <button className="primary-button compact" disabled={working || needsRefresh} onClick={() => void move(row.id, "fulfilled")}>Mark Fulfilled</button>
                 </div>
               )}
             </article>
@@ -763,7 +779,7 @@ export function AdminPortal({
     [role]
   );
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (requireSuccess = false) => {
     setError("");
     const [challengeResult, badgeResult, rewardResult, redemptionResult] = await Promise.all([
       supabase
@@ -788,6 +804,7 @@ export function AdminPortal({
     const firstError = challengeResult.error || badgeResult.error || rewardResult.error || redemptionResult.error;
     if (firstError) {
       setError(firstError.message);
+      if (requireSuccess) throw firstError;
       return;
     }
 
@@ -916,7 +933,7 @@ export function AdminPortal({
           ) : section === "support" ? (
             <SupportAdmin />
           ) : (
-            <RedemptionAdmin redemptions={redemptions} canFulfill={canFulfill} refresh={refresh} />
+            <RedemptionAdmin redemptions={redemptions} canFulfill={canFulfill} refresh={() => refresh(true)} />
           )}
         </main>
       </div>
