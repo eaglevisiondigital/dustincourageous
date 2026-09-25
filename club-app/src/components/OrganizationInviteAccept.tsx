@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { createInvitationAcceptor } from "../lib/invitationAcceptance";
 
 type Preview = {
   invitation_id: string;
@@ -28,11 +29,17 @@ export function OrganizationInviteAccept({
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const [accepted,setAccepted]=useState(false);
+  const [retry,setRetry]=useState(0);
+  const busy=useRef(false);
+  const acceptor=useMemo(()=>createInvitationAcceptor(supabase,"organization",invitationId,token),[invitationId,token]);
 
   useEffect(() => {
     let active = true;
 
     async function load() {
+      setLoading(true);setPreview(null);setMessage("");
+      try {
       const { data, error } = await supabase.rpc(
         "preview_organization_invitation",
         {
@@ -59,6 +66,11 @@ export function OrganizationInviteAccept({
       }
 
       setPreview(row);
+      } catch {
+        if(active)setMessage("The invitation preview could not be loaded. Please try again.");
+      } finally {
+        if(active)setLoading(false);
+      }
     }
 
     void load();
@@ -66,29 +78,22 @@ export function OrganizationInviteAccept({
     return () => {
       active = false;
     };
-  }, [invitationId, token]);
+  }, [invitationId, token, retry]);
 
   async function accept() {
+    if(busy.current||loading||(!preview&&!accepted))return;
+    busy.current=true;
     setWorking(true);
     setMessage("");
 
-    const { error } = await supabase.rpc(
-      "accept_organization_invitation",
-      {
-        p_invitation_id: invitationId,
-        p_token: token
-      }
-    );
-
-    setWorking(false);
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
+    try {
+    await acceptor.accept();
+    setAccepted(true);
     setMessage("Invitation accepted. Opening your Leader Hub...");
     await onAccepted();
+    } catch(error) {
+      setMessage(acceptor.hasAccepted()?"Your invitation was accepted, but the Leader Hub could not open. Try opening it again.":error instanceof Error?error.message:"The invitation could not be accepted. It may have expired or changed. Check with the organization administrator.");
+    } finally {busy.current=false;setWorking(false);}
   }
 
   return (
@@ -123,7 +128,8 @@ export function OrganizationInviteAccept({
           </>
         )}
 
-        {message && <div className="form-message">{message}</div>}
+        {message && <div className="form-message" role="status">{message}</div>}
+        {!loading&&!preview&&!accepted&&<button type="button" className="secondary-button" onClick={()=>setRetry(value=>value+1)}>Retry invitation preview</button>}
 
         {preview && (
           <button
@@ -131,11 +137,11 @@ export function OrganizationInviteAccept({
             disabled={working}
             onClick={() => void accept()}
           >
-            {working ? "Joining..." : "Accept Leader Invitation"}
+            {working ? "Opening leader access..." : accepted?"Open Leader Hub":"Accept Leader Invitation"}
           </button>
         )}
 
-        <button className="text-button recovery-button" type="button" onClick={onCancel}>
+        <button className="text-button recovery-button" type="button" disabled={working} onClick={onCancel}>
           Return to Adventure Club
         </button>
 

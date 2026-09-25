@@ -1312,6 +1312,7 @@ export default function App() {
     return (
       <Suspense fallback={<LoadingScreen />}>
       <OrganizationInviteAccept
+        key={invitationId+":"+token+":"+session.user.id}
         invitationId={invitationId}
         token={token}
         onCancel={() => navigate("/")}
@@ -1346,6 +1347,9 @@ export default function App() {
     return (
       <Suspense fallback={<LoadingScreen />}>
       <InviteAccept
+        key={invitationId+":"+token+":"+session.user.id}
+        signedInEmail={session.user.email??"your adult account"}
+        onCancel={()=>navigate("/")}
         invitationId={invitationId}
         token={token}
         onAccepted={async () => {
