@@ -77,7 +77,7 @@ export function FamilyFaithAtHome({
     const nextGuides=(guideResult.data??[]) as Guide[];
     setGuides(nextGuides);
     setSessions((sessionResult.data??[]) as Session[]);
-    setActiveGuideId(current=>nextGuides.some(guide=>guide.id===current)?current:nextGuides[0]?.id??"");
+    setActiveGuideId(current=>current||nextGuides[0]?.id||"");
     } catch {
       if(version===loadVersion.current)setLoadError("Family Faith guides and progress could not be loaded. Please try again.");
     } finally {
@@ -85,11 +85,16 @@ export function FamilyFaithAtHome({
     }
   },[householdId]);
 
-  useEffect(()=>{ void load();return ()=>{loadVersion.current+=1;}; },[load]);
+  useEffect(()=>{
+    void load();
+    const refresh=()=>{if(!actionBusy.current)void load();};
+    window.addEventListener("dc-progress-updated",refresh);
+    return ()=>{loadVersion.current+=1;window.removeEventListener("dc-progress-updated",refresh);};
+  },[load]);
 
 
   const activeGuide=useMemo(
-    ()=>guides.find((guide)=>guide.id===activeGuideId)??guides[0]??null,
+    ()=>guides.find((guide)=>guide.id===activeGuideId)??null,
     [guides,activeGuideId]
   );
 
@@ -116,13 +121,16 @@ export function FamilyFaithAtHome({
     }
   }
 
-  if(loading||loadError)return <section className="family-faith-card"><h2>Faith At Home</h2>{loading?<p role="status">Loading guides and progress...</p>:<><p role="alert">{loadError}</p><button type="button" className="secondary-button" onClick={()=>void load()}>Retry Family Faith</button></>}</section>;
+  if(!guides.length&&(loading||loadError))return <section className="family-faith-card"><h2>Faith At Home</h2>{message&&<p role="status">{message}</p>}<FamilySaveResults results={results} children={children}/>{loading?<p role="status">Loading guides and progress...</p>:<><p role="alert">{loadError}</p><button type="button" className="secondary-button" onClick={()=>void load()}>Retry Family Faith</button></>}</section>;
 
   if(!guides.length){
     return (
       <section className="family-faith-card">
         <p className="eyebrow gold">Faith At Home</p>
-        <h2>Family Faith guides are coming.</h2>
+        <h2>No guides are available right now.</h2>
+        {message&&<p role="status">{message}</p>}
+        <FamilySaveResults results={results} children={children}/>
+        <button type="button" className="secondary-button" disabled={working} onClick={()=>void load()}>Refresh Family Faith</button>
       </section>
     );
   }
@@ -138,17 +146,23 @@ export function FamilyFaithAtHome({
       </div>
 
       {message && <div className="form-message" role="status">{message}</div>}
+      <FamilySaveResults results={results} children={children}/>
+      {loading&&<p role="status">Refreshing guides and progress...</p>}
+      {loadError&&<p role="alert">{loadError} Previously displayed progress may be out of date.</p>}
+      <button type="button" className="text-button" disabled={loading||working} onClick={()=>void load()}>Refresh Family Faith</button>
+      {!activeGuide&&<p role="status">The previously selected guide is no longer available. Choose another guide to continue.</p>}
 
       <div className="family-faith-selector">
         <label>
           Guide
-          <select disabled={working} value={activeGuideId} onChange={(event)=>{setActiveGuideId(event.target.value);setParticipants([]);setResults([]);setMessage("");}}>
+          <select disabled={working||loading||Boolean(loadError)} value={activeGuide?.id??""} onChange={(event)=>{setActiveGuideId(event.target.value);setParticipants([]);setResults([]);setMessage("");}}>
+            <option value="" disabled>Choose A Guide</option>
             {guides.map((guide)=><option key={guide.id} value={guide.id}>{guide.title}</option>)}
           </select>
         </label>
       </div>
 
-      <FamilyParticipants children={children} selected={participants} onChange={ids=>{setParticipants(ids);setResults([]);setMessage("");}} disabled={working}
+      <FamilyParticipants children={children} selected={participants} onChange={ids=>{setParticipants(ids);setResults([]);setMessage("");}} disabled={working||loading||Boolean(loadError)||!activeGuide}
         statuses={Object.fromEntries([...completedIds].map(id=>[id,"Completed"]))}/>
       <p className="muted">Family Faith time appears in each participating child’s activity and eligible badge progress. It does not award challenge XP.</p>
 
@@ -190,11 +204,10 @@ export function FamilyFaithAtHome({
               </article>
             )}
 
-            <FamilySaveResults results={results} children={children}/>
             <button
               type="button"
               className={allSelectedComplete ? "secondary-button" : "primary-button"}
-              disabled={allSelectedComplete||working||!participants.length}
+              disabled={allSelectedComplete||working||loading||Boolean(loadError)||!participants.length}
               onClick={()=>void completeGuide()}
             >
               {allSelectedComplete ? "Selected Children Completed ✓" : working ? "Saving..." : "Complete For Selected Children"}

@@ -6,6 +6,17 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Family Faith refreshes preserve the displayed guide and per-child
+save results. Loading/errors are shown inline when guides are already available;
+saves and participant/guide changes are disabled until progress is current. Added
+Refresh Family Faith to normal and empty states, plus progress-event refreshes.
+Own save events defer to the existing final refresh. An unavailable selected guide
+no longer silently switches to another activity; the family explicitly chooses a
+new guide. Confirmed results remain visible even when no guides remain. Existing
+251 tests and production build pass. This batch adds no new automated UI tests;
+signed-in device/recovery acceptance remains pending. No schema, content, consent
+or XP changes.
+
 September 25: Password recovery remains mounted ahead of account-loading screens
 while a recovery session exists, so USER_UPDATED family refreshes do not replace the
 form during save. Successful saves show Password Updated before explicit Continue.
