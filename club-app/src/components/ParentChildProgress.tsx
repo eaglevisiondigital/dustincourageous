@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { readParentChildSnapshot } from "../lib/parentChildSnapshot";
+import { ChildReadingHistory } from "./ChildReadingHistory";
 
 type Level = {
   total_xp: number | null;
@@ -110,6 +111,7 @@ export function ParentChildProgress({
         <article><strong>{activeWeeklyStreak}</strong><span>Current Weekly Streak</span></article>
         <article><strong>{bestWeeklyStreak}</strong><span>Best Weekly Streak</span></article>
       </div>
+      <ChildReadingHistory key={childId} childId={childId} />
     </section>
   );
 }

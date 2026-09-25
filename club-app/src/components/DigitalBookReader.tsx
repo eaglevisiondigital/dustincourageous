@@ -69,6 +69,7 @@ function DigitalBookReader({ childId, bookId, title, book, onClose }: {
     saveBusy.current = true; setPhase("saving"); setSaveError(false);
     try {
       await saveDigitalBookPosition(supabase, childId, bookId, book.revision, page);
+      window.dispatchEvent(new Event("dc-reading-updated"));
       if (request === version.current) savedRequest.current = request;
     } catch { if (request === version.current) setSaveError(true); }
     finally { saveBusy.current = false; if (request === version.current) setPhase("ready"); }
