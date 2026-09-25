@@ -25,7 +25,10 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
   returned zero findings. This is database authorization evidence, not an
   Auth-issued session, Storage HTTP or signed-in browser walkthrough.
 - Cloud browser reached the development preview's guardian sign-in screen;
-  no guardian session was available. See ALPHA_VERIFICATION.md for boundaries.
+  one secure sign-in attempt returned `Invalid login credentials`, so no guardian
+  session was established. Manual sign-in or a valid test guardian account is
+  needed. See ALPHA_VERIFICATION.md for boundaries; do not reset credentials or
+  treat this as a completed signed-in walkthrough.
 - Guardian planning/help/inbox batch:
   - Events show the event timezone, matching date badge, end time, address,
     HTTPS online link and device-local start time when different. Guardians can

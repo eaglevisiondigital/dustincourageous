@@ -44,8 +44,12 @@ regression tests, build/typecheck and Edge Function syntax checks.
 
 The development preview loaded successfully in the cloud browser and displayed
 the guardian sign-in screen, approved shield, and Show password control.
-No guardian session was available. This establishes preview reachability only,
-not successful authentication or family workflow acceptance.
+No guardian session was available initially. One secure email/password sign-in
+attempt returned the visible message `Invalid login credentials`; a guardian
+session was not established. No credentials were read or stored in the build
+record. This establishes preview reachability and a displayed login failure,
+not successful authentication or family workflow acceptance. Manual sign-in or
+a valid test guardian account is needed to continue the browser walkthrough.
 
 ## Still open before a family-ready claim
 
