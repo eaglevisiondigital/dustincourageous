@@ -241,3 +241,23 @@ early-provider callback retry and sandbox integration remain release gates.
 App code is unchanged from the 227-test/build-passing checkpoint.
 
 Security advisor retains the existing [Auth leaked-password protection warning](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection); no new database findings.
+
+## Existing adult account details
+
+September 25: Existing adults can now update full name, optional contact phone
+and Parent/Guardian display choice in Membership & Settings > Household > Your
+Account Details. Reuses signup validation; account email is read-only. Clearing
+the phone explicitly removes saved contact metadata without changing phone Auth,
+verification or messaging consent. Fresh current-user checks precede writes;
+profile writes target only the adult ID and confirm returned values. Auth metadata
+and profile updates are separate requests, so partial/uncertain saves report that
+some changes may have saved and offer retry/refresh instead of false success.
+Five new mocked-client checks cover reads, identity changes, phone removal,
+validation and partial-save failure. All 236 app tests and production build pass.
+A rollback-only real authenticated-role check confirms own-profile name updates
+and denial of cross-account edits. No schema or permission changes. Signed-in
+settings/device acceptance is pending.
+
+Device check: add the missing last name on an existing account, change Parent/Guardian,
+reload and confirm the badge and saved name; add then remove the optional phone.
+Test interrupted saves and refresh without modifying email or authentication roles.

@@ -6,6 +6,20 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Existing adults can now update full name, optional contact phone
+and Parent/Guardian display choice in Membership & Settings > Household > Your
+Account Details. Reuses signup validation; account email is read-only. Clearing
+the phone explicitly removes saved contact metadata without changing phone Auth,
+verification or messaging consent. Fresh current-user checks precede writes;
+profile writes target only the adult ID and confirm returned values. Auth metadata
+and profile updates are separate requests, so partial/uncertain saves report that
+some changes may have saved and offer retry/refresh instead of false success.
+Five new mocked-client checks cover reads, identity changes, phone removal,
+validation and partial-save failure. All 236 app tests and production build pass.
+A rollback-only real authenticated-role check confirms own-profile name updates
+and denial of cross-account edits. No schema or permission changes. Signed-in
+settings/device acceptance is pending.
+
 September 25: Adult signup now requires first and last name and retains required
 email plus Parent/Guardian selection for family accounts. Optional Cell Phone is
 stored as adult_contact_phone in the account's Auth metadata only; it does not
