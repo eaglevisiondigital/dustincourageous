@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { activityAssetUrl, activityExternalUrl, completeActivity } from "../lib/activityActions";
 
 type ContentItem = {
   id: string;
@@ -30,7 +31,7 @@ type Progress = {
 
 function externalUrl(body: Record<string, unknown> | null) {
   const value = body?.external_url;
-  return typeof value === "string" ? value : null;
+  return activityExternalUrl(value);
 }
 
 export function ActivitiesHub({
@@ -45,13 +46,20 @@ export function ActivitiesHub({
   const [items, setItems] = useState<ContentItem[]>([]);
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [progress, setProgress] = useState<Progress[]>([]);
-  const [urls, setUrls] = useState<Record<string, string>>({});
+  const [readyLink, setReadyLink] = useState<{id:string;url:string}|null>(null);
   const [category, setCategory] = useState("all");
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
+  const [loading,setLoading] = useState(true);
+  const [loadError,setLoadError] = useState("");
+  const loadVersion = useRef(0);
+  const actionBusy = useRef(false);
+
   const load = useCallback(async () => {
-    setError("");
+    const version=++loadVersion.current;
+    setLoading(true);setLoadError("");setReadyLink(null);
+    try {
 
     const [itemResult, progressResult] = await Promise.all([
       supabase
@@ -68,18 +76,16 @@ export function ActivitiesHub({
     ]);
 
     if (itemResult.error || progressResult.error) {
-      setError((itemResult.error || progressResult.error)!.message);
-      return;
+      throw itemResult.error || progressResult.error;
     }
 
     const nextItems = (itemResult.data ?? []) as ContentItem[];
-    setItems(nextItems);
-    setProgress((progressResult.data ?? []) as Progress[]);
+    if(version!==loadVersion.current)return;
 
     const assetKeys = Array.from(new Set(nextItems.map((item) => item.asset_key).filter((value): value is string => !!value)));
     if (!assetKeys.length) {
+      setItems(nextItems);setProgress((progressResult.data ?? []) as Progress[]);
       setAssets([]);
-      setUrls({});
       return;
     }
 
@@ -89,32 +95,18 @@ export function ActivitiesHub({
       .in("asset_key", assetKeys)
       .eq("status", "ready");
 
-    if (assetError) {
-      setError(assetError.message);
-      return;
-    }
-
-    const nextAssets = (assetData ?? []) as MediaAsset[];
-    setAssets(nextAssets);
-
-    const nextUrls: Record<string, string> = {};
-    await Promise.all(nextAssets.map(async (asset) => {
-      if (asset.bucket_name === "dc-public") {
-        nextUrls[asset.asset_key] = supabase.storage
-          .from("dc-public")
-          .getPublicUrl(asset.object_path).data.publicUrl;
-      } else {
-        const { data } = await supabase.storage
-          .from(asset.bucket_name)
-          .createSignedUrl(asset.object_path, 900);
-        if (data?.signedUrl) nextUrls[asset.asset_key] = data.signedUrl;
-      }
-    }));
-    setUrls(nextUrls);
+    if(assetError)throw assetError;
+    if(version!==loadVersion.current)return;
+    setItems(nextItems);setProgress((progressResult.data ?? []) as Progress[]);
+    setAssets((assetData ?? []) as MediaAsset[]);
+    } catch {
+      if(version===loadVersion.current)setLoadError("Activities could not be loaded. Please try again.");
+    } finally {if(version===loadVersion.current)setLoading(false);}
   }, [childId]);
 
   useEffect(() => {
     void load();
+    return ()=>{loadVersion.current++;};
   }, [load]);
 
   const progressMap = useMemo(
@@ -129,41 +121,47 @@ export function ActivitiesHub({
 
   const visibleItems = category === "all" ? items : items.filter((item) => item.category === category);
 
-  function itemUrl(item: ContentItem) {
-    if (item.asset_key && urls[item.asset_key]) return urls[item.asset_key];
-    return externalUrl(item.body);
+  async function openActivity(item:ContentItem) {
+    if(actionBusy.current)return;
+    actionBusy.current=true;setWorkingId(item.id);setError("");setReadyLink(null);
+    let tab:Window|null=null;
+    try {
+      tab=window.open("about:blank","_blank");
+      if(tab)tab.opener=null;
+      let url:string|null;
+      if(item.asset_key) {
+        const asset=assets.find(value=>value.asset_key===item.asset_key);
+        if(!asset)throw new Error("Activity file unavailable.");
+        url=await activityAssetUrl(supabase,asset);
+      } else url=externalUrl(item.body);
+      if(!url)throw new Error("Activity link unavailable.");
+      if(tab&&!tab.closed)tab.location.href=url;
+      else {setReadyLink({id:item.id,url});setError("Your activity is ready. Use the open link below.");}
+    } catch {
+      tab?.close();
+      setError("This activity could not be opened. Please try again or ask your guardian for help.");
+    } finally {actionBusy.current=false;setWorkingId(null);}
   }
 
   async function complete(item: ContentItem) {
-    if (progressMap.get(item.id)?.status === "completed") return;
-
-    setWorkingId(item.id);
-    setError("");
-
-    const existing = progressMap.get(item.id);
-    const { error: saveError } = await supabase
-      .from("child_content_progress")
-      .upsert(
-        {
-          child_profile_id: childId,
-          content_item_id: item.id,
-          status: "completed",
-          started_at: existing ? undefined : new Date().toISOString(),
-          completed_at: existing?.completed_at ?? new Date().toISOString()
-        },
-        { onConflict: "child_profile_id,content_item_id" }
-      );
-
-    setWorkingId(null);
-
-    if (saveError) {
-      setError(saveError.message);
-      return;
+    if(actionBusy.current||progressMap.get(item.id)?.status==="completed")return;
+    actionBusy.current=true;setWorkingId(item.id);setError("");
+    let saved=false;
+    try {
+      await completeActivity(supabase,childId,item.id);
+      saved=true;
+      setProgress(current=>[...current.filter(row=>row.content_item_id!==item.id),{content_item_id:item.id,status:"completed",completed_at:new Date().toISOString()}]);
+      window.dispatchEvent(new Event("dc-progress-updated"));
+      await onProgress();
+    } catch {
+      setError(saved ? "Activity completed. Your progress totals could not refresh yet." : "Completion could not be confirmed. Refresh activities before trying again.");
+    } finally {
+      await load();actionBusy.current=false;setWorkingId(null);
     }
-
-    await load();
-    await onProgress();
   }
+
+  if(loading)return <section className="activities-hub" aria-busy="true"><p role="status">Loading activities...</p></section>;
+  if(loadError)return <section className="activities-hub"><p role="alert">{loadError}</p><button className="secondary-button" disabled={workingId!==null} onClick={()=>void load()}>Try again</button></section>;
 
   return (
     <div className="activities-hub">
@@ -176,7 +174,7 @@ export function ActivitiesHub({
         <div className="activities-mark">★</div>
       </section>
 
-      {error && <div className="form-message">{error}</div>}
+      {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh activities</button></div>}
 
       <nav className="activity-filters" aria-label="Activity categories">
         {categories.map((item) => (
@@ -184,6 +182,8 @@ export function ActivitiesHub({
             key={item}
             type="button"
             className={category === item ? "active" : ""}
+            aria-pressed={category === item}
+            disabled={workingId!==null}
             onClick={() => setCategory(item)}
           >
             {item.replaceAll("_", " ")}
@@ -194,7 +194,7 @@ export function ActivitiesHub({
       <section className="activity-grid">
         {visibleItems.map((item) => {
           const done = progressMap.get(item.id)?.status === "completed";
-          const url = itemUrl(item);
+          const canOpen = item.asset_key ? assets.some(asset=>asset.asset_key===item.asset_key) : !!externalUrl(item.body);
 
           return (
             <article className={item.is_featured ? "activity-card featured" : "activity-card"} key={item.id}>
@@ -210,16 +210,17 @@ export function ActivitiesHub({
               <small>{item.category.replaceAll("_", " ")}</small>
 
               <div className="activity-actions">
-                {url ? (
-                  <a className="secondary-button activity-link" href={url} target="_blank" rel="noreferrer">
-                    {item.content_type === "video" ? "Watch" : item.content_type === "audio" ? "Listen" : "Open"}
-                  </a>
+                {canOpen ? (
+                  <button className="secondary-button activity-link" disabled={workingId!==null} onClick={()=>void openActivity(item)}>
+                    {workingId===item.id ? "Please wait..." : item.content_type === "video" ? "Watch" : item.content_type === "audio" ? "Listen" : "Open"}
+                  </button>
                 ) : (
-                  <button className="secondary-button" disabled>Asset coming soon</button>
+                  <button className="secondary-button" disabled>File unavailable</button>
                 )}
+                {readyLink?.id===item.id&&<a className="secondary-button" href={readyLink.url} target="_blank" rel="noopener noreferrer">Open ready activity</a>}
                 <button
                   className={done ? "status-chip done" : "text-button small"}
-                  disabled={done || workingId === item.id}
+                  disabled={done || workingId !== null}
                   onClick={() => void complete(item)}
                 >
                   {done ? "Completed ✓" : item.completion_xp > 0 ? `Complete · +${item.completion_xp} XP` : "Mark complete"}
