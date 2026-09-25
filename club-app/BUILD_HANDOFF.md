@@ -16,6 +16,18 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Adult signup now requires first and last name and retains required
+email plus Parent/Guardian selection for family accounts. Optional Cell Phone is
+stored as adult_contact_phone in the account's Auth metadata only; it does not
+configure phone login, mark the number verified or opt into texts. Display name
+remains first name, and the existing new-user trigger stores both names in the
+adult profile. Existing Parent Controlled/Guardian Controlled badges still use
+the selected relationship for presentation only. Four tests cover metadata,
+required fields, phone validation and leader registration. All 231 app tests and
+production build pass. A rolled-back real Auth/profile-trigger check confirms
+name/contact/relationship persistence and no phone verification. Existing accounts
+are not retroactively filled. Actual confirmation-email/device signup is pending.
+
 September 25: Reproduced expired-checkout payment acceptance in the deployed
 mark_order_paid_from_provider RPC using rollback-only synthetic orders. Deployed
 `20260925132731_validate_payment_checkout_under_lock.sql`: payment confirmation

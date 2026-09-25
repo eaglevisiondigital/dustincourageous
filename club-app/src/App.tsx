@@ -1,3 +1,4 @@
+import { adultSignupMetadata } from "./lib/adultSignup";
 import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -100,6 +101,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const leaderInvitation = window.location.pathname.startsWith("/org-invite");
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cellPhone, setCellPhone] = useState("");
   const [relationship, setRelationship] = useState<FamilyRelationship | "">("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -132,6 +135,11 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
       return;
     }
 
+    let signupMetadata;
+    if (mode === "signup") {
+      try { signupMetadata = adultSignupMetadata(firstName, lastName, cellPhone, relationship, leaderInvitation); }
+      catch (error) { setMessage(error instanceof Error ? error.message : "Check the adult account details."); return; }
+    }
     const result =
       mode === "signup"
         ? await supabase.auth.signUp({
@@ -139,11 +147,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
             password,
             options: {
               emailRedirectTo: window.location.origin + window.location.pathname + window.location.search,
-              data: {
-                first_name: firstName.trim(),
-                display_name: firstName.trim(),
-                ...(!leaderInvitation && relationship ? { family_relationship: relationship } : {})
-              }
+              data: signupMetadata
             }
           })
         : await supabase.auth.signInWithPassword({ email: email.trim(), password });
@@ -231,17 +235,27 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
           <form onSubmit={submit} className="form-stack">
             {mode === "signup" && (
               <label>
-                Parent or guardian first name
+                Adult First Name
                 <input
                   required
                   autoComplete="given-name"
+                  maxLength={80}
                   value={firstName}
                   disabled={working}
                   onChange={(event) => setFirstName(event.target.value)}
                 />
               </label>
             )}
-            {mode === "signup" && !leaderInvitation && <label>I Am a
+            {mode === "signup" && <>
+              <label>Adult Last Name
+                <input required autoComplete="family-name" maxLength={80} value={lastName} disabled={working} onChange={event => setLastName(event.target.value)}/>
+              </label>
+              <label>Cell Phone (Optional)
+                <input type="tel" autoComplete="tel" maxLength={40} value={cellPhone} disabled={working} aria-describedby="adult-phone-help" onChange={event => setCellPhone(event.target.value)}/>
+              </label>
+              <p id="adult-phone-help" className="muted">Use the adult account holder’s number. This does not enable text messages or phone sign-in. Email is required for account confirmation and recovery.</p>
+            </>}
+            {mode === "signup" && !leaderInvitation && <label>I Am A
               <select required disabled={working} value={relationship} onChange={event => setRelationship(event.target.value as FamilyRelationship | "")}>
                 <option value="" disabled>Choose Parent Or Guardian</option>
                 <option value="parent">Parent</option><option value="guardian">Guardian</option>
