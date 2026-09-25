@@ -6,6 +6,10 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+The guardian account usability batch adds Show/Hide password controls to sign-in,
+signup and both recovery fields. Production build and the existing 194 tests
+pass. Signed-in and physical-device acceptance remain pending.
+
 The last twelve commits primarily strengthened existing flows. They did not
 represent twelve new product features. Distinct fixes covered event capacity,
 group approval and code reuse, account setup, support retries, progress loading,

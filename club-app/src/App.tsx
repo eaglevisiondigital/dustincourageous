@@ -5,6 +5,7 @@ import { supabase } from "./lib/supabase";
 import { registerCurrentInstallation } from "./lib/installations";
 import { childProfileInput, householdInput, createOnboardingAttempt } from "./lib/onboarding";
 import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
+import { PasswordField } from "./components/PasswordField";
 
 const AdminPortal = lazy(() =>
   import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
@@ -242,18 +243,16 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
               />
             </label>
             {mode !== "forgot" && (
-              <label>
-                Password
-                <input
+                <PasswordField
+                  key={mode}
+                  label="Password"
                   required
                   minLength={8}
-                  type="password"
                   autoComplete={mode === "signin" ? "current-password" : "new-password"}
                   value={password}
                   disabled={working}
                   onChange={(event) => setPassword(event.target.value)}
                 />
-              </label>
             )}
 
             {message && <div className="form-message" role="status">{message}</div>}
@@ -342,14 +341,8 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
         <h1>Choose a new password</h1>
         <p className="muted">This updates the password for the adult Adventure Club account.</p>
         <form className="form-stack" onSubmit={submit}>
-          <label>
-            New password
-            <input required disabled={working} minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
-          </label>
-          <label>
-            Confirm new password
-            <input required disabled={working} minLength={8} type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
-          </label>
+          <PasswordField label="New password" required disabled={working} minLength={8} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <PasswordField label="Confirm new password" required disabled={working} minLength={8} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
           {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
             {working ? "Updating..." : "Update password"}
@@ -986,510 +979,2158 @@ function FamilyPortal({
                   <h1>{household.name}</h1>
                   <p>See progress, manage profiles, approve rewards, and help your kids keep growing.</p>
                 </div>
-                <div className="household-badge">Guardian controlled</div>
-              </section>
-
-              <section className="family-grid">
-                {children.map((child) => (
-                  <article className="family-child-card" key={child.id}>
-                    <div className="avatar large">{child.display_name.slice(0, 1).toUpperCase()}</div>
-                    <div>
-                      <h3>{child.display_name}</h3>
-                      <p>{child.birth_year ? `Birth year ${child.birth_year}` : "Protected child profile"}</p>
-                    </div>
-                    <button
-                      className="text-button small"
-                      onClick={() => {
-                        selectChild(child.id);
-                        setKidSection("home");
-                        setView("kid");
-                      }}
-                    >
-                      View adventure
-                    </button>
-                  </article>
-                ))}
-              </section>
-
-              <section className="parent-modules">
-                <article><span>Progress</span><strong>See XP, streaks, badges, and completed challenges.</strong></article>
-                <article><span>Rewards</span><strong>Review and approve rewards your kids unlock.</strong></article>
-                <article><span>Faith at Home</span><strong>Read, talk, pray, and take a practical faith step together.</strong></article>
-                <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
-              </section>
-
-              <ParentApprovals
-                householdId={household.id}
-                childIds={children.map((child) => child.id)}
-              />
-
-              <ParentProgressOverview
-                key={household.id+":"+user.id}
-                householdId={household.id}
-                selectedChildId={selectedChild?.id ?? ""}
-                onSelectChild={selectChild}
-                onOpenChild={(childId) => {
-                  selectChild(childId);
-                  setKidSection("home");
-                  setView("kid");
-                }}
-              />
-
-              {selectedChild && (
-                <>
-                  <ParentChildProgress key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
-                  <div className="family-detail-grid">
-                    <RewardsPanel key={selectedChild.id} childId={selectedChild.id} userId={user.id} />
-                    <NotificationsPanel key={user.id} userId={user.id} />
-                  </div>
-                </>
-              )}
-                </>
-              )}
-            </>
-          )}
-          </Suspense>
-        </main>
-      </div>
-
-      {selectedChallenge && selectedChild && selectedChallenge.childId === selectedChild.id && (
-        <Suspense fallback={null}>
-        <ChallengeDialog
-          key={`${selectedChild.id}:${selectedChallenge.challenge.id}`}
-          challenge={selectedChallenge.challenge}
-          childId={selectedChild.id}
-          onClose={() => setSelectedChallenge(null)}
-          onCompleted={async () => {
-            await loadChildDashboard();
-            window.dispatchEvent(new Event("dc-progress-updated"));
-          }}
-        />
-        </Suspense>
-      )}
-
-      {unlockOpen && (
-        <Suspense fallback={null}>
-        <GuardianUnlockDialog
-          householdId={household.id}
-          onClose={() => setUnlockOpen(false)}
-          onUnlock={(token) => {
-            sessionStorage.setItem("dc_guardian_session_token", token);
-            localStorage.removeItem("dc_adventure_club_kid_locked");
-            setKidLocked(false);
-            setUnlockOpen(false);
-            setView("parent");
-          }}
-          onSignOut={async () => {
-            sessionStorage.removeItem("dc_guardian_session_token");
-            await supabase.auth.signOut();
-          }}
-        />
-        </Suspense>
-      )}
-    </div>
-  );
+         …22238 tokens truncated…rship-footnote {
+  margin: 16px 0 0;
+  color: #77736e;
+  font-size: .72rem;
+  line-height: 1.5;
+}
+@media (max-width: 850px) {
+  .family-faith-selector,
+  .membership-feature-grid { grid-template-columns: 1fr; }
 }
 
-export default function App() {
-  const location = useLocation();
 
-  useEffect(() => {
-    const referralCode = new URLSearchParams(window.location.search).get("ref");
-    if (referralCode) {
-      localStorage.setItem(
-        "dc_referral_code",
-        referralCode.toUpperCase().replace(/[^A-F0-9]/g, "").slice(0, 10)
-      );
-    }
-  }, []);
-  const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [accountError, setAccountError] = useState("");
-  const familyLoadVersion = useRef(0);
-  const [household, setHousehold] = useState<Household | null>(null);
-  const [children, setChildren] = useState<Child[]>([]);
-  const [adminRole, setAdminRole] = useState<string | null>(null);
-  const [hasOrganizationAccess, setHasOrganizationAccess] = useState(false);
-  const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
-  const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
-  const [passwordRecovery, setPasswordRecovery] = useState(
-    () => window.location.hash.includes("type=recovery") || new URLSearchParams(window.location.search).get("type") === "recovery"
-  );
-
-  const authRedirectMessage = useMemo(() => {
-    const search = new URLSearchParams(window.location.search);
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const description = search.get("error_description") || hash.get("error_description");
-    return description ? description.replaceAll("+", " ") : "";
-  }, []);
-
-  const loadFamily = useCallback(async (user: User) => {
-    const version = ++familyLoadVersion.current;
-    try {
-    const { data: adminData, error: adminError } = await supabase
-      .from("app_admins")
-      .select("role,status")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .maybeSingle();
-
-    if (adminError) throw adminError;
-
-    const { data: orgMembershipData, error: orgMembershipError } = await supabase
-      .from("organization_members")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .limit(1)
-      .maybeSingle();
-
-    if (orgMembershipError) throw orgMembershipError;
-
-    const { data: membershipData, error: membershipError } = await supabase
-      .from("household_members")
-      .select("household_id,role,households(id,name,timezone,status)")
-      .eq("user_id", user.id)
-      .eq("status", "active")
-      .limit(1)
-      .maybeSingle();
-
-    if (membershipError) throw membershipError;
-
-    const membership = membershipData as HouseholdMembershipRow | null;
-    const joined = membership?.households;
-    const currentHousehold = Array.isArray(joined) ? joined[0] : joined;
-    if (version !== familyLoadVersion.current) return;
-    if (membership && !currentHousehold) throw new Error("Household unavailable");
-
-    if (!currentHousehold) {
-      setAdminRole(adminData?.role ?? null);
-      setHasOrganizationAccess(Boolean(orgMembershipData));
-      setHousehold(null);
-      setChildren([]);
-      setGuardianPinConfigured(null);
-      setAccountError("");
-      return;
-    }
-
-    const [childResult, pinResult] = await Promise.all([
-      supabase
-        .from("child_profiles")
-        .select("id,household_id,display_name,birth_year,avatar_key")
-        .eq("household_id", currentHousehold.id)
-        .eq("status", "active")
-        .order("created_at", { ascending: true }),
-      supabase.rpc("guardian_pin_status", {
-        p_household_id: currentHousehold.id
-      })
-    ]);
-
-    if (version !== familyLoadVersion.current) return;
-    if (childResult.error) throw childResult.error;
-    if (pinResult.error) throw pinResult.error;
-    const pinStatus = pinResult.data?.[0];
-    if (!pinStatus) throw new Error("Guardian PIN status unavailable");
-
-    setAdminRole(adminData?.role ?? null);
-    setHasOrganizationAccess(Boolean(orgMembershipData));
-    setHousehold(currentHousehold);
-    setChildren((childResult.data ?? []) as Child[]);
-    setGuardianPinConfigured(pinStatus.configured);
-    setAccountError("");
-
-    void supabase.rpc("claim_marketing_leads_for_household", {
-      p_household_id: currentHousehold.id
-    });
-
-    const storedReferralCode = localStorage.getItem("dc_referral_code");
-    if (storedReferralCode) {
-      void supabase
-        .rpc("attribute_referral", {
-          p_code: storedReferralCode,
-          p_referred_household_id: currentHousehold.id,
-          p_source: "adventure_club_signup"
-        })
-        .then(({ error }) => {
-          if (!error) localStorage.removeItem("dc_referral_code");
-        });
-    }
-
-    } catch (error) {
-      if (version !== familyLoadVersion.current) return;
-      setAccountError("We could not load your family account. Please try again. Your saved progress has not been changed.");
-      throw error;
-    }
-  }, []);
-
-  useEffect(() => {
-    let disposed = false;
-    let authVersion = 0;
-    let pendingLoad: ReturnType<typeof setTimeout> | undefined;
-    const acceptSession = (nextSession: Session | null) => {
-      const version = ++authVersion;
-      familyLoadVersion.current += 1;
-      clearTimeout(pendingLoad);
-      setSession(nextSession);
-      setAccountError("");
-      if (!nextSession) {
-        setHousehold(null);
-        setChildren([]);
-        setAdminRole(null);
-        setHasOrganizationAccess(false);
-        setGuardianPinConfigured(null);
-        setPasswordRecovery(false);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      // Run database calls after the auth callback releases its session lock.
-      pendingLoad = setTimeout(() => {
-        if (disposed || version !== authVersion) return;
-        void registerCurrentInstallation().catch(() => {});
-        void loadFamily(nextSession.user)
-          .catch(() => {}) // loadFamily presents the recoverable error state.
-          .finally(() => {
-            if (!disposed && version === authVersion) setLoading(false);
-          });
-      }, 0);
-    };
-
-    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (disposed) return;
-      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
-      acceptSession(nextSession);
-    });
-
-    const initialVersion = authVersion;
-    void supabase.auth.getSession().then(({ data, error }) => {
-      if (disposed || authVersion !== initialVersion) return;
-      if (error) throw error;
-      acceptSession(data.session);
-    }).catch(() => {
-      if (disposed || authVersion !== initialVersion) return;
-      setAccountError("We could not restore your sign-in. Please reload and try again.");
-      setLoading(false);
-    });
-
-    return () => {
-      disposed = true;
-      familyLoadVersion.current += 1;
-      clearTimeout(pendingLoad);
-      listener.subscription.unsubscribe();
-    };
-  }, [loadFamily]);
-
-  if (loading) return <LoadingScreen />;
-  if (session?.user && passwordRecovery) {
-    return (
-      <ResetPasswordScreen
-        onComplete={() => {
-          window.history.replaceState({}, document.title, "/");
-          setPasswordRecovery(false);
-          navigate("/", { replace: true });
-        }}
-      />
-    );
-  }
-
-  if (accountError) {
-    return (
-      <main className="setup-page">
-        <div className="setup-card">
-          <Brand />
-          <h1>Let’s reconnect</h1>
-          <p role="alert" className="muted">{accountError}</p>
-          <button className="primary-button" onClick={() => window.location.reload()}>Try again</button>
-        </div>
-      </main>
-    );
-  }
-  if (!session?.user) return <AuthScreen initialMessage={authRedirectMessage} />;
-
-  if (location.pathname.startsWith("/org-invite")) {
-    const params = new URLSearchParams(location.search);
-    const invitationId = params.get("id");
-    const token = params.get("token");
-
-    if (!invitationId || !token) {
-      return (
-        <main className="setup-page">
-          <div className="setup-card">
-            <Brand />
-            <p className="eyebrow red">Leader Invitation</p>
-            <h1>Invalid invitation link</h1>
-            <p className="muted">This organization invitation link is incomplete.</p>
-            <button className="secondary-button" onClick={() => navigate("/")}>
-              Return to Adventure Club
-            </button>
-          </div>
-        </main>
-      );
-    }
-
-    return (
-      <Suspense fallback={<LoadingScreen />}>
-      <OrganizationInviteAccept
-        key={invitationId+":"+token+":"+session.user.id}
-        invitationId={invitationId}
-        token={token}
-        onCancel={() => navigate("/")}
-        onAccepted={async () => {
-          await loadFamily(session.user);
-          navigate("/");
-        }}
-      />
-      </Suspense>
-    );
-  }
-
-  if (location.pathname.startsWith("/invite")) {
-    const params = new URLSearchParams(location.search);
-    const invitationId = params.get("id");
-    const token = params.get("token");
-
-    if (!invitationId || !token) {
-      return (
-        <main className="setup-page">
-          <div className="setup-card">
-            <Brand />
-            <p className="eyebrow red">Invitation</p>
-            <h1>Invalid invitation link</h1>
-            <p className="muted">This family invitation link is incomplete.</p>
-            <button className="secondary-button" onClick={() => navigate("/")}>Return to Adventure Club</button>
-          </div>
-        </main>
-      );
-    }
-
-    return (
-      <Suspense fallback={<LoadingScreen />}>
-      <InviteAccept
-        key={invitationId+":"+token+":"+session.user.id}
-        signedInEmail={session.user.email??"your adult account"}
-        onCancel={()=>navigate("/")}
-        invitationId={invitationId}
-        token={token}
-        onAccepted={async () => {
-          await loadFamily(session.user);
-          navigate("/");
-        }}
-      />
-      </Suspense>
-    );
-  }
-
-  if (location.pathname.startsWith("/admin")) {
-    if (!adminRole) {
-      return (
-        <main className="setup-page">
-          <div className="setup-card">
-            <Brand />
-            <p className="eyebrow red">Restricted Area</p>
-            <h1>Admin access required</h1>
-            <p className="muted">This account is not currently assigned an Adventure Club admin role.</p>
-            <button className="secondary-button" onClick={() => navigate("/")}>Return to family area</button>
-          </div>
-        </main>
-      );
-    }
-
-    if (household && guardianPinConfigured === false) {
-      return (
-        <Suspense fallback={<LoadingScreen />}>
-        <GuardianPinSetup
-          key={household.id+":"+session.user.id}
-          householdId={household.id}
-          onComplete={() => setGuardianPinConfigured(true)}
-        />
-        </Suspense>
-      );
-    }
-
-    if (household && localStorage.getItem("dc_adventure_club_kid_locked") === "1") {
-      return (
-        <main className="setup-page">
-          <div className="setup-card">
-            <Brand />
-            <p className="eyebrow red">Guardian Only</p>
-            <h1>Unlock Family Hub first</h1>
-            <p className="muted">Admin controls are available only after the guardian PIN unlocks Kid View.</p>
-            <button className="primary-button" type="button" onClick={() => setAdminUnlockOpen(true)}>
-              Enter guardian PIN
-            </button>
-            <button className="text-button" type="button" onClick={() => navigate("/")}>
-              Return to Kid View
-            </button>
-          </div>
-          {adminUnlockOpen && (
-            <Suspense fallback={null}>
-            <GuardianUnlockDialog
-              householdId={household.id}
-              onClose={() => setAdminUnlockOpen(false)}
-              onUnlock={(token) => {
-                sessionStorage.setItem("dc_guardian_session_token", token);
-                localStorage.removeItem("dc_adventure_club_kid_locked");
-                setAdminUnlockOpen(false);
-              }}
-              onSignOut={async () => {
-                sessionStorage.removeItem("dc_guardian_session_token");
-                await supabase.auth.signOut();
-              }}
-            />
-            </Suspense>
-          )}
-        </main>
-      );
-    }
-
-    return (
-      <Suspense fallback={<LoadingScreen />}>
-        <AdminPortal user={session.user} role={adminRole} onExit={() => navigate("/")} />
-      </Suspense>
-    );
-  }
-
-  if (!household && hasOrganizationAccess) {
-    return (
-      <Suspense fallback={<LoadingScreen />}>
-      <LeaderOnlyPortal
-        user={session.user}
-        adminRole={adminRole}
-        onAdmin={() => navigate("/admin")}
-      />
-      </Suspense>
-    );
-  }
-
-  if (!household) {
-    return <HouseholdSetup key={session.user.id} user={session.user} onComplete={() => loadFamily(session.user)} />;
-  }
-
-  if (!children.length) {
-    return <EmptyFamily household={household} user={session.user} onAdded={() => loadFamily(session.user)} />;
-  }
-
-  if (guardianPinConfigured === false) {
-    return (
-      <Suspense fallback={<LoadingScreen />}>
-      <GuardianPinSetup
-        key={household.id+":"+session.user.id}
-        householdId={household.id}
-        onComplete={() => setGuardianPinConfigured(true)}
-      />
-      </Suspense>
-    );
-  }
-
-  return (
-    <FamilyPortal
-      user={session.user}
-      household={household}
-      children={children}
-      reload={() => loadFamily(session.user)}
-      adminRole={adminRole}
-      onAdmin={() => navigate("/admin")}
-    />
-  );
+/* Family order history */
+.order-history-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
 }
+.order-history-list {
+  display: grid;
+  gap: 11px;
+}
+.order-history-row {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.order-history-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+.order-history-main strong,
+.order-history-main span {
+  display: block;
+}
+.order-history-main span:not(.status-chip) {
+  margin-top: 4px;
+  color: #817d77;
+  font-size: .72rem;
+}
+.order-item-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.order-item-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  color: #aaa59e;
+  font-size: .77rem;
+}
+.order-item-list strong {
+  color: #d7d2cb;
+}
+.order-fulfillment-note {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: #817d77;
+  font-size: .72rem;
+}
+.order-fulfillment-note a {
+  color: var(--gold);
+}
+.commerce-order-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(180px,240px);
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #0b0b0b;
+}
+.commerce-order-row strong,
+.commerce-order-row small {
+  display: block;
+}
+.commerce-order-row small {
+  margin-top: 5px;
+  color: #8f8b85;
+  font-size: .72rem;
+}
+@media (max-width: 720px) {
+  .commerce-order-row { grid-template-columns: 1fr auto; }
+  .commerce-order-row select { grid-column: 1 / -1; }
+}
+
+
+/* Adventure Club Groups */
+.family-groups-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.group-join-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+.group-preview {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 15px;
+  background: rgba(240,198,91,.05);
+}
+.group-preview span,
+.family-group-head span,
+.group-assignment-row span {
+  color: #8f8b85;
+  font-size: .66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.group-preview h3,
+.family-group-head h3 {
+  margin: 4px 0;
+}
+.group-preview p,
+.family-group-head p {
+  margin: 0;
+  color: #8f8b85;
+  font-size: .78rem;
+}
+.group-preview-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+.group-preview-actions small {
+  color: #77736e;
+}
+.family-group-list {
+  display: grid;
+  gap: 10px;
+}
+.family-group-row {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.family-group-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+.group-assignment-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.group-assignment-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 11px;
+  text-align: left;
+  color: #d7d2cb;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #101010;
+}
+.group-assignment-row strong,
+.group-assignment-row span {
+  display: block;
+}
+.group-assignment-row strong {
+  margin-top: 3px;
+}
+.group-assignment-row small {
+  color: #817d77;
+}
+@media (max-width: 760px) {
+  .group-join-form { grid-template-columns: 1fr; }
+  .group-preview,
+  .family-group-head,
+  .group-assignment-row { align-items: flex-start; flex-direction: column; }
+  .group-preview-actions { justify-items: start; }
+}
+
+
+/* Organization + leader group tools */
+.leader-groups-hub {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.leader-group-selectors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.leader-create-group {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.leader-create-group summary {
+  cursor: pointer;
+  font-weight: 850;
+}
+.leader-create-group .admin-form {
+  margin-top: 14px;
+}
+.leader-code-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 15px;
+  background: rgba(240,198,91,.05);
+}
+.leader-code-card span,
+.leader-code-card strong,
+.leader-code-card small {
+  display: block;
+}
+.leader-code-card span {
+  color: #8f8b85;
+  font-size: .66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.leader-code-card strong {
+  margin: 4px 0;
+  color: var(--gold);
+  font-size: 1.5rem;
+  letter-spacing: .08em;
+}
+.leader-code-card small {
+  max-width: 620px;
+  color: #77736e;
+}
+.leader-groups-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+.leader-panel {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.leader-panel label {
+  margin-bottom: 10px;
+}
+.leader-panel button {
+  width: 100%;
+}
+.leader-roster {
+  display: grid;
+  gap: 8px;
+}
+.leader-roster > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #101010;
+}
+.leader-assignment-progress {
+  display: grid;
+  gap: 9px;
+  margin-top: 14px;
+}
+.leader-assignment-progress > article {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px,280px);
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.leader-assignment-progress span,
+.leader-assignment-progress strong,
+.leader-assignment-progress small {
+  display: block;
+}
+.leader-assignment-progress span {
+  color: #8f8b85;
+  font-size: .65rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.leader-assignment-progress small {
+  margin-top: 4px;
+  color: #77736e;
+}
+.leader-progress-meter > strong {
+  display: block;
+  text-align: right;
+}
+.leader-progress-meter .level-progress-track {
+  margin: 6px 0 0;
+}
+@media (max-width: 820px) {
+  .leader-group-selectors,
+  .leader-groups-grid { grid-template-columns: 1fr; }
+  .leader-code-card { align-items: flex-start; flex-direction: column; }
+  .leader-assignment-progress > article { grid-template-columns: 1fr; }
+  .leader-progress-meter > strong { text-align: left; }
+}
+
+
+/* Events, referrals and support */
+.family-events-card,
+.referral-support-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.event-child-selector {
+  max-width: 320px;
+  margin-bottom: 14px;
+}
+.family-events-list {
+  display: grid;
+  gap: 10px;
+}
+.family-event-row {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.event-date-box {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 62px;
+  border-radius: 14px;
+  background: linear-gradient(145deg,#c52a2a,#7b1212);
+  color: white;
+}
+.event-date-box strong {
+  font-size: .68rem;
+  text-transform: uppercase;
+}
+.event-date-box span {
+  font-size: 1.55rem;
+  font-weight: 900;
+}
+.family-event-copy > span {
+  color: #8f8b85;
+  font-size: .65rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.family-event-copy h3 {
+  margin: 3px 0 5px;
+}
+.family-event-copy p {
+  margin: 0 0 5px;
+  color: #8f8b85;
+  line-height: 1.45;
+  font-size: .78rem;
+}
+.family-event-copy small {
+  color: #77736e;
+}
+.family-event-action {
+  display: grid;
+  gap: 7px;
+  justify-items: end;
+}
+.referral-code-box {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 14px;
+  background: rgba(240,198,91,.05);
+}
+.referral-code-box strong,
+.referral-code-box span {
+  display: block;
+}
+.referral-code-box strong {
+  color: var(--gold);
+  font-size: 1.7rem;
+  letter-spacing: .08em;
+}
+.referral-code-box span {
+  margin-top: 5px;
+  color: #817d77;
+  font-size: .72rem;
+}
+.support-ticket-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.support-ticket-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.support-ticket-list strong,
+.support-ticket-list span {
+  display: block;
+}
+.support-ticket-list > article > div > span {
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .68rem;
+  text-transform: capitalize;
+}
+.support-admin-list {
+  display: grid;
+  gap: 10px;
+}
+.support-admin-list > article {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px,240px);
+  gap: 14px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.support-admin-copy > span {
+  color: #8f8b85;
+  font-size: .66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.support-admin-copy h3 {
+  margin: 5px 0;
+}
+.support-admin-copy p {
+  margin: 0 0 6px;
+  color: #aaa59e;
+  line-height: 1.5;
+}
+.support-admin-copy small {
+  color: #77736e;
+}
+.support-admin-actions {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+@media (max-width: 760px) {
+  .family-event-row { grid-template-columns: auto 1fr; }
+  .family-event-action { grid-column: 1 / -1; justify-items: start; }
+  .support-admin-list > article { grid-template-columns: 1fr; }
+}
+
+
+/* DC Governance Center */
+.governance-admin {
+  display: grid;
+  gap: 18px;
+}
+.governance-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(240,198,91,.10), transparent 22rem),
+    linear-gradient(135deg,#17120a,#111 60%,#1b0c0c);
+}
+.governance-hero h2 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem,4vw,3.4rem);
+}
+.governance-hero p:last-child {
+  max-width: 850px;
+  margin: 0;
+  color: #a9a49d;
+  line-height: 1.55;
+}
+.governance-lock {
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border: 1px solid rgba(240,198,91,.28);
+  border-radius: 14px;
+  color: var(--gold);
+  font-size: .72rem;
+  font-weight: 950;
+  letter-spacing: .16em;
+}
+.governance-standard-grid {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 10px;
+}
+.governance-standard-grid article {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0c0c0c;
+}
+.governance-standard-grid span,
+.governance-standard-grid small {
+  display: block;
+  color: #817d77;
+  font-size: .64rem;
+  text-transform: uppercase;
+}
+.governance-standard-grid h3 {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+.governance-standard-grid p {
+  margin: 8px 0 0;
+  color: #8f8b85;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+.governance-selected {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+.governance-selected div {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.governance-selected span,
+.governance-selected strong {
+  display: block;
+}
+.governance-selected span {
+  color: #77736e;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.governance-selected strong {
+  margin-top: 4px;
+  text-transform: capitalize;
+}
+.governance-checklist {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 10px;
+}
+.governance-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #090909;
+}
+.governance-check input {
+  width: auto;
+  accent-color: var(--red-bright);
+}
+.governance-publish {
+  width: 100%;
+  margin-top: 12px;
+}
+.governance-assets,
+.governance-characters {
+  display: grid;
+  gap: 10px;
+}
+.governance-assets article,
+.governance-characters article {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.governance-assets article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+.governance-assets span,
+.governance-assets strong,
+.governance-assets small,
+.governance-characters span,
+.governance-characters small {
+  display: block;
+}
+.governance-assets span,
+.governance-characters span {
+  color: #8f8b85;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.governance-assets img {
+  width: 70px;
+  height: 70px;
+  border-radius: 13px;
+  object-fit: cover;
+}
+.governance-assets p,
+.governance-characters p {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  color: #8f8b85;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+.governance-rule-list {
+  display: grid;
+  gap: 9px;
+}
+.governance-rule-list article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.governance-rule-list span {
+  color: #ff6a6a;
+  font-size: .62rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.governance-rule-list h3 {
+  margin: 4px 0 6px;
+}
+.governance-rule-list p {
+  margin: 0;
+  color: #9b9690;
+  line-height: 1.5;
+  font-size: .78rem;
+}
+.governance-rule-list small {
+  color: #77736e;
+}
+.governance-editor-note {
+  grid-column: 1 / -1;
+  padding: 11px 13px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 12px;
+  background: rgba(240,198,91,.05);
+  color: #c9bb8e;
+  font-size: .75rem;
+  line-height: 1.45;
+}
+@media (max-width: 1200px) {
+  .governance-standard-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 700px) {
+  .governance-hero { align-items:flex-start; flex-direction:column; }
+  .governance-standard-grid,
+  .governance-selected { grid-template-columns: 1fr; }
+  .governance-rule-list article { grid-template-columns: 1fr; }
+}
+
+
+/* DC governance preflight */
+.governance-preflight {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.governance-preflight-list {
+  display: grid;
+  gap: 8px;
+}
+.governance-preflight-list article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+}
+.governance-preflight-list article.error {
+  border-color: rgba(239,52,52,.26);
+  background: rgba(198,40,40,.08);
+}
+.governance-preflight-list article.warning {
+  border-color: rgba(240,198,91,.20);
+  background: rgba(240,198,91,.05);
+}
+.governance-preflight-list strong {
+  font-size: .64rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.governance-preflight-list .error strong {
+  color: #ff7777;
+}
+.governance-preflight-list .warning strong {
+  color: var(--gold);
+}
+.governance-preflight-list span {
+  color: #a39e97;
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+
+/* DC creative blueprints */
+.governance-blueprints {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+.governance-blueprints > article {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #090909;
+}
+.governance-blueprint-head span,
+.governance-blueprint-head small {
+  display: block;
+  color: #817d77;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.governance-blueprint-head h3 {
+  margin: 4px 0;
+}
+.governance-blueprints > article > p {
+  color: #9b9690;
+  line-height: 1.5;
+  font-size: .77rem;
+}
+.governance-blueprint-requirements {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+.governance-blueprint-requirements > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #111;
+}
+.governance-blueprint-requirements strong,
+.governance-blueprint-requirements span {
+  display: block;
+}
+.governance-blueprint-requirements strong {
+  font-size: .8rem;
+}
+.governance-blueprint-requirements span {
+  grid-column: 1 / -1;
+  color: #88847e;
+  font-size: .7rem;
+  line-height: 1.4;
+}
+.governance-blueprint-requirements small {
+  color: var(--gold);
+  font-size: .6rem;
+  text-transform: uppercase;
+}
+@media (max-width: 800px) {
+  .governance-blueprints { grid-template-columns: 1fr; }
+}
+
+
+/* Guardian onboarding consent */
+.onboarding-consent,
+.child-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 13px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 13px;
+  background: rgba(240,198,91,.045);
+  color: #b9b4ad;
+  font-size: .76rem;
+  line-height: 1.45;
+}
+.onboarding-consent input,
+.child-consent input {
+  width: auto;
+  margin-top: 2px;
+  accent-color: var(--red-bright);
+}
+.child-form .child-consent {
+  grid-column: 1 / -1;
+}
+
+/* Guardian privacy & data controls */
+.privacy-controls-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.privacy-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+.privacy-panel,
+.privacy-data-inventory,
+.privacy-request-panel {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #090909;
+}
+.privacy-consent-list {
+  display: grid;
+  gap: 8px;
+}
+.privacy-consent-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #111;
+}
+.privacy-consent-row strong,
+.privacy-consent-row small {
+  display: block;
+}
+.privacy-consent-row p {
+  margin: 4px 0;
+  color: #8f8b85;
+  font-size: .72rem;
+  line-height: 1.45;
+}
+.privacy-consent-row small {
+  color: #6f6b66;
+  font-size: .65rem;
+}
+.privacy-data-inventory,
+.privacy-request-panel {
+  margin-top: 12px;
+}
+.privacy-inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+}
+.privacy-inventory-grid div {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #111;
+}
+.privacy-inventory-grid strong,
+.privacy-inventory-grid span {
+  display: block;
+}
+.privacy-inventory-grid strong {
+  font-size: 1.45rem;
+}
+.privacy-inventory-grid span {
+  margin-top: 3px;
+  color: #77736e;
+  font-size: .64rem;
+  text-transform: uppercase;
+}
+.privacy-profile-actions {
+  margin-top: 12px;
+}
+.privacy-request-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+}
+.privacy-reason {
+  grid-column: 1 / -1;
+}
+.privacy-request-history {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+.privacy-request-history > div {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #111;
+}
+.privacy-request-history strong,
+.privacy-request-history span {
+  display: block;
+}
+.privacy-request-history > div > div > span {
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .66rem;
+}
+
+/* Admin analytics & privacy operations */
+.analytics-privacy-admin {
+  display: grid;
+  gap: 18px;
+}
+.analytics-snapshot {
+  padding: 24px;
+  border: 1px solid rgba(240,198,91,.16);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 95% 0%,rgba(240,198,91,.08),transparent 20rem),
+    #101010;
+}
+.analytics-snapshot-grid,
+.analytics-period-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 9px;
+}
+.analytics-snapshot-grid article,
+.analytics-period-grid article {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.analytics-snapshot-grid strong,
+.analytics-snapshot-grid span,
+.analytics-period-grid strong,
+.analytics-period-grid span {
+  display: block;
+}
+.analytics-snapshot-grid strong,
+.analytics-period-grid strong {
+  font-size: 1.7rem;
+}
+.analytics-snapshot-grid span,
+.analytics-period-grid span {
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.analytics-daily-table {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+.analytics-daily-head,
+.analytics-daily-table > div:not(.analytics-daily-head) {
+  min-width: 650px;
+  display: grid;
+  grid-template-columns: 1.4fr repeat(5,.8fr);
+  gap: 8px;
+  padding: 9px 10px;
+}
+.analytics-daily-head {
+  color: #77736e;
+  font-size: .62rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.analytics-daily-table > div:not(.analytics-daily-head) {
+  border-top: 1px solid var(--line);
+  color: #aaa59e;
+  font-size: .73rem;
+}
+.privacy-admin-row,
+.notification-delivery-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.privacy-admin-row small,
+.notification-delivery-row small {
+  display: block;
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .66rem;
+}
+.privacy-admin-row p {
+  margin: 6px 0 0;
+  color: #8f8b85;
+  font-size: .72rem;
+}
+@media (max-width: 900px) {
+  .privacy-two-column,
+  .analytics-snapshot-grid,
+  .analytics-period-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .privacy-inventory-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 620px) {
+  .privacy-two-column,
+  .analytics-snapshot-grid,
+  .analytics-period-grid,
+  .privacy-request-form { grid-template-columns: 1fr; }
+  .privacy-request-history > div { grid-template-columns: 1fr auto; }
+  .privacy-request-history .text-button { grid-column: 1 / -1; justify-self: start; }
+}
+
+
+/* Privacy export actions */
+.privacy-request-history .secondary-button.compact {
+  padding: 8px 10px;
+  font-size: .7rem;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .privacy-request-history > div {
+    grid-template-columns: 1fr auto;
+  }
+  .privacy-request-history .secondary-button,
+  .privacy-request-history .text-button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+
+/* Guardian communications center */
+.communications-admin {
+  display: grid;
+  gap: 18px;
+}
+.communications-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid rgba(240,198,91,.16);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(240,198,91,.08),transparent 20rem),
+    #101010;
+}
+.communications-hero h2 {
+  margin-bottom: 7px;
+  font-size: clamp(2rem,4vw,3.1rem);
+}
+.communications-hero p:last-child {
+  max-width: 780px;
+  margin: 0;
+  color: #99948d;
+  line-height: 1.5;
+}
+.communications-audience {
+  flex: 0 0 auto;
+  min-width: 150px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #090909;
+}
+.communications-audience strong,
+.communications-audience span {
+  display: block;
+}
+.communications-audience strong {
+  color: var(--gold);
+  font-size: 2.2rem;
+}
+.communications-audience span {
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .67rem;
+}
+.communication-channel-picks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.communication-channel-picks > span {
+  width: 100%;
+  color: #aaa59e;
+  font-size: .72rem;
+  font-weight: 850;
+}
+.communication-channel-picks label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.communication-channel-picks input {
+  width: auto;
+  accent-color: var(--red-bright);
+}
+.communication-channel-picks small {
+  width: 100%;
+  color: #77736e;
+}
+.communications-template-row,
+.communications-campaign-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.communications-template-row strong,
+.communications-template-row small,
+.communications-template-row p,
+.communications-campaign-row strong,
+.communications-campaign-row small,
+.communications-campaign-row p,
+.communications-campaign-row em {
+  display: block;
+}
+.communications-template-row small,
+.communications-campaign-row small {
+  margin-top: 4px;
+  color: #77736e;
+  font-size: .67rem;
+}
+.communications-template-row p,
+.communications-campaign-row p {
+  margin: 7px 0 0;
+  color: #aaa59e;
+  font-size: .76rem;
+}
+.communications-campaign-row em {
+  margin-top: 6px;
+  color: #ff8a8a;
+  font-size: .68rem;
+  font-style: normal;
+}
+.communications-campaign-status {
+  display: grid;
+  gap: 7px;
+  justify-items: end;
+}
+.communications-preview {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 12px;
+  background: rgba(240,198,91,.05);
+}
+.communications-preview strong {
+  color: var(--gold);
+  font-size: 1.6rem;
+}
+.communications-preview span {
+  color: #8f8b85;
+  font-size: .75rem;
+}
+.quiet-hours-settings {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3,1fr);
+  gap: 10px;
+  align-items: end;
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid rgba(240,198,91,.14);
+  border-radius: 14px;
+  background: rgba(240,198,91,.035);
+}
+.quiet-hours-settings p {
+  margin-bottom: 4px;
+}
+@media (max-width: 900px) {
+  .communications-hero { align-items:flex-start; flex-direction:column; }
+  .quiet-hours-settings { grid-template-columns: 1fr 1fr; }
+  .quiet-hours-settings > div { grid-column: 1 / -1; }
+}
+@media (max-width: 620px) {
+  .communications-template-row,
+  .communications-campaign-row { grid-template-columns: 1fr; }
+  .communications-campaign-status { justify-items:start; }
+  .quiet-hours-settings { grid-template-columns: 1fr; }
+}
+
+
+/* Automatic reminder rules */
+.communications-reminder-section {
+  margin-top: 0;
+}
+
+
+/* Adult organization invitations and leader-only access */
+.organization-invite-preview {
+  margin: 20px 0;
+  padding: 17px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 16px;
+  background: rgba(240,198,91,.05);
+}
+.organization-invite-preview > span {
+  color: var(--gold);
+  font-size: .67rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.organization-invite-preview h2 {
+  margin: 5px 0 10px;
+}
+.organization-invite-preview p {
+  margin: 5px 0;
+  color: #aaa59e;
+}
+.organization-invite-preview small {
+  display: block;
+  margin-top: 10px;
+  color: #77736e;
+}
+.leader-only-main {
+  max-width: 1450px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(24px,4vw,50px);
+}
+.leader-only-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(240,198,91,.16);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(240,198,91,.08),transparent 20rem),
+    #101010;
+}
+.leader-only-hero h1 {
+  margin-bottom: 8px;
+  font-size: clamp(2.3rem,5vw,4.2rem);
+}
+.leader-only-hero p:last-child {
+  max-width: 720px;
+  margin: 0;
+  color: #99948d;
+}
+.leader-account-chip {
+  min-width: 220px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.leader-account-chip span,
+.leader-account-chip strong {
+  display: block;
+}
+.leader-account-chip span {
+  color: #77736e;
+  font-size: .65rem;
+  text-transform: uppercase;
+}
+.leader-account-chip strong {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.leader-adult-invites {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.leader-invite-link {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 12px;
+  background: rgba(240,198,91,.05);
+}
+.leader-invite-link code {
+  overflow-wrap: anywhere;
+  color: #c8c2ba;
+  font-size: .72rem;
+}
+.leader-invitation-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.leader-invitation-list article {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #111;
+}
+.leader-invitation-list strong,
+.leader-invitation-list span,
+.leader-invitation-list small {
+  display: block;
+}
+.leader-invitation-list > article > div:first-child > span,
+.leader-invitation-list small {
+  margin-top: 3px;
+  color: #77736e;
+  font-size: .67rem;
+  text-transform: capitalize;
+}
+.leader-invitation-list > article > div:last-child {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+@media (max-width: 760px) {
+  .leader-only-hero { align-items:flex-start; flex-direction:column; }
+  .leader-account-chip { width:100%; }
+  .leader-invitation-list article { grid-template-columns:1fr; }
+  .leader-invitation-list > article > div:last-child { justify-items:start; }
+}
+
+
+/* PIN-backed guardian challenge approvals */
+.parent-approvals-card {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid rgba(239,52,52,.18);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(198,40,40,.08),transparent 18rem),
+    #101010;
+}
+.parent-approvals-card.clear {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  border-color: rgba(111,184,121,.18);
+  background: rgba(68,126,76,.045);
+}
+.parent-approvals-card.clear h2 {
+  margin-bottom: 6px;
+}
+.parent-approvals-card.clear p:last-child {
+  margin: 0;
+  color: #8f8b85;
+}
+.guardian-approval-unlock {
+  display: grid;
+  grid-template-columns: minmax(180px,280px) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 16px 0;
+}
+.guardian-session-chip {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin: 14px 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(111,184,121,.22);
+  border-radius: 12px;
+  background: rgba(68,126,76,.08);
+}
+.guardian-session-chip > span {
+  color: #a7d4af;
+}
+.guardian-session-chip strong {
+  color: #d8e9db;
+}
+.guardian-session-chip small {
+  margin-left: auto;
+  color: #7f9b84;
+}
+.parent-approval-list {
+  display: grid;
+  gap: 10px;
+}
+.parent-approval-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  gap: 13px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #090909;
+}
+.parent-approval-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(240,198,91,.10);
+  color: var(--gold);
+}
+.parent-approval-copy > span {
+  color: #8f8b85;
+  font-size: .64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.parent-approval-copy h3 {
+  margin: 4px 0 5px;
+}
+.parent-approval-copy p {
+  margin: 0;
+  color: #aaa59e;
+  font-size: .78rem;
+}
+.parent-approval-copy small {
+  display: block;
+  margin-top: 5px;
+  color: #77736e;
+  font-size: .68rem;
+}
+.parent-approval-actions {
+  display: grid;
+  gap: 7px;
+  justify-items: end;
+}
+.success-banner.pending {
+  border-color: rgba(240,198,91,.24);
+  background: rgba(240,198,91,.08);
+}
+@media (max-width: 720px) {
+  .guardian-approval-unlock { grid-template-columns: 1fr; }
+  .parent-approval-list article { grid-template-columns: auto 1fr; }
+  .parent-approval-actions {
+    grid-column: 1 / -1;
+    justify-items: start;
+  }
+  .guardian-session-chip { align-items:flex-start; flex-wrap:wrap; }
+  .guardian-session-chip small { width:100%; margin-left:0; }
+}
+
+
+/* Integrations and delivery health */
+.integration-health-admin {
+  display: grid;
+  gap: 18px;
+}
+.integration-health-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 24px;
+  border: 1px solid rgba(240,198,91,.16);
+  border-radius: 22px;
+  background: linear-gradient(135deg,#15110a,#101010 60%,#160b0b);
+}
+.integration-health-hero h2 {
+  margin-bottom: 8px;
+  font-size: clamp(2rem,4vw,3.2rem);
+}
+.integration-health-hero p:last-child {
+  max-width: 820px;
+  margin: 0;
+  color: #9b9690;
+  line-height: 1.5;
+}
+.integration-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 12px;
+}
+.integration-provider-grid > article {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0a0a0a;
+}
+.integration-provider-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.integration-provider-head span:first-child {
+  color: #8f8b85;
+  font-size: .64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.integration-provider-head h3 {
+  margin: 4px 0 0;
+}
+.integration-provider-grid dl {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0 0;
+}
+.integration-provider-grid dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 7px;
+  border-top: 1px solid var(--line);
+}
+.integration-provider-grid dt,
+.integration-provider-grid dd {
+  margin: 0;
+  font-size: .72rem;
+}
+.integration-provider-grid dt {
+  color: #77736e;
+}
+.integration-provider-grid dd {
+  color: #d2cdc6;
+}
+.integration-error {
+  margin: 12px 0 0;
+  color: #ff8484;
+  font-size: .72rem;
+  line-height: 1.4;
+}
+.worker-health-strip {
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  gap: 9px;
+}
+.worker-health-strip > div {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.worker-health-strip span,
+.worker-health-strip strong {
+  display: block;
+}
+.worker-health-strip span {
+  color: #77736e;
+  font-size: .63rem;
+  text-transform: uppercase;
+}
+.worker-health-strip strong {
+  margin-top: 4px;
+  text-transform: capitalize;
+}
+.worker-run-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.worker-run-list article {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.worker-run-list strong,
+.worker-run-list small {
+  display: block;
+}
+.worker-run-list small {
+  color: #77736e;
+  font-size: .68rem;
+}
+.integration-next-steps p:last-child {
+  margin-bottom: 0;
+  color: #9b9690;
+  line-height: 1.55;
+}
+@media (max-width: 1000px) {
+  .integration-provider-grid { grid-template-columns: 1fr; }
+  .worker-health-strip { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 650px) {
+  .integration-health-hero { flex-direction: column; }
+  .worker-run-list { grid-template-columns: 1fr; }
+}
+
+
+/* Guardian Family Store */
+.family-store {
+  display: grid;
+  gap: 18px;
+}
+.family-store-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(28px,4vw,46px);
+  border: 1px solid rgba(240,198,91,.15);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(240,198,91,.12),transparent 22rem),
+    linear-gradient(135deg,#17120a,#111 58%,#1b0c0c);
+}
+.family-store-hero h1 {
+  margin-bottom: 11px;
+  font-size: clamp(2.4rem,5vw,4.5rem);
+  line-height: .96;
+}
+.family-store-hero p:last-child {
+  max-width: 760px;
+  margin-bottom: 0;
+  color: #aaa59e;
+  line-height: 1.55;
+}
+.store-member-chip {
+  flex: 0 0 auto;
+  min-width: 170px;
+  padding: 17px;
+  text-align: center;
+  border: 1px solid rgba(240,198,91,.18);
+  border-radius: 17px;
+  background: rgba(240,198,91,.055);
+}
+.store-member-chip span,
+.store-member-chip strong {
+  display: block;
+}
+.store-member-chip span {
+  color: #817d77;
+  font-size: .66rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.store-member-chip strong {
+  margin-top: 5px;
+  color: var(--gold);
+}
+.family-store-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 360px;
+  gap: 16px;
+  align-items: start;
+}
+.store-return-status {
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(212, 165, 75, .45);
+  border-radius: 16px;
+  background: rgba(212, 165, 75, .1);
+}
+.store-return-status strong { color: var(--gold); }
+.store-return-status p { margin: 8px 0 0; line-height: 1.5; }
+.store-return-status button { margin-top: 12px; }
+.store-return-status .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.store-catalog,
+.store-cart {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+}
+.store-cart {
+  position: sticky;
+  top: 100px;
+}
+.store-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 13px;
+}
+.store-product-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #090909;
+}
+.store-product-image {
+  position: relative;
+  aspect-ratio: 16/10;
+  background: #151515;
+}
+.store-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px;
+}
+.store-product-image > span {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #17120a;
+  background: var(--gold);
+  font-size: .62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.store-product-copy {
+  padding: 17px;
+}
+.store-product-copy > span {
+  color: #8f8b85;
+  font-size: .64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.store-product-copy h3 {
+  margin: 5px 0 7px;
+  font-size: 1.3rem;
+}
+.store-product-copy > p {
+  min-height: 44px;
+  color: #8f8b85;
+  font-size: .77rem;
+  line-height: 1.45;
+}
+.store-product-copy label {
+  margin-top: 12px;
+}
+.store-price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 13px;
+  align-items: center;
+  margin-top: 14px;
+}
+.store-price-row strong,
+.store-price-row small {
+  display: block;
+}
+.store-price-row strong {
+  font-size: 1.45rem;
+}
+.store-price-row small {
+  margin-top: 3px;
+  color: #77736e;
+  text-decoration: line-through;
+  font-size: .7rem;
+}
+.store-cart-lines {
+  display: grid;
+  gap: 9px;
+}
+.store-cart-lines article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.store-cart-lines strong,
+.store-cart-lines small,
+.store-cart-lines span {
+  display: block;
+}
+.store-cart-lines small,
+.store-cart-lines span {
+  margin-top: 3px;
+  color: #817d77;
+  font-size: .69rem;
+}
+.store-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.store-quantity button {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: white;
+  background: #171717;
+}
+.store-quantity strong {
+  min-width: 18px;
+  text-align: center;
+}
+.store-promo {
+  margin-top: 14px;
+}
+.store-total-preview,
+.store-server-total {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.store-server-total {
+  border-color: rgba(111,184,121,.22);
+  background: rgba(68,126,76,.07);
+}
+.store-total-preview span,
+.store-server-total span {
+  color: #817d77;
+  font-size: .67rem;
+  text-transform: uppercase;
+}
+.store-total-preview strong,
+.store-server-total strong {
+  font-size: 1.65rem;
+}
+.store-total-preview small,
+.store-server-total small {
+  color: #77736e;
+  line-height: 1.4;
+}
+.store-checkout-button {
+  width: 100%;
+  margin-top: 14px;
+}
+@media (max-width: 1050px) {
+  .family-store-layout { grid-template-columns: 1fr; }
+  .store-cart { position: static; }
+}
+@media (max-width: 720px) {
+  .family-store-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .store-member-chip {
+    min-width: 0;
+    width: 100%;
+  }
+  .store-product-grid { grid-template-columns: 1fr; }
+}
+
+
+/* Commerce readiness */
+.commerce-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 9px;
+}
+.commerce-readiness-grid > div {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #090909;
+}
+.commerce-readiness-grid span,
+.commerce-readiness-grid strong {
+  display: block;
+}
+.commerce-readiness-grid span {
+  color: #77736e;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.commerce-readiness-grid strong {
+  margin-top: 5px;
+  font-size: 1.4rem;
+  text-transform: capitalize;
+}
+.commerce-webhook-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.commerce-webhook-list article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #090909;
+}
+.commerce-webhook-list strong,
+.commerce-webhook-list small {
+  display: block;
+}
+.commerce-webhook-list small {
+  margin-top: 3px;
+  color: #77736e;
+  font-size: .67rem;
+}
+@media (max-width: 900px) {
+  .commerce-readiness-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 560px) {
+  .commerce-readiness-grid { grid-template-columns: 1fr; }
+}
+
+
+/* Production Launch Gate */
+.launch-gate-admin{display:grid;gap:18px}
+.launch-gate-recheck{justify-self:start}
+.launch-gate-hero{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:28px;border-radius:24px;border:1px solid var(--line)}
+.launch-gate-hero.blocked{border-color:rgba(239,52,52,.26);background:radial-gradient(circle at 92% 10%,rgba(198,40,40,.14),transparent 21rem),linear-gradient(135deg,#1c0d0d,#111 62%)}
+.launch-gate-hero.ready{border-color:rgba(111,184,121,.24);background:radial-gradient(circle at 92% 10%,rgba(68,126,76,.14),transparent 21rem),linear-gradient(135deg,#0d180f,#111 62%)}
+.launch-gate-hero h2{margin-bottom:9px;font-size:clamp(2.1rem,4vw,3.5rem)}
+.launch-gate-hero p:last-child{max-width:860px;margin:0;color:#9f9a93;line-height:1.55}
+.launch-gate-score{flex:0 0 auto;text-align:center;min-width:145px}
+.launch-gate-score strong,.launch-gate-score span{display:block}
+.launch-gate-score strong{font-size:2.8rem;line-height:1}
+.launch-gate-score span{margin-top:6px;color:#817d77;font-size:.67rem;text-transform:uppercase}
+.launch-gate-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.launch-gate-summary article{padding:17px;border:1px solid var(--line);border-radius:16px;background:#0a0a0a}
+.launch-gate-summary article.bad{border-color:rgba(239,52,52,.25);background:rgba(198,40,40,.07)}
+.launch-gate-summary article.warn{border-color:rgba(240,198,91,.20);background:rgba(240,198,91,.045)}
+.launch-gate-summary article.good{border-color:rgba(111,184,121,.18)}
+.launch-gate-summary span,.launch-gate-summary strong,.launch-gate-summary small{display:block}
+.launch-gate-summary span{color:#817d77;font-size:.66rem;font-weight:850;text-transform:uppercase}
+.launch-gate-summary strong{margin:5px 0 3px;font-size:2rem}
+.launch-gate-summary small{color:#77736e}
+.launch-priority-list,.launch-warning-list{display:grid;gap:9px}
+.launch-priority-list article{padding:14px;border:1px solid rgba(239,52,52,.22);border-radius:14px;background:rgba(198,40,40,.065)}
+.launch-priority-list span{color:#ff7474;font-size:.62rem;font-weight:900;letter-spacing:.07em}
+.launch-priority-list h3{margin:5px 0 6px}
+.launch-priority-list p,.launch-warning-list p{margin:0;color:#98938c;font-size:.76rem;line-height:1.45}
+.launch-warning-list article{display:grid;grid-template-columns:minmax(180px,.55fr) 1fr;gap:14px;padding:12px;border:1px solid rgba(240,198,91,.17);border-radius:12px;background:rgba(240,198,91,.035)}
+.launch-warning-list strong,.launch-warning-list small{display:block}
+.launch-warning-list small{margin-top:3px;color:#77736e}
+.launch-gate-areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.launch-gate-areas>article{padding:17px;border:1px solid var(--line);border-radius:16px;background:#0a0a0a}
+.launch-area-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.launch-area-head span{color:#817d77;font-size:.62rem;font-weight:850;text-transform:uppercase}
+.launch-area-head h3{margin:4px 0 0}
+.launch-area-head>strong{font-size:1.35rem}
+.launch-area-checks{display:grid;gap:7px}
+.launch-area-checks>div{display:grid;grid-template-columns:auto 1fr;gap:9px;padding:10px;border:1px solid var(--line);border-radius:11px;background:#111}
+.launch-area-checks>div>span{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;font-weight:900}
+.launch-area-checks .pass>span{color:#a7d4af;background:rgba(68,126,76,.12)}
+.launch-area-checks .fail>span{color:#ff8585;background:rgba(198,40,40,.12)}
+.launch-area-checks .warning>span{color:var(--gold);background:rgba(240,198,91,.10)}
+.launch-area-checks strong,.launch-area-checks small{display:block}
+.launch-area-checks small{margin-top:3px;color:#77736e;line-height:1.35}
+.launch-gate-note p:last-child{margin-bottom:0;color:#99948d;line-height:1.55}
+@media (max-width:850px){.launch-gate-areas{grid-template-columns:1fr}}
+@media (max-width:650px){.launch-gate-hero{flex-direction:column;align-items:flex-start}.launch-gate-score{text-align:left}.launch-gate-summary{grid-template-columns:1fr}.launch-warning-list article{grid-template-columns:1fr}}
+
+
+/* Public leads and inquiries */
+.leads-admin {
+  display: grid;
+  gap: 18px;
+}
+.leads-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 10px;
+}
+.leads-summary-grid article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0a0a0a;
+}
+.leads-summary-grid span,
+.leads-summary-grid strong,
+.leads-summary-grid small {
+  display: block;
+}
+.leads-summary-grid span,
+.leads-summary-grid small {
+  color: #817d77;
+  font-size: .66rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.leads-summary-grid strong {
+  margin: 5px 0;
+  font-size: 2rem;
+}
+.lead-record-list {
+  display: grid;
+  gap: 9px;
+}
+.lead-record {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(150px,190px);
+  gap: 14px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #090909;
+}
+.lead-record.inquiry {
+  grid-template-columns: minmax(0,1fr) minmax(150px,190px);
+}
+.lead-record-main > span {
+  color: #ff6a6a;
+  font-size: .63rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.lead-record-main h3 {
+  margin: 4px 0 2px;
+}
+.lead-record-main a {
+  color: var(--gold);
+  font-size: .78rem;
+}
+.lead-record-main p {
+  margin: 8px 0 0;
+  color: #9b9690;
+  line-height: 1.45;
+  font-size: .78rem;
+}
+.lead-record-main small,
+.lead-record-consent small {
+  display: block;
+  margin-top: 7px;
+  color: #77736e;
+  font-size: .68rem;
+}
+.lead-record-consent {
+  min-width: 160px;
+}
+@media (max-width: 850px) {
+  .leads-summary-grid { grid-template-columns: 1fr; }
+  .lead-record,
+  .lead-record.inquiry { grid-template-columns: 1fr; }
+}
+
+
+/* Safe provider integration tests */
+.integration-test-box {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.integration-test-box span,
+.integration-test-box strong,
+.integration-test-box small {
+  display: block;
+}
+.integration-test-box span {
+  color: #77736e;
+  font-size: .61rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.integration-test-box strong {
+  margin-top: 3px;
+  text-transform: capitalize;
+}
+.integration-test-box small {
+  max-width: 260px;
+  margin-top: 4px;
+  color: #817d77;
+  font-size: .67rem;
+  line-height: 1.35;
+}
+.integration-test-box .integration-error {
+  color: #ff8585;
+}
+/* Private digital book reader. Preserve original page and spread proportions. */
+.digital-book-entry { margin: 1rem 0; }
+.digital-book-reader { width: min(1100px, 96vw); max-height: 94dvh; padding: clamp(12px, 2vw, 28px); }
+.digital-reader-header, .digital-reader-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.digital-reader-header h2 { margin: 0 0 12px; font-size: clamp(1.2rem, 3vw, 1.8rem); }
+.digital-reader-controls { padding: 12px 0; }
+.digital-reader-controls select { min-height: 44px; padding: 6px; }
+.digital-reader-status { min-height: 1.5em; }
+.digital-reader-page { overflow: auto; max-height: 64dvh; background: #f0eee8; border-radius: 8px; text-align: center; }
+.digital-reader-page img { display: block; margin: auto; width: auto; height: auto; max-width: 100%; max-height: 64dvh; object-fit: contain; }
+.digital-reader-page.enlarged img { width: 150%; max-width: none; max-height: none; }
+.digital-reader-page:focus-visible { outline: 3px solid #b9202c; outline-offset: 2px; }
+.digital-reader-page { touch-action: pan-y pinch-zoom; }
+.digital-reader-page.enlarged { touch-action: auto; }
+.digital-reader-help { font-size: .875rem; line-height: 1.5; }
+.digital-reader-text { margin-top: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.digital-reader-text p { white-space: pre-wrap; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.7; overflow-wrap: anywhere; }
+.digital-reader-controls button { min-height: 44px; }
+.digital-book-preparation { grid-column: 1 / -1; }
+.digital-book-preparation > label { display: block; margin: 16px 0; }
+.digital-book-preparation textarea { display: block; width: 100%; }
+.digital-upload-preview { display: block; max-width: 100%; max-height: 480px; margin: 16px auto; object-fit: contain; }
+/* Guardian-owned reading history stays separate from completion awards. */
+.child-reading-history { margin-top: 1.5rem; border-top: 1px solid #dbe3ee; padding-top: 1rem; }
+.child-reading-history ul { list-style: none; padding: 0; display: grid; gap: .75rem; }
+.child-reading-history li { display: grid; gap: .25rem; padding: .85rem; background: #f3f6fa; border-radius: .75rem; overflow-wrap: anywhere; }
+.child-reading-history li span { font-size: .9rem; color: #42536a; }

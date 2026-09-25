@@ -15,6 +15,13 @@ Do not repeat completed batches without a concrete defect or required gate.
 
 ## Latest completed implementation
 
+- Guardian sign-in, account creation and password recovery now include accessible
+  Show/Hide password controls. Fields start hidden; switching sign-in/signup
+  resets visibility. Recovery fields have independent controls. Existing
+  validation, autocomplete and submit locking remain in place. This closes a
+  guardian account usability gap, not the signed-in Alpha verification gate.
+  Verified by TypeScript/build and the existing 194 regression tests; browser
+  and real-device interaction checks remain pending. No backend changes.
 - Protected digital book reader with child-specific household entitlements,
   private image storage, resumable positions, fit/enlarge view, keyboard and
   touch navigation, and accessible page text.
