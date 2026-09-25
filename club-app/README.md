@@ -2,6 +2,9 @@
 
 Standalone family and kid experience backed by the Dustin Courageous Adventure Club Supabase project.
 
+See [Launch milestones](LAUNCH_MILESTONES.md) for the current implementation,
+verification gaps, external dependencies and next delivery milestone.
+
 ## Development
 
 1. Run `npm install`.
@@ -16,7 +19,10 @@ Deploy this `club-app` directory as its own Netlify site or set it as the Netlif
 
 Recommended production URL: `club.dustincourageous.com`.
 
-## Current flows
+## Initial foundation
+
+The list below describes the original scaffold, not the current feature inventory.
+Use the launch milestones above for current readiness and outstanding work.
 
 - Guardian sign up and sign in
 - Automatic profile creation through Supabase Auth
