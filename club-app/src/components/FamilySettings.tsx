@@ -3,6 +3,7 @@ import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { saveNotificationPreferences } from "../lib/familyActions";
 import { revokeHouseholdInvite, saveHouseholdSettings } from "../lib/householdSettings";
+import { FamilyRelationshipSettings } from "./FamilyRelationshipSettings";
 
 type Plan = {
   id: string;
@@ -443,6 +444,7 @@ export function FamilySettings({
 
       {tab==="household"&&(
         <div className="settings-stack">
+          <FamilyRelationshipSettings key={user.id} user={user} />
           <section className="settings-card">
             <p className="eyebrow gold">Family Hub</p>
             <h2>Household settings</h2>

@@ -1,3 +1,4 @@
+import { familyControlLabel } from "../lib/familyDisplay";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
@@ -247,7 +248,7 @@ export function PrivacyDataControls({
           <p className="eyebrow red">Guardian Privacy</p>
           <h2>Data & consent controls</h2>
         </div>
-        <span className="pill">Guardian Controlled</span>
+        <span className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</span>
       </div>
 
       <p className="muted">

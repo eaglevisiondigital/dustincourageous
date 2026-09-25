@@ -6,6 +6,7 @@ import { registerCurrentInstallation } from "./lib/installations";
 import { childProfileInput, householdInput, createOnboardingAttempt } from "./lib/onboarding";
 import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
 import { PasswordField } from "./components/PasswordField";
+import { familyControlLabel, type FamilyRelationship } from "./lib/familyDisplay";
 
 const AdminPortal = lazy(() =>
   import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
@@ -96,6 +97,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const leaderInvitation = window.location.pathname.startsWith("/org-invite");
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [firstName, setFirstName] = useState("");
+  const [relationship, setRelationship] = useState<FamilyRelationship | "">("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [working, setWorking] = useState(false);
@@ -110,6 +112,10 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
     setWorking(true);
     setMessage("");
     try {
+    if (mode === "signup" && !leaderInvitation && !relationship) {
+      setMessage("Please choose Parent or Guardian.");
+      return;
+    }
     if (mode === "forgot") {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: window.location.origin + "/"
@@ -132,7 +138,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
               emailRedirectTo: window.location.origin + window.location.pathname + window.location.search,
               data: {
                 first_name: firstName.trim(),
-                display_name: firstName.trim()
+                display_name: firstName.trim(),
+                ...(!leaderInvitation && relationship ? { family_relationship: relationship } : {})
               }
             }
           })
@@ -231,6 +238,12 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
                 />
               </label>
             )}
+            {mode === "signup" && !leaderInvitation && <label>I Am a
+              <select required disabled={working} value={relationship} onChange={event => setRelationship(event.target.value as FamilyRelationship | "")}>
+                <option value="" disabled>Choose Parent or Guardian</option>
+                <option value="parent">Parent</option><option value="guardian">Guardian</option>
+              </select>
+            </label>}
             <label>
               Email
               <input
@@ -979,7 +992,7 @@ function FamilyPortal({
                   <h1>{household.name}</h1>
                   <p>See progress, manage profiles, approve rewards, and help your kids keep growing.</p>
                 </div>
-                <div className="household-badge">Guardian Controlled</div>
+                <div className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</div>
               </section>
 
               <section className="family-grid">

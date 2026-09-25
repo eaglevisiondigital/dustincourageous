@@ -16,6 +16,16 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25: Added breathing room and 44px targets to account links below
+  Sign In. Family signup requires a Parent/Guardian presentation choice saved
+  in Auth user metadata (family_relationship). Family Hub and privacy badges use
+  Parent Controlled for parent, Guardian Controlled otherwise, with a stronger
+  red background and larger padding/type. Existing users can save their choice
+  in Membership & Settings > Household > Your Family Label. This is per-account
+  display metadata only, never authorization; no membership roles or policies
+  change. Existing accounts default to Guardian until they choose. Build and
+  regression checks run; live signup/update/device verification remains pending.
+
 - September 25 device screenshots confirm Dave reached Family Hub after the
   onboarding fix. Shared pill/status spacing now prevents flex compression,
   centers labels with consistent line height, and uses title case for short
