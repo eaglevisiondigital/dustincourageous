@@ -27,6 +27,7 @@ const ActivitiesHub = lazy(() => import("./components/ActivitiesHub").then((modu
 const FamilyStore = lazy(() => import("./components/FamilyStore").then((module) => ({ default: module.FamilyStore })));
 const ParentApprovals = lazy(() => import("./components/ParentApprovals").then((module) => ({ default: module.ParentApprovals })));
 const ParentProgressOverview = lazy(() => import("./components/ParentProgressOverview").then((module) => ({ default: module.ParentProgressOverview })));
+const FamilyAssignments = lazy(() => import("./components/FamilyAssignments").then(module => ({ default: module.FamilyAssignments })));
 const FamilyChallenges = lazy(() => import("./components/FamilyChallengeActivity").then(module => ({ default: module.FamilyChallenges })));
 const FamilyFaithAtHome = lazy(() => import("./components/FamilyFaithAtHome").then((module) => ({ default: module.FamilyFaithAtHome })));
 const FamilyGroupsCard = lazy(() => import("./components/FamilyGroupsCard").then((module) => ({ default: module.FamilyGroupsCard })));
@@ -966,6 +967,7 @@ function FamilyPortal({
               ) : parentSection === "faith" ? (
                 <div className="family-workspace" key={household.id}>
                   <div><p className="eyebrow gold">Together As A Family</p><h1>Family Activities</h1><p className="muted">Choose an activity, check who took part, and save each child’s participation or completion.</p></div>
+                  <FamilyAssignments householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                   <FamilyChallenges householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                   <ParentApprovals key={household.id} householdId={household.id} childIds={children.map(child=>child.id)} />
                   <FamilyFaithAtHome key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>

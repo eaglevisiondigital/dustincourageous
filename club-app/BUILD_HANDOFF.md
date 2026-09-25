@@ -16,6 +16,19 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Added Family Assignments directly to the Family workspace. Reads
+active group memberships for the current family's children, combines sibling
+memberships into one assignment entry, and shows group, assigned children and
+local due time. Guardians open the existing multi-child activity flow without
+switching child profiles. Other participating children still need challenge access;
+completion does not enroll them in a group. Hidden/unpublished challenges remain
+unavailable. The list shows up to 100 recent assignments with an explicit limit
+notice, refresh/retry and distinct empty/error states. Existing deployed SELECT
+policies were inspected; no policies, schema, content or credit rules changed.
+Five SDK/mock-HTTP tests cover scoped queries, combined siblings, inactive/hidden
+groups, unavailable content, unexpected rows and denied loads. All 223 app tests
+and production build pass. Signed-in group-assignment/device acceptance is pending.
+
 September 25: Completed the Family activity review loop. Family now includes the
 existing household-scoped guardian PIN approval queue. Confirmed saves list each
 selected child and the returned Participating, Awaiting Approval or Completed

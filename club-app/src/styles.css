@@ -5038,3 +5038,6 @@ button.status-chip { min-height: 44px; }
   .participant-grid { grid-template-columns: minmax(0, 1fr); }
   .family-participants { padding: 12px; }
 }
+
+.family-assignment-context { margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #171717; overflow-wrap: anywhere; }
+.family-assignment-context p { color: var(--muted); line-height: 1.5; margin-bottom: 0; }

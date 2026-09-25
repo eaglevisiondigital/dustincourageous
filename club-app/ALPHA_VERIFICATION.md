@@ -160,3 +160,23 @@ Device acceptance: save for two selected children, check the named results, then
 approve or return each pending entry in Family. Confirm current participant
 statuses refresh, required steps need reconfirmation after a return, and changing
 a Faith guide clears selection. Unchecked children must remain unaffected.
+
+## Family assignment entry point
+
+September 25: Added Family Assignments directly to the Family workspace. Reads
+active group memberships for the current family's children, combines sibling
+memberships into one assignment entry, and shows group, assigned children and
+local due time. Guardians open the existing multi-child activity flow without
+switching child profiles. Other participating children still need challenge access;
+completion does not enroll them in a group. Hidden/unpublished challenges remain
+unavailable. The list shows up to 100 recent assignments with an explicit limit
+notice, refresh/retry and distinct empty/error states. Existing deployed SELECT
+policies were inspected; no policies, schema, content or credit rules changed.
+Five SDK/mock-HTTP tests cover scoped queries, combined siblings, inactive/hidden
+groups, unavailable content, unexpected rows and denied loads. All 223 app tests
+and production build pass. Signed-in group-assignment/device acceptance is pending.
+
+Device check: with siblings in one group, verify the assignment appears once,
+shows both assigned names, opens without changing the selected sidebar child,
+and credits only the checked participants. Verify a hidden challenge cannot open
+and refresh failure shows an error instead of an empty list.
