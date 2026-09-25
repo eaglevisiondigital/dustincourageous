@@ -27,7 +27,7 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
     async function load() {
       try {
         const [c,s,p] = await Promise.all([
-          supabase.from("challenges").select("id,title,description,xp_reward,parent_approval_required").eq("id",challengeId).single(),
+          supabase.from("challenges").select("id,title,description,xp_reward,parent_approval_required").eq("id",challengeId).eq("status","published").single(),
           supabase.from("challenge_steps").select("id,title,instructions,is_required").eq("challenge_id",challengeId).order("sort_order"),
           supabase.from("child_challenge_progress").select("child_profile_id,status").eq("challenge_id",challengeId).in("child_profile_id",children.map(child=>child.id))
         ]);

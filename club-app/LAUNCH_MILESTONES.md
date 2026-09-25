@@ -6,6 +6,18 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Open challenge progress rows now launch the existing multi-child
+Family Challenge editor directly from Family Activity History. No participants are
+preselected, including when the history filter names one child. The editor stays
+mounted after completion removes a row from the open list, preserving save results.
+Opening another row starts a fresh editor; close, filter and other open actions are
+disabled during saves. Opening moves keyboard focus to the editor heading. Only
+matching published challenge joins expose an open action; unavailable content
+retains its status context. The editor freshly requires published content on load.
+One new SDK/mock-HTTP test verifies published/mismatched/hidden relations. All 245
+tests and production build pass. No schema, permissions, PIN or XP rules changed.
+Signed-in device and keyboard acceptance remains pending.
+
 September 25: Family Activity History now includes In Progress & Awaiting Approval
 above the recorded activity feed. The shared All Children/individual-child filter
 shows current challenge status, child name and last update; it explicitly separates

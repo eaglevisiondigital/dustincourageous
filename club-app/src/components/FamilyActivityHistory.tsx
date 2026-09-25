@@ -1,17 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { readFamilyActivityPage, readOpenFamilyChallenges, type OpenFamilyChallenge, type FamilyActivity, type ActivityCursor } from "../lib/familyActivityHistory";
+import { FamilyChallengeActivity } from "./FamilyChallengeActivity";
 import type { FamilyChild } from "./FamilyParticipants";
 
 export function FamilyActivityHistory({ householdId, children }: { householdId: string; children: FamilyChild[] }) {
   const [filter, setFilter] = useState("");
+  const [active, setActive] = useState<OpenFamilyChallenge | null>(null);
+  const [working, setWorking] = useState(false);
+  const activityHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { if (active) activityHeading.current?.focus(); }, [active?.id]);
   const childKey = JSON.stringify(children.map(child => child.id).sort());
   const selected = children.some(child => child.id === filter) ? filter : "";
   return <section className="family-section-card">
     <div className="section-heading"><div><p className="eyebrow gold">Saved Progress</p><h2>Family Activity History</h2></div></div>
     <p className="muted">See current challenge participation and recorded activity for your active child profiles. Participation and pending approval do not award completion XP.</p>
-    <label>Show Activity<select value={selected} onChange={event => setFilter(event.target.value)}><option value="">All Children</option>{children.map(child => <option key={child.id} value={child.id}>{child.display_name}</option>)}</select></label>
-    <OpenChallenges key={"open:" + householdId + childKey + selected} householdId={householdId} children={children} childKey={selected ? JSON.stringify([selected]) : childKey}/>
+    <label>Show Activity<select value={selected} disabled={working} onChange={event => setFilter(event.target.value)}><option value="">All Children</option>{children.map(child => <option key={child.id} value={child.id}>{child.display_name}</option>)}</select></label>
+    <OpenChallenges working={working} onOpen={setActive} key={"open:" + householdId + childKey + selected} householdId={householdId} children={children} childKey={selected ? JSON.stringify([selected]) : childKey}/>
+    {active?.challengeId && <section className="family-section-card" aria-label="Resume Family Challenge">
+      <div className="section-heading"><h3 ref={activityHeading} tabIndex={-1}>Resume Family Challenge</h3>
+        <button type="button" className="text-button" disabled={working} onClick={() => setActive(null)}>Close Challenge</button>
+      </div>
+      <p className="muted">Choose everyone who took part. The history filter does not select participants or award credit.</p>
+      <FamilyChallengeActivity key={active.id} householdId={householdId} children={children} challengeId={active.challengeId} onBusyChange={setWorking}/>
+    </section>}
     <h3>Recorded Activity</h3>
     <ActivityList key={householdId + childKey + selected} householdId={householdId} children={children} childKey={selected ? JSON.stringify([selected]) : childKey}/>
   </section>;
@@ -66,7 +78,7 @@ function ActivityList({ householdId, children, childKey }: { householdId: string
   </div>;
 }
 
-function OpenChallenges({ householdId, children, childKey }: { householdId: string; children: FamilyChild[]; childKey: string }) {
+function OpenChallenges({ householdId, children, childKey, working, onOpen }: { householdId: string; children: FamilyChild[]; childKey: string; working: boolean; onOpen: (item: OpenFamilyChallenge) => void }) {
   const [items, setItems] = useState<OpenFamilyChallenge[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -99,6 +111,9 @@ function OpenChallenges({ householdId, children, childKey }: { householdId: stri
         <span className="status-chip">{item.status === "pending_parent" ? "Awaiting Approval" : "In Progress"}</span>
       </div>
       <h4>{item.title}</h4><p>Updated <time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleString()}</time></p>
+      <button type="button" className="secondary-button" disabled={working || loading || error || !item.challengeId} onClick={() => onOpen(item)}>
+        {item.challengeId ? "Open Family Challenge" : "Challenge Unavailable"}
+      </button>
     </li>)}</ul>
     {hasMore && <p className="muted">Showing the 50 most recently updated open challenges. Choose a child above to narrow the list.</p>}
   </div>;

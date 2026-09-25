@@ -27,6 +27,7 @@ export async function readFamilyActivityPage(client: SupabaseClient<Database>, h
 export type OpenFamilyChallenge = {
   id: string;
   childId: string;
+  challengeId: string | null;
   title: string;
   status: "in_progress" | "pending_parent";
   updatedAt: string;
@@ -37,9 +38,9 @@ export async function readOpenFamilyChallenges(client: SupabaseClient<Database>,
   if (!uuid.test(householdId) || ids.some(id => !uuid.test(id))) throw new Error("Invalid family progress request");
   if (!ids.length) return { items: [] as OpenFamilyChallenge[], hasMore: false };
   const { data, error } = await client.from("child_challenge_progress")
-    .select("id,child_profile_id,status,updated_at,child_profiles!inner(household_id,status),challenges(title)")
+    .select("id,challenge_id,child_profile_id,status,updated_at,child_profiles!inner(household_id,status),challenges(id,title,status)")
     .in("child_profile_id", ids).eq("child_profiles.household_id", householdId).eq("child_profiles.status", "active")
-    .in("status", ["in_progress", "pending_parent"])
+    .eq("challenges.status", "published").in("status", ["in_progress", "pending_parent"])
     .order("updated_at", { ascending: false }).order("id", { ascending: false }).limit(51);
   if (error) throw error;
   const items = (data ?? []).map(row => {
@@ -47,8 +48,10 @@ export async function readOpenFamilyChallenges(client: SupabaseClient<Database>,
     if (!uuid.test(row.id) || !ids.includes(row.child_profile_id) || child?.household_id !== householdId || child?.status !== "active"
       || (row.status !== "in_progress" && row.status !== "pending_parent")
       || !timestamp.test(row.updated_at) || !Number.isFinite(Date.parse(row.updated_at))) throw new Error("Family progress could not be confirmed");
-    return { id: row.id, childId: row.child_profile_id, status: row.status,
-      title: row.challenges?.title ?? "Challenge Unavailable", updatedAt: row.updated_at } as OpenFamilyChallenge;
+    const challenge = row.challenges;
+    const available = challenge?.status === "published" && challenge.id === row.challenge_id && uuid.test(challenge.id);
+    return { id: row.id, challengeId: available ? challenge.id : null, childId: row.child_profile_id, status: row.status,
+      title: available ? challenge.title : "Challenge Unavailable", updatedAt: row.updated_at } as OpenFamilyChallenge;
   });
   return { items: items.slice(0, 50), hasMore: items.length > 50 };
 }

@@ -987,7 +987,7 @@ function FamilyPortal({
                   <FamilyChallenges householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                   <ParentApprovals key={household.id} householdId={household.id} childIds={children.map(child=>child.id)} />
                   <FamilyFaithAtHome key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
-                  <FamilyActivityHistory householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
+                  <FamilyActivityHistory key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                 </div>
               ) : parentSection === "groups" ? (
                 <FamilyGroupsCard
