@@ -946,6 +946,8 @@ function FamilyPortal({
                 />
               ) : parentSection === "groups" ? (
                 <FamilyGroupsCard
+                  key={household.id}
+                  onSelectChild={selectChild}
                   children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
                   selectedChildId={selectedChild?.id ?? ""}
                   onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
