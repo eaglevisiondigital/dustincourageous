@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { validatedLaunchChecks } from "../lib/adminOperations";
 
 type LaunchCheck = {
   area: string;
@@ -15,26 +16,31 @@ export function LaunchReadinessAdmin() {
   const [message,setMessage]=useState("");
   const [loading,setLoading]=useState(true);
   const [verified,setVerified]=useState(false);
+  const loadVersion=useRef(0);
+  const [checkedAt,setCheckedAt]=useState<string|null>(null);
 
   const load=useCallback(async()=>{
+    const version=++loadVersion.current;
     setLoading(true);
     setVerified(false);
+    setChecks([]);setCheckedAt(null);
     setMessage("");
+    try {
     const {data,error}=await supabase.rpc("admin_get_production_launch_gate");
-    if(error){
-      setMessage(error.message);
-      setChecks([]);
-      setLoading(false);
-      return;
-    }
-    const nextChecks=(data??[]) as LaunchCheck[];
+    if(version!==loadVersion.current)return;
+    if(error)throw error;
+    const nextChecks=validatedLaunchChecks(data);
     setChecks(nextChecks);
     setVerified(nextChecks.length>0);
-    if(!nextChecks.length) setMessage("Launch checks returned no results. Production readiness cannot be verified.");
-    setLoading(false);
+    setCheckedAt(new Date().toLocaleString());
+    } catch(error) {
+      if(version===loadVersion.current)setMessage(error instanceof Error?error.message:"Launch checks could not be loaded. Readiness remains unverified.");
+    } finally {
+      if(version===loadVersion.current)setLoading(false);
+    }
   },[]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{void load();return ()=>{loadVersion.current+=1;};},[load]);
 
   const blockers=useMemo(
     ()=>checks.filter((item)=>item.severity==="blocker"&&!item.passed),
@@ -62,19 +68,19 @@ export function LaunchReadinessAdmin() {
 
   return (
     <div className="launch-gate-admin">
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="alert">{message}</div>}
 
       <section className={ready?"launch-gate-hero ready":"launch-gate-hero blocked"}>
         <div>
           <p className="eyebrow gold">Production Readiness</p>
-          <h2>{loading?"Checking production readiness":!verified?"Production readiness unverified":ready?"Launch blockers cleared":"Not ready for production launch"}</h2>
+          <h2>{loading?"Checking production readiness":!verified?"Production readiness unverified":ready?"Automated blockers cleared":"Not ready for production launch"}</h2>
           <p>
             This gate checks DC Governance, theology/prayer compliance, guardian safety, privacy operations,
             communications delivery, scheduled workers, commerce, and stale operational failures.
           </p>
         </div>
         <div className="launch-gate-score">
-          <strong>{passed.length}/{checks.length}</strong>
+          <strong>{verified?`${passed.length}/${checks.length}`:"?"}</strong>
           <span>checks passing</span>
         </div>
       </section>
@@ -82,6 +88,7 @@ export function LaunchReadinessAdmin() {
       <button className="secondary-button launch-gate-recheck" type="button" disabled={loading} onClick={()=>void load()}>
         {loading?"Checking...":"Recheck launch readiness"}
       </button>
+      {checkedAt&&<p className="muted">Last checked: {checkedAt}</p>}
 
       <div className="launch-gate-summary">
         <article className={!verified||blockers.length?"bad":"good"}>
@@ -180,6 +187,8 @@ export function LaunchReadinessAdmin() {
         <p>
           A green CI build proves the software compiles. This Launch Gate is stricter. It checks whether the
           actual operational systems required to serve families safely are configured and healthy.
+          Signed-in device walkthroughs, approved book files and content, and provider payment reconciliation
+          still require separate verification. Clearing automated checks does not approve deployment.
         </p>
       </section>
     </div>
