@@ -1,3 +1,4 @@
+import { authFeedback, authIsRateLimited, emailRetrySeconds } from "./lib/authFeedback";
 import { adultSignupMetadata } from "./lib/adultSignup";
 import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
@@ -110,10 +111,21 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const [message, setMessage] = useState(initialMessage);
   const [confirmationPending, setConfirmationPending] = useState(false);
   const authBusy = useRef(false);
+  const emailRetryAt = useRef(0);
+  const [emailWait, setEmailWait] = useState(0);
+  useEffect(() => {
+    if (!emailWait) return;
+    const timer = window.setInterval(() => setEmailWait(emailRetrySeconds(emailRetryAt.current, Date.now())), 1000);
+    return () => window.clearInterval(timer);
+  }, [emailWait > 0]);
+  function pauseEmailRequests() {
+    emailRetryAt.current = Date.now() + 60000;
+    setEmailWait(60);
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (authBusy.current) return;
+    if (authBusy.current || (mode !== "signin" && emailRetrySeconds(emailRetryAt.current, Date.now()) > 0)) return;
     authBusy.current = true;
     setWorking(true);
     setMessage("");
@@ -126,10 +138,10 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: window.location.origin + "/"
       });
-      setWorking(false);
+      if (!error || authIsRateLimited(error)) pauseEmailRequests();
       setMessage(
         error
-          ? error.message
+          ? authFeedback(error)
           : "If an Adventure Club account uses that email, a secure password reset link is on its way."
       );
       return;
@@ -155,7 +167,9 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
     setWorking(false);
 
     if (result.error) {
-      setMessage(result.error.message);
+      setMessage(authFeedback(result.error));
+      if (result.error.code === "email_not_confirmed") setConfirmationPending(true);
+      if (mode === "signup" && authIsRateLimited(result.error)) pauseEmailRequests();
       return;
     }
 
@@ -164,7 +178,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
     }
 
     if (mode === "signup" && !result.data.session) {
-      setMessage("Check your email to confirm your guardian account, then come back and sign in.");
+      pauseEmailRequests();
+      setMessage("Check your email to confirm your adult account, then come back and sign in. Check the address above and your spam folder if the email does not arrive.");
       setConfirmationPending(true);
     }
     } catch {
@@ -173,7 +188,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   }
 
   async function resendConfirmation() {
-    if (!email.trim() || authBusy.current) return;
+    if (!email.trim() || authBusy.current || emailRetrySeconds(emailRetryAt.current, Date.now()) > 0) return;
     authBusy.current = true;
     setWorking(true);
     setMessage("");
@@ -184,7 +199,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
       options: { emailRedirectTo: window.location.origin + window.location.pathname + window.location.search }
     });
     setWorking(false);
-    setMessage(error ? error.message : "A new confirmation email has been requested. Please check your inbox and spam folder.");
+    if (!error || authIsRateLimited(error)) pauseEmailRequests();
+    setMessage(error ? authFeedback(error) : "A new confirmation email has been requested. Please check your inbox and spam folder.");
     } catch {
       setMessage("We could not request another confirmation email. Please try again.");
     } finally { authBusy.current = false; setWorking(false); }
@@ -287,11 +303,12 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
 
             {message && <div className="form-message" role="status">{message}</div>}
 
-            <button className="primary-button" disabled={working} type="submit">
+            {emailWait > 0 && <p className="muted">Please wait {emailWait} seconds before requesting another email. You can still sign in.</p>}
+            <button className="primary-button" disabled={working || (mode !== "signin" && emailWait > 0)} type="submit">
               {working ? "Working..." : mode === "forgot" ? "Send Secure Reset Link" : mode === "signin" ? "Sign In" : "Create Family Account"}
             </button>
             {confirmationPending && (
-              <button className="secondary-button" disabled={working} type="button" onClick={() => void resendConfirmation()}>
+              <button className="secondary-button" disabled={working || emailWait > 0} type="button" onClick={() => void resendConfirmation()}>
                 Resend Confirmation Email
               </button>
             )}

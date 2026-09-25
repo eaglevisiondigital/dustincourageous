@@ -6,6 +6,17 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Auth recovery feedback now maps documented Supabase error codes to
+plain-language guidance for unconfirmed email, incorrect credentials, throttling,
+weak passwords and unavailable signup. Unconfirmed sign-in offers confirmation
+resend directly. Successful email requests and rate-limited email attempts start a
+60-second in-memory retry pause shared across signup/reset/resend; sign-in remains
+available. This is UI pacing, not a security rate limit, provider configuration fix
+or promise of email delivery. No automatic email retries or messages were sent in
+verification. Four pure-helper tests cover error guidance and retry timing. All 249
+app tests and production build pass. Real signup/recovery email delivery and device
+acceptance remain pending.
+
 September 25: Open challenge progress rows now launch the existing multi-child
 Family Challenge editor directly from Family Activity History. No participants are
 preselected, including when the history filter names one child. The editor stays
