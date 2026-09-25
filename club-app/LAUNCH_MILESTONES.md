@@ -6,6 +6,13 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+The guardian notification-history batch removes the fixed 12-alert viewing
+limit. Load older notifications preserves stable timestamp/ID ordering, while
+Refresh returns to the newest alerts. Failed page requests retain the displayed
+history and retry position. All 199 tests and the production build pass; five
+new SDK/mock-HTTP tests cover paging and guardian scoping. Live signed-in
+notification and cross-account checks remain pending.
+
 The Family Hub reading continuation batch adds Read together directly to saved
 reading places. It uses a fresh access check and the latest server position,
 with retry/cancel and preserved history when access is unavailable. Existing

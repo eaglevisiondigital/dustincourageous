@@ -15,6 +15,15 @@ Do not repeat completed batches without a concrete defect or required gate.
 
 ## Latest completed implementation
 
+- Guardian notifications now support loading older alerts and refreshing the
+  newest alerts. Pages use timestamp plus ID cursors, preserving microseconds
+  and tied timestamps, with 12 displayed rows and one lookahead. Failed older
+  loads retain the list and retry cursor. Account changes remount the inbox;
+  stale requests cannot update it. Read/refresh/page requests are serialized.
+  Five new tests use the actual Supabase SDK with mocked HTTP responses to check
+  guardian filtering, request encoding, page boundaries, same-time alerts, new
+  arrivals, malformed cursors and denied/wrong-user responses. They do not prove
+  live RLS or signed-in UI behavior. No schema or policy changes.
 - Family Hub saved reading places now offer Read together. Each launch checks
   current access and resumes the server's latest position using the existing
   protected reader, not the historical page displayed in the list. Locked and
@@ -41,7 +50,7 @@ Do not repeat completed batches without a concrete defect or required gate.
   with book title, saved page and local save time. Unavailable book metadata
   retains the saved place. Errors remain distinct from empty reading history.
   Confirmed reader saves refresh this panel. No completion or XP awarded by it.
-- 194 automated tests pass. Production build checked with this batch. GitHub CI
+- 199 automated tests pass. Production build checked with this batch. GitHub CI
   must be checked on the pushed commit before reporting completion.
 - No schema or permissions changed in the Family Hub reading-history batch.
 
