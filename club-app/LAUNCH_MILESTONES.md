@@ -6,6 +6,18 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Added Mark Loaded Notifications Read to the family inbox. The action
+updates only the current adult's loaded unread IDs, deduplicates them and confirms
+returned IDs, ownership and read status. Already-read and unloaded notifications
+are excluded. Partial confirmations update only confirmed items; the remainder
+stay visible with refresh guidance. Unread-only mode removes confirmed rows while
+preserving its older-page cursor. Refreshes retain the visible notification list,
+and loading/working states block overlapping actions. Older-notification button
+labels now use title case. Five tests cover scope, no-op inputs, ownership,
+partial results and invalid responses; all 280 tests and production build pass.
+No delivery providers, communication preferences, messages or backend permissions
+changed. Signed-in bulk-read and device interaction acceptance remain pending.
+
 September 25: Reward request recovery now spans families and staff. Family rewards
 stay visible through reloads, block requests while stale, and commit the displayed
 unlock/status snapshot only after both reads succeed. Added refresh controls in

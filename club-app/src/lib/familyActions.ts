@@ -48,3 +48,18 @@ export async function markNotificationRead(client: SupabaseClient<Database>, use
   if (error) throw error;
   if (data?.id !== id || data.status !== "read") throw new Error("Read status could not be confirmed.");
 }
+
+export async function markLoadedNotificationsRead(client: SupabaseClient<Database>, userId: string,
+  items: { id: string; user_id: string; status: string }[]) {
+  if (items.some(item => item.user_id !== userId)) throw new Error("Notification owner could not be confirmed.");
+  const ids = [...new Set(items.filter(item => item.status === "unread").map(item => item.id))];
+  if (!ids.length) return { confirmed: [] as string[], unconfirmed: [] as string[] };
+  const {data,error} = await client.from("user_notifications")
+    .update({status:"read",read_at:new Date().toISOString()})
+    .eq("user_id",userId).eq("status","unread").in("id",ids).select("id,user_id,status");
+  if (error) throw error;
+  const rows = data ?? [];
+  if (rows.some(row => !ids.includes(row.id) || row.user_id !== userId || row.status !== "read") || new Set(rows.map(row => row.id)).size !== rows.length) throw new Error("Notification updates could not be confirmed.");
+  const confirmed = rows.map(row => row.id);
+  return {confirmed,unconfirmed:ids.filter(id => !confirmed.includes(id))};
+}
