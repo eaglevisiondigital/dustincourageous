@@ -16,6 +16,17 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25 device screenshots confirm Dave reached Family Hub after the
+  onboarding fix. Shared pill/status spacing now prevents flex compression,
+  centers labels with consistent line height, and uses title case for short
+  labels while explanatory pill sentences retain sentence case. Family Hub and
+  Sign Out labels corrected. Guardian Controlled and All Clear stay on one line;
+  their card rows wrap instead of squeezing the badges. Notification counts are
+  separate Unread/Loaded pills, with a 48px, inherited-font select. Mobile header
+  now scrolls with the page, actions and primary tabs wrap, and compact headings
+  align left. Production build passes. Cloud browser still has an unsigned-in
+  signup form; updated signed-in device visual confirmation remains pending.
+
 - September 25: Dave reached signed-in household setup on his device and
   reported creation failure. Reproduced SQLSTATE 42501 in the deployed RPC:
   INSERT RETURNING checked household SELECT RLS before the AFTER INSERT trigger

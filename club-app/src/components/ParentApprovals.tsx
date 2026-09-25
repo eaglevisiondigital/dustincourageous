@@ -187,7 +187,7 @@ export function ParentApprovals({
           <p>Challenges that require a parent or guardian will appear here before XP is awarded.</p>
           {message && <p role="status">{message}</p>}
         </div>
-        <span className="status-chip done">All clear</span>
+        <span className="status-chip done">All Clear</span>
       </section>
     );
   }

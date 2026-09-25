@@ -247,7 +247,7 @@ export function PrivacyDataControls({
           <p className="eyebrow red">Guardian Privacy</p>
           <h2>Data & consent controls</h2>
         </div>
-        <span className="pill">Guardian controlled</span>
+        <span className="pill">Guardian Controlled</span>
       </div>
 
       <p className="muted">

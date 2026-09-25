@@ -564,7 +564,7 @@ export function BibleHub({
               <p className="eyebrow gold">Prayer</p>
               <h2>Talk with God</h2>
             </div>
-            <span className="pill">No private prayer text is stored</span>
+            <span className="pill sentence-pill">No private prayer text is stored</span>
           </div>
           <div className="prayer-grid">
             {prayers.map((prayer) => {

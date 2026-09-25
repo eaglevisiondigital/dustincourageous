@@ -7,8 +7,8 @@ export function NotificationsPanel({ userId }: { userId: string }) {
   const [filter, setFilter] = useState<NotificationFilter>("all");
   return <section className="family-section-card">
     <div className="section-heading compact-heading"><div><p className="eyebrow red">Family Activity</p><h2>Notifications</h2></div></div>
-    <label className="notification-filter">Show notifications<select value={filter} onChange={event => setFilter(event.target.value as NotificationFilter)}>
-      <option value="all">All notifications</option><option value="unread">Unread only</option>
+    <label className="notification-filter">Show Notifications<select value={filter} onChange={event => setFilter(event.target.value as NotificationFilter)}>
+      <option value="all">All Notifications</option><option value="unread">Unread Only</option>
     </select></label>
     <NotificationInbox key={`${userId}:${filter}`} userId={userId} filter={filter} />
   </section>;
@@ -68,8 +68,8 @@ function NotificationInbox({ userId, filter }: { userId: string; filter: Notific
   return <div>
     <div className="notification-toolbar">
       <button type="button" className="secondary-button" disabled={disabled}
-        onClick={() => { if (!busy.current) void load(); }}>Refresh notifications</button>
-      {!loading && <span className="pill">{items.filter(item => item.status === "unread").length} unread in {items.length} loaded notifications</span>}
+        onClick={() => { if (!busy.current) void load(); }}>Refresh Notifications</button>
+      {!loading && <div className="notification-counts" aria-label="Loaded notification counts"><span className="pill">{items.filter(item => item.status === "unread").length} Unread</span><span className="pill">{items.length} Loaded</span></div>}
     </div>
     {actionError && <div className="form-message" role="alert">{actionError}</div>}
     {error && <p role="alert">{error}</p>}

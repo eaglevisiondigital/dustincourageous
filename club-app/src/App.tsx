@@ -189,7 +189,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
             challenges, learn God's Word, earn rewards, and keep moving forward.
           </p>
           <div className="trust-row">
-            <span>Guardian controlled</span>
+            <span>Guardian Controlled</span>
             <span>No child email required</span>
             <span>Family first</span>
           </div>
@@ -683,7 +683,7 @@ function FamilyPortal({
                 Lock Kid View
               </button>
               <button className={view === "parent" ? "mode active" : "mode"} onClick={() => setView("parent")}>
-                Family hub
+                Family Hub
               </button>
               {adminRole && (
                 <button className="text-button small" onClick={onAdmin}>
@@ -691,7 +691,7 @@ function FamilyPortal({
                 </button>
               )}
               <button className="text-button small" onClick={signOut}>
-                Sign out
+                Sign Out
               </button>
             </>
           )}
@@ -844,7 +844,7 @@ function FamilyPortal({
                     <p className="eyebrow red">Keep Going</p>
                     <h2>Today's adventures</h2>
                   </div>
-                  <span className="pill">Fresh challenges appear here</span>
+                  <span className="pill sentence-pill">Fresh challenges appear here</span>
                 </div>
 
                 {challenges.length ? (
@@ -979,7 +979,7 @@ function FamilyPortal({
                   <h1>{household.name}</h1>
                   <p>See progress, manage profiles, approve rewards, and help your kids keep growing.</p>
                 </div>
-                <div className="household-badge">Guardian controlled</div>
+                <div className="household-badge">Guardian Controlled</div>
               </section>
 
               <section className="family-grid">

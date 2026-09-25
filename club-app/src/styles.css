@@ -19,7 +19,7 @@
 * { box-sizing: border-box; }
 html { background: #070707; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 20% 0%, rgba(198,40,40,.17), transparent 34rem), #070707; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: wait; opacity: .65; }
 h1, h2, h3, p { margin-top: 0; }
@@ -45,7 +45,8 @@ a { color: inherit; }
 .story-content h1 { max-width: 680px; font-size: clamp(2.6rem, 5vw, 5.2rem); line-height: .98; margin-bottom: 24px; }
 .story-content > p:not(.eyebrow) { max-width: 620px; font-size: 1.08rem; line-height: 1.65; color: #e1ddd6; }
 .trust-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-.trust-row span, .pill, .household-badge { padding: 9px 13px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(0,0,0,.35); font-size: .78rem; color: #e8e3dc; }
+.trust-row span, .pill, .household-badge { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; max-width: 100%; padding: 9px 14px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(0,0,0,.35); font-size: .78rem; line-height: 1.4; text-align: center; text-transform: capitalize; color: #e8e3dc; }
+.pill.sentence-pill { text-transform: none; }
 
 .auth-panel { display: grid; place-items: center; padding: 40px; background: linear-gradient(145deg, #0c0c0c, #141414); }
 .auth-card { width: min(100%, 520px); padding: clamp(28px, 4vw, 52px); background: rgba(24,24,24,.86); border: 1px solid var(--line); border-radius: 30px; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
@@ -395,8 +396,14 @@ dialog.native-modal :focus-visible {
   line-height: 1.45;
 }
 .status-chip {
-  display: inline-block;
-  padding: 7px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  max-width: 100%;
+  padding: 8px 13px;
+  line-height: 1.4;
+  text-align: center;
   border-radius: 999px;
   background: rgba(240,198,91,.11);
   color: #e2ca88;
@@ -4928,3 +4935,28 @@ select:focus {
 .support-ticket-dates dd { margin: .25rem 0 0; }
 .support-ticket-message { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; line-height: 1.6; }
 .notification-filter { max-width: 280px; }
+
+/* Short labels retain breathing room; sentences and names retain their casing. */
+.section-heading { flex-wrap: wrap; }
+.section-heading > div, .parent-hero > div:first-child,
+.parent-approvals-card.clear > div { min-width: 0; }
+.parent-hero, .parent-approvals-card.clear { flex-wrap: wrap; }
+.parent-hero > div:first-child, .parent-approvals-card.clear > div { flex: 1 1 280px; }
+.household-badge, .parent-approvals-card.clear .status-chip { white-space: nowrap; }
+.xp-chip { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1.4; }
+.mode { min-height: 44px; white-space: nowrap; }
+.header-actions { flex-wrap: wrap; justify-content: flex-end; }
+.header-actions .text-button { min-height: 44px; padding: 10px 12px; }
+.notification-toolbar { align-items: center; gap: 12px 16px; margin: 16px 0; }
+.notification-counts { display: flex; flex-wrap: wrap; gap: 8px; }
+.notification-filter select { min-height: 48px; padding: 12px 14px; font-size: 1rem; line-height: 1.4; }
+.kid-subnav { flex-wrap: wrap; }
+.kid-subnav-button { flex: 0 0 auto; min-height: 44px; white-space: nowrap; }
+
+@media (max-width: 700px) {
+  .app-header { position: static; flex-direction: column; align-items: stretch; }
+  .header-actions { justify-content: flex-start; gap: 8px; }
+  .compact-heading { align-items: flex-start; }
+  .parent-approvals-card.clear { align-items: flex-start; }
+  .family-section-card, .parent-approvals-card { padding: 22px 20px; }
+}
