@@ -6,6 +6,22 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Reproduced expired-checkout payment acceptance in the deployed
+mark_order_paid_from_provider RPC using rollback-only synthetic orders. Deployed
+`20260925132731_validate_payment_checkout_under_lock.sql`: payment confirmation
+locks checkout before order, matching cancellation/expiry, then validates current
+provider_pending status, clock-time expiry, provider/checkout identity, amount and
+currency under those locks. Only pending_payment orders may newly become paid;
+existing committed event replay behavior remains. No function permission expansion:
+service_role only, never guardian/anonymous clients. Ten SQL checks pass before
+and after deployment, including expired/canceled/early/mismatched inputs, valid
+commit and replay. Fixtures use no products, inventory or real payment provider;
+this is transition verification, not concurrent-load or live payment acceptance.
+No prices, provider configuration or checkout enablement changed. Existing Edge
+handler routes rejected captures to reconciliation. Full stock/fulfillment races,
+early-provider callback retry and sandbox integration remain release gates.
+App code is unchanged from the 227-test/build-passing checkpoint.
+
 September 25: Reproduced a legacy/direct Faith completion access gap: an
 unpublished draft guide accepted a child completion through direct table INSERT.
 Deployed `20260925131231_protect_direct_family_faith_credit.sql` to strengthen the
