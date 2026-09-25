@@ -15,6 +15,15 @@ Do not repeat completed batches without a concrete defect or required gate.
 
 ## Latest completed implementation
 
+- Family Hub saved reading places now offer Read together. Each launch checks
+  current access and resumes the server's latest position using the existing
+  protected reader, not the historical page displayed in the list. Locked and
+  unavailable books retain their saved history. Failed checks can be retried;
+  canceled/unmounted checks cannot open a reader later. Reading-history refresh
+  does not unmount an open reader. Closing returns focus to the selected book
+  button or history section. No schema, permission, artwork or XP changes.
+  Production build and 194 existing regression tests pass; signed-in interaction
+  and device verification remain pending.
 - Guardian sign-in, account creation and password recovery now include accessible
   Show/Hide password controls. Fields start hidden; switching sign-in/signup
   resets visibility. Recovery fields have independent controls. Existing

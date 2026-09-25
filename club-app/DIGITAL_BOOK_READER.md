@@ -4,6 +4,11 @@ Checkpoint: September 24, 2026, America/Chicago.
 
 ## Implemented
 
+- Guardians can choose Read together from a child's Family Hub reading history.
+  A fresh protected lookup determines access, edition and saved page before the
+  reader opens. Historical page numbers never grant access or override a newer
+  saved position. Background history refresh preserves the open reader. A failed
+  lookup offers retry; closing/canceling ignores late responses.
 - Bookshelf opens a private image-page reader with previous/next, page selection,
   fit/enlarge controls, page-error retry, and a confirmed saved place per child.
 - The focused page supports arrow keys, Home and End. Deliberate horizontal touch

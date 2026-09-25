@@ -30,7 +30,7 @@ export function DigitalBookEntry({ childId, bookId, title }: { childId: string; 
   </div>;
 }
 
-function DigitalBookReader({ childId, bookId, title, book, onClose }: {
+export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
   childId: string; bookId: string; title: string; book: ReadyDigitalBook; onClose: () => void;
 }) {
   const headingId = useId();

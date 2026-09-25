@@ -6,6 +6,12 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+The Family Hub reading continuation batch adds Read together directly to saved
+reading places. It uses a fresh access check and the latest server position,
+with retry/cancel and preserved history when access is unavailable. Existing
+194 regression tests and the production build pass. The signed-in walkthrough
+is still an open acceptance gate.
+
 The guardian account usability batch adds Show/Hide password controls to sign-in,
 signup and both recovery fields. Production build and the existing 194 tests
 pass. Signed-in and physical-device acceptance remain pending.
