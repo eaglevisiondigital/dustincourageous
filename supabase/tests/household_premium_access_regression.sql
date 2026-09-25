@@ -88,7 +88,7 @@ update premium_challenges set status='published';
 update premium_adventures set status='published';
 update premium_events set status='published';
 do $$ declare fn text; definition text; begin
-  foreach fn in array array['child_can_access_challenge','child_can_access_adventure','can_view_event','register_for_event_impl'] loop
+  foreach fn in array array['child_can_access_challenge','child_can_access_adventure','can_view_event','register_for_event_impl','event_audience_allows_registration'] loop
     select pg_get_functiondef(p.oid) into definition from pg_proc p join pg_namespace n on n.oid=p.pronamespace
       where n.nspname='private' and p.proname=fn;
     definition:=replace(definition,'public.challenges','pg_temp.premium_challenges');

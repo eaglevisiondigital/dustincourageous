@@ -90,8 +90,19 @@ export function FamilyEventsCard({
     if(error)throw error;
     if(!["registered","waitlist","attended"].includes(data??""))throw new Error("Registration status could not be confirmed.");
     setMessage(data==="waitlist"?"Added to the waitlist. A place is not yet confirmed.":data==="attended"?"Attendance is already recorded.":"Registration confirmed.");
-    } catch {
-      setMessage("Registration could not be confirmed. Please check the refreshed registration status before trying again.");
+    } catch (error) {
+      const reason=typeof error==="object"&&error!==null&&"message" in error ? error.message : null;
+      if(reason==="Event is not available for this family selection") {
+        setMessage("This child or family is not eligible for this event. Choose an eligible child or review your group connection.");
+      } else if(reason==="This household requires premium event access") {
+        setMessage("This event requires active membership access for the selected family.");
+      } else if(reason==="Event registration is closed") {
+        setMessage("Registration for this event has closed.");
+      } else if(reason==="Child does not belong to this household") {
+        setMessage("Choose an active child from this family before registering.");
+      } else {
+        setMessage("Registration could not be confirmed. Please check the refreshed registration status before trying again.");
+      }
     } finally {
       await load();
       actionBusy.current=false;setWorking("");
@@ -165,7 +176,7 @@ export function FamilyEventsCard({
                   </>
                 ):(
                   <button type="button" className="secondary-button" disabled={!!working||!time||Date.parse(event.starts_at)<=Date.now()} onClick={()=>void register(event.id)}>
-                    {working===event.id?"Saving...":!time?"Check event details":Date.parse(event.starts_at)<=Date.now()?"Registration closed":"Register"}
+                    {working===event.id?"Saving...":!time?"Check Event Details":Date.parse(event.starts_at)<=Date.now()?"Registration Closed":"Register"}
                   </button>
                 )}
               </div>

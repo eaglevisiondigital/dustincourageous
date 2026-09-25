@@ -14,6 +14,7 @@ create function pg_temp.can_manage_household(id uuid) returns boolean language s
  select id=current_setting('test.household')::uuid;
 $$;
 create function pg_temp.can_view_event(id uuid) returns boolean language sql as $$ select true; $$;
+create function pg_temp.event_audience_allows_registration(e uuid,h uuid,c uuid) returns boolean language sql as $$ select true; $$;
 do $$
 declare name text; definition text;
 begin
@@ -24,6 +25,7 @@ begin
     definition:=replace(definition,'public.','pg_temp.');
     definition:=replace(definition,'private.can_manage_household','pg_temp.can_manage_household');
     definition:=replace(definition,'private.can_view_event','pg_temp.can_view_event');
+    definition:=replace(definition,'private.event_audience_allows_registration','pg_temp.event_audience_allows_registration');
     execute definition;
   end loop;
 end;

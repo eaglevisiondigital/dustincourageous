@@ -16,6 +16,20 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25: Reproduced and fixed group-event registration borrowing another
+  managed child's group membership. Deployed event-audience migration checks the
+  selected child or household, gives a specific group precedence over its wider
+  organization, and requires active child/group/organization membership. Adult
+  leadership does not bypass selected-child participation. Whole-family group
+  entries need a qualifying child in that household; organization-wide family
+  entries may also qualify through the registering adult's active org membership.
+  Existing registrations are retained and cancellation remains available.
+  Family Events now explains audience, paid-access, closed-registration and
+  inactive/wrong-family selections without exposing raw backend errors.
+  Eight audience checks, ten premium checks, event capacity/retry regression,
+  212 app tests and production build pass. Synthetic published event copies are
+  test-only and all fixtures roll back. Signed-in/device acceptance remains open.
+
 - September 25: Reproduced and repaired a cross-household Book Companion write:
   a dual-household guardian could use one family's entitlement for the other's
   child. Deployed `20260925120405_scope_child_household_premium_access.sql`.

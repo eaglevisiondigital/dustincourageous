@@ -6,6 +6,12 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Event registration now qualifies the selected child/family for the
+specific group or organization. Removed memberships and paused groups/orgs are
+blocked. Eight audience checks pass alongside premium-access and capacity/retry
+regressions; synthetic event publication is isolated to transaction-only copies.
+The frontend explains expected eligibility failures. Signed-in acceptance is open.
+
 September 25: Fixed a reproduced cross-household Book Companion access leak.
 Selected-household checks now protect companion/challenge/adventure writes,
 premium XP-threshold rewards and premium event registration. Adventure progress

@@ -62,12 +62,32 @@ New helpers live in the private schema with fixed search paths and explicit
 execution grants. Existing RLS remains in force. Catalog visibility remains
 user-wide; writes and earned benefits are scoped to the selected household.
 Premium group/organization events now require the selected family's entitlement,
-but broader group/organization audience qualification still needs review.
+and registration audience qualification is now checked as described below.
 No historical progress or rewards were rewritten by this repair.
 
 Security advisor: no database findings; the existing Auth
 [leaked-password protection setting](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
 remains disabled and is an open launch task.
+
+## Event registration audience repair (September 25)
+
+`event_audience_regression.sql` reproduced registration for the wrong group via
+another managed child. Eight checks now pass against real household, group and
+registration paths, using only temporary synthetic event copies for publication.
+Checks cover cross-household and sibling-group denial; eligible child/family
+success; organization qualification; open events; leadership not bypassing
+child participation; removed membership; paused groups; and paused organizations.
+The ten premium checks and event capacity/cancellation/retry regression pass.
+App tests (212) and production build pass. This is SQL integration evidence,
+not Auth-issued HTTP or signed-in device acceptance.
+
+Group-specific events require an active qualifying child in the selected
+household, and a specific-child registration requires that child's membership.
+Organization-wide whole-family registrations may also use the registering
+adult's active organization membership. Management permissions are unchanged.
+Existing registrations are not retroactively canceled or deleted.
+Catalog visibility still reflects the signed-in user's accessible events and
+may include events unavailable for a particular selected child.
 
 ## Browser evidence
 
@@ -92,8 +112,8 @@ a valid test guardian account is needed to continue the browser walkthrough.
 - Check phone/tablet gestures, screen-reader behavior, and calendar import.
 - Complete signed-in HTTP verification of selected-household access. The scoped
   write/earned-benefit repair above is verified at the SQL layer; catalog reads
-  intentionally still aggregate households. Review group/organization event
-  audience qualification separately from paid entitlement checks.
+  intentionally still aggregate households. Group/organization registration
+  qualification is verified below at the SQL layer; device acceptance remains open.
 - Configure and test payment, outbound communications and GoodBarber providers
   before enabling their production features. Pricing remains unapproved.
 
