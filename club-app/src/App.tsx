@@ -964,9 +964,10 @@ function FamilyPortal({
                   />
                 </>
               ) : parentSection === "faith" ? (
-                <div className="family-workspace">
+                <div className="family-workspace" key={household.id}>
                   <div><p className="eyebrow gold">Together As A Family</p><h1>Family Activities</h1><p className="muted">Choose an activity, check who took part, and save each child’s participation or completion.</p></div>
                   <FamilyChallenges householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
+                  <ParentApprovals key={household.id} householdId={household.id} childIds={children.map(child=>child.id)} />
                   <FamilyFaithAtHome key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                 </div>
               ) : parentSection === "groups" ? (

@@ -144,3 +144,19 @@ Complete a recorded signed-in free-family walkthrough and the remaining
 selected-household premium-access review. Add fixes only for observed failures
 or requirements exposed by those checks. Avoid using unrelated interface
 additions as evidence that these launch gates are complete.
+
+## Family approval and save feedback
+
+September 25: Completed the Family activity review loop. Family now includes the
+existing household-scoped guardian PIN approval queue. Confirmed saves list each
+selected child and the returned Participating, Awaiting Approval or Completed
+state. Approval/return events refresh the displayed child statuses and clear
+stale shared-step confirmations. Faith guide changes clear participant selection;
+selection changes clear old save results. Narrow screens use a single participant
+column. No new backend, authorization, XP or publication rules. Existing 218 tests
+and production build pass; signed-in multi-child/device acceptance remains pending.
+
+Device acceptance: save for two selected children, check the named results, then
+approve or return each pending entry in Family. Confirm current participant
+statuses refresh, required steps need reconfirmation after a return, and changing
+a Faith guide clears selection. Unchecked children must remain unaffected.

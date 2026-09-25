@@ -171,7 +171,7 @@ export function ParentApprovals({
   }
 
   const countLabel = useMemo(
-    () => items.length + " waiting",
+    () => items.length + " Waiting",
     [items.length]
   );
 
@@ -197,7 +197,7 @@ export function ParentApprovals({
       <div className="section-heading">
         <div>
           <p className="eyebrow red">Guardian Approvals</p>
-          <h2>Review completed kid challenges</h2>
+          <h2>Review challenge completions</h2>
         </div>
         <span className="pill">{countLabel}</span>
       </div>
@@ -206,7 +206,7 @@ export function ParentApprovals({
         Enter your guardian PIN to approve a challenge or return it to your child for another look.
       </p>
 
-      {message && <div className="form-message">{message}</div>}
+      {message && <div className="form-message" role="status">{message}</div>}
 
       {!guardianToken && (
         <form className="guardian-approval-unlock" onSubmit={unlock}>
@@ -227,7 +227,7 @@ export function ParentApprovals({
             />
           </label>
           <button className="secondary-button" disabled={Boolean(working)}>
-            {working === "unlock" ? "Checking..." : "Unlock approvals"}
+            {working === "unlock" ? "Checking..." : "Unlock Approvals"}
           </button>
         </form>
       )}
@@ -283,7 +283,7 @@ export function ParentApprovals({
                   }
                   onClick={() => void decide(item.id, "return")}
                 >
-                  Return to child
+                  Return To Child
                 </button>
               </div>
             </article>

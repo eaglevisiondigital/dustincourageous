@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { saveFamilyParticipation } from "../lib/familyParticipation";
+import { saveFamilyParticipation, type ParticipantResult } from "../lib/familyParticipation";
+import { FamilySaveResults } from "./FamilySaveResults";
 import { FamilyParticipants } from "./FamilyParticipants";
 
 type Guide = {
@@ -43,6 +44,7 @@ export function FamilyFaithAtHome({
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeGuideId, setActiveGuideId] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
+  const [results, setResults] = useState<ParticipantResult[]>([]);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
   const [loading,setLoading]=useState(true);
@@ -100,9 +102,11 @@ export function FamilyFaithAtHome({
     actionBusy.current=true;
     setWorking(true);
     setMessage("");
+    setResults([]);
 
     try {
-    await saveFamilyParticipation(supabase,householdId,activeGuide.id,participants,"faith");
+    const confirmed = await saveFamilyParticipation(supabase,householdId,activeGuide.id,participants,"faith");
+    setResults(confirmed);
     setMessage("Family Faith completion saved to each selected child’s activity. Previously saved credit is kept without duplication.");
     window.dispatchEvent(new Event("dc-progress-updated"));
     } catch {
@@ -138,13 +142,13 @@ export function FamilyFaithAtHome({
       <div className="family-faith-selector">
         <label>
           Guide
-          <select disabled={working} value={activeGuideId} onChange={(event)=>setActiveGuideId(event.target.value)}>
+          <select disabled={working} value={activeGuideId} onChange={(event)=>{setActiveGuideId(event.target.value);setParticipants([]);setResults([]);setMessage("");}}>
             {guides.map((guide)=><option key={guide.id} value={guide.id}>{guide.title}</option>)}
           </select>
         </label>
       </div>
 
-      <FamilyParticipants children={children} selected={participants} onChange={setParticipants} disabled={working}
+      <FamilyParticipants children={children} selected={participants} onChange={ids=>{setParticipants(ids);setResults([]);setMessage("");}} disabled={working}
         statuses={Object.fromEntries([...completedIds].map(id=>[id,"Completed"]))}/>
       <p className="muted">Family Faith time appears in each participating child’s activity and eligible badge progress. It does not award challenge XP.</p>
 
@@ -186,6 +190,7 @@ export function FamilyFaithAtHome({
               </article>
             )}
 
+            <FamilySaveResults results={results} children={children}/>
             <button
               type="button"
               className={allSelectedComplete ? "secondary-button" : "primary-button"}

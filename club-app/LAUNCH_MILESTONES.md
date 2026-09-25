@@ -6,6 +6,15 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Completed the Family activity review loop. Family now includes the
+existing household-scoped guardian PIN approval queue. Confirmed saves list each
+selected child and the returned Participating, Awaiting Approval or Completed
+state. Approval/return events refresh the displayed child statuses and clear
+stale shared-step confirmations. Faith guide changes clear participant selection;
+selection changes clear old save results. Narrow screens use a single participant
+column. No new backend, authorization, XP or publication rules. Existing 218 tests
+and production build pass; signed-in multi-child/device acceptance remains pending.
+
 September 25: Added Family-first activity participation with multi-child checkboxes
 for family challenges/projects and Faith At Home, plus shared mode on guardian
 challenge dialogs. Atomic per-child saves preserve configured XP, required steps,

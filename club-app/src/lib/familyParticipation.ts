@@ -18,3 +18,12 @@ export async function saveFamilyParticipation(
   }
   return rows;
 }
+
+// Describe confirmed state, never imply that retrying awarded new XP.
+export function participationStatusLabel(status: string): string {
+  if (status === "completed") return "Completed";
+  if (status === "pending_parent") return "Awaiting Approval";
+  if (status === "in_progress") return "Participating";
+  if (status === "not_started") return "Not Started";
+  return "Status Unavailable";
+}

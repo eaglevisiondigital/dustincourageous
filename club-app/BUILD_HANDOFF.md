@@ -16,6 +16,15 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Completed the Family activity review loop. Family now includes the
+existing household-scoped guardian PIN approval queue. Confirmed saves list each
+selected child and the returned Participating, Awaiting Approval or Completed
+state. Approval/return events refresh the displayed child statuses and clear
+stale shared-step confirmations. Faith guide changes clear participant selection;
+selection changes clear old save results. Narrow screens use a single participant
+column. No new backend, authorization, XP or publication rules. Existing 218 tests
+and production build pass; signed-in multi-child/device acceptance remains pending.
+
 - September 25: Dave requested Family-first participation rather than selecting
   one child at a time. Family Hub now has a Family sidebar button/tab opening
   Family Challenges & Projects plus Faith At Home. Guardians check participating

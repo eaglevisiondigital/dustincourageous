@@ -5026,3 +5026,15 @@ button.status-chip { min-height: 44px; }
 .family-step-choice { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
 .family-step-choice small { display: block; margin-top: 6px; color: var(--muted); line-height: 1.5; }
 .family-action-buttons { margin-top: 20px; }
+
+.family-save-results { margin: 20px 0; padding: 18px; background: #122018; border: 1px solid #466c50; border-radius: 16px; }
+.family-save-results > strong { color: #e4f3e8; }
+.family-save-results ul { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 10px; }
+.family-save-results li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.family-save-results li > span:first-child { overflow-wrap: anywhere; min-width: 0; }
+.family-save-results p { color: #c4d5c9; line-height: 1.5; margin-bottom: 0; font-size: .9rem; }
+.family-workspace .parent-approvals-card { margin: 0; }
+@media (max-width: 380px) {
+  .participant-grid { grid-template-columns: minmax(0, 1fr); }
+  .family-participants { padding: 12px; }
+}

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { saveFamilyParticipation } from "../lib/familyParticipation";
+import { saveFamilyParticipation, participationStatusLabel as statusLabel, type ParticipantResult } from "../lib/familyParticipation";
+import { FamilySaveResults } from "./FamilySaveResults";
 import { FamilyParticipants, type FamilyChild } from "./FamilyParticipants";
 
 type Challenge = { id: string; title: string; description: string | null; xp_reward: number; parent_approval_required: boolean };
 type Step = { id: string; title: string; instructions: string | null; is_required: boolean };
-const statusLabel = (status: string) => status === "completed" ? "Completed" : status === "pending_parent" ? "Awaiting Approval" : "Participating";
 export function FamilyChallengeActivity({ householdId, children, challengeId, onSaved, onBusyChange }: {
   householdId: string; children: FamilyChild[]; challengeId: string; onSaved?: () => Promise<void>; onBusyChange?: (busy:boolean)=>void;
 }) {
@@ -17,6 +17,7 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [working, setWorking] = useState(false);
+  const [results, setResults] = useState<ParticipantResult[]>([]);
   const [message, setMessage] = useState("");
   const [reload, setReload] = useState(0);
   const busy = useRef(false);
@@ -37,11 +38,17 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
     }
     void load(); return () => { stale = true; };
   }, [householdId,challengeId,reload,children.map(child=>child.id).join(",")]);
+  useEffect(() => {
+    const refresh = () => { if (!busy.current) setChecked([]); setReload(value => value + 1); };
+    window.addEventListener("dc-progress-updated", refresh);
+    return () => window.removeEventListener("dc-progress-updated", refresh);
+  }, []);
   async function save(action: "participate" | "complete") {
     if (busy.current || loading || failed || !selected.length) return;
-    busy.current=true; setWorking(true); onBusyChange?.(true); setMessage("");
+    busy.current=true; setWorking(true); onBusyChange?.(true); setMessage(""); setResults([]);
     try {
       const results = await saveFamilyParticipation(supabase,householdId,challengeId,selected,"challenge",action,checked);
+      setResults(results);
       setStatuses(current=>({...current,...Object.fromEntries(results.map(row=>[row.child_profile_id,statusLabel(row.status)]))}));
       setMessage(results.some(row=>row.status==="pending_parent") ? "Saved for the selected children. Challenges awaiting approval need guardian PIN approval before XP is awarded." : action === "participate" ? "Participation saved for each selected child. Completion XP is awarded when the challenge is completed." : "Completion confirmed for each selected child. Existing completion credit is kept without duplication.");
       window.dispatchEvent(new Event("dc-progress-updated"));
@@ -54,12 +61,13 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
   return <section className="family-challenge-activity">
     <div className="section-heading"><div><p className="eyebrow gold">Together As A Family</p><h3>{challenge.title}</h3></div><span className="xp-chip">{challenge.xp_reward} XP Per Completion</span></div>
     <p className="muted">{challenge.description}</p>
-    <FamilyParticipants children={children} selected={selected} onChange={ids=>{setSelected(ids);setChecked([]);}} disabled={working} statuses={statuses}/>
+    <FamilyParticipants children={children} selected={selected} onChange={ids=>{setSelected(ids);setChecked([]);setResults([]);setMessage("");}} disabled={working} statuses={statuses}/>
     {!!steps.length && <fieldset className="family-participants" disabled={working}><legend>Shared Challenge Steps</legend><p>Confirm each step was completed by every child you selected.</p>
       {steps.map(step=><label className="family-step-choice" key={step.id}><input type="checkbox" checked={checked.includes(step.id)} onChange={e=>setChecked(e.target.checked?[...checked,step.id]:checked.filter(id=>id!==step.id))}/><span><strong>{step.title}{step.is_required?" (Required)":""}</strong>{step.instructions&&<small>{step.instructions}</small>}</span></label>)}
     </fieldset>}
     {challenge.parent_approval_required&&<p className="guardian-note">Completion goes to guardian approval for each child before XP is awarded.</p>}
     {message&&<p className="form-message" role="status">{message}</p>}
+    <FamilySaveResults results={results} children={children}/>
     <div className="family-action-buttons"><button className="secondary-button" disabled={working||!selected.length} onClick={()=>void save("participate")}>Save Participation</button><button className="primary-button" disabled={working||!selected.length||steps.some(step=>step.is_required&&!checked.includes(step.id))} onClick={()=>void save("complete")}>{working?"Saving...":"Complete For Selected Children"}</button><button className="text-button" disabled={working} onClick={()=>setReload(v=>v+1)}>Refresh Progress</button></div>
   </section>;
 }
