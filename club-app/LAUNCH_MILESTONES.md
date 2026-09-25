@@ -6,6 +6,14 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Fixed a reproduced cross-household Book Companion access leak.
+Selected-household checks now protect companion/challenge/adventure writes,
+premium XP-threshold rewards and premium event registration. Adventure progress
+also rejects unpublished/unavailable content. Ten targeted SQL checks and the
+existing 13 deployed RLS checks pass; content-publication fixtures are temporary
+copies, never approval of real content. No historical records were changed.
+See ALPHA_VERIFICATION.md for test limits and remaining audience/HTTP gates.
+
 The launch-verification batch added and executed 13 rollback-only checks against
 actual deployed tables, policies and functions under authenticated/anon roles.
 It verified concrete household isolation and digital-entitlement scenarios

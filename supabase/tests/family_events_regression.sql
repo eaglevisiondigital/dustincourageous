@@ -1,8 +1,8 @@
 -- Isolated function-logic fixtures. Authorization helpers are mocked; this does
 -- not replace signed-in RLS tests or a simultaneous multi-session load test.
 begin;
-create temp table events(id uuid primary key,capacity integer,status text,starts_at timestamptz);
-create temp table child_profiles(id uuid primary key,household_id uuid);
+create temp table events(id uuid primary key,capacity integer,status text,starts_at timestamptz,access_level text default 'free');
+create temp table child_profiles(id uuid primary key,household_id uuid,status text default 'active');
 create temp table event_registrations(
   id uuid primary key default gen_random_uuid(),event_id uuid,household_id uuid,
   child_profile_id uuid,registered_by uuid,status text,
@@ -34,8 +34,8 @@ declare
   event_id uuid:=gen_random_uuid(); household_a uuid:=gen_random_uuid(); household_b uuid:=gen_random_uuid();
   child_a uuid:=gen_random_uuid(); registration_id uuid; result text;
 begin
-  insert into pg_temp.events values(event_id,1,'published',now()+interval '1 day');
-  insert into pg_temp.child_profiles values(child_a,household_a);
+  insert into pg_temp.events(id,capacity,status,starts_at) values(event_id,1,'published',now()+interval '1 day');
+  insert into pg_temp.child_profiles(id,household_id) values(child_a,household_a);
   perform set_config('test.household',household_a::text,true);
   result:=pg_temp.register_for_event_impl(event_id,household_a,child_a);
   if result<>'registered' then raise exception 'First seat not registered'; end if;

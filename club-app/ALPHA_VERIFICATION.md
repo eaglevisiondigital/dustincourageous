@@ -40,6 +40,35 @@ The current GitHub workflow does not run this deployed-database test; it was
 executed through the connected project database tool. CI continues to run app
 regression tests, build/typecheck and Edge Function syntax checks.
 
+## Selected-household paid-access repair (September 25)
+
+`household_premium_access_regression.sql` first reproduced a real companion
+write leak on the deployed database. After the scoped-access migration, ten
+checks pass: wrong-household companion writes, reassignment, draft content,
+premium challenge/adventure access and rewards, premium event registration,
+free XP without premium reward leakage, expired/future grants, non-guardian
+adults, and removed guardians. The 13 checks above and the existing event
+capacity/cancellation/retry regression still pass.
+
+The first part uses real tables and deployed functions under authenticated RLS.
+For published-content cases only, the test redirects content lookups to temporary
+copies of synthetic drafts marked published. It does not mock identity,
+membership, entitlement or progress/reward logic, but those content cases are
+not a full unchanged-production-path or governance-publication acceptance test.
+No real content was approved or released. All transactions rolled back; checks
+confirmed zero fixture households, challenges, adventures, rewards and events.
+
+New helpers live in the private schema with fixed search paths and explicit
+execution grants. Existing RLS remains in force. Catalog visibility remains
+user-wide; writes and earned benefits are scoped to the selected household.
+Premium group/organization events now require the selected family's entitlement,
+but broader group/organization audience qualification still needs review.
+No historical progress or rewards were rewritten by this repair.
+
+Security advisor: no database findings; the existing Auth
+[leaked-password protection setting](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
+remains disabled and is an open launch task.
+
 ## Browser evidence
 
 The development preview loaded successfully in the cloud browser and displayed
@@ -61,11 +90,10 @@ a valid test guardian account is needed to continue the browser walkthrough.
 - Verify free/premium reader behavior with a reviewed, approved digital edition.
   Corrected Book 1 artwork, page text, reading order and human approval are pending.
 - Check phone/tablet gestures, screen-reader behavior, and calendar import.
-- Audit broader premium access outside the digital reader. The generic
-  `private.user_has_active_entitlement` intentionally checks all of a user's
-  active households; its callers in challenge/adventure completion, book
-  companions and event access need a selected-household review. The 13 checks
-  above establish digital-book scoping only, not these other paths.
+- Complete signed-in HTTP verification of selected-household access. The scoped
+  write/earned-benefit repair above is verified at the SQL layer; catalog reads
+  intentionally still aggregate households. Review group/organization event
+  audience qualification separately from paid entitlement checks.
 - Configure and test payment, outbound communications and GoodBarber providers
   before enabling their production features. Pricing remains unapproved.
 

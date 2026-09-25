@@ -16,6 +16,23 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25: Reproduced and repaired a cross-household Book Companion write:
+  a dual-household guardian could use one family's entitlement for the other's
+  child. Deployed `20260925120405_scope_child_household_premium_access.sql`.
+  Child challenge/companion writes and challenge/adventure reward unlocks now
+  use selected-household access. Adventure progress gains a published/available
+  content gate; child reassignment rechecks access. Premium event registration
+  checks the requested household; archived children cannot register.
+  Ten targeted SQL checks pass, plus the existing 13 deployed RLS checks and
+  event capacity/retry regression. Fixtures roll back and zero leftovers were
+  confirmed. The premium test uses temporary published copies of synthetic
+  drafts for content lookups only; actual content is never published/approved.
+  Identity, household, entitlement, progress and reward paths remain real.
+  Catalog reads still aggregate a guardian's households; group/organization
+  event-audience scoping and signed-in HTTP/device acceptance remain open.
+  Security advisor has no database findings; existing leaked-password Auth
+  protection warning remains. See ALPHA_VERIFICATION.md for exact boundaries.
+
 - September 25 screenshot review: standardized short action/field/status labels
   while keeping sentences and content copy intact. Raised muted-text contrast,
   darkened the primary red for white-label contrast, normalized Safari selects
