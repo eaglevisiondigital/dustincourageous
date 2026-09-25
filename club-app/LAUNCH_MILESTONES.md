@@ -6,6 +6,12 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Added Family-first activity participation with multi-child checkboxes
+for family challenges/projects and Faith At Home, plus shared mode on guardian
+challenge dialogs. Atomic per-child saves preserve configured XP, required steps,
+PIN approvals and idempotency. Ten SQL integration checks and 218 app tests pass;
+production build passes. Signed-in multi-child device acceptance remains open.
+
 September 25: Event registration now qualifies the selected child/family for the
 specific group or organization. Removed memberships and paused groups/orgs are
 blocked. Eight audience checks pass alongside premium-access and capacity/retry

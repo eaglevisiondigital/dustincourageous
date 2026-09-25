@@ -89,6 +89,27 @@ Existing registrations are not retroactively canceled or deleted.
 Catalog visibility still reflects the signed-in user's accessible events and
 may include events unavailable for a particular selected child.
 
+## Family participation implementation (September 25)
+
+Ten checks in `family_participation_regression.sql` verify mixed-household batch
+rejection without partial writes, per-child Faith activity, retry idempotency,
+participation without premature XP, required steps/step ownership, configured
+completion XP once, guardian approval before XP, empty selections, archived
+children and non-guardian denial. Six client checks cover atomic RPC payloads,
+partial/wrong-child responses, preserved statuses and backend failures.
+
+The database test uses actual authenticated RLS, progress tables and triggers.
+Only synthetic content lookup functions and the step-catalog read policy are
+redirected to temporary published-content copies. All fixture writes and policy
+substitutions roll back. No real content is approved or published. These are
+integration checks, not a real-session family-device walkthrough.
+
+Manual acceptance still required: open Family, select two children, record
+Faith/challenge participation, complete required steps, approve any PIN-gated
+challenge, reload each child's history, and retry to confirm no duplicated XP.
+Also verify an unchecked child receives no record. Existing household-only Faith
+records remain unattributed because the original participants are unknown.
+
 ## Browser evidence
 
 The development preview loaded successfully in the cloud browser and displayed

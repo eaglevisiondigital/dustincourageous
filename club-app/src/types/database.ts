@@ -7226,6 +7226,14 @@ export type Database = {
       }
     }
     Functions: {
+      complete_family_faith_participants: {
+        Args: { p_household_id: string; p_guide_id: string; p_child_ids: string[] }
+        Returns: { child_profile_id: string; status: string }[]
+      }
+      save_family_challenge_participants: {
+        Args: { p_household_id: string; p_challenge_id: string; p_child_ids: string[]; p_action: string; p_step_ids?: string[] }
+        Returns: { child_profile_id: string; status: string }[]
+      }
       accept_household_invitation: {
         Args: { p_invitation_id: string; p_token: string }
         Returns: string

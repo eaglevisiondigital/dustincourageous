@@ -27,6 +27,7 @@ const ActivitiesHub = lazy(() => import("./components/ActivitiesHub").then((modu
 const FamilyStore = lazy(() => import("./components/FamilyStore").then((module) => ({ default: module.FamilyStore })));
 const ParentApprovals = lazy(() => import("./components/ParentApprovals").then((module) => ({ default: module.ParentApprovals })));
 const ParentProgressOverview = lazy(() => import("./components/ParentProgressOverview").then((module) => ({ default: module.ParentProgressOverview })));
+const FamilyChallenges = lazy(() => import("./components/FamilyChallengeActivity").then(module => ({ default: module.FamilyChallenges })));
 const FamilyFaithAtHome = lazy(() => import("./components/FamilyFaithAtHome").then((module) => ({ default: module.FamilyFaithAtHome })));
 const FamilyGroupsCard = lazy(() => import("./components/FamilyGroupsCard").then((module) => ({ default: module.FamilyGroupsCard })));
 const FamilyEventsCard = lazy(() => import("./components/FamilyEventsCard").then((module) => ({ default: module.FamilyEventsCard })));
@@ -713,13 +714,14 @@ function FamilyPortal({
 
       <div className="app-body">
         <aside className="side-panel">
-          <p className="eyebrow">Your Adventurers</p>
+          <p className="eyebrow">{view === "parent" ? "Family & Adventurers" : "Your Adventurers"}</p>
           <div className="children-list">
+            {view === "parent" && !kidLocked && <button type="button" className={parentSection === "faith" ? "child-switcher active" : "child-switcher"} aria-pressed={parentSection === "faith"} onClick={() => setParentSection("faith")}><span className="avatar">F</span><span>Family</span></button>}
             {children.map((child) => (
               <button
                 key={child.id}
-                className={selectedChild?.id === child.id ? "child-switcher active" : "child-switcher"}
-                onClick={() => selectChild(child.id)}
+                className={selectedChild?.id === child.id && !(view === "parent" && parentSection === "faith") ? "child-switcher active" : "child-switcher"}
+                onClick={() => { selectChild(child.id); if(view === "parent" && parentSection === "faith") setParentSection("overview"); }}
               >
                 <span className="avatar">{child.display_name.slice(0, 1).toUpperCase()}</span>
                 <span>{child.display_name}</span>
@@ -908,7 +910,7 @@ function FamilyPortal({
                   className={parentSection === "faith" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setParentSection("faith")}
                 >
-                  Family Faith
+                  Family
                 </button>
                 <button
                   type="button"
@@ -962,13 +964,11 @@ function FamilyPortal({
                   />
                 </>
               ) : parentSection === "faith" ? (
-                <FamilyFaithAtHome
-                  key={household.id}
-                  householdId={household.id}
-                  user={user}
-                  children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
-                  selectedChildId={selectedChild?.id ?? ""}
-                />
+                <div className="family-workspace">
+                  <div><p className="eyebrow gold">Together As A Family</p><h1>Family Activities</h1><p className="muted">Choose an activity, check who took part, and save each child’s participation or completion.</p></div>
+                  <FamilyChallenges householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
+                  <FamilyFaithAtHome key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
+                </div>
               ) : parentSection === "groups" ? (
                 <FamilyGroupsCard
                   key={household.id}
@@ -1064,6 +1064,7 @@ function FamilyPortal({
           key={`${selectedChild.id}:${selectedChallenge.challenge.id}`}
           challenge={selectedChallenge.challenge}
           childId={selectedChild.id}
+          family={view === "parent" && !kidLocked ? {householdId:household.id,children:children.map(child=>({id:child.id,display_name:child.display_name}))} : undefined}
           onClose={() => setSelectedChallenge(null)}
           onCompleted={async () => {
             await loadChildDashboard();

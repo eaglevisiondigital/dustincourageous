@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { saveChallengeCompletion } from "../lib/challengeProgress";
+import { FamilyChallengeActivity } from "./FamilyChallengeActivity";
 import { ModalDialog } from "./ModalDialog";
 
 type Challenge = {
@@ -24,14 +25,17 @@ type Step = {
 export function ChallengeDialog({
   challenge,
   childId,
+  family,
   onClose,
   onCompleted
 }: {
   challenge: Challenge;
   childId: string;
+  family?: {householdId:string;children:{id:string;display_name:string}[]};
   onClose: () => void;
   onCompleted: () => Promise<void>;
 }) {
+  const [familyMode,setFamilyMode] = useState(false);
   const [steps, setSteps] = useState<Step[]>([]);
   const [progressId, setProgressId] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("not_started");
@@ -208,6 +212,12 @@ export function ChallengeDialog({
     });
   }
 
+  if (familyMode && family) return <ModalDialog className="challenge-dialog" labelledBy="family-challenge-title" busy={working} onClose={onClose}>
+    <h2 id="family-challenge-title">Family Challenge</h2>
+    <button type="button" className="modal-close" disabled={working} onClick={onClose} aria-label="Close family challenge">×</button>
+    <FamilyChallengeActivity householdId={family.householdId} children={family.children} challengeId={challenge.id} onSaved={onCompleted} onBusyChange={setWorking}/>
+  </ModalDialog>;
+
   return (
       <ModalDialog
         className="challenge-dialog"
@@ -227,6 +237,8 @@ export function ChallengeDialog({
           </div>
           <span className="xp-chip large">+{challenge.xp_reward} XP</span>
         </div>
+
+        {family && <button type="button" className="secondary-button" disabled={working} onClick={()=>setFamilyMode(true)}>Do This As A Family</button>}
 
         {loading ? (
           <div className="dialog-loading"><div className="loader" /> Loading challenge...</div>

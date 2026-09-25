@@ -16,6 +16,25 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25: Dave requested Family-first participation rather than selecting
+  one child at a time. Family Hub now has a Family sidebar button/tab opening
+  Family Challenges & Projects plus Faith At Home. Guardians check participating
+  children, save participation, or complete for the selection. Existing challenge
+  dialogs in guardian mode also offer Do This As A Family (including assignments).
+  Shared required-step confirmations reset when the participant selection changes.
+  Kid View does not expose family controls.
+  Deployed `20260925123327_family_activity_participants.sql`: two SECURITY INVOKER
+  RPCs validate the entire active-child/household/access selection and atomically
+  write existing per-child records. Retries preserve completed/pending records;
+  configured challenge XP is awarded only once through existing triggers. Required
+  guardian PIN approval still applies per child. Faith completion records each
+  participant's activity and eligible badge progress, with no invented XP rules.
+  Prior NULL-child whole-family records are retained, not retroactively attributed.
+  Ten SQL integration checks and 218 app tests pass; production build passes.
+  Content-publication fixtures and the step-catalog lookup use transaction-only
+  copies; real guardian/child progress/XP checks remain enforced. No content was
+  published or approved. Signed-in device acceptance of the new flow is pending.
+
 - September 25: Reproduced and fixed group-event registration borrowing another
   managed child's group membership. Deployed event-audience migration checks the
   selected child or household, gives a specific group precedence over its wider
