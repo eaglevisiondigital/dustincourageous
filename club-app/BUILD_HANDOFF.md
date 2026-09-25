@@ -16,6 +16,20 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Closed the direct-assignment discovery gap. Family Assignments now
+combines existing household/child challenge_assignments with active-group
+assignments, without changing the sidebar child. Direct entries are scoped to the
+current household and active children; NULL-child assignments display Whole Family.
+The selector separates Household & Child Assignments from Group Assignments and
+names the recipient on individual entries. Published accessible content opens the
+existing multi-child flow, which still begins with no participants selected.
+Unavailable content stays disabled; either failed source shows a retryable load
+error. Limits are explicit at 100 recent records per source. Four SDK/mock-HTTP
+tests cover filters, household/child isolation, missing content and errors. All 240
+app tests and production build pass. Existing deployed assignment SELECT policy
+was inspected; no schema, grants, content publication or XP changes. Signed-in
+assignment/device acceptance remains pending.
+
 September 25: Existing adults can now update full name, optional contact phone
 and Parent/Guardian display choice in Membership & Settings > Household > Your
 Account Details. Reuses signup validation; account email is read-only. Clearing

@@ -41,3 +41,25 @@ export async function loadFamilyAssignments(client: SupabaseClient<Database>, ch
       dueAt: row.due_at, challenge: challenge ? { id: challenge.id, title: challenge.title, xp_reward: challenge.xp_reward } : null };
   });
 }
+
+export async function loadHouseholdAssignments(client: SupabaseClient<Database>, householdId: string, childIds: string[]): Promise<FamilyAssignment[]> {
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const ids = [...new Set(childIds)];
+  if (!uuid.test(householdId) || ids.some(id => !uuid.test(id))) throw new Error("Invalid family assignment scope");
+  if (!ids.length) return [];
+  const result = await client.from("challenge_assignments")
+    .select("id,household_id,child_profile_id,challenge_id,due_at,challenges(id,title,xp_reward,status)")
+    .eq("household_id", householdId)
+    .or(`child_profile_id.is.null,child_profile_id.in.(${ids.join(",")})`)
+    .eq("challenges.status", "published")
+    .order("assigned_at", { ascending: false }).order("id", { ascending: false }).limit(100);
+  if (result.error) throw result.error;
+  return (result.data ?? []).map(row => {
+    const challenge = first(row.challenges);
+    if (row.household_id !== householdId || (row.child_profile_id !== null && !ids.includes(row.child_profile_id)) ||
+      (challenge && (challenge.id !== row.challenge_id || challenge.status !== "published"))) throw new Error("Unexpected family assignment");
+    return { id: "household:" + row.id, groupId: "", groupName: row.child_profile_id ? "Child Assignment" : "Whole Family",
+      childIds: row.child_profile_id ? [row.child_profile_id] : ids, dueAt: row.due_at,
+      challenge: challenge ? { id: challenge.id, title: challenge.title, xp_reward: challenge.xp_reward } : null };
+  });
+}

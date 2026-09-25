@@ -261,3 +261,23 @@ settings/device acceptance is pending.
 Device check: add the missing last name on an existing account, change Parent/Guardian,
 reload and confirm the badge and saved name; add then remove the optional phone.
 Test interrupted saves and refresh without modifying email or authentication roles.
+
+## Direct household and child assignments
+
+September 25: Closed the direct-assignment discovery gap. Family Assignments now
+combines existing household/child challenge_assignments with active-group
+assignments, without changing the sidebar child. Direct entries are scoped to the
+current household and active children; NULL-child assignments display Whole Family.
+The selector separates Household & Child Assignments from Group Assignments and
+names the recipient on individual entries. Published accessible content opens the
+existing multi-child flow, which still begins with no participants selected.
+Unavailable content stays disabled; either failed source shows a retryable load
+error. Limits are explicit at 100 recent records per source. Four SDK/mock-HTTP
+tests cover filters, household/child isolation, missing content and errors. All 240
+app tests and production build pass. Existing deployed assignment SELECT policy
+was inspected; no schema, grants, content publication or XP changes. Signed-in
+assignment/device acceptance remains pending.
+
+Device check: load a household-wide assignment and an individual-child assignment,
+confirm the correct recipients, choose participants explicitly, then save and
+verify each selected child’s recorded credit. Test unavailable content and retry.
