@@ -16,6 +16,17 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25: Dave reached signed-in household setup on his device and
+  reported creation failure. Reproduced SQLSTATE 42501 in the deployed RPC:
+  INSERT RETURNING checked household SELECT RLS before the AFTER INSERT trigger
+  created owner membership. Fixed by allocating the UUID before INSERT and
+  returning it after membership and consent creation. SECURITY INVOKER and
+  all policies remain unchanged. Deployed migration and rollback-only actual
+  RPC test pass for creation, owner visibility/membership, consent, household
+  isolation and anonymous denial. Device retry remains pending. Security advisor
+  now reports Auth leaked-password protection disabled; no database findings.
+  Remediation: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
 - Launch verification now includes 13 passing checks against real deployed
   tables/policies/functions under authenticated and anonymous database roles.
   Covered household/child/bookmark/support isolation, notification read/write
