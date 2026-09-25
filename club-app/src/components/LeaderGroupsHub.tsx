@@ -1,5 +1,6 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { readLeaderGroup } from "../lib/leaderGroupData";
 
 type OrgMembership = {
   role: string;
@@ -82,6 +83,12 @@ export function LeaderGroupsHub(){
   const [message,setMessage]=useState("");
   const [joinCode,setJoinCode]=useState("");
   const [working,setWorking]=useState(false);
+  const versions=useRef({base:0,groups:0,invitations:0,detail:0});
+  const actionBusy=useRef(false);
+  const [baseLoading,setBaseLoading]=useState(true);
+  const [groupsLoading,setGroupsLoading]=useState(false);
+  const [detailLoading,setDetailLoading]=useState(false);
+  const [loadErrors,setLoadErrors]=useState({base:"",groups:"",invitations:"",detail:""});
   const [invitations,setInvitations]=useState<OrgInvitation[]>([]);
   const [inviteEmail,setInviteEmail]=useState("");
   const [inviteRole,setInviteRole]=useState("leader");
@@ -107,9 +114,11 @@ export function LeaderGroupsHub(){
   const canManageOrg=selectedMembership?.role==="owner"||selectedMembership?.role==="admin";
 
   const loadBase=useCallback(async()=>{
-    setMessage("");
-    const {data:{user}}=await supabase.auth.getUser();
-    if(!user)return;
+    const version=++versions.current.base;
+    setBaseLoading(true);setLoadErrors(old=>({...old,base:""}));
+    try {
+    const {data:{user},error:authError}=await supabase.auth.getUser();
+    if(authError||!user)throw authError||new Error("Sign in to load leader access.");
 
     const [membershipResult,challengeResult]=await Promise.all([
       supabase
@@ -126,38 +135,52 @@ export function LeaderGroupsHub(){
     ]);
 
     const error=membershipResult.error||challengeResult.error;
-    if(error){setMessage(error.message);return;}
+    if(error)throw error;
+    if(version!==versions.current.base)return;
 
     const nextMemberships=(membershipResult.data??[]) as OrgMembership[];
     const nextChallenges=(challengeResult.data??[]) as Challenge[];
     setOrgMemberships(nextMemberships);
     setChallenges(nextChallenges);
-    if(!challengeId&&nextChallenges[0])setChallengeId(nextChallenges[0].id);
+    setChallengeId(current=>nextChallenges.some(item=>item.id===current)?current:nextChallenges[0]?.id??"");
 
     const firstOrg=firstRelation(nextMemberships[0]?.organizations??null);
-    if(!selectedOrgId&&firstOrg)setSelectedOrgId(firstOrg.id);
-  },[selectedOrgId,challengeId]);
+    setSelectedOrgId(current=>nextMemberships.some(item=>firstRelation(item.organizations)?.id===current)?current:firstOrg?.id??"");
+    } catch {
+      if(version===versions.current.base)setLoadErrors(old=>({...old,base:"Leader access could not be loaded."}));
+    } finally { if(version===versions.current.base)setBaseLoading(false); }
+  },[]);
 
   const loadGroups=useCallback(async()=>{
-    if(!selectedOrgId){setGroups([]);setSelectedGroupId("");return;}
+    const version=++versions.current.groups;
+    setLoadErrors(old=>({...old,groups:""}));
+    if(!selectedOrgId){setGroups([]);setSelectedGroupId("");setGroupsLoading(false);return;}
+    setGroupsLoading(true);
+    try {
     const {data,error}=await supabase
       .from("adventure_groups")
       .select("id,organization_id,group_key,name,group_type,description,status")
       .eq("organization_id",selectedOrgId)
       .order("created_at",{ascending:true});
-    if(error){setMessage(error.message);return;}
+    if(error)throw error;
+    if(version!==versions.current.groups)return;
     const next=(data??[]) as Group[];
     setGroups(next);
-    if(!selectedGroupId&&next[0])setSelectedGroupId(next[0].id);
-    if(selectedGroupId&&!next.some((g)=>g.id===selectedGroupId))setSelectedGroupId(next[0]?.id??"");
-  },[selectedOrgId,selectedGroupId]);
+    setSelectedGroupId(current=>next.some(g=>g.id===current)?current:next[0]?.id??"");
+    } catch {
+      if(version===versions.current.groups){setGroups([]);setSelectedGroupId("");setLoadErrors(old=>({...old,groups:"Groups could not be loaded."}));}
+    } finally { if(version===versions.current.groups)setGroupsLoading(false); }
+  },[selectedOrgId]);
 
   const loadInvitations=useCallback(async()=>{
+    const version=++versions.current.invitations;
+    setInvitations([]);setLoadErrors(old=>({...old,invitations:""}));
     if(!selectedOrgId||!canManageOrg){
       setInvitations([]);
       return;
     }
 
+    try {
     const {data,error}=await supabase
       .from("organization_invitations")
       .select("id,email,organization_role,group_id,group_role,status,expires_at,adventure_groups(name)")
@@ -165,49 +188,45 @@ export function LeaderGroupsHub(){
       .order("created_at",{ascending:false})
       .limit(50);
 
-    if(error){
-      setMessage(error.message);
-      return;
-    }
-
+    if(error)throw error;
+    if(version!==versions.current.invitations)return;
     setInvitations((data??[]) as OrgInvitation[]);
+    } catch { if(version===versions.current.invitations)setLoadErrors(old=>({...old,invitations:"Adult invitations could not be loaded."})); }
   },[selectedOrgId,canManageOrg]);
 
   const loadGroupDetail=useCallback(async()=>{
+    const version=++versions.current.detail;
+    setAssignments([]);setRoster([]);setProgress({});
+    setLoadErrors(old=>({...old,detail:""}));setDetailLoading(false);
     if(!selectedGroupId){
-      setAssignments([]);setRoster([]);setProgress({});return;
+      return;
     }
-
-    const [assignmentResult,rosterResult]=await Promise.all([
-      supabase
-        .from("group_challenge_assignments")
-        .select("id,challenge_id,due_at,challenges(id,title,challenge_type,xp_reward)")
-        .eq("group_id",selectedGroupId)
-        .order("assigned_at",{ascending:false}),
-      supabase.rpc("get_group_roster",{p_group_id:selectedGroupId})
-    ]);
-
-    const error=assignmentResult.error||rosterResult.error;
-    if(error){setMessage(error.message);return;}
-
-    const nextAssignments=(assignmentResult.data??[]) as Assignment[];
-    setAssignments(nextAssignments);
-    setRoster((rosterResult.data??[]) as Roster[]);
-
-    const entries=await Promise.all(nextAssignments.map(async(item)=>{
-      const {data}=await supabase.rpc("get_group_progress_summary",{
-        p_group_id:selectedGroupId,
-        p_challenge_id:item.challenge_id
-      });
-      return [item.challenge_id,((data??[])[0]??{active_children:0,completed_children:0,completion_percent:0}) as Progress] as const;
-    }));
-    setProgress(Object.fromEntries(entries));
+    setDetailLoading(true);
+    try {
+      const result=await readLeaderGroup(supabase,selectedGroupId);
+      if(version!==versions.current.detail)return;
+      setAssignments(result.assignments);setRoster(result.roster);setProgress(result.progress);
+    } catch { if(version===versions.current.detail)setLoadErrors(old=>({...old,detail:"Roster and progress could not be loaded."})); }
+    finally { if(version===versions.current.detail)setDetailLoading(false); }
   },[selectedGroupId]);
 
-  useEffect(()=>{void loadBase();},[loadBase]);
-  useEffect(()=>{void loadGroups();},[loadGroups]);
-  useEffect(()=>{void loadInvitations();},[loadInvitations]);
-  useEffect(()=>{void loadGroupDetail();},[loadGroupDetail]);
+  useEffect(()=>{void loadBase();return ()=>{versions.current.base++;};},[loadBase]);
+  useEffect(()=>{void loadGroups();return ()=>{versions.current.groups++;};},[loadGroups]);
+  useEffect(()=>{void loadInvitations();return ()=>{versions.current.invitations++;};},[loadInvitations]);
+  useEffect(()=>{setJoinCode("");void loadGroupDetail();return ()=>{versions.current.detail++;};},[loadGroupDetail]);
+
+  function clearGroupView(){
+    versions.current.detail++;
+    setJoinCode("");setAssignments([]);setRoster([]);setProgress({});setDueDate("");setDetailLoading(true);
+  }
+
+  async function runAction(action:()=>Promise<void>){
+    if(actionBusy.current)return;
+    actionBusy.current=true;setWorking(true);
+    try { await action(); }
+    catch { setMessage("The action could not be confirmed. Refresh the group before trying again."); }
+    finally { actionBusy.current=false;setWorking(false); }
+  }
 
   async function createGroup(event:FormEvent){
     event.preventDefault();
@@ -224,13 +243,13 @@ export function LeaderGroupsHub(){
       p_maximum_age:maxAge?Number(maxAge):undefined
     });
 
-    setWorking(false);
     if(error){setMessage(error.message);return;}
 
+    if(typeof data!=="string"||!data)throw new Error("Group creation could not be confirmed.");
     setGroupName("");setGroupKey("");setDescription("");setMinAge("");setMaxAge("");
     setMessage("Adventure Club group created.");
     await loadGroups();
-    if(typeof data==="string")setSelectedGroupId(data);
+    if(typeof data==="string"){clearGroupView();setSelectedGroupId(data);}
   }
 
   async function createAdultInvitation(event:FormEvent){
@@ -255,7 +274,6 @@ export function LeaderGroupsHub(){
       p_expires_in_days:7
     });
 
-    setWorking(false);
 
     if(error){
       setMessage(error.message);
@@ -274,7 +292,7 @@ export function LeaderGroupsHub(){
       setInviteEmail("");
       setMessage("Leader invitation created. Copy the secure link and send it to the invited adult.");
       await loadInvitations();
-    }
+    } else throw new Error("Invitation creation could not be confirmed.");
   }
 
   async function cancelAdultInvitation(id:string){
@@ -285,13 +303,13 @@ export function LeaderGroupsHub(){
       p_invitation_id:id
     });
 
-    setWorking(false);
 
     if(error){
       setMessage(error.message);
       return;
     }
 
+    setInviteLink("");
     setMessage("Organization invitation canceled.");
     await loadInvitations();
   }
@@ -303,31 +321,33 @@ export function LeaderGroupsHub(){
       p_group_id:selectedGroupId,
       p_expires_in_days:30
     });
-    setWorking(false);
     if(error){setMessage(error.message);return;}
-    setJoinCode(data||"");
+    if(!data)throw new Error("No join code returned");
+    setJoinCode(data);
   }
 
   async function assignChallenge(){
     if(!selectedGroupId||!challengeId)return;
     setWorking(true);setMessage("");
     const {data:{user}}=await supabase.auth.getUser();
-    if(!user){setWorking(false);return;}
+    if(!user)throw new Error("Sign in again to assign a challenge.");
 
-    const {error}=await supabase.from("group_challenge_assignments").upsert({
+    const {data,error}=await supabase.from("group_challenge_assignments").upsert({
       group_id:selectedGroupId,
       challenge_id:challengeId,
       assigned_by:user.id,
       due_at:dueDate?new Date(dueDate+"T23:59:59").toISOString():null
-    },{onConflict:"group_id,challenge_id"});
+    },{onConflict:"group_id,challenge_id"}).select("group_id,challenge_id").single();
 
-    setWorking(false);
     if(error){setMessage(error.message);return;}
+    if(data?.group_id!==selectedGroupId||data?.challenge_id!==challengeId)throw new Error("Assignment could not be confirmed.");
     setMessage("Challenge assigned to the group.");
     setDueDate("");
     await loadGroupDetail();
   }
 
+  if(baseLoading)return <section className="leader-groups-hub" role="status">Loading leader access...</section>;
+  if(loadErrors.base)return <section className="leader-groups-hub"><p role="alert">{loadErrors.base}</p><button className="secondary-button" onClick={()=>void loadBase()}>Retry leader access</button></section>;
   if(!orgs.length)return null;
 
   return (
@@ -340,18 +360,27 @@ export function LeaderGroupsHub(){
         <span className="pill">Approved organization access</span>
       </div>
 
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="status">{message}</div>}
+      {(["groups","invitations","detail"] as const).map(key=>loadErrors[key]&&<div className="form-message" role="alert" key={key}>{loadErrors[key]} <button className="text-button" disabled={working} onClick={()=>void (key==="groups"?loadGroups():key==="invitations"?loadInvitations():loadGroupDetail())}>Retry</button></div>)}
 
       <div className="leader-group-selectors">
         <label>
           Organization
-          <select value={selectedOrgId} onChange={(event)=>{setSelectedOrgId(event.target.value);setSelectedGroupId("");}}>
+          <select disabled={working} value={selectedOrgId} onChange={(event)=>{
+            if(actionBusy.current)return;
+            versions.current.groups++;versions.current.invitations++;clearGroupView();
+            setGroups([]);setInvitations([]);setInviteGroupId("");setInviteLink("");setMessage("");
+            setSelectedOrgId(event.target.value);setSelectedGroupId("");
+          }}>
             {orgs.map(({membership,org})=><option key={org!.id} value={org!.id}>{org!.name} · {membership.role}</option>)}
           </select>
         </label>
         <label>
           Group
-          <select value={selectedGroupId} onChange={(event)=>setSelectedGroupId(event.target.value)}>
+          <select disabled={working||groupsLoading} value={selectedGroupId} onChange={(event)=>{
+            if(actionBusy.current)return;
+            clearGroupView();setMessage("");setSelectedGroupId(event.target.value);
+          }}>
             <option value="">Select group</option>
             {groups.map((group)=><option key={group.id} value={group.id}>{group.name}</option>)}
           </select>
@@ -367,10 +396,10 @@ export function LeaderGroupsHub(){
             </div>
           </div>
 
-          <form className="admin-form" onSubmit={createAdultInvitation}>
+          <form className="admin-form" onSubmit={(event)=>{event.preventDefault();void runAction(()=>createAdultInvitation(event));}}>
             <label>
               Adult email
-              <input
+              <input disabled={working}
                 required
                 type="email"
                 value={inviteEmail}
@@ -380,7 +409,7 @@ export function LeaderGroupsHub(){
 
             <label>
               Organization role
-              <select value={inviteRole} onChange={(event)=>setInviteRole(event.target.value)}>
+              <select disabled={working} value={inviteRole} onChange={(event)=>setInviteRole(event.target.value)}>
                 <option value="leader">Group leader</option>
                 <option value="admin">Organization admin</option>
               </select>
@@ -390,7 +419,7 @@ export function LeaderGroupsHub(){
               <>
                 <label>
                   Approved group
-                  <select
+                  <select disabled={working}
                     required
                     value={inviteGroupId}
                     onChange={(event)=>setInviteGroupId(event.target.value)}
@@ -404,7 +433,7 @@ export function LeaderGroupsHub(){
 
                 <label>
                   Group role
-                  <select value={inviteGroupRole} onChange={(event)=>setInviteGroupRole(event.target.value)}>
+                  <select disabled={working} value={inviteGroupRole} onChange={(event)=>setInviteGroupRole(event.target.value)}>
                     <option value="lead">Lead</option>
                     <option value="leader">Leader</option>
                     <option value="assistant">Assistant</option>
@@ -425,9 +454,13 @@ export function LeaderGroupsHub(){
               <button
                 type="button"
                 className="secondary-button"
-                onClick={()=>{
-                  void navigator.clipboard?.writeText(inviteLink);
-                  setMessage("Invitation link copied.");
+                disabled={working}
+                onClick={async()=>{
+                  try {
+                    if(!navigator.clipboard)throw new Error("Clipboard unavailable");
+                    await navigator.clipboard.writeText(inviteLink);
+                    setMessage("Invitation link copied.");
+                  } catch { setMessage("Copy was unavailable. Select and copy the invitation link above."); }
                 }}
               >
                 Copy invitation link
@@ -459,7 +492,7 @@ export function LeaderGroupsHub(){
                           type="button"
                           className="text-button small"
                           disabled={working}
-                          onClick={()=>void cancelAdultInvitation(invitation.id)}
+                          onClick={()=>void runAction(()=>cancelAdultInvitation(invitation.id))}
                         >
                           Cancel
                         </button>
@@ -476,18 +509,18 @@ export function LeaderGroupsHub(){
       {canManageOrg&&(
         <details className="leader-create-group">
           <summary>Create another group</summary>
-          <form className="admin-form" onSubmit={createGroup}>
+          <form className="admin-form" onSubmit={(event)=>{event.preventDefault();void runAction(()=>createGroup(event));}}>
             <label>
               Name
-              <input required value={groupName} onChange={(event)=>{setGroupName(event.target.value);if(!groupKey)setGroupKey(slugify(event.target.value));}}/>
+              <input disabled={working} required value={groupName} onChange={(event)=>{setGroupName(event.target.value);if(!groupKey)setGroupKey(slugify(event.target.value));}}/>
             </label>
             <label>
               Key
-              <input required value={groupKey} onChange={(event)=>setGroupKey(slugify(event.target.value))}/>
+              <input disabled={working} required value={groupKey} onChange={(event)=>setGroupKey(slugify(event.target.value))}/>
             </label>
             <label>
               Type
-              <select value={groupType} onChange={(event)=>setGroupType(event.target.value)}>
+              <select disabled={working} value={groupType} onChange={(event)=>setGroupType(event.target.value)}>
                 <option value="church_class">Church class</option>
                 <option value="school_class">School class</option>
                 <option value="homeschool_group">Homeschool group</option>
@@ -496,9 +529,9 @@ export function LeaderGroupsHub(){
                 <option value="other">Other</option>
               </select>
             </label>
-            <label>Minimum age<input type="number" min="0" max="18" value={minAge} onChange={(event)=>setMinAge(event.target.value)}/></label>
-            <label>Maximum age<input type="number" min="0" max="18" value={maxAge} onChange={(event)=>setMaxAge(event.target.value)}/></label>
-            <label className="full">Description<textarea value={description} onChange={(event)=>setDescription(event.target.value)}/></label>
+            <label>Minimum age<input disabled={working} type="number" min="0" max="18" value={minAge} onChange={(event)=>setMinAge(event.target.value)}/></label>
+            <label>Maximum age<input disabled={working} type="number" min="0" max="18" value={maxAge} onChange={(event)=>setMaxAge(event.target.value)}/></label>
+            <label className="full">Description<textarea disabled={working} value={description} onChange={(event)=>setDescription(event.target.value)}/></label>
             <button className="secondary-button full" disabled={working}>Create group</button>
           </form>
         </details>
@@ -512,7 +545,7 @@ export function LeaderGroupsHub(){
               <strong>{joinCode||"Generate a new 30-day code"}</strong>
               <small>Families must sign in, preview the group, choose their child, and explicitly approve joining.</small>
             </div>
-            <button className="secondary-button" disabled={working} onClick={()=>void generateCode()}>
+            <button className="secondary-button" disabled={working} onClick={()=>void runAction(generateCode)}>
               Generate code
             </button>
           </div>
@@ -522,26 +555,26 @@ export function LeaderGroupsHub(){
               <p className="eyebrow red">Assign Challenge</p>
               <label>
                 Challenge
-                <select value={challengeId} onChange={(event)=>setChallengeId(event.target.value)}>
+                <select disabled={working} value={challengeId} onChange={(event)=>setChallengeId(event.target.value)}>
                   {challenges.map((challenge)=><option key={challenge.id} value={challenge.id}>{challenge.title} · +{challenge.xp_reward} XP</option>)}
                 </select>
               </label>
               <label>
                 Due date <span className="optional">(optional)</span>
-                <input type="date" value={dueDate} onChange={(event)=>setDueDate(event.target.value)}/>
+                <input disabled={working} type="date" value={dueDate} onChange={(event)=>setDueDate(event.target.value)}/>
               </label>
-              <button className="primary-button" disabled={working||!challengeId} onClick={()=>void assignChallenge()}>
+              <button className="primary-button" disabled={working||!challengeId} onClick={()=>void runAction(assignChallenge)}>
                 Assign to group
               </button>
             </article>
 
             <article className="leader-panel">
               <div className="section-heading compact-heading">
-                <div><p className="eyebrow gold">Roster</p><h3>{roster.length} active</h3></div>
+                <div><p className="eyebrow gold">Roster</p><h3>{detailLoading?"Loading...":loadErrors.detail?"Unavailable":roster.length+" active"}</h3></div>
               </div>
               <div className="leader-roster">
                 {roster.map((child)=><div key={child.child_profile_id}><span className="avatar">{child.display_name.slice(0,1).toUpperCase()}</span><strong>{child.display_name}</strong></div>)}
-                {!roster.length&&<p className="muted">No children have joined yet.</p>}
+                {!detailLoading&&!loadErrors.detail&&!roster.length&&<p className="muted">No children have joined yet.</p>}
               </div>
             </article>
           </div>
