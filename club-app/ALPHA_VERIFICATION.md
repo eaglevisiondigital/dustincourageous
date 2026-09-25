@@ -180,3 +180,26 @@ Device check: with siblings in one group, verify the assignment appears once,
 shows both assigned names, opens without changing the selected sidebar child,
 and credits only the checked participants. Verify a hidden challenge cannot open
 and refresh failure shows an error instead of an empty list.
+
+## Family activity history
+
+September 25: Added Family Activity History to the Family workspace so guardians
+can verify recorded child activity after leaving a challenge or reloading. Shows
+child name, recorded title/description, local timestamp and nonzero XP delta, with
+All Children or one-child filtering independent of the sidebar profile. Reads are
+scoped to the current household and active child IDs; internal metadata is not
+requested. Twenty-row pages use timestamp plus numeric ID cursors, preserving
+microseconds. Older-load failures retain history/cursor; replaced filters ignore
+late responses. Save/approval events refresh newest history, including a queued
+refresh when a request is already running. This is existing recorded activity,
+not a new participation ledger or proof that pending approvals awarded XP.
+Four SDK/mock-HTTP tests cover scope, tied-time paging, unsafe/foreign records and
+failure/empty behavior. All 227 tests and production build pass. Existing deployed
+activity SELECT policy was inspected; no database changes. Signed-in history and
+device acceptance remain pending. Previous Family Assignments CI passed.
+
+Device check: complete an activity for selected siblings, approve if required,
+then verify the resulting recorded activity by child in Family Activity History.
+Reload, filter, load older events, and verify that no unchecked child received
+credit. Pending participation without an activity event is not listed as earned
+completion. Also test an interrupted load and switching filters during a request.

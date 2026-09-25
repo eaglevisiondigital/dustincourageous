@@ -6,6 +6,21 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Added Family Activity History to the Family workspace so guardians
+can verify recorded child activity after leaving a challenge or reloading. Shows
+child name, recorded title/description, local timestamp and nonzero XP delta, with
+All Children or one-child filtering independent of the sidebar profile. Reads are
+scoped to the current household and active child IDs; internal metadata is not
+requested. Twenty-row pages use timestamp plus numeric ID cursors, preserving
+microseconds. Older-load failures retain history/cursor; replaced filters ignore
+late responses. Save/approval events refresh newest history, including a queued
+refresh when a request is already running. This is existing recorded activity,
+not a new participation ledger or proof that pending approvals awarded XP.
+Four SDK/mock-HTTP tests cover scope, tied-time paging, unsafe/foreign records and
+failure/empty behavior. All 227 tests and production build pass. Existing deployed
+activity SELECT policy was inspected; no database changes. Signed-in history and
+device acceptance remain pending. Previous Family Assignments CI passed.
+
 September 25: Added Family Assignments directly to the Family workspace. Reads
 active group memberships for the current family's children, combines sibling
 memberships into one assignment entry, and shows group, assigned children and

@@ -5041,3 +5041,10 @@ button.status-chip { min-height: 44px; }
 
 .family-assignment-context { margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #171717; overflow-wrap: anywhere; }
 .family-assignment-context p { color: var(--muted); line-height: 1.5; margin-bottom: 0; }
+
+.family-activity-history ul { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 14px; }
+.family-activity-history li { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #171717; overflow-wrap: anywhere; }
+.family-activity-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.family-activity-history h3 { margin: 12px 0 8px; font-size: 1.1rem; }
+.family-activity-history p, .family-activity-history time { color: var(--muted); line-height: 1.5; }
+.family-activity-history time { font-size: .88rem; }
