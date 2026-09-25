@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { readBookAdventure, saveBookStatus, finishBookAdventure, completeBookStep } from "../lib/bookActions";
 
 type Book = {
   id: string;
@@ -150,8 +151,18 @@ export function Bookshelf({
   const [stepWorking, setStepWorking] = useState("");
   const [error, setError] = useState("");
 
+  const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState("");
+  const [adventureLoading,setAdventureLoading]=useState(false);
+  const [adventureError,setAdventureError]=useState("");
+  const loadVersion=useRef(0);
+  const adventureVersion=useRef(0);
+  const actionBusy=useRef(false);
+
   const load = useCallback(async () => {
-    setError("");
+    const version=++loadVersion.current;
+    setLoading(true);setLoadError("");
+    try {
 
     const [
       booksResult,
@@ -208,20 +219,16 @@ export function Bookshelf({
       challengeResult.error ||
       contentResult.error;
 
-    if (firstError) {
-      setError(firstError.message);
-      return;
-    }
+    if (firstError) throw firstError;
 
     const nextBooks = (booksResult.data ?? []) as Book[];
     const accessResults = await Promise.all(
       nextBooks.map((book) => supabase.rpc("has_book_access", { p_book_id: book.id }))
     );
     const accessError = accessResults.find((result) => result.error)?.error;
-    if (accessError) {
-      setError(accessError.message);
-      return;
-    }
+    if (accessError) throw accessError;
+    if(accessResults.some(result=>typeof result.data!=="boolean"))throw new Error("Book access could not be confirmed.");
+    if(version!==loadVersion.current)return;
 
     setBooks(nextBooks);
     setBookAccess(Object.fromEntries(nextBooks.map((book, index) => [book.id, accessResults[index].data === true])));
@@ -233,13 +240,15 @@ export function Bookshelf({
     setChallengeLinks((challengeResult.data ?? []) as ChallengeLink[]);
     setContentLinks((contentResult.data ?? []) as ContentLink[]);
 
-    if (!selectedBookId && nextBooks.length) {
-      setSelectedBookId(nextBooks[0].id);
-    }
-  }, [childId, selectedBookId]);
+    setSelectedBookId(current=>nextBooks.some(book=>book.id===current)?current:nextBooks[0]?.id??"");
+    } catch {
+      if(version===loadVersion.current)setLoadError("Your bookshelf could not be loaded. Please try again.");
+    } finally {if(version===loadVersion.current)setLoading(false);}
+  }, [childId]);
 
   useEffect(() => {
     void load();
+    return ()=>{loadVersion.current++;};
   }, [load]);
 
   const progressByBook = useMemo(
@@ -275,39 +284,27 @@ export function Bookshelf({
     : [];
 
   const loadAdventure = useCallback(async () => {
-    if (!selectedBook) {
-      setAdventureSteps([]);
-      setAdventureSummary(null);
-      return;
-    }
-
-    const [stepsResult, summaryResult] = await Promise.all([
-      supabase.rpc("get_child_book_adventure_steps", {
-        p_child_profile_id: childId,
-        p_book_id: selectedBook.id
-      }),
-      supabase.rpc("get_child_book_adventure_summary", {
-        p_child_profile_id: childId,
-        p_book_id: selectedBook.id
-      })
-    ]);
-
-    const firstError = stepsResult.error || summaryResult.error;
-    if (firstError) {
-      setError(firstError.message);
-      return;
-    }
-
-    setAdventureSteps((stepsResult.data ?? []) as AdventureStep[]);
-    setAdventureSummary(((summaryResult.data ?? [])[0] ?? null) as AdventureSummary | null);
-  }, [childId, selectedBook]);
+    const version=++adventureVersion.current;
+    setAdventureSteps([]);setAdventureSummary(null);setAdventureError("");setAdventureLoading(false);
+    if(!selectedBook || !selectedHasAccess)return;
+    setAdventureLoading(true);
+    try {
+      const result=await readBookAdventure(supabase,childId,selectedBook.id);
+      if(version!==adventureVersion.current)return;
+      setAdventureSteps(result.steps);setAdventureSummary(result.summary);
+    } catch {
+      if(version===adventureVersion.current)setAdventureError("Book Adventure progress could not be loaded. Please try again.");
+    } finally {if(version===adventureVersion.current)setAdventureLoading(false);}
+  }, [childId, selectedBook?.id, selectedHasAccess]);
 
   useEffect(() => {
     void loadAdventure();
+    return ()=>{adventureVersion.current++;};
   }, [loadAdventure]);
 
   useEffect(() => {
     const handler = () => {
+      if(actionBusy.current)return;
       void load();
       void loadAdventure();
     };
@@ -315,67 +312,30 @@ export function Bookshelf({
     return () => window.removeEventListener("dc-progress-updated", handler);
   }, [load, loadAdventure]);
 
+  async function runBookAction(key:string,action:()=>Promise<void>) {
+    if(actionBusy.current||!selectedHasAccess||adventureLoading||adventureError)return;
+    actionBusy.current=true;setWorking(true);setStepWorking(key);setError("");
+    let saved=false;
+    try {
+      await action();saved=true;
+      await onProgress();
+    } catch {
+      setError(saved ? "Your progress was saved. The latest totals could not refresh yet." : "Progress could not be confirmed. Refresh the bookshelf before trying again.");
+    } finally {
+      await Promise.all([load(),loadAdventure()]);
+      if(saved)window.dispatchEvent(new Event("dc-progress-updated"));
+      actionBusy.current=false;setWorking(false);setStepWorking("");
+    }
+  }
+
   async function completeSimpleStep(step: AdventureStep) {
-    if (!selectedHasAccess) return;
-    setStepWorking(step.step_type + ":" + step.source_id);
-    setError("");
-
-    let stepError = null;
-
-    if (step.step_type === "identity") {
-      const result = await supabase
-        .from("child_identity_progress")
-        .upsert({
-          child_profile_id: childId,
-          identity_truth_id: step.source_id,
-          learned: true,
-          learned_at: new Date().toISOString()
-        }, { onConflict: "child_profile_id,identity_truth_id" });
-      stepError = result.error;
-    } else if (step.step_type === "prayer") {
-      const result = await supabase
-        .from("child_prayer_progress")
-        .upsert({
-          child_profile_id: childId,
-          prayer_prompt_id: step.source_id,
-          completed_at: new Date().toISOString()
-        }, { onConflict: "child_profile_id,prayer_prompt_id" });
-      stepError = result.error;
-    }
-
-    setStepWorking("");
-
-    if (stepError) {
-      setError(stepError.message);
-      return;
-    }
-
-    window.dispatchEvent(new Event("dc-progress-updated"));
-    await onProgress();
-    await loadAdventure();
+    if(step.completed)return;
+    await runBookAction(step.step_type+":"+step.source_id,()=>completeBookStep(supabase,childId,step.step_type,step.source_id));
   }
 
   async function finishFullAdventure() {
-    if (!selectedBook || !selectedHasAccess) return;
-    setStepWorking("finish");
-    setError("");
-
-    const { error: finishError } = await supabase.rpc("complete_child_book_adventure", {
-      p_child_profile_id: childId,
-      p_book_id: selectedBook.id
-    });
-
-    setStepWorking("");
-
-    if (finishError) {
-      setError(finishError.message);
-      return;
-    }
-
-    window.dispatchEvent(new Event("dc-progress-updated"));
-    await onProgress();
-    await load();
-    await loadAdventure();
+    if(!selectedBook||!adventureSummary?.ready_for_adventure_completion||selectedProgress?.status==="adventure_completed")return;
+    await runBookAction("finish",()=>finishBookAdventure(supabase,childId,selectedBook.id));
   }
 
   function stepAction(step: AdventureStep) {
@@ -383,7 +343,7 @@ export function Bookshelf({
 
     if (step.step_type === "book") {
       return (
-        <button type="button" className="secondary-button" onClick={() => void setBookStatus("completed")}>
+        <button type="button" className="secondary-button" disabled={working} onClick={() => void setBookStatus("completed")}>
           Mark book complete
         </button>
       );
@@ -418,7 +378,7 @@ export function Bookshelf({
         <button
           type="button"
           className="secondary-button"
-          disabled={stepWorking === step.step_type + ":" + step.source_id}
+          disabled={working || adventureLoading || !!adventureError}
           onClick={() => void completeSimpleStep(step)}
         >
           {stepWorking === step.step_type + ":" + step.source_id ? "Saving..." : "I learned this truth"}
@@ -431,7 +391,7 @@ export function Bookshelf({
         <button
           type="button"
           className="secondary-button"
-          disabled={stepWorking === step.step_type + ":" + step.source_id}
+          disabled={working || adventureLoading || !!adventureError}
           onClick={() => void completeSimpleStep(step)}
         >
           {stepWorking === step.step_type + ":" + step.source_id ? "Saving..." : "I prayed this"}
@@ -443,42 +403,12 @@ export function Bookshelf({
   }
 
   async function setBookStatus(status: "reading" | "completed") {
-    if (!selectedBook || !selectedHasAccess) return;
-
-    if (progressByBook.get(selectedBook.id)?.status === "adventure_completed") return;
-
-    setWorking(true);
-    setError("");
-
-    const existing = progressByBook.get(selectedBook.id);
-    const { error: saveError } = await supabase
-      .from("child_book_progress")
-      .upsert(
-        {
-          child_profile_id: childId,
-          book_id: selectedBook.id,
-          status,
-          started_at: existing?.started_at ?? new Date().toISOString(),
-          completed_at:
-            status === "completed"
-              ? existing?.completed_at ?? new Date().toISOString()
-              : existing?.completed_at ?? null
-        },
-        { onConflict: "child_profile_id,book_id" }
-      );
-
-    setWorking(false);
-
-    if (saveError) {
-      setError(saveError.message);
-      return;
-    }
-
-    await load();
-    await loadAdventure();
-    window.dispatchEvent(new Event("dc-progress-updated"));
-    if (status === "completed") await onProgress();
+    if(!selectedBook)return;
+    await runBookAction(status,()=>saveBookStatus(supabase,childId,selectedBook.id,status));
   }
+
+  if(loading)return <section className="bookshelf" aria-busy="true"><p role="status">Loading your bookshelf...</p></section>;
+  if(loadError)return <section className="bookshelf"><p role="alert">{loadError}</p><button className="secondary-button" disabled={working} onClick={()=>void load()}>Try again</button></section>;
 
   return (
     <div className="bookshelf">
@@ -494,7 +424,8 @@ export function Bookshelf({
         </div>
       </section>
 
-      {error && <div className="form-message">{error}</div>}
+      {error && <div className="form-message" role="status">{error}</div>}
+      {!books.length&&<p className="muted">Books will appear here when they are available.</p>}
 
       <section className="book-shelf-row">
         {books.map((book) => {
@@ -504,7 +435,13 @@ export function Bookshelf({
               type="button"
               key={book.id}
               className={selectedBook?.id === book.id ? "book-spine-card active" : "book-spine-card"}
-              onClick={() => setSelectedBookId(book.id)}
+              disabled={working}
+              aria-pressed={selectedBook?.id===book.id}
+              onClick={() => {
+                if(actionBusy.current||book.id===selectedBookId)return;
+                adventureVersion.current++;setAdventureSteps([]);setAdventureSummary(null);setAdventureError("");setAdventureLoading(true);
+                setSelectedBookId(book.id);
+              }}
             >
               <img src={coverUrl(book.cover_asset_key)} alt={book.title} />
               <span>Book #{book.book_number ?? ""}</span>
@@ -558,7 +495,7 @@ export function Bookshelf({
             <div className="book-progress-actions">
               <button
                 className="secondary-button"
-                disabled={!selectedHasAccess || working || selectedProgress?.status === "reading" || selectedBookCompleted}
+                disabled={!selectedHasAccess || working || adventureLoading || !!adventureError || selectedProgress?.status === "reading" || selectedBookCompleted}
                 onClick={() => void setBookStatus("reading")}
               >
                 {selectedProgress?.status === "reading" || selectedBookCompleted
@@ -567,7 +504,7 @@ export function Bookshelf({
               </button>
               <button
                 className="primary-button compact"
-                disabled={!selectedHasAccess || working || selectedBookCompleted}
+                disabled={!selectedHasAccess || working || adventureLoading || !!adventureError || selectedBookCompleted}
                 onClick={() => void setBookStatus("completed")}
               >
                 {selectedBookCompleted
@@ -589,7 +526,7 @@ export function Bookshelf({
                   <p className="eyebrow red">Full Book Adventure</p>
                   <h3>Keep the story going</h3>
                   <p>
-                    Complete the required steps connected to this book. The full Adventure completion is validated by the Dustin backend.
+                    Complete the required steps connected to this book to finish your full Book Adventure.
                   </p>
                 </div>
                 {adventureSummary && (
@@ -606,6 +543,8 @@ export function Bookshelf({
                 </div>
               )}
 
+              {adventureLoading&&<p role="status">Loading adventure steps...</p>}
+              {adventureError&&<div className="form-message" role="alert">{adventureError} <button className="text-button" disabled={working} onClick={()=>void loadAdventure()}>Try again</button></div>}
               <div className="book-adventure-steps">
                 {adventureSteps.map((step) => (
                   <article className={step.completed ? "book-adventure-step complete" : "book-adventure-step"} key={step.step_type + ":" + step.source_id}>
@@ -626,7 +565,7 @@ export function Bookshelf({
               <button
                 type="button"
                 className="primary-button book-adventure-finish"
-                disabled={!selectedHasAccess || !adventureSummary?.ready_for_adventure_completion || stepWorking === "finish" || selectedProgress?.status === "adventure_completed"}
+                disabled={!selectedHasAccess || working || adventureLoading || !!adventureError || !adventureSummary?.ready_for_adventure_completion || stepWorking === "finish" || selectedProgress?.status === "adventure_completed"}
                 onClick={() => void finishFullAdventure()}
               >
                 {selectedProgress?.status === "adventure_completed"
