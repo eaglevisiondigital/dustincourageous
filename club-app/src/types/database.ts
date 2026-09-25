@@ -6718,6 +6718,7 @@ export type Database = {
           household_id: string | null
           identity_progress_records: number | null
           prayer_progress_records: number | null
+          reading_position_records: number | null
           reward_records: number | null
           scripture_progress_records: number | null
           status: string | null
@@ -6738,6 +6739,7 @@ export type Database = {
           household_id?: string | null
           identity_progress_records?: never
           prayer_progress_records?: never
+          reading_position_records?: never
           reward_records?: never
           scripture_progress_records?: never
           status?: string | null
@@ -6758,6 +6760,7 @@ export type Database = {
           household_id?: string | null
           identity_progress_records?: never
           prayer_progress_records?: never
+          reading_position_records?: never
           reward_records?: never
           scripture_progress_records?: never
           status?: string | null

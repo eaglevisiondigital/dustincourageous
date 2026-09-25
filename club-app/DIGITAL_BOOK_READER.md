@@ -11,6 +11,10 @@ Checkpoint: September 24, 2026, America/Chicago.
 - Positions are separate from Book Companion completion and XP. They reset to
   page 1 when an approved edition revision changes. Across multiple devices,
   the last successful position write wins.
+- Guardian privacy inventory and household/child exports include reading places,
+  including archived children and history retained after digital access expires.
+  Export version 2026.2 adds `book_reading_positions`. Permanent child deletion
+  cascades these records through the existing foreign key.
 - Each request checks the selected child's active household and guardian access.
   Full-book access requires `digital_books` or a current individual book grant.
   Free `book_companions` does not unlock full books.
@@ -61,6 +65,10 @@ release in this batch. No real book manifest was staged using placeholder text.
   edition changes, admin checks and preparation retry behavior. Catalog checks
   verify actual deployed grants, private bucket configuration and position RLS.
   It does not exercise the Storage HTTP server or signed-in browser sessions.
+- `supabase/tests/reading_privacy_regression.sql` checks household and child
+  export isolation, archived-child history, empty results, and removed-guardian
+  denial using temporary fixtures. It also verifies deployed history policy,
+  inventory invoker security, and the child-deletion cascade constraint.
 - All 37 actual proof images pass the client manifest/download checks in an
   isolated mocked-client test with byte sizes preserved. Saved-position calls
   in that source-file test are simulated, not live child records.

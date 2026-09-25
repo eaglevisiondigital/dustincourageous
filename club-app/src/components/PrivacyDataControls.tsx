@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import type { Database } from "../types/database";
 
 type Child = {
   id: string;
@@ -39,25 +40,7 @@ type PrivacyRequest = {
   created_at: string;
 };
 
-type Inventory = {
-  child_profile_id: string;
-  display_name: string;
-  status: string;
-  challenge_progress_records: number;
-  adventure_progress_records: number;
-  scripture_progress_records: number;
-  devotional_progress_records: number;
-  prayer_progress_records: number;
-  identity_progress_records: number;
-  content_progress_records: number;
-  book_progress_records: number;
-  xp_records: number;
-  badge_records: number;
-  reward_records: number;
-  activity_records: number;
-  group_membership_records: number;
-  event_registration_records: number;
-};
+type Inventory = Database["public"]["Views"]["child_data_inventory"]["Row"];
 
 export function PrivacyDataControls({
   householdId,
@@ -351,6 +334,7 @@ export function PrivacyDataControls({
             <div><strong>{selectedInventory.scripture_progress_records}</strong><span>Scripture progress</span></div>
             <div><strong>{selectedInventory.devotional_progress_records}</strong><span>Devotionals</span></div>
             <div><strong>{selectedInventory.book_progress_records}</strong><span>Book progress</span></div>
+            <div><strong>{selectedInventory.reading_position_records}</strong><span>Saved reading places</span></div>
             <div><strong>{selectedInventory.xp_records}</strong><span>XP records</span></div>
             <div><strong>{selectedInventory.badge_records}</strong><span>Badges</span></div>
             <div><strong>{selectedInventory.reward_records}</strong><span>Rewards</span></div>
@@ -359,11 +343,11 @@ export function PrivacyDataControls({
 
           <div className="privacy-profile-actions">
             {selectedInventory.status==="archived"?(
-              <button className="secondary-button" disabled={working.startsWith("restore:")} onClick={()=>void restoreChild(selectedInventory.child_profile_id)}>
+              <button className="secondary-button" disabled={!selectedInventory.child_profile_id || working.startsWith("restore:")} onClick={()=>{if(selectedInventory.child_profile_id)void restoreChild(selectedInventory.child_profile_id);}}>
                 Restore child profile
               </button>
             ):(
-              <button className="secondary-button" disabled={working.startsWith("archive:")} onClick={()=>void archiveChild(selectedInventory.child_profile_id)}>
+              <button className="secondary-button" disabled={!selectedInventory.child_profile_id || working.startsWith("archive:")} onClick={()=>{if(selectedInventory.child_profile_id)void archiveChild(selectedInventory.child_profile_id);}}>
                 Archive child profile
               </button>
             )}
