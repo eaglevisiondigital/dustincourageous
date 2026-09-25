@@ -4908,3 +4908,23 @@ select:focus {
 .reading-history-open { justify-self: start; min-height: 44px; margin-top: .5rem; }
 .reading-launch-status { margin-top: 1rem; padding: 1rem; border: 1px solid #dbe3ee; border-radius: .75rem; }
 .reading-launch-status button { min-height: 44px; margin: .25rem .5rem .25rem 0; }
+.event-refresh, .support-history-refresh { margin-bottom: 1rem; }
+.support-history-refresh { margin-top: 1rem; }
+.event-details { margin-top: .75rem; }
+.event-details p { color: #d5d0c8; font-size: .9rem; line-height: 1.5; overflow-wrap: anywhere; }
+.event-details .event-timezone, .event-details .event-calendar-note { color: #aaa59e; font-size: .85rem; }
+.event-address { white-space: pre-wrap; }
+.event-detail-actions, .notification-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; margin: .75rem 0; }
+.event-detail-actions a { display: inline-flex; align-items: center; text-decoration: none; }
+.event-detail-actions > *, .notification-toolbar button, .support-ticket-dialog button { min-height: 44px; }
+.support-ticket-list article { flex-wrap: wrap; }
+.support-ticket-list article > div { flex: 1 1 200px; min-width: 0; overflow-wrap: anywhere; }
+.support-ticket-dialog { width: min(720px, 94vw); max-height: 90dvh; padding: clamp(16px, 3vw, 32px); overflow-y: auto; }
+.support-ticket-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.support-ticket-heading h2 { margin: .5rem 0; }
+.support-ticket-status { text-transform: capitalize; }
+.support-ticket-dates { display: grid; gap: .75rem; }
+.support-ticket-dates dt { font-weight: 700; }
+.support-ticket-dates dd { margin: .25rem 0 0; }
+.support-ticket-message { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; line-height: 1.6; }
+.notification-filter { max-width: 280px; }

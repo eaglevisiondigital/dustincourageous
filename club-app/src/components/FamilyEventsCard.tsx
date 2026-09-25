@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { EventDetails } from "./EventDetails";
+import { eventTimeDetails } from "../lib/eventCalendar";
 
 type EventRow = {
   id:string;
@@ -123,6 +125,7 @@ export function FamilyEventsCard({
       </div>
 
       {message&&<div className="form-message" role="status">{message}</div>}
+      <button type="button" className="secondary-button event-refresh" disabled={loading||!!working} onClick={()=>void load()}>Refresh events</button>
       {loading?<p className="muted" role="status">Loading events and registrations...</p>:loadError?(
         <div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={!!working} onClick={()=>void load()}>Retry events</button></div>
       ):<>
@@ -140,20 +143,19 @@ export function FamilyEventsCard({
       <div className="family-events-list">
         {events.map((event)=>{
           const registration=registrations.find((item)=>item.event_id===event.id&&(item.child_profile_id??"")===(childId??""));
+          let time: ReturnType<typeof eventTimeDetails> | null = null;
+          try { time = eventTimeDetails(event); } catch { /* Display a correction message below. */ }
           return (
             <article className="family-event-row" key={event.id}>
               <div className="event-date-box">
-                <strong>{new Date(event.starts_at).toLocaleDateString(undefined,{month:"short"})}</strong>
-                <span>{new Date(event.starts_at).getDate()}</span>
+                <strong>{time?.month ?? "Date"}</strong>
+                <span>{time?.day ?? "?"}</span>
               </div>
               <div className="family-event-copy">
                 <span>{event.event_type.replaceAll("_"," ")}</span>
                 <h3>{event.title}</h3>
                 <p>{event.description}</p>
-                <small>
-                  {new Date(event.starts_at).toLocaleString()}
-                  {event.location_name?" · "+event.location_name:""}
-                </small>
+                <EventDetails event={event}/>
               </div>
               <div className="family-event-action">
                 {registration&&registration.status!=="canceled"?(
@@ -162,8 +164,8 @@ export function FamilyEventsCard({
                     {["registered","waitlist"].includes(registration.status)&&<button type="button" className="text-button small" disabled={!!working} onClick={()=>void cancel(registration.id)}>{working===registration.id?"Canceling...":"Cancel"}</button>}
                   </>
                 ):(
-                  <button type="button" className="secondary-button" disabled={!!working||Date.parse(event.starts_at)<=Date.now()} onClick={()=>void register(event.id)}>
-                    {working===event.id?"Saving...":Date.parse(event.starts_at)<=Date.now()?"Registration closed":"Register"}
+                  <button type="button" className="secondary-button" disabled={!!working||!time||Date.parse(event.starts_at)<=Date.now()} onClick={()=>void register(event.id)}>
+                    {working===event.id?"Saving...":!time?"Check event details":Date.parse(event.starts_at)<=Date.now()?"Registration closed":"Register"}
                   </button>
                 )}
               </div>

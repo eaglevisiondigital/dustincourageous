@@ -6,6 +6,14 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+The larger guardian planning/help/inbox batch adds event timezone and location
+details, safe online links, downloadable calendar reminders and event refresh;
+household-scoped support request viewing and refresh; and server-filtered unread
+notifications with independent pagination. All 212 tests and the production
+build pass. These are three implemented guardian workflows, not a claim of
+signed-in acceptance or launch readiness. Calendar imports, real-device behavior,
+and actual signed-in support/inbox checks remain to be completed.
+
 The guardian notification-history batch removes the fixed 12-alert viewing
 limit. Load older notifications preserves stable timestamp/ID ordering, while
 Refresh returns to the newest alerts. Failed page requests retain the displayed

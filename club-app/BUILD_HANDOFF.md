@@ -15,6 +15,25 @@ Do not repeat completed batches without a concrete defect or required gate.
 
 ## Latest completed implementation
 
+- Guardian planning/help/inbox batch:
+  - Events show the event timezone, matching date badge, end time, address,
+    HTTPS online link and device-local start time when different. Guardians can
+    download a standalone calendar reminder and refresh events. Calendar text
+    is escaped and folded by UTF-8 byte count; UTC instants preserve DST offsets.
+    Reminders contain event details only, not child/household registrations, and
+    do not confirm attendance or update automatically. Invalid timing blocks
+    new registration and calendar export; existing registrations can be canceled.
+  - Family support history now opens the submitted message and current status,
+    submission/update/resolution times, with a refreshable scoped detail dialog.
+    Internal metadata, assigned staff and priority are not requested. This is
+    original-request viewing, not a two-way support conversation implementation.
+  - Notifications offer All/Unread views with server-side filtering and fresh
+    cursors on filter changes. Successful read updates remove alerts from the
+    unread view. Requests from replaced inboxes cannot update the current view.
+  - 13 new tests cover calendar encoding, timezones/DST, unsafe links, support
+    scoping and unread filters. Supabase tests use actual SDK/mock HTTP; calendar
+    tests generate files in memory. Browser/device/calendar-import checks are
+    still pending. No schema, policy, provider or approved-content changes.
 - Guardian notifications now support loading older alerts and refreshing the
   newest alerts. Pages use timestamp plus ID cursors, preserving microseconds
   and tied timestamps, with 12 displayed rows and one lookahead. Failed older
@@ -50,7 +69,7 @@ Do not repeat completed batches without a concrete defect or required gate.
   with book title, saved page and local save time. Unavailable book metadata
   retains the saved place. Errors remain distinct from empty reading history.
   Confirmed reader saves refresh this panel. No completion or XP awarded by it.
-- 199 automated tests pass. Production build checked with this batch. GitHub CI
+- 212 automated tests pass. Production build checked with this batch. GitHub CI
   must be checked on the pushed commit before reporting completion.
 - No schema or permissions changed in the Family Hub reading-history batch.
 
@@ -95,6 +114,9 @@ not approved release assets.
 3. Prepare the corrected Book 1 edition when source images arrive, then run human
    governance review before publishing. Do not auto-approve creative content.
 4. Continue provider readiness without enabling unconfigured checkout.
+5. Support currently stores the original request and status only. A future
+   two-way thread needs guardian/staff permissions, retry-safe replies, privacy
+   export/deletion coverage and notification behavior before implementation.
 
 User authorizes continued development and development-branch pushes. Keep
 batches concrete, verify once against the relevant risks, and report what

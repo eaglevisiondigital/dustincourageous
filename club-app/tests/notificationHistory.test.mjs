@@ -75,3 +75,22 @@ test("failed, malformed, and cross-guardian responses are never treated as empty
     await assert.rejects(readNotificationPage(f.client, user));
   }
 });
+
+test("unread filtering applies server-side on every page while preserving guardian scoping", async () => {
+  const f = fixture(() => ({ data: [row(1)] }));
+  await readNotificationPage(f.client, user, { id: row(2).id, created_at: stamp }, "unread");
+  const params = f.urls[0].searchParams;
+  assert.equal(params.get("status"), "eq.unread");
+  assert.equal(params.get("user_id"), `eq.${user}`);
+  assert.ok(params.has("or"));
+  const all = fixture(() => ({ data: [{ ...row(1), status: "read" }] }));
+  assert.equal((await readNotificationPage(all.client, user)).items.length, 1);
+  assert.equal(all.urls[0].searchParams.has("status"), false);
+});
+
+test("unread filtering rejects inconsistent results and invalid filter values", async () => {
+  await assert.rejects(readNotificationPage(fixture(() => ({ data: [{ ...row(1), status: "read" }] })).client, user, null, "unread"));
+  const f = fixture(() => ({ data: [] }));
+  await assert.rejects(readNotificationPage(f.client, user, null, "all,status.eq.read"));
+  assert.equal(f.urls.length, 0);
+});

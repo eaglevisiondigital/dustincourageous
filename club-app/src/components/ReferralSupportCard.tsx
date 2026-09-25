@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { submitSupportRequest, type SupportRequest } from "../lib/supportTicket";
+import { SupportTicketDetails } from "./SupportTicketDetails";
 
 type Ticket={
   id:string;
@@ -31,6 +32,7 @@ export function ReferralSupportCard({
   const [loadError,setLoadError]=useState("");
   const [pendingRequest,setPendingRequest]=useState<SupportRequest|null>(null);
   const [copyFallback,setCopyFallback]=useState("");
+  const [openTicket,setOpenTicket]=useState<string|null>(null);
   const actionBusy=useRef(false);
   const loadVersion=useRef(0);
 
@@ -180,16 +182,19 @@ export function ReferralSupportCard({
         </article>
       </div>
 
+      <button type="button" className="secondary-button support-history-refresh" disabled={loading||working} onClick={()=>void load()}>Refresh support history</button>
       {loading?<p role="status">Loading support history...</p>:loadError?null:tickets.length>0?(
         <div className="support-ticket-list">
           {tickets.map((ticket)=>(
             <article key={ticket.id}>
               <div><strong>#{ticket.ticket_number} · {ticket.subject}</strong><span>{ticket.category} · {new Date(ticket.created_at).toLocaleDateString()}</span></div>
               <span className={ticket.status==="resolved"||ticket.status==="closed"?"status-chip done":"status-chip"}>{ticket.status.replaceAll("_"," ")}</span>
+              <button type="button" className="secondary-button" aria-label={`View support request ${ticket.ticket_number}`} onClick={()=>setOpenTicket(ticket.id)}>View request</button>
             </article>
           ))}
         </div>
       ):<p className="muted">No support requests are connected to this family yet.</p>}
+      {openTicket&&<SupportTicketDetails key={`${householdId}:${openTicket}`} householdId={householdId} ticketId={openTicket} onClose={()=>setOpenTicket(null)}/>}
     </section>
   );
 }

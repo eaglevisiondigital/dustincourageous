@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { markNotificationRead } from "../lib/familyActions";
-import { readNotificationPage, type NotificationCursor, type NotificationItem } from "../lib/notificationHistory";
+import { readNotificationPage, type NotificationCursor, type NotificationItem, type NotificationFilter } from "../lib/notificationHistory";
 
 export function NotificationsPanel({ userId }: { userId: string }) {
-  return <NotificationInbox key={userId} userId={userId} />;
+  const [filter, setFilter] = useState<NotificationFilter>("all");
+  return <section className="family-section-card">
+    <div className="section-heading compact-heading"><div><p className="eyebrow red">Family Activity</p><h2>Notifications</h2></div></div>
+    <label className="notification-filter">Show notifications<select value={filter} onChange={event => setFilter(event.target.value as NotificationFilter)}>
+      <option value="all">All notifications</option><option value="unread">Unread only</option>
+    </select></label>
+    <NotificationInbox key={`${userId}:${filter}`} userId={userId} filter={filter} />
+  </section>;
 }
 
-function NotificationInbox({ userId }: { userId: string }) {
+function NotificationInbox({ userId, filter }: { userId: string; filter: NotificationFilter }) {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [next, setNext] = useState<NotificationCursor | null>(null);
   const [error, setError] = useState("");
@@ -23,7 +30,7 @@ function NotificationInbox({ userId }: { userId: string }) {
     busy.current = true;
     setLoading(!cursor); setLoadingMore(!!cursor); setError(""); setActionError("");
     try {
-      const page = await readNotificationPage(supabase, userId, cursor);
+      const page = await readNotificationPage(supabase, userId, cursor, filter);
       if (request !== version.current) return;
       setItems(current => cursor ? [...current, ...page.items.filter(row => !current.some(existing => existing.id === row.id))] : page.items);
       setNext(page.next);
@@ -34,7 +41,7 @@ function NotificationInbox({ userId }: { userId: string }) {
     } finally {
       if (request === version.current) { busy.current = false; setLoading(false); setLoadingMore(false); }
     }
-  }, [userId]);
+  }, [userId, filter]);
 
   useEffect(() => {
     void load();
@@ -47,7 +54,9 @@ function NotificationInbox({ userId }: { userId: string }) {
     const request = ++version.current;
     try {
       await markNotificationRead(supabase, userId, id);
-      if (request === version.current) setItems(current => current.map(item => item.id === id ? { ...item, status: "read" } : item));
+      if (request === version.current) setItems(current => filter === "unread"
+        ? current.filter(item => item.id !== id)
+        : current.map(item => item.id === id ? { ...item, status: "read" } : item));
     } catch {
       if (request === version.current) setActionError("Read status could not be saved. Please try again.");
     } finally {
@@ -56,13 +65,12 @@ function NotificationInbox({ userId }: { userId: string }) {
   }
 
   const disabled = loading || loadingMore || working;
-  return <section className="family-section-card">
-    <div className="section-heading compact-heading">
-      <div><p className="eyebrow red">Family Activity</p><h2>Notifications</h2></div>
+  return <div>
+    <div className="notification-toolbar">
+      <button type="button" className="secondary-button" disabled={disabled}
+        onClick={() => { if (!busy.current) void load(); }}>Refresh notifications</button>
       {!loading && <span className="pill">{items.filter(item => item.status === "unread").length} unread in {items.length} loaded notifications</span>}
     </div>
-    <button type="button" className="secondary-button" disabled={disabled}
-      onClick={() => { if (!busy.current) void load(); }}>Refresh notifications</button>
     {actionError && <div className="form-message" role="alert">{actionError}</div>}
     {error && <p role="alert">{error}</p>}
     {loading ? <p role="status">Loading notifications...</p> : <>
@@ -76,11 +84,13 @@ function NotificationInbox({ userId }: { userId: string }) {
           <time dateTime={item.created_at}>{new Date(item.created_at).toLocaleDateString()}</time>
         </button>)}
       </div>
-      {!items.length && !error && <p className="muted">Adventure Club milestones and family alerts will appear here.</p>}
+      {!items.length && !error && <p className="muted">{filter === "unread"
+        ? next ? "No unread alerts remain in this page. Load older notifications to continue." : "You're caught up. No unread notifications."
+        : "Adventure Club milestones and family alerts will appear here."}</p>}
       {next && <button type="button" className="secondary-button" disabled={disabled}
         onClick={() => { if (!busy.current) void load(next); }}>{loadingMore ? "Loading older notifications..." : "Load older notifications"}</button>}
       {loadingMore && <p role="status">Loading older notifications...</p>}
       {items.length > 0 && !next && !error && <p className="muted">You have reached the end of your notifications.</p>}
     </>}
-  </section>;
+  </div>;
 }
