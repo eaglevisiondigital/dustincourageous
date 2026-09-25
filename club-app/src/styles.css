@@ -5056,3 +5056,7 @@ button.status-chip { min-height: 44px; }
   margin: 1.25rem 0 0;
   min-width: 0;
 }
+
+.adult-account-actions { margin-top: 1rem; }
+.adult-account-actions > *, .adult-account-download { min-height: 44px; white-space: normal; text-align: center; }
+.adult-account-download { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }

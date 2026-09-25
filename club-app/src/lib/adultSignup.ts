@@ -21,7 +21,7 @@ export async function readAdultDetails(client: SupabaseClient<Database>, userId:
   const user = auth.data.user;
   return { firstName: data.first_name ?? "", lastName: data.last_name ?? "", email: user.email ?? "",
     cellPhone: typeof user.user_metadata.adult_contact_phone === "string" ? user.user_metadata.adult_contact_phone : "",
-    relationship: user.user_metadata.family_relationship === "parent" ? "parent" : "guardian" };
+    relationship: ["parent", "guardian"].includes(user.user_metadata.family_relationship) ? user.user_metadata.family_relationship : "" };
 }
 export async function saveAdultDetails(client: SupabaseClient<Database>, userId: string, details: AdultDetails) {
   const metadata = { ...adultSignupMetadata(details.firstName, details.lastName, details.cellPhone, details.relationship), adult_contact_phone: details.cellPhone.trim() || null };
@@ -32,4 +32,26 @@ export async function saveAdultDetails(client: SupabaseClient<Database>, userId:
   const { data, error } = await client.from("profiles").update({ first_name: metadata.first_name, last_name: metadata.last_name, display_name: metadata.display_name })
     .eq("id", userId).select("id,first_name,last_name,display_name").single();
   if (error || !data || data.id !== userId || data.first_name !== metadata.first_name || data.last_name !== metadata.last_name || data.display_name !== metadata.display_name) throw new Error("Profile details could not be confirmed");
+}
+
+// Deliberately allowlist adult contact fields. Never serialize the Auth user/session.
+export async function exportAdultDetails(client: SupabaseClient<Database>, userId: string) {
+  const details = await readAdultDetails(client, userId);
+  return {
+    export_version: "adult-contact-1",
+    generated_at: new Date().toISOString(),
+    scope: "requesting_adult_contact_details",
+    adult: {
+      first_name: details.firstName,
+      last_name: details.lastName,
+      email: details.email,
+      cell_phone: details.cellPhone || null,
+      family_relationship: details.relationship || null,
+    },
+  };
+}
+
+export function adultDetailsChanged(saved: AdultDetails | null, current: AdultDetails) {
+  return saved !== null && (["firstName", "lastName", "cellPhone", "relationship"] as const)
+    .some(key => saved[key] !== current[key]);
 }

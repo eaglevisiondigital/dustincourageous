@@ -16,6 +16,25 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Adult Account settings now provide a separate saved-contact JSON
+export (name, email, optional phone and Parent/Guardian choice). It freshly verifies
+the requesting adult and reads their own profile, allowlists contact fields, and
+never serializes Auth sessions or arbitrary metadata. A visible download link
+supports deliberate device downloads; its object URL is revoked on replacement,
+refresh, save or unmount. This supplements household/child privacy exports, whose
+schema remains unchanged. No email, SMS, provider or authorization changes.
+
+Unsaved account edits now show a notice, request an explicit discard before an
+in-section refresh, and register the browser's page-unload warning. In-app section
+navigation is not intercepted, so the notice asks adults to save before leaving.
+Legacy accounts with no valid relationship must explicitly choose Parent or
+Guardian when saving, instead of silently preselecting Guardian. Existing badge
+fallback remains unchanged until a choice is saved. Account actions wrap with
+spacing and 44px minimum target heights. Four new tests cover export field limits,
+identity/read failures, absent contact values and editable-field change detection;
+all 259 tests and production build pass. Signed-in device, download and unsaved-form
+interaction acceptance remain pending.
+
 September 25: Routine same-adult TOKEN_REFRESHED, USER_UPDATED and repeated
 SIGNED_IN events now update the session without replacing the mounted workspace
 or restarting an existing family load. This prevents automatic auth events from
