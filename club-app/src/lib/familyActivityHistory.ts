@@ -23,3 +23,32 @@ export async function readFamilyActivityPage(client: SupabaseClient<Database>, h
   const last = items.at(-1);
   return { items, next: data.length > 20 && last ? { id: last.id, created_at: last.created_at } : null };
 }
+
+export type OpenFamilyChallenge = {
+  id: string;
+  childId: string;
+  title: string;
+  status: "in_progress" | "pending_parent";
+  updatedAt: string;
+};
+
+export async function readOpenFamilyChallenges(client: SupabaseClient<Database>, householdId: string, childIds: string[]) {
+  const ids = [...new Set(childIds)];
+  if (!uuid.test(householdId) || ids.some(id => !uuid.test(id))) throw new Error("Invalid family progress request");
+  if (!ids.length) return { items: [] as OpenFamilyChallenge[], hasMore: false };
+  const { data, error } = await client.from("child_challenge_progress")
+    .select("id,child_profile_id,status,updated_at,child_profiles!inner(household_id,status),challenges(title)")
+    .in("child_profile_id", ids).eq("child_profiles.household_id", householdId).eq("child_profiles.status", "active")
+    .in("status", ["in_progress", "pending_parent"])
+    .order("updated_at", { ascending: false }).order("id", { ascending: false }).limit(51);
+  if (error) throw error;
+  const items = (data ?? []).map(row => {
+    const child = row.child_profiles;
+    if (!uuid.test(row.id) || !ids.includes(row.child_profile_id) || child?.household_id !== householdId || child?.status !== "active"
+      || (row.status !== "in_progress" && row.status !== "pending_parent")
+      || !timestamp.test(row.updated_at) || !Number.isFinite(Date.parse(row.updated_at))) throw new Error("Family progress could not be confirmed");
+    return { id: row.id, childId: row.child_profile_id, status: row.status,
+      title: row.challenges?.title ?? "Challenge Unavailable", updatedAt: row.updated_at } as OpenFamilyChallenge;
+  });
+  return { items: items.slice(0, 50), hasMore: items.length > 50 };
+}

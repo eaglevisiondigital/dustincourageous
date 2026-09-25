@@ -16,6 +16,19 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Family Activity History now includes In Progress & Awaiting Approval
+above the recorded activity feed. The shared All Children/individual-child filter
+shows current challenge status, child name and last update; it explicitly separates
+participation/pending approval from completion XP. Refreshes after progress events;
+failed requests retain displayed rows with an out-of-date warning and retry.
+Queries restrict active children and selected household using an inner child join,
+request no evidence text, and disclose the 50-row recent-result limit. Unavailable
+challenge titles retain status context. Four SDK/mock-HTTP tests cover scope,
+archived/foreign children, pending status, hidden joins, limits and error handling.
+All 244 app tests and production build pass. Existing child/progress SELECT policies
+were inspected. No schema, permissions or XP writes changed. Signed-in device
+acceptance remains pending.
+
 September 25: Privacy-controls feedback and refresh reliability improved. Success
 messages survive the follow-up refresh. Loading failures have a separate alert and
 Refresh Privacy Controls action; controls are disabled until a successful reload.
