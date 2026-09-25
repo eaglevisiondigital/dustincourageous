@@ -6,6 +6,20 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Reproduced a legacy/direct Faith completion access gap: an
+unpublished draft guide accepted a child completion through direct table INSERT.
+Deployed `20260925131231_protect_direct_family_faith_credit.sql` to strengthen the
+existing INSERT policy with published/available guide checks, selected-household
+premium access and active-child validation. Guardian ownership and authenticated
+completed_by remain required. Existing history and household-only records are
+unchanged. Nine direct-insert checks and ten atomic Family participation checks
+pass before and after deployment. Synthetic published catalog rows exist only in
+rolled-back test copies; no content was published or approved. Updated the older
+family regression's catalog seam to exercise the strengthened deployed policy.
+Cloud preview still has no signed-in session. App code is unchanged from the
+227-test/build-passing checkpoint. Security advisor retains only the previously
+recorded Auth leaked-password warning; no database findings.
+
 September 25: Added Family Activity History to the Family workspace so guardians
 can verify recorded child activity after leaving a challenge or reloading. Shows
 child name, recorded title/description, local timestamp and nonzero XP delta, with

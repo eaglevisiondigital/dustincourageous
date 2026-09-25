@@ -27,6 +27,14 @@ grant select on family_test_guides,family_test_challenges to authenticated;
 alter policy challenge_steps_read on public.challenge_steps using (
  exists(select 1 from pg_temp.family_test_challenges c where c.id=challenge_steps.challenge_id and c.status='published')
 );
+-- Mirror only the guide catalog lookup inside the deployed INSERT policy.
+-- Ownership, active-child and selected-household entitlement checks remain real.
+do $$ declare definition text; begin
+ select with_check into definition from pg_policies where schemaname='public'
+  and tablename='household_faith_sessions' and policyname='household_faith_sessions_insert';
+ definition:=replace(definition,'family_faith_guides','pg_temp.family_test_guides');
+ execute 'alter policy household_faith_sessions_insert on public.household_faith_sessions with check ('||definition||')';
+end $$;
 do $$ declare fn text; ns text; definition text; begin
  foreach fn in array array['complete_family_faith_participants','save_family_challenge_participants','child_can_access_challenge','user_can_access_challenge'] loop
   ns:=case when fn in ('complete_family_faith_participants','save_family_challenge_participants') then 'public' else 'private' end;

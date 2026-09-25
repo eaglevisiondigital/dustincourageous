@@ -203,3 +203,21 @@ then verify the resulting recorded activity by child in Family Activity History.
 Reload, filter, load older events, and verify that no unchecked child received
 credit. Pending participation without an activity event is not listed as earned
 completion. Also test an interrupted load and switching filters during a request.
+
+## Direct Family Faith completion access
+
+September 25: Reproduced a legacy/direct Faith completion access gap: an
+unpublished draft guide accepted a child completion through direct table INSERT.
+Deployed `20260925131231_protect_direct_family_faith_credit.sql` to strengthen the
+existing INSERT policy with published/available guide checks, selected-household
+premium access and active-child validation. Guardian ownership and authenticated
+completed_by remain required. Existing history and household-only records are
+unchanged. Nine direct-insert checks and ten atomic Family participation checks
+pass before and after deployment. Synthetic published catalog rows exist only in
+rolled-back test copies; no content was published or approved. Updated the older
+family regression's catalog seam to exercise the strengthened deployed policy.
+Cloud preview still has no signed-in session. App code is unchanged from the
+227-test/build-passing checkpoint. Security advisor retains only the previously
+recorded Auth leaked-password warning; no database findings.
+
+Remaining Auth notice: [Leaked-password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
