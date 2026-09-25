@@ -12,9 +12,20 @@ Preview: https://deploy-preview-1--dustincourageous.netlify.app
 Read LAUNCH_MILESTONES.md and DIGITAL_BOOK_READER.md for implementation and
 verification boundaries. Inspect current branch before choosing new work.
 Do not repeat completed batches without a concrete defect or required gate.
+Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- Launch verification now includes 13 passing checks against real deployed
+  tables/policies/functions under authenticated and anonymous database roles.
+  Covered household/child/bookmark/support isolation, notification read/write
+  ownership, denied cross-family child edits, removed/non-guardian access and
+  selected-child digital entitlements across two households. All fixtures were
+  rolled back; follow-up found zero fixture households/tickets. Security advisor
+  returned zero findings. This is database authorization evidence, not an
+  Auth-issued session, Storage HTTP or signed-in browser walkthrough.
+- Cloud browser reached the development preview's guardian sign-in screen;
+  no guardian session was available. See ALPHA_VERIFICATION.md for boundaries.
 - Guardian planning/help/inbox batch:
   - Events show the event timezone, matching date badge, end time, address,
     HTTPS online link and device-local start time when different. Guardians can
@@ -109,7 +120,9 @@ not approved release assets.
 
 ## Next useful work
 
-1. Inspect existing milestones and pick an unfinished family-facing workflow.
+1. Prioritize Alpha verification over more incidental interface additions:
+   inspect ALPHA_VERIFICATION.md and review selected-household premium access
+   outside digital books (generic entitlement callers remain an open audit).
 2. Complete signed-in preview QA when an authorized test session is available.
 3. Prepare the corrected Book 1 edition when source images arrive, then run human
    governance review before publishing. Do not auto-approve creative content.

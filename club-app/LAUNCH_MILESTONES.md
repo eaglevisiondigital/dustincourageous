@@ -6,6 +6,14 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+The launch-verification batch added and executed 13 rollback-only checks against
+actual deployed tables, policies and functions under authenticated/anon roles.
+It verified concrete household isolation and digital-entitlement scenarios
+without mocked authorization helpers. It did not issue real Auth sessions or
+exercise Storage HTTP. The preview is reachable but awaits guardian sign-in.
+See [Alpha verification evidence](ALPHA_VERIFICATION.md) for exact results and
+the remaining premium-access and signed-in acceptance gates.
+
 The larger guardian planning/help/inbox batch adds event timezone and location
 details, safe online links, downloadable calendar reminders and event refresh;
 household-scoped support request viewing and refresh; and server-filtered unread
