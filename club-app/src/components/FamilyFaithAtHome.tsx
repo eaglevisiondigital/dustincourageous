@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { completeFamilyFaith } from "../lib/familyActions";
 
 type Guide = {
   id: string;
@@ -48,10 +49,15 @@ export function FamilyFaithAtHome({
   const [activeChildId, setActiveChildId] = useState(selectedChildId);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState("");
+  const loadVersion=useRef(0);
+  const actionBusy=useRef(false);
 
   const load = useCallback(async () => {
-    setMessage("");
-
+    const version=++loadVersion.current;
+    setLoading(true);setLoadError("");
+    try {
     const [guideResult, sessionResult] = await Promise.all([
       supabase
         .from("family_faith_guides")
@@ -67,18 +73,21 @@ export function FamilyFaithAtHome({
     ]);
 
     const error=guideResult.error||sessionResult.error;
-    if(error){
-      setMessage(error.message);
-      return;
-    }
+    if(version!==loadVersion.current)return;
+    if(error)throw error;
 
     const nextGuides=(guideResult.data??[]) as Guide[];
     setGuides(nextGuides);
     setSessions((sessionResult.data??[]) as Session[]);
-    if(!activeGuideId && nextGuides[0]) setActiveGuideId(nextGuides[0].id);
-  },[householdId,activeGuideId]);
+    setActiveGuideId(current=>nextGuides.some(guide=>guide.id===current)?current:nextGuides[0]?.id??"");
+    } catch {
+      if(version===loadVersion.current)setLoadError("Family Faith guides and progress could not be loaded. Please try again.");
+    } finally {
+      if(version===loadVersion.current)setLoading(false);
+    }
+  },[householdId]);
 
-  useEffect(()=>{ void load(); },[load]);
+  useEffect(()=>{ void load();return ()=>{loadVersion.current+=1;}; },[load]);
 
   useEffect(()=>{
     if(selectedChildId) setActiveChildId(selectedChildId);
@@ -89,40 +98,29 @@ export function FamilyFaithAtHome({
     [guides,activeGuideId]
   );
 
-  const completedForChild = activeGuide && activeChildId
-    ? sessions.find((session)=>session.family_faith_guide_id===activeGuide.id && session.child_profile_id===activeChildId)
+  const completedForChild = activeGuide
+    ? sessions.find((session)=>session.family_faith_guide_id===activeGuide.id && session.child_profile_id===(activeChildId||null))
     : undefined;
 
   async function completeGuide(){
-    if(!activeGuide) return;
-
+    if(!activeGuide||actionBusy.current||loading||loadError||completedForChild) return;
+    if(activeChildId&&!children.some(child=>child.id===activeChildId))return;
+    actionBusy.current=true;
     setWorking(true);
     setMessage("");
 
-    const { error }=await supabase
-      .from("household_faith_sessions")
-      .upsert({
-        household_id:householdId,
-        family_faith_guide_id:activeGuide.id,
-        child_profile_id:activeChildId||null,
-        completed_by:user.id,
-        completed_at:new Date().toISOString()
-      },{
-        onConflict:"household_id,family_faith_guide_id,child_profile_id",
-        ignoreDuplicates:true
-      });
-
-    setWorking(false);
-
-    if(error){
-      setMessage(error.message);
-      return;
-    }
-
+    try {
+    await completeFamilyFaith(supabase,householdId,activeGuide.id,activeChildId||null,user.id);
     setMessage("Family Faith time completed.");
     window.dispatchEvent(new Event("dc-progress-updated"));
-    await load();
+    } catch {
+      setMessage("Completion could not be confirmed. Check the refreshed progress before trying again.");
+    } finally {
+      await load();actionBusy.current=false;setWorking(false);
+    }
   }
+
+  if(loading||loadError)return <section className="family-faith-card"><h2>Faith at Home</h2>{loading?<p role="status">Loading guides and progress...</p>:<><p role="alert">{loadError}</p><button type="button" className="secondary-button" onClick={()=>void load()}>Retry Family Faith</button></>}</section>;
 
   if(!guides.length){
     return (
@@ -143,18 +141,18 @@ export function FamilyFaithAtHome({
         <span className="pill">{sessions.length} completed</span>
       </div>
 
-      {message && <div className="form-message">{message}</div>}
+      {message && <div className="form-message" role="status">{message}</div>}
 
       <div className="family-faith-selector">
         <label>
           Guide
-          <select value={activeGuideId} onChange={(event)=>setActiveGuideId(event.target.value)}>
+          <select disabled={working} value={activeGuideId} onChange={(event)=>setActiveGuideId(event.target.value)}>
             {guides.map((guide)=><option key={guide.id} value={guide.id}>{guide.title}</option>)}
           </select>
         </label>
         <label>
           Child
-          <select value={activeChildId} onChange={(event)=>setActiveChildId(event.target.value)}>
+          <select disabled={working} value={activeChildId} onChange={(event)=>setActiveChildId(event.target.value)}>
             <option value="">Whole family</option>
             {children.map((child)=><option key={child.id} value={child.id}>{child.display_name}</option>)}
           </select>

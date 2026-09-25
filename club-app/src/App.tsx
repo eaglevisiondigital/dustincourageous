@@ -939,6 +939,7 @@ function FamilyPortal({
                 </>
               ) : parentSection === "faith" ? (
                 <FamilyFaithAtHome
+                  key={household.id}
                   householdId={household.id}
                   user={user}
                   children={children.map((child) => ({ id: child.id, display_name: child.display_name }))}
@@ -1020,7 +1021,7 @@ function FamilyPortal({
                   <ParentChildProgress key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
                   <div className="family-detail-grid">
                     <RewardsPanel key={selectedChild.id} childId={selectedChild.id} userId={user.id} />
-                    <NotificationsPanel userId={user.id} />
+                    <NotificationsPanel key={user.id} userId={user.id} />
                   </div>
                 </>
               )}

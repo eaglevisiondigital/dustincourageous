@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { saveNotificationPreferences } from "../lib/familyActions";
 
 type Plan = {
   id: string;
@@ -121,6 +122,7 @@ export function FamilySettings({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const loadVersion = useRef(0);
+  const preferenceBusy=useRef(false);
 
   const load = useCallback(async () => {
     const version = ++loadVersion.current;
@@ -217,13 +219,19 @@ export function FamilySettings({
   );
 
   async function savePreferences(){
+    if(preferenceBusy.current||working||loading||loadError)return;
+    preferenceBusy.current=true;
     setWorking(true);setMessage("");
-    const {error}=await supabase.from("notification_preferences").upsert({
-      user_id:user.id,
-      ...preferences
-    },{onConflict:"user_id"});
-    setWorking(false);
-    setMessage(error?error.message:"Notification preferences saved.");
+    try {
+      const saved=await saveNotificationPreferences(supabase,user.id,preferences);
+      const {user_id:_,...values}=saved;
+      setPreferences(values);
+      setMessage("Notification preferences saved.");
+    } catch(error) {
+      setMessage(error instanceof Error?error.message:"Preferences could not be saved. Your choices are still here to retry.");
+    } finally {
+      preferenceBusy.current=false;setWorking(false);
+    }
   }
 
   async function saveHousehold(event:FormEvent){
@@ -370,7 +378,7 @@ export function FamilySettings({
               ["product_updates","Dustin Courageous updates"],
               ["marketing","Marketing and offers"]
             ].map(([key,label])=>(
-              <button type="button" className="preference-row" key={key} onClick={()=>toggle(key as keyof Preference)}>
+              <button type="button" className="preference-row" key={key} disabled={working} aria-pressed={!!preferences[key as keyof Preference]} onClick={()=>toggle(key as keyof Preference)}>
                 <span>{label}</span>
                 <strong>{preferences[key as keyof Preference]?"On":"Off"}</strong>
               </button>
@@ -385,6 +393,7 @@ export function FamilySettings({
               Quiet starts
               <input
                 type="time"
+                disabled={working}
                 value={preferences.quiet_hours_start?.slice(0,5) ?? ""}
                 onChange={e=>setPreferences(current=>({...current,quiet_hours_start:e.target.value||null}))}
               />
@@ -393,6 +402,7 @@ export function FamilySettings({
               Quiet ends
               <input
                 type="time"
+                disabled={working}
                 value={preferences.quiet_hours_end?.slice(0,5) ?? ""}
                 onChange={e=>setPreferences(current=>({...current,quiet_hours_end:e.target.value||null}))}
               />
@@ -400,6 +410,7 @@ export function FamilySettings({
             <label>
               Notification timezone
               <input
+                disabled={working}
                 value={preferences.timezone}
                 onChange={e=>setPreferences(current=>({...current,timezone:e.target.value}))}
               />
