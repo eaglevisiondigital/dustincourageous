@@ -1,4 +1,4 @@
-import { authFeedback, authIsRateLimited, emailRetrySeconds } from "./lib/authFeedback";
+import { authFeedback, authIsRateLimited, emailRetrySeconds, authRedirectFeedback } from "./lib/authFeedback";
 import { adultSignupMetadata } from "./lib/adultSignup";
 import { FormEvent, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
@@ -350,6 +350,7 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
   const busy = useRef(false);
+  const [saved, setSaved] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -369,16 +370,34 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
     try {
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
-      setMessage(error.message);
+      setMessage(authFeedback(error));
       return;
     }
     setPassword("");
     setConfirmation("");
-    onComplete();
+    setSaved(true);
     } catch {
       setMessage("We could not confirm the password update. Try again, or sign in with your new password if it was saved.");
     } finally { busy.current = false; setWorking(false); }
   }
+
+  async function returnToSignIn() {
+    if (busy.current) return;
+    busy.current = true; setWorking(true); setMessage("");
+    try {
+      const { error } = await supabase.auth.signOut({ scope: "local" });
+      if (error) throw error;
+      sessionStorage.removeItem("dc_guardian_session_token");
+      onComplete();
+    } catch { setMessage("We could not return to sign-in. Check your connection and try again."); }
+    finally { busy.current = false; setWorking(false); }
+  }
+
+  if (saved) return <main className="setup-page"><div className="setup-card">
+    <Brand /><h1>Password Updated</h1>
+    <p role="status">Your new password has been saved. Use it the next time you sign in.</p>
+    <button type="button" className="primary-button" onClick={onComplete}>Continue To Adventure Club</button>
+  </div></main>;
 
   return (
     <main className="setup-page">
@@ -388,13 +407,14 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
         <h1>Choose a new password</h1>
         <p className="muted">This updates the password for the adult Adventure Club account.</p>
         <form className="form-stack" onSubmit={submit}>
-          <PasswordField label="New password" required disabled={working} minLength={8} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
-          <PasswordField label="Confirm new password" required disabled={working} minLength={8} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
+          <PasswordField label="New Password" required disabled={working} minLength={8} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <PasswordField label="Confirm New Password" required disabled={working} minLength={8} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
           {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
-            {working ? "Updating..." : "Update password"}
+            {working ? "Updating..." : "Update Password"}
           </button>
         </form>
+        <button type="button" className="text-button" disabled={working} onClick={() => void returnToSignIn()}>Return To Sign In</button>
       </div>
     </main>
   );
@@ -1162,10 +1182,7 @@ export default function App() {
   );
 
   const authRedirectMessage = useMemo(() => {
-    const search = new URLSearchParams(window.location.search);
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const description = search.get("error_description") || hash.get("error_description");
-    return description ? description.replaceAll("+", " ") : "";
+    return authRedirectFeedback(window.location.search, window.location.hash);
   }, []);
 
   const loadFamily = useCallback(async (user: User) => {
@@ -1324,7 +1341,6 @@ export default function App() {
     };
   }, [loadFamily]);
 
-  if (loading) return <LoadingScreen />;
   if (session?.user && passwordRecovery) {
     return (
       <ResetPasswordScreen
@@ -1336,6 +1352,8 @@ export default function App() {
       />
     );
   }
+
+  if (loading) return <LoadingScreen />;
 
   if (accountError) {
     return (

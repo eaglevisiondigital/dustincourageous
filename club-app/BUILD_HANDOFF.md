@@ -16,6 +16,17 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Password recovery remains mounted ahead of account-loading screens
+while a recovery session exists, so USER_UPDATED family refreshes do not replace the
+form during save. Successful saves show Password Updated before explicit Continue.
+Return To Sign In signs out the local browser session and clears the guardian token;
+failures remain visible. Recovery errors use shared guidance, including expired
+sessions and same-password errors. Failed email redirects display fixed recovery
+instructions instead of arbitrary URL error descriptions. Two additional helper
+tests cover redirect errors and recovery guidance; all 251 tests and production
+build pass. No passwords, emails or real recovery actions were submitted during
+verification. Actual email-link, device and session acceptance remains pending.
+
 September 25: Auth recovery feedback now maps documented Supabase error codes to
 plain-language guidance for unconfirmed email, incorrect credentials, throttling,
 weak passwords and unavailable signup. Unconfirmed sign-in offers confirmation
