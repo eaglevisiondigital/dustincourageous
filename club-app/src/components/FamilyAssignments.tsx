@@ -30,8 +30,11 @@ export function FamilyAssignments({ householdId, children }: { householdId: stri
       <button type="button" className="text-button" disabled={working || loading} onClick={() => setRetry(value => value + 1)}>Refresh Assignments</button>
     </div>
     <p className="muted">Household, child and active-group assignments, together in one place. Open an activity, then choose who took part.</p>
-    {loading ? <p role="status">Loading family assignments...</p> : error ? <p role="alert">Family assignments could not be loaded. Use Refresh Assignments to try again.</p> : !items.length ? <p className="muted">No assignments are available for your active child profiles yet. Family challenges and Faith At Home are available below when published.</p> : <>
-      <label>Choose Assignment<select value={activeId} disabled={working} onChange={event => setActiveId(event.target.value)}>
+    {loading && <p role="status">Loading family assignments...</p>}
+    {error && <p role="alert">Family assignments could not be loaded. Use Refresh Assignments to try again.</p>}
+    {!loading && !error && !items.length && <p className="muted">No assignments are available for your active child profiles yet. Family challenges and Faith At Home are available below when published.</p>}
+    {!!items.length && <>
+      <label>Choose Assignment<select value={activeId} disabled={working || loading || error} onChange={event => setActiveId(event.target.value)}>
         <option value="">Choose An Assignment</option>
         {!!items.filter(item => !item.groupId).length && <optgroup label="Household & Child Assignments">{items.filter(item => !item.groupId).map(item => <option key={item.id} value={item.id} disabled={!item.challenge}>{item.groupName} · {item.challenge?.title ?? "Challenge Unavailable"}{item.groupName === "Child Assignment" ? " · " + names(item.childIds) : ""}</option>)}</optgroup>}
         {!!items.filter(item => item.groupId).length && <optgroup label="Group Assignments">{items.filter(item => item.groupId).map(item => <option key={item.id} value={item.id} disabled={!item.challenge}>{item.groupName} · {item.challenge?.title ?? "Challenge Unavailable"}</option>)}</optgroup>}
@@ -43,7 +46,7 @@ export function FamilyAssignments({ householdId, children }: { householdId: stri
           {active.dueAt && Number.isFinite(Date.parse(active.dueAt)) && <p>Due: <time dateTime={active.dueAt}>{new Date(active.dueAt).toLocaleString()}</time></p>}
           <p>Other children in your family may participate if they have access to the challenge. {active.groupId ? "Completing it does not join them to the group." : "Only children you check receive participation or completion credit."}</p>
         </div>
-        <FamilyChallengeActivity key={active.id} householdId={householdId} children={children} challengeId={active.challenge.id} onBusyChange={setWorking}/>
+        <FamilyChallengeActivity key={active.id} householdId={householdId} children={children} challengeId={active.challenge.id} onBusyChange={setWorking} suspended={loading || error}/>
       </>}
     </>}
   </section>;

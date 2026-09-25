@@ -10,6 +10,7 @@ export function FamilyParticipants({ children, selected, onChange, disabled = fa
       <button type="button" className="text-button" onClick={() => onChange(children.map(child => child.id))}>Select All</button>
       <button type="button" className="text-button" onClick={() => onChange([])}>Clear Selection</button>
     </div>
+    <p className="muted" role="status">{children.filter(child => selected.includes(child.id)).length} {children.filter(child => selected.includes(child.id)).length === 1 ? "Child Selected" : "Children Selected"}</p>
     <div className="participant-grid">{children.map(child => <label key={child.id} className={selected.includes(child.id) ? "participant-choice selected" : "participant-choice"}>
       <input type="checkbox" checked={selected.includes(child.id)} onChange={event => onChange(event.target.checked ? [...selected, child.id] : selected.filter(id => id !== child.id))}/>
       <span>{child.display_name}</span>

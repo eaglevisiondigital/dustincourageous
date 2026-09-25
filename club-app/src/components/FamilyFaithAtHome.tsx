@@ -1,3 +1,4 @@
+import { currentFamilySelection } from "../lib/familyChallengeState";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { saveFamilyParticipation, type ParticipantResult } from "../lib/familyParticipation";
@@ -44,6 +45,9 @@ export function FamilyFaithAtHome({
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeGuideId, setActiveGuideId] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
+  const childKey = JSON.stringify(children.map(child => child.id).sort());
+  const currentParticipants = currentFamilySelection(participants, children.map(child => child.id));
+  useEffect(() => { setParticipants(current => currentFamilySelection(current, JSON.parse(childKey))); }, [childKey]);
   const [results, setResults] = useState<ParticipantResult[]>([]);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
@@ -99,18 +103,17 @@ export function FamilyFaithAtHome({
   );
 
   const completedIds = new Set(sessions.filter(session=>session.family_faith_guide_id===activeGuide?.id && session.child_profile_id).map(session=>session.child_profile_id!));
-  const allSelectedComplete = participants.length > 0 && participants.every(id=>completedIds.has(id));
+  const allSelectedComplete = currentParticipants.length > 0 && currentParticipants.every(id=>completedIds.has(id));
 
   async function completeGuide(){
-    if(!activeGuide||actionBusy.current||loading||loadError||allSelectedComplete||!participants.length) return;
-    if(participants.some(id=>!children.some(child=>child.id===id)))return;
+    if(!activeGuide||actionBusy.current||loading||loadError||allSelectedComplete||!currentParticipants.length) return;
     actionBusy.current=true;
     setWorking(true);
     setMessage("");
     setResults([]);
 
     try {
-    const confirmed = await saveFamilyParticipation(supabase,householdId,activeGuide.id,participants,"faith");
+    const confirmed = await saveFamilyParticipation(supabase,householdId,activeGuide.id,currentParticipants,"faith");
     setResults(confirmed);
     setMessage("Family Faith completion saved to each selected child’s activity. Previously saved credit is kept without duplication.");
     window.dispatchEvent(new Event("dc-progress-updated"));
@@ -162,7 +165,7 @@ export function FamilyFaithAtHome({
         </label>
       </div>
 
-      <FamilyParticipants children={children} selected={participants} onChange={ids=>{setParticipants(ids);setResults([]);setMessage("");}} disabled={working||loading||Boolean(loadError)||!activeGuide}
+      <FamilyParticipants children={children} selected={currentParticipants} onChange={ids=>{setParticipants(ids);setResults([]);setMessage("");}} disabled={working||loading||Boolean(loadError)||!activeGuide}
         statuses={Object.fromEntries([...completedIds].map(id=>[id,"Completed"]))}/>
       <p className="muted">Family Faith time appears in each participating child’s activity and eligible badge progress. It does not award challenge XP.</p>
 
@@ -207,7 +210,7 @@ export function FamilyFaithAtHome({
             <button
               type="button"
               className={allSelectedComplete ? "secondary-button" : "primary-button"}
-              disabled={allSelectedComplete||working||loading||Boolean(loadError)||!participants.length}
+              disabled={allSelectedComplete||working||loading||Boolean(loadError)||!currentParticipants.length}
               onClick={()=>void completeGuide()}
             >
               {allSelectedComplete ? "Selected Children Completed ✓" : working ? "Saving..." : "Complete For Selected Children"}

@@ -16,6 +16,25 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Family challenge refreshes now retain the activity, participant
+selection and confirmed per-child results. Progress errors display inline and block
+writes until a successful refresh. Save completion triggers one final refresh;
+self-generated progress events no longer start a competing refresh during the save.
+Shared step confirmations clear after saves, external progress updates, explicit
+refreshes and roster changes. Assignment and challenge-list refreshes preserve an
+available open editor, suspend writes while loading/failed, and refresh its progress
+when resumed. Added Refresh Challenges in normal and empty states; a removed selected
+challenge requires an explicit new selection instead of silently switching tasks.
+
+Challenge and Family Faith selections now discard removed child IDs and never
+select newly added children automatically. This fixes a silent Family Faith save
+no-op after roster changes. The shared participant picker shows a selected-child
+count. A tested challenge loader checks published activity identity, scopes progress
+to unique requested child IDs, rejects foreign/duplicate rows and skips progress
+queries for empty rosters. Five new tests cover these boundaries; all 264 tests and
+production build pass. Actual signed-in refresh/error/device interactions remain
+pending. Existing atomic participation, approval, access and XP rules are unchanged.
+
 September 25: Adult Account settings now provide a separate saved-contact JSON
 export (name, email, optional phone and Parent/Guardian choice). It freshly verifies
 the requesting adult and reads their own profile, allowlists contact fields, and
