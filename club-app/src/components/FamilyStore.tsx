@@ -402,7 +402,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       <section className="family-store-hero">
         <div>
           <p className="eyebrow gold">Courageous Kids Store</p>
-          <h1>Books, gear & adventure extras</h1>
+          <h1>Books, Gear & Adventure Extras</h1>
           <p>
             Explore approved Dustin Courageous books and adventure extras for your family.
             Available discounts and your final total are confirmed before payment.
@@ -439,14 +439,14 @@ export function FamilyStore({ householdId }: { householdId: string }) {
       {catalogLoading ? <p className="muted" role="status">Loading the family store...</p> : catalogError ? (
         <div className="empty-state">
           <p role="alert">{catalogError}</p>
-          <button type="button" className="secondary-button" onClick={() => void load()}>Retry store</button>
+          <button type="button" className="secondary-button" onClick={() => void load()}>Retry Store</button>
         </div>
       ) : <div className="family-store-layout">
         <section className="store-catalog">
           <div className="section-heading">
             <div>
               <p className="eyebrow red">Shop</p>
-              <h2>Adventure Club products</h2>
+              <h2>Adventure Club Products</h2>
             </div>
             <span className="pill">{products.length} available</span>
           </div>
@@ -537,7 +537,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
           <div className="section-heading compact-heading">
             <div>
               <p className="eyebrow gold">Cart</p>
-              <h2>Your order</h2>
+              <h2>Your Order</h2>
             </div>
             <span className="pill">
               {cart.reduce((sum, line) => sum + line.quantity, 0)} items
@@ -597,7 +597,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
               </label>
 
               <div className="store-total-preview">
-                <span>Estimated merchandise subtotal</span>
+                <span>Estimated Merchandise Subtotal</span>
                 <strong>{money(previewSubtotal, cartPreview[0]?.product?.currency)}</strong>
                 <small>
                   Final member pricing, promo discount, inventory, tax, and shipping are
@@ -607,7 +607,7 @@ export function FamilyStore({ householdId }: { householdId: string }) {
 
               {checkoutSummary && (
                 <div className="store-server-total">
-                  <span>Server-validated total</span>
+                  <span>Server-validated Total</span>
                   <strong>
                     {money(checkoutSummary.total_cents, checkoutSummary.currency)}
                   </strong>

@@ -25,8 +25,8 @@ export function EventDetails({ event }: { event: CalendarEvent }) {
     {event.location_name && <p>{event.location_name}</p>}
     {event.location_address && <p className="event-address">{event.location_address}</p>}
     <div className="event-detail-actions">
-      {link && <a className="secondary-button" href={link} target="_blank" rel="noopener noreferrer">Open online event</a>}
-      {time && <button type="button" className="secondary-button" onClick={saveCalendar}>Add calendar reminder</button>}
+      {link && <a className="secondary-button" href={link} target="_blank" rel="noopener noreferrer">Open Online Event</a>}
+      {time && <button type="button" className="secondary-button" onClick={saveCalendar}>Add Calendar Reminder</button>}
     </div>
     {time && <p className="event-calendar-note">A reminder does not register your family. Check here for event changes.</p>}
     {error && <p role="alert">{error}</p>}

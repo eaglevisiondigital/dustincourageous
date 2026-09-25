@@ -186,7 +186,7 @@ export function AnalyticsPrivacyAdmin({ role }: { role: string }) {
 
         <div className="analytics-daily-table">
           <div className="analytics-daily-head">
-            <span>Date</span><span>Homes</span><span>Challenges</span><span>Verses</span><span>Faith at Home</span><span>Events</span>
+            <span>Date</span><span>Homes</span><span>Challenges</span><span>Verses</span><span>Faith At Home</span><span>Events</span>
           </div>
           {metrics.slice().reverse().slice(0,14).map((item)=>(
             <div key={item.metric_date}>

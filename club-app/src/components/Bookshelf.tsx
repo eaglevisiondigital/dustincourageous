@@ -409,7 +409,7 @@ export function Bookshelf({
   }
 
   if(loading)return <section className="bookshelf" aria-busy="true"><p role="status">Loading your bookshelf...</p></section>;
-  if(loadError)return <section className="bookshelf"><p role="alert">{loadError}</p><button className="secondary-button" disabled={working} onClick={()=>void load()}>Try again</button></section>;
+  if(loadError)return <section className="bookshelf"><p role="alert">{loadError}</p><button className="secondary-button" disabled={working} onClick={()=>void load()}>Try Again</button></section>;
 
   return (
     <div className="bookshelf">
@@ -546,7 +546,7 @@ export function Bookshelf({
               )}
 
               {adventureLoading&&<p role="status">Loading adventure steps...</p>}
-              {adventureError&&<div className="form-message" role="alert">{adventureError} <button className="text-button" disabled={working} onClick={()=>void loadAdventure()}>Try again</button></div>}
+              {adventureError&&<div className="form-message" role="alert">{adventureError} <button className="text-button" disabled={working} onClick={()=>void loadAdventure()}>Try Again</button></div>}
               <div className="book-adventure-steps">
                 {adventureSteps.map((step) => (
                   <article className={step.completed ? "book-adventure-step complete" : "book-adventure-step"} key={step.step_type + ":" + step.source_id}>

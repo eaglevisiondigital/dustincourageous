@@ -120,21 +120,21 @@ export function FamilyEventsCard({
   return (
     <section className="family-events-card">
       <div className="section-heading">
-        <div><p className="eyebrow gold">Events</p><h2>Adventure Club experiences</h2></div>
+        <div><p className="eyebrow gold">Events</p><h2>Adventure Club Experiences</h2></div>
         {!loading&&!loadError&&<span className="pill">{events.length} events</span>}
       </div>
 
       {message&&<div className="form-message" role="status">{message}</div>}
-      <button type="button" className="secondary-button event-refresh" disabled={loading||!!working} onClick={()=>void load()}>Refresh events</button>
+      <button type="button" className="secondary-button event-refresh" disabled={loading||!!working} onClick={()=>void load()}>Refresh Events</button>
       {loading?<p className="muted" role="status">Loading events and registrations...</p>:loadError?(
-        <div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={!!working} onClick={()=>void load()}>Retry events</button></div>
+        <div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={!!working} onClick={()=>void load()}>Retry Events</button></div>
       ):<>
 
       {events.length>0&&(
         <label className="event-child-selector">
           Register
           <select disabled={!!working} value={childId} onChange={(event)=>setChildId(event.target.value)}>
-            <option value="">Whole family</option>
+            <option value="">Whole Family</option>
             {children.map((child)=><option key={child.id} value={child.id}>{child.display_name}</option>)}
           </select>
         </label>

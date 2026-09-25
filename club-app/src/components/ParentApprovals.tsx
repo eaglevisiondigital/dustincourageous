@@ -176,7 +176,7 @@ export function ParentApprovals({
   );
 
   if (loading) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading guardian approvals...</p></section>;
-  if (loadError) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
+  if (loadError) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   if (!items.length) {
     return (
@@ -235,7 +235,7 @@ export function ParentApprovals({
       {guardianToken && (
         <div className="guardian-session-chip">
           <span>◆</span>
-          <strong>Guardian PIN entered</strong>
+          <strong>Guardian PIN Entered</strong>
           <small>You may be asked to enter it again when approving.</small>
         </div>
       )}

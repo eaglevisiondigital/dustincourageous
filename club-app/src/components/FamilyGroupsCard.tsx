@@ -199,7 +199,7 @@ export function FamilyGroupsCard({
       <div className="section-heading">
         <div>
           <p className="eyebrow red">Adventure Club Groups</p>
-          <h2>Church, school & homeschool connections</h2>
+          <h2>Church, School & Homeschool Connections</h2>
         </div>
         {!loading&&!loadError&&<span className="pill">{memberships.length} active</span>}
       </div>
@@ -208,7 +208,7 @@ export function FamilyGroupsCard({
 
       <form className="group-join-form" onSubmit={previewCode}>
         <label>
-          Join code
+          Join Code
           <input
             disabled={working}
             value={joinCode}
@@ -223,7 +223,7 @@ export function FamilyGroupsCard({
             {children.map((child)=><option key={child.id} value={child.id}>{child.display_name}</option>)}
           </select>
         </label>
-        <button className="secondary-button" disabled={working||loading||!!loadError||!childMap.has(joinChildId)}>Preview group</button>
+        <button className="secondary-button" disabled={working||loading||!!loadError||!childMap.has(joinChildId)}>Preview Group</button>
       </form>
 
       {preview&&(
@@ -243,7 +243,7 @@ export function FamilyGroupsCard({
         </article>
       )}
 
-      {loading?<p role="status">Loading group connections...</p>:loadError?<div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={working} onClick={()=>void load()}>Retry connections</button></div>:<div className="family-group-list">
+      {loading?<p role="status">Loading group connections...</p>:loadError?<div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={working} onClick={()=>void load()}>Retry Connections</button></div>:<div className="family-group-list">
         {memberships.map((membership)=>{
           const group=firstRelation(membership.adventure_groups);
           const org=group?firstRelation(group.organizations):null;
@@ -257,7 +257,7 @@ export function FamilyGroupsCard({
                   <p>{org?.name} · {childMap.get(membership.child_profile_id)}</p>
                 </div>
                 <button type="button" className="text-button small" disabled={working} onClick={()=>void withdraw(membership.group_id,membership.child_profile_id)}>
-                  Leave group
+                  Leave Group
                 </button>
               </div>
 

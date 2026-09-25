@@ -398,7 +398,7 @@ export function LeaderGroupsHub(){
 
           <form className="admin-form" onSubmit={(event)=>{event.preventDefault();void runAction(()=>createAdultInvitation(event));}}>
             <label>
-              Adult email
+              Adult Email
               <input disabled={working}
                 required
                 type="email"

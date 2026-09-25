@@ -55,7 +55,7 @@ export function ParentProgressOverview({
   );
 
   if (loading) return <section className="parent-progress-overview" aria-busy="true"><p role="status">Loading family progress...</p></section>;
-  if (error) return <section className="parent-progress-overview"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
+  if (error) return <section className="parent-progress-overview"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   return (
     <section className="parent-progress-overview">
@@ -118,7 +118,7 @@ export function ParentProgressOverview({
                   className="secondary-button"
                   onClick={() => onOpenChild(selected.child_profile_id)}
                 >
-                  View child experience
+                  View Child Experience
                 </button>
               </div>
             </article>

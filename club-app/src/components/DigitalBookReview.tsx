@@ -44,7 +44,7 @@ export function DigitalBookReview({ bookId }: { bookId: string }) {
   return <div className="digital-edition-review">
     <h3>Review the prepared edition</h3>
     {loading ? <p role="status">Checking prepared pages...</p> : !book && !error ? <p>No digital edition has been prepared for this book.</p> : null}
-    {error && <p role="alert">{error} <button className="text-button" onClick={() => setRetry(value => value + 1)}>Try again</button></p>}
+    {error && <p role="alert">{error} <button className="text-button" onClick={() => setRetry(value => value + 1)}>Try Again</button></p>}
     {book && <>
       <p>{book.pages.length} pages. Revision: <code>{book.revision}</code>. This preview does not publish or approve the book.</p>
       <button className="secondary-button" aria-expanded={show} onClick={() => setShow(value => !value)}>{show ? "Hide prepared pages" : "Review prepared pages"}</button>

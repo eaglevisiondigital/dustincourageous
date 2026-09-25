@@ -527,7 +527,7 @@ export function BibleHub({
           <div className="section-heading">
             <div>
               <p className="eyebrow red">What God Says About Me</p>
-              <h2>Identity truths</h2>
+              <h2>Identity Truths</h2>
             </div>
           </div>
           <div className="identity-truth-grid">

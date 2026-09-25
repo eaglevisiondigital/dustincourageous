@@ -246,7 +246,7 @@ export function PrivacyDataControls({
       <div className="section-heading">
         <div>
           <p className="eyebrow red">Guardian Privacy</p>
-          <h2>Data & consent controls</h2>
+          <h2>Data & Consent Controls</h2>
         </div>
         <span className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</span>
       </div>
@@ -271,14 +271,14 @@ export function PrivacyDataControls({
                     <p>{policy.description}</p>
                     <small>Policy v{policy.current_policy_version}{policy.required_for_core_service?" · core service":""}</small>
                   </div>
-                  <button
+                  {policy.required_for_core_service&&granted ? <span className="status-chip done">Granted</span> : <button
                     type="button"
                     className={granted?"status-chip done":"secondary-button"}
                     disabled={working.startsWith("consent:")||Boolean(policy.required_for_core_service&&granted)}
                     onClick={()=>void recordConsent(policy,granted?"revoked":"granted",null)}
                   >
-                    {granted?"Granted":"Grant"}
-                  </button>
+                    {granted?"Revoke Consent":"Grant Consent"}
+                  </button>}
                 </div>
               );
             })}
@@ -288,9 +288,9 @@ export function PrivacyDataControls({
         <article className="privacy-panel">
           <p className="eyebrow gold">Child Participation</p>
           <label>
-            Child profile
+            Child Profile
             <select value={selectedChildId} onChange={(event)=>setSelectedChildId(event.target.value)}>
-              {children.map((child)=><option key={child.id} value={child.id}>{child.display_name} · {child.status}</option>)}
+              {children.map((child)=><option key={child.id} value={child.id}>{child.display_name} · {child.status.charAt(0).toUpperCase()+child.status.slice(1)}</option>)}
             </select>
           </label>
 
@@ -305,14 +305,14 @@ export function PrivacyDataControls({
                     <p>{policy.description}</p>
                     <small>Policy v{policy.current_policy_version}{policy.required_for_core_service?" · core service":""}</small>
                   </div>
-                  <button
+                  {policy.required_for_core_service&&granted ? <span className="status-chip done">Granted</span> : <button
                     type="button"
                     className={granted?"status-chip done":"secondary-button"}
                     disabled={!selectedChildId||working.startsWith("consent:")||Boolean(policy.required_for_core_service&&granted)}
                     onClick={()=>void recordConsent(policy,granted?"revoked":"granted",selectedChildId||null)}
                   >
-                    {granted?"Granted":"Grant"}
-                  </button>
+                    {granted?"Revoke Consent":"Grant Consent"}
+                  </button>}
                 </div>
               );
             })}
@@ -325,31 +325,31 @@ export function PrivacyDataControls({
           <div className="section-heading compact-heading">
             <div>
               <p className="eyebrow gold">What We Store</p>
-              <h3>{selectedInventory.display_name}'s Adventure Club data</h3>
+              <h3>{selectedInventory.display_name}'s Adventure Club Data</h3>
             </div>
             <span className="status-chip">{selectedInventory.status}</span>
           </div>
 
           <div className="privacy-inventory-grid">
-            <div><strong>{selectedInventory.challenge_progress_records}</strong><span>Challenge progress</span></div>
-            <div><strong>{selectedInventory.scripture_progress_records}</strong><span>Scripture progress</span></div>
+            <div><strong>{selectedInventory.challenge_progress_records}</strong><span>Challenge Progress</span></div>
+            <div><strong>{selectedInventory.scripture_progress_records}</strong><span>Scripture Progress</span></div>
             <div><strong>{selectedInventory.devotional_progress_records}</strong><span>Devotionals</span></div>
-            <div><strong>{selectedInventory.book_progress_records}</strong><span>Book progress</span></div>
-            <div><strong>{selectedInventory.reading_position_records}</strong><span>Saved reading places</span></div>
-            <div><strong>{selectedInventory.xp_records}</strong><span>XP records</span></div>
+            <div><strong>{selectedInventory.book_progress_records}</strong><span>Book Progress</span></div>
+            <div><strong>{selectedInventory.reading_position_records}</strong><span>Saved Reading Places</span></div>
+            <div><strong>{selectedInventory.xp_records}</strong><span>XP Records</span></div>
             <div><strong>{selectedInventory.badge_records}</strong><span>Badges</span></div>
             <div><strong>{selectedInventory.reward_records}</strong><span>Rewards</span></div>
-            <div><strong>{selectedInventory.group_membership_records}</strong><span>Group records</span></div>
+            <div><strong>{selectedInventory.group_membership_records}</strong><span>Group Records</span></div>
           </div>
 
           <div className="privacy-profile-actions">
             {selectedInventory.status==="archived"?(
               <button className="secondary-button" disabled={!selectedInventory.child_profile_id || working.startsWith("restore:")} onClick={()=>{if(selectedInventory.child_profile_id)void restoreChild(selectedInventory.child_profile_id);}}>
-                Restore child profile
+                Restore Child Profile
               </button>
             ):(
               <button className="secondary-button" disabled={!selectedInventory.child_profile_id || working.startsWith("archive:")} onClick={()=>{if(selectedInventory.child_profile_id)void archiveChild(selectedInventory.child_profile_id);}}>
-                Archive child profile
+                Archive Child Profile
               </button>
             )}
           </div>
@@ -358,16 +358,16 @@ export function PrivacyDataControls({
 
       <article className="privacy-request-panel">
         <p className="eyebrow red">Data Requests</p>
-        <h3>Export or deletion request</h3>
+        <h3>Export Or Deletion Request</h3>
 
         <div className="privacy-request-form">
           <label>
             Request
             <select value={requestType} onChange={(event)=>setRequestType(event.target.value)}>
-              <option value="export_household">Export household data</option>
-              <option value="export_child">Export child data</option>
-              <option value="delete_child">Request permanent child data deletion</option>
-              <option value="delete_household">Request permanent household data deletion</option>
+              <option value="export_household">Export Household Data</option>
+              <option value="export_child">Export Child Data</option>
+              <option value="delete_child">Request Permanent Child Data Deletion</option>
+              <option value="delete_household">Request Permanent Household Data Deletion</option>
             </select>
           </label>
 
@@ -386,7 +386,7 @@ export function PrivacyDataControls({
           </label>
 
           <button className="primary-button" disabled={working==="request"} onClick={()=>void submitRequest()}>
-            Submit privacy request
+            Submit Privacy Request
           </button>
         </div>
 

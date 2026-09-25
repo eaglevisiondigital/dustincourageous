@@ -25,18 +25,18 @@ export function SupportTicketDetails({ householdId, ticketId, onClose }: {
 
   return <ModalDialog className="support-ticket-dialog" labelledBy={heading} onClose={onClose}>
     <header className="support-ticket-heading"><h2 id={heading}>Support request{ticket ? ` #${ticket.ticket_number}` : ""}</h2>
-      <button type="button" className="secondary-button" onClick={onClose}>Close request</button></header>
-    <button type="button" className="secondary-button" disabled={loading} onClick={() => void load()}>Refresh request</button>
+      <button type="button" className="secondary-button" onClick={onClose}>Close Request</button></header>
+    <button type="button" className="secondary-button" disabled={loading} onClick={() => void load()}>Refresh Request</button>
     {loading ? <p role="status">Loading your request...</p> : error ? <p role="alert">The request could not be loaded. Use Refresh request to try again.</p>
       : !ticket ? <p role="status">This request is no longer available to this family.</p> : <>
         <h3>{ticket.subject}</h3>
         <p className="support-ticket-status">{ticket.status.replaceAll("_", " ")} · {ticket.category.replaceAll("_", " ")}</p>
         <dl className="support-ticket-dates">
           <div><dt>Submitted</dt><dd>{date(ticket.created_at)}</dd></div>
-          <div><dt>Last updated</dt><dd>{date(ticket.updated_at)}</dd></div>
+          <div><dt>Last Updated</dt><dd>{date(ticket.updated_at)}</dd></div>
           {ticket.resolved_at && <div><dt>Resolved</dt><dd>{date(ticket.resolved_at)}</dd></div>}
         </dl>
-        <h3>Submitted message</h3>
+        <h3>Submitted Message</h3>
         <div className="support-ticket-message">{ticket.message}</div>
       </>}
   </ModalDialog>;

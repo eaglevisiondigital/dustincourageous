@@ -120,12 +120,12 @@ export function FamilyFaithAtHome({
     }
   }
 
-  if(loading||loadError)return <section className="family-faith-card"><h2>Faith at Home</h2>{loading?<p role="status">Loading guides and progress...</p>:<><p role="alert">{loadError}</p><button type="button" className="secondary-button" onClick={()=>void load()}>Retry Family Faith</button></>}</section>;
+  if(loading||loadError)return <section className="family-faith-card"><h2>Faith At Home</h2>{loading?<p role="status">Loading guides and progress...</p>:<><p role="alert">{loadError}</p><button type="button" className="secondary-button" onClick={()=>void load()}>Retry Family Faith</button></>}</section>;
 
   if(!guides.length){
     return (
       <section className="family-faith-card">
-        <p className="eyebrow gold">Faith at Home</p>
+        <p className="eyebrow gold">Faith At Home</p>
         <h2>Family Faith guides are coming.</h2>
       </section>
     );
@@ -135,7 +135,7 @@ export function FamilyFaithAtHome({
     <section className="family-faith-card">
       <div className="section-heading">
         <div>
-          <p className="eyebrow gold">Faith at Home</p>
+          <p className="eyebrow gold">Faith At Home</p>
           <h2>Talk it through together</h2>
         </div>
         <span className="pill">{sessions.length} completed</span>
@@ -153,7 +153,7 @@ export function FamilyFaithAtHome({
         <label>
           Child
           <select disabled={working} value={activeChildId} onChange={(event)=>setActiveChildId(event.target.value)}>
-            <option value="">Whole family</option>
+            <option value="">Whole Family</option>
             {children.map((child)=><option key={child.id} value={child.id}>{child.display_name}</option>)}
           </select>
         </label>

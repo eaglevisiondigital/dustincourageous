@@ -53,7 +53,7 @@ export function InviteAccept({
         <button className="primary-button" disabled={working} onClick={() => void accept()}>
           {working ? "Opening family access..." : accepted?"Open Family Hub":"Accept Family Invitation"}
         </button>
-        <button className="text-button recovery-button" type="button" disabled={working} onClick={onCancel}>Return to Adventure Club</button>
+        <button className="text-button recovery-button" type="button" disabled={working} onClick={onCancel}>Return To Adventure Club</button>
 
         <p className="privacy-note">
           You must be signed in with the same email address the invitation was created for.

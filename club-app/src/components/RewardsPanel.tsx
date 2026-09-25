@@ -114,7 +114,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
   }
 
   if (loading) return <section className="family-section-card" aria-busy="true"><p role="status">Loading rewards...</p></section>;
-  if (loadError) return <section className="family-section-card"><p role="alert">{loadError}</p>{error && <p>{error}</p>}<button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
+  if (loadError) return <section className="family-section-card"><p role="alert">{loadError}</p>{error && <p>{error}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   if (!unlocks.length) {
     return (
@@ -122,7 +122,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
         <div className="section-heading compact-heading">
           <div>
             <p className="eyebrow gold">Rewards</p>
-            <h2>Unlocked rewards</h2>
+            <h2>Unlocked Rewards</h2>
           </div>
         </div>
         <p className="muted">Rewards earned through Adventure Club progress will appear here for guardian review.</p>
@@ -136,7 +136,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
       <div className="section-heading compact-heading">
         <div>
           <p className="eyebrow gold">Rewards</p>
-          <h2>Unlocked rewards</h2>
+          <h2>Unlocked Rewards</h2>
         </div>
       </div>
 

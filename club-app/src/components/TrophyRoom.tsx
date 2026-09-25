@@ -168,7 +168,7 @@ export function TrophyRoom({
     );
   }
 
-  if (error) return <section className="trophy-loading"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
+  if (error) return <section className="trophy-loading"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   return (
     <div className="trophy-room">
@@ -248,7 +248,7 @@ export function TrophyRoom({
         <div className="section-heading">
           <div>
             <p className="eyebrow red">Keep Showing Up</p>
-            <h2>Weekly streaks</h2>
+            <h2>Weekly Streaks</h2>
           </div>
         </div>
 
@@ -305,7 +305,7 @@ export function TrophyRoom({
         <div className="section-heading">
           <div>
             <p className="eyebrow gold">Forever Yours</p>
-            <h2>Lifetime achievements</h2>
+            <h2>Lifetime Achievements</h2>
           </div>
           <span className="pill">{earnedLifetime.length} earned</span>
         </div>
@@ -336,7 +336,7 @@ export function TrophyRoom({
         <div className="section-heading">
           <div>
             <p className="eyebrow red">Within Reach</p>
-            <h2>Next badges</h2>
+            <h2>Next Badges</h2>
           </div>
         </div>
 
@@ -370,7 +370,7 @@ export function TrophyRoom({
           <div className="section-heading">
             <div>
               <p className="eyebrow gold">You Did It Before</p>
-              <h2>Streak badge history</h2>
+              <h2>Streak Badge History</h2>
             </div>
           </div>
           <div className="streak-history-list">

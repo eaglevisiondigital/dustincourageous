@@ -23,7 +23,7 @@ export function FamilyRelationshipSettings({ user }: { user: User }) {
 
   return <section className="settings-card">
     <p className="eyebrow gold">Your Family Label</p>
-    <h2>Parent or Guardian</h2>
+    <h2>Parent Or Guardian</h2>
     <p className="muted">Choose how your control badge appears when you use the Family Hub.</p>
     <form className="form-stack" onSubmit={event => { event.preventDefault(); void save(); }}>
       <label>I Am a

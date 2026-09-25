@@ -69,7 +69,7 @@ export function ParentChildProgress({
   }, [load]);
 
   if (loading) return <section className="parent-progress-card" aria-busy="true"><p role="status">Loading {childName}'s progress...</p></section>;
-  if (error) return <section className="parent-progress-card"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
+  if (error) return <section className="parent-progress-card"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   return (
     <section className="parent-progress-card">
@@ -92,7 +92,7 @@ export function ParentChildProgress({
           {level?.next_level_name ? (
             <><span>{level.xp_to_next_level ?? 0} XP to</span><strong>{level.next_level_name}</strong></>
           ) : (
-            <strong>Top configured level</strong>
+            <strong>Top Configured Level</strong>
           )}
         </div>
       </div>

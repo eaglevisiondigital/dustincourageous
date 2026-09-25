@@ -58,7 +58,7 @@ function firstRelation<T>(value: T | T[] | null): T | null {
 }
 
 function price(cents: number | null, period: string) {
-  if (cents === null) return "Pricing to be finalized";
+  if (cents === null) return "Pricing To Be Finalized";
   if (cents === 0) return "Free";
   return `$${(cents / 100).toFixed(2)}/${period}`;
 }
@@ -329,7 +329,7 @@ export function FamilySettings({
   };
 
   if(loading) return <section className="family-settings" aria-busy="true"><p role="status">Loading family settings...</p></section>;
-  if(loadError) return <section className="family-settings"><p role="alert">{loadError}</p><button className="secondary-button" onClick={()=>void load()}>Try again</button></section>;
+  if(loadError) return <section className="family-settings"><p role="alert">{loadError}</p><button className="secondary-button" onClick={()=>void load()}>Try Again</button></section>;
 
   return (
     <section className="family-settings">
@@ -375,9 +375,9 @@ export function FamilySettings({
                 <strong>{price(plan.monthly_price_cents,"mo")}</strong>
                 {plan.annual_price_cents!==null&&plan.annual_price_cents>0&&<small>{price(plan.annual_price_cents,"yr")}</small>}
                 {currentPlan?.id===plan.id?(
-                  <div className="status-chip done">Current plan</div>
+                  <div className="status-chip done">Current Plan</div>
                 ):(
-                  <button className="secondary-button" disabled>{plan.plan_key==="premium" ? "Paid enrollment coming soon" : "Plan changes unavailable"}</button>
+                  <button className="secondary-button" disabled>{plan.plan_key==="premium" ? "Paid Enrollment Coming Soon" : "Plan Changes Unavailable"}</button>
                 )}
               </article>
             ))}
@@ -412,7 +412,7 @@ export function FamilySettings({
               <p className="muted">Queued email and push delivery waits until quiet hours end. In-app notifications remain available.</p>
             </div>
             <label>
-              Quiet starts
+              Quiet Starts
               <input
                 type="time"
                 disabled={working}
@@ -421,7 +421,7 @@ export function FamilySettings({
               />
             </label>
             <label>
-              Quiet ends
+              Quiet Ends
               <input
                 type="time"
                 disabled={working}
@@ -430,7 +430,7 @@ export function FamilySettings({
               />
             </label>
             <label>
-              Notification timezone
+              Notification Timezone
               <input
                 disabled={working}
                 value={preferences.timezone}
@@ -447,9 +447,9 @@ export function FamilySettings({
           <FamilyRelationshipSettings key={user.id} user={user} />
           <section className="settings-card">
             <p className="eyebrow gold">Family Hub</p>
-            <h2>Household settings</h2>
+            <h2>Household Settings</h2>
             <form className="form-stack" onSubmit={saveHousehold}>
-              <label>Family Hub name<input disabled={working} required value={name} onChange={e=>setName(e.target.value)}/></label>
+              <label>Family Hub Name<input disabled={working} required value={name} onChange={e=>setName(e.target.value)}/></label>
               <label>Timezone<input disabled={working} required value={householdTimezone} onChange={e=>setHouseholdTimezone(e.target.value)}/></label>
               <button className="primary-button" disabled={working}>Save Household</button>
             </form>
@@ -459,7 +459,7 @@ export function FamilySettings({
             <div className="section-heading compact-heading">
               <div>
                 <p className="eyebrow red">Approved Adults</p>
-                <h2>Family access</h2>
+                <h2>Family Access</h2>
               </div>
               <span className="pill">{adults.length} adult{adults.length===1?"":"s"}</span>
             </div>
@@ -479,7 +479,7 @@ export function FamilySettings({
 
             <form className="invite-form" onSubmit={createInvitation}>
               <label>
-                Adult email
+                Adult Email
                 <input disabled={working} required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="parent@example.com"/>
               </label>
               <label>
@@ -495,7 +495,7 @@ export function FamilySettings({
 
             {inviteLink&&(
               <div className="invite-link-box">
-                <span>Secure invite link</span>
+                <span>Secure Invite Link</span>
                 <code>{inviteLink}</code>
                 <button className="primary-button compact" type="button" onClick={()=>void copyInvite()}>Copy Link</button>
               </div>
@@ -522,7 +522,7 @@ export function FamilySettings({
       {tab==="security"&&(
         <section className="settings-card">
           <p className="eyebrow red">Guardian Security</p>
-          <h2>Change guardian PIN</h2>
+          <h2>Change Guardian PIN</h2>
           <p className="muted">The PIN protects Family Hub and parent controls when the device is handed to a child.</p>
           <form className="form-stack" onSubmit={savePin}>
             <label>New PIN<input disabled={working} required type="password" inputMode="numeric" maxLength={6} value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>

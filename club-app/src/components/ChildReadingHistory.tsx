@@ -39,16 +39,16 @@ export function ChildReadingHistory({ childId }: { childId: string }) {
     <p>The most recent saved place in up to 20 books. A saved page does not count as finishing a book. A new edition may restart at page 1.</p>
     {loading ? <p role="status">Loading reading places...</p> : error ? <>
       <p role="alert">Reading places could not be loaded.</p>
-      <button className="secondary-button" onClick={() => void load()}>Try again</button>
+      <button className="secondary-button" onClick={() => void load()}>Try Again</button>
     </> : rows.length === 0 ? <p>No saved reading places yet. Open a digital book from the Bookshelf to begin.</p> :
       <ul>{rows.map(row => <li key={row.bookId}>
         <strong>{row.title}</strong>
         <span>Saved at page {row.page}</span>
-        <span>Last saved <time dateTime={row.updatedAt}>{new Date(row.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time></span>
+        <span>Last Saved <time dateTime={row.updatedAt}>{new Date(row.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time></span>
         <button type="button" className="secondary-button reading-history-open"
           ref={element => { if (element) launchButtons.current.set(row.bookId, element); else launchButtons.current.delete(row.bookId); }}
           disabled={selected !== null} aria-label={`Read ${row.title} together`}
-          onClick={() => setSelected({ bookId: row.bookId, title: row.title })}>Read together</button>
+          onClick={() => setSelected({ bookId: row.bookId, title: row.title })}>Read Together</button>
       </li>)}</ul>}
     {selected && <ReadingHistoryLaunch key={`${childId}:${selected.bookId}`} childId={childId}
       bookId={selected.bookId} title={selected.title} onClose={closeReader} />}

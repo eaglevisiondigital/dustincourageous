@@ -168,7 +168,7 @@ export function FamilyFaithAdmin() {
 
       <div className="admin-two-column">
         <section className="admin-card">
-          <p className="eyebrow gold">Faith at Home</p>
+          <p className="eyebrow gold">Faith At Home</p>
           <h2>Create family guide</h2>
 
           <form className="admin-form" onSubmit={createGuide}>

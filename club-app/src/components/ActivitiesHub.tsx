@@ -161,7 +161,7 @@ export function ActivitiesHub({
   }
 
   if(loading)return <section className="activities-hub" aria-busy="true"><p role="status">Loading activities...</p></section>;
-  if(loadError)return <section className="activities-hub"><p role="alert">{loadError}</p><button className="secondary-button" disabled={workingId!==null} onClick={()=>void load()}>Try again</button></section>;
+  if(loadError)return <section className="activities-hub"><p role="alert">{loadError}</p><button className="secondary-button" disabled={workingId!==null} onClick={()=>void load()}>Try Again</button></section>;
 
   return (
     <div className="activities-hub">
@@ -174,7 +174,7 @@ export function ActivitiesHub({
         <div className="activities-mark">★</div>
       </section>
 
-      {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh activities</button></div>}
+      {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh Activities</button></div>}
 
       <nav className="activity-filters" aria-label="Activity categories">
         {categories.map((item) => (
@@ -215,9 +215,9 @@ export function ActivitiesHub({
                     {workingId===item.id ? "Please wait..." : item.content_type === "video" ? "Watch" : item.content_type === "audio" ? "Listen" : "Open"}
                   </button>
                 ) : (
-                  <button className="secondary-button" disabled>File unavailable</button>
+                  <button className="secondary-button" disabled>File Unavailable</button>
                 )}
-                {readyLink?.id===item.id&&<a className="secondary-button" href={readyLink.url} target="_blank" rel="noopener noreferrer">Open ready activity</a>}
+                {readyLink?.id===item.id&&<a className="secondary-button" href={readyLink.url} target="_blank" rel="noopener noreferrer">Open Ready Activity</a>}
                 <button
                   className={done ? "status-chip done" : "text-button small"}
                   disabled={done || workingId !== null}

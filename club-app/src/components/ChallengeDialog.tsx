@@ -231,7 +231,7 @@ export function ChallengeDialog({
         {loading ? (
           <div className="dialog-loading"><div className="loader" /> Loading challenge...</div>
         ) : loadFailed ? (
-          <div className="empty-state"><p role="alert">{error}</p><button className="secondary-button" onClick={() => setReloadCount(value => value + 1)}>Reload progress</button></div>
+          <div className="empty-state"><p role="alert">{error}</p><button className="secondary-button" onClick={() => setReloadCount(value => value + 1)}>Reload Progress</button></div>
         ) : (
           <>
             {steps.length > 0 && (

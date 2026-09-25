@@ -142,7 +142,7 @@ export function OrganizationInviteAccept({
         )}
 
         <button className="text-button recovery-button" type="button" disabled={working} onClick={onCancel}>
-          Return to Adventure Club
+          Return To Adventure Club
         </button>
 
         <p className="privacy-note">

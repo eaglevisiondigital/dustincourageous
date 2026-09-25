@@ -70,10 +70,10 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
       <div className="section-heading compact-heading">
         <div>
           <p className="eyebrow gold">Purchases</p>
-          <h2>Orders & fulfillment</h2>
+          <h2>Orders & Fulfillment</h2>
         </div>
         <button className="secondary-button" type="button" disabled={refreshing} onClick={()=>void load()}>
-          {refreshing?"Checking...":"Refresh orders"}
+          {refreshing?"Checking...":"Refresh Orders"}
         </button>
       </div>
 
@@ -107,7 +107,7 @@ export function OrderHistoryCard({ householdId }: { householdId: string }) {
                   return <div className="order-fulfillment-note" key={fulfillment.id}>
                     <span>Fulfillment: {fulfillment.status.replaceAll("_"," ")}</span>
                     {trackingUrl?(
-                      <a href={trackingUrl} target="_blank" rel="noopener noreferrer">Track shipment</a>
+                      <a href={trackingUrl} target="_blank" rel="noopener noreferrer">Track Shipment</a>
                     ):fulfillment.tracking_number?(
                       <span>Tracking {fulfillment.tracking_number}</span>
                     ):null}

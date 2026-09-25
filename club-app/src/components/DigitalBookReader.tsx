@@ -22,7 +22,7 @@ export function DigitalBookEntry({ childId, bookId, title }: { childId: string; 
   useEffect(() => { void load(); return () => { version.current++; }; }, [load]);
   return <div className="digital-book-entry">
     {loading ? <p role="status">Checking digital book availability...</p>
-      : error ? <p role="alert">Digital book availability could not be checked. <button className="text-button" onClick={() => void load()}>Try again</button></p>
+      : error ? <p role="alert">Digital book availability could not be checked. <button className="text-button" onClick={() => void load()}>Try Again</button></p>
       : book?.availability === "ready" ? <button className="primary-button compact" onClick={() => setOpen(true)}>{book.page_number > 1 ? "Continue digital book" : "Open digital book"}</button>
       : <p className="muted">{book?.availability === "locked" ? "A guardian can check this family's digital book access in Family Hub." : "The digital edition is not available yet. You can still enjoy the Book Companion below."}</p>}
     {open && book?.availability === "ready" && <DigitalBookReader childId={childId} bookId={bookId} title={title} book={book}
@@ -84,20 +84,20 @@ export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
     setPhase("loading"); setPage(target);
   }
   return <ModalDialog className="digital-book-reader" labelledBy={headingId} busy={phase === "saving"} onClose={onClose}>
-    <header className="digital-reader-header"><div><p className="eyebrow red">Read together</p><h2 id={headingId}>{title}</h2></div>
-      <button className="secondary-button" disabled={phase === "saving"} onClick={onClose}>Close book</button></header>
+    <header className="digital-reader-header"><div><p className="eyebrow red">Read Together</p><h2 id={headingId}>{title}</h2></div>
+      <button className="secondary-button" disabled={phase === "saving"} onClick={onClose}>Close Book</button></header>
     <nav className="digital-reader-controls" aria-label="Book pages">
-      <button className="secondary-button" disabled={busy || page === 1} onClick={() => goToPage(page - 1)}>Previous page</button>
+      <button className="secondary-button" disabled={busy || page === 1} onClick={() => goToPage(page - 1)}>Previous Page</button>
       <label>Page <select aria-label="Go to page" value={page} disabled={busy} onChange={event => goToPage(Number(event.target.value))}>
         {book.pages.map((_, index) => <option key={index} value={index + 1}>{index + 1}</option>)}
       </select> of {book.pages.length}</label>
-      <button className="secondary-button" disabled={busy || page === book.pages.length} onClick={() => goToPage(page + 1)}>Next page</button>
+      <button className="secondary-button" disabled={busy || page === book.pages.length} onClick={() => goToPage(page + 1)}>Next Page</button>
       <button className="text-button" aria-pressed={zoom} disabled={!image || phase === "failed"} onClick={() => setZoom(value => !value)}>{zoom ? "Fit page" : "Enlarge page"}</button>
       <button className="text-button" aria-expanded={showText} aria-controls={pageTextId} onClick={() => setShowText(value => !value)}>{showText ? "Hide page text" : "Read page text"}</button>
     </nav>
     <p className="digital-reader-status" role="status">{phase === "loading" || phase === "decoding" ? "Opening page..." : phase === "saving" ? "Saving your place..." : phase === "ready" && !saveError ? `Your place is saved on page ${page}.` : ""}</p>
-    {saveError && <p role="alert">Your place could not be saved. <button className="text-button" onClick={() => image && void savePlace(image.request)}>Save my place</button></p>}
-    {phase === "failed" && <p role="alert">This page could not be opened. Check your connection and try again. If access has changed, close and reopen the book. <button className="secondary-button" onClick={() => setRetry(value => value + 1)}>Try page again</button></p>}
+    {saveError && <p role="alert">Your place could not be saved. <button className="text-button" onClick={() => image && void savePlace(image.request)}>Save My Place</button></p>}
+    {phase === "failed" && <p role="alert">This page could not be opened. Check your connection and try again. If access has changed, close and reopen the book. <button className="secondary-button" onClick={() => setRetry(value => value + 1)}>Try Page Again</button></p>}
     <p id={helpId} className="muted digital-reader-help">{zoom ? "Scroll to explore the enlarged page. Choose Fit page to swipe between pages." : "Swipe left or right on the page. With the page focused, use arrow keys to turn pages, Home for the first page, or End for the last."}</p>
     <div className={`digital-reader-page${zoom ? " enlarged" : ""}`} tabIndex={0} role="region" aria-label={`Book page ${page}`} aria-describedby={helpId}
       onKeyDown={event => {

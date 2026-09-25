@@ -14,14 +14,14 @@ type Summary = {
 };
 
 const labels: Record<string,string> = {
-  club_access: "Adventure Club core",
-  premium_content: "Premium content",
-  member_downloads: "Member downloads",
-  rewards_redemption: "Reward redemption",
-  family_faith: "Faith at Home",
-  book_companions: "Book companion adventures",
-  digital_books: "Digital book library",
-  full_challenge_library: "Complete challenge library"
+  club_access: "Adventure Club Core",
+  premium_content: "Premium Content",
+  member_downloads: "Member Downloads",
+  rewards_redemption: "Reward Redemption",
+  family_faith: "Faith At Home",
+  book_companions: "Book Companion Adventures",
+  digital_books: "Digital Book Library",
+  full_challenge_library: "Complete Challenge Library"
 };
 
 export function MembershipAccessCard({ householdId }: { householdId: string }) {
@@ -61,8 +61,8 @@ export function MembershipAccessCard({ householdId }: { householdId: string }) {
   );
 
   if(loading)return <section className="membership-access-card" aria-busy="true"><p role="status">Loading membership...</p></section>;
-  if(error)return <section className="membership-access-card"><p role="alert">{error}</p><button className="secondary-button" onClick={()=>void load()}>Try again</button></section>;
-  if(!summary)return <section className="membership-access-card"><h2>Membership</h2><p>No membership details are available yet.</p><button className="secondary-button" onClick={()=>void load()}>Refresh membership</button></section>;
+  if(error)return <section className="membership-access-card"><p role="alert">{error}</p><button className="secondary-button" onClick={()=>void load()}>Try Again</button></section>;
+  if(!summary)return <section className="membership-access-card"><h2>Membership</h2><p>No membership details are available yet.</p><button className="secondary-button" onClick={()=>void load()}>Refresh Membership</button></section>;
 
   return (
     <section className="membership-access-card">

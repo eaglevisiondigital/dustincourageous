@@ -130,12 +130,12 @@ export function ReferralSupportCard({
   return (
     <section className="referral-support-card">
       {message&&<div className="form-message" role="status">{message}</div>}
-      {loadError&&<div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={working||loading} onClick={()=>void load()}>Retry details</button></div>}
+      {loadError&&<div><p role="alert">{loadError}</p><button type="button" className="secondary-button" disabled={working||loading} onClick={()=>void load()}>Retry Details</button></div>}
 
       <div className="family-detail-grid">
         <article className="family-section-card">
-          <p className="eyebrow gold">Invite a Family</p>
-          <h2>Adventure Club referral</h2>
+          <p className="eyebrow gold">Invite A Family</p>
+          <h2>Adventure Club Referral</h2>
           <p className="muted">Share a family referral code without sharing anyone's private account information.</p>
           {loading?<p role="status">Loading referral details...</p>:code?(
             <div className="referral-code-box">
@@ -146,20 +146,20 @@ export function ReferralSupportCard({
                 className="text-button small"
                 onClick={() => void copyReferral()}
               >
-                Copy referral link
+                Copy Referral Link
               </button>
-              {copyFallback&&<label>Referral link<input readOnly value={copyFallback} onFocus={event=>event.target.select()}/></label>}
+              {copyFallback&&<label>Referral Link<input readOnly value={copyFallback} onFocus={event=>event.target.select()}/></label>}
             </div>
           ):(
             <button type="button" className="secondary-button" disabled={working||!!loadError} onClick={()=>void createCode()}>
-              Create family referral code
+              Create Family Referral Code
             </button>
           )}
         </article>
 
         <article className="family-section-card">
           <p className="eyebrow red">Help</p>
-          <h2>Contact Adventure Club support</h2>
+          <h2>Contact Adventure Club Support</h2>
           <form className="form-stack" onSubmit={submitTicket}>
             <label>
               Category
@@ -177,19 +177,19 @@ export function ReferralSupportCard({
             </label>
             <label>Subject<input required disabled={working||!!pendingRequest} value={subject} onChange={(event)=>setSubject(event.target.value)}/></label>
             <label>Message<textarea required disabled={working||!!pendingRequest} value={body} onChange={(event)=>setBody(event.target.value)}/></label>
-            <button className="primary-button" disabled={working}>{working?"Checking request...":pendingRequest?"Retry saved request":"Send support request"}</button>
+            <button className="primary-button" disabled={working}>{working?"Checking request...":pendingRequest?"Retry Saved Request":"Send Support Request"}</button>
           </form>
         </article>
       </div>
 
-      <button type="button" className="secondary-button support-history-refresh" disabled={loading||working} onClick={()=>void load()}>Refresh support history</button>
+      <button type="button" className="secondary-button support-history-refresh" disabled={loading||working} onClick={()=>void load()}>Refresh Support History</button>
       {loading?<p role="status">Loading support history...</p>:loadError?null:tickets.length>0?(
         <div className="support-ticket-list">
           {tickets.map((ticket)=>(
             <article key={ticket.id}>
               <div><strong>#{ticket.ticket_number} · {ticket.subject}</strong><span>{ticket.category} · {new Date(ticket.created_at).toLocaleDateString()}</span></div>
               <span className={ticket.status==="resolved"||ticket.status==="closed"?"status-chip done":"status-chip"}>{ticket.status.replaceAll("_"," ")}</span>
-              <button type="button" className="secondary-button" aria-label={`View support request ${ticket.ticket_number}`} onClick={()=>setOpenTicket(ticket.id)}>View request</button>
+              <button type="button" className="secondary-button" aria-label={`View support request ${ticket.ticket_number}`} onClick={()=>setOpenTicket(ticket.id)}>View Request</button>
             </article>
           ))}
         </div>

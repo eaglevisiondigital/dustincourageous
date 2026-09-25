@@ -16,6 +16,19 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+- September 25 screenshot review: standardized short action/field/status labels
+  while keeping sentences and content copy intact. Raised muted-text contrast,
+  darkened the primary red for white-label contrast, normalized Safari selects
+  with 48px targets and visible chevrons, improved entitlement/consent spacing,
+  wrapped settings tabs and plan rows, and reduced oversized store headings.
+  Corrected light reading-history cards with inherited light text. Mandatory
+  granted consent is a readable status; optional actions explicitly say Grant
+  Consent/Revoke Consent without changing permissions. Added a rendering-error
+  recovery screen and visible section loading feedback. The blank screenshot's
+  original cause has not been reproduced. Existing 212 tests and production
+  build pass; signed-in Safari/device review remains pending. Parent/Guardian
+  display choice and red badge from the preceding batch remain in place.
+
 - September 25: Added breathing room and 44px targets to account links below
   Sign In. Family signup requires a Parent/Guardian presentation choice saved
   in Auth user metadata (family_relationship). Family Hub and privacy badges use

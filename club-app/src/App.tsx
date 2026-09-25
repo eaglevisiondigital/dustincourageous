@@ -197,8 +197,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
           </p>
           <div className="trust-row">
             <span>Guardian Controlled</span>
-            <span>No child email required</span>
-            <span>Family first</span>
+            <span>No Child Email Required</span>
+            <span>Family First</span>
           </div>
         </div>
       </section>
@@ -240,7 +240,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
             )}
             {mode === "signup" && !leaderInvitation && <label>I Am a
               <select required disabled={working} value={relationship} onChange={event => setRelationship(event.target.value as FamilyRelationship | "")}>
-                <option value="" disabled>Choose Parent or Guardian</option>
+                <option value="" disabled>Choose Parent Or Guardian</option>
                 <option value="parent">Parent</option><option value="guardian">Guardian</option>
               </select>
             </label>}
@@ -271,11 +271,11 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
             {message && <div className="form-message" role="status">{message}</div>}
 
             <button className="primary-button" disabled={working} type="submit">
-              {working ? "Working..." : mode === "forgot" ? "Send secure reset link" : mode === "signin" ? "Sign in" : "Create family account"}
+              {working ? "Working..." : mode === "forgot" ? "Send Secure Reset Link" : mode === "signin" ? "Sign In" : "Create Family Account"}
             </button>
             {confirmationPending && (
               <button className="secondary-button" disabled={working} type="button" onClick={() => void resendConfirmation()}>
-                Resend confirmation email
+                Resend Confirmation Email
               </button>
             )}
           </form>
@@ -291,11 +291,11 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
                 setConfirmationPending(false);
               }}
             >
-              {mode === "signin" ? "New family? Create an account" : "Back to sign in"}
+              {mode === "signin" ? "New family? Create An Account" : "Back To Sign In"}
             </button>
             {mode === "signin" && (
               <button type="button" disabled={working} className="text-button" onClick={() => { setMode("forgot"); setMessage(""); setConfirmationPending(false); }}>
-                Forgot password?
+                Forgot Password?
               </button>
             )}
           </div>
@@ -728,7 +728,7 @@ function FamilyPortal({
           </div>
           {view === "parent" && !kidLocked && (
             <button className="add-link" onClick={() => setAddingChild((value) => !value)}>
-              + Add another child
+              + Add Another Child
             </button>
           )}
           {view === "parent" && !kidLocked && addingChild && (
@@ -749,7 +749,7 @@ function FamilyPortal({
 
         <main className="portal-main">
           {challengeError && <p className="form-message" role="alert">{challengeError}</p>}
-          <Suspense fallback={<div className="loader" aria-label="Loading section" />}>
+          <Suspense fallback={<div className="section-loading" role="status"><div className="loader" aria-hidden="true" /><p>Loading your adventure…</p></div>}>
           {view === "kid" ? (
             <>
               <nav className="kid-subnav" aria-label="Kid area">
@@ -839,23 +839,23 @@ function FamilyPortal({
               )}
 
               {dashboardError ? (
-                <div className="empty-state"><p role="alert">{dashboardError}</p><button className="secondary-button" onClick={()=>void loadChildDashboard()}>Try again</button></div>
+                <div className="empty-state"><p role="alert">{dashboardError}</p><button className="secondary-button" onClick={()=>void loadChildDashboard()}>Try Again</button></div>
               ) : dashboardLoading || dashboardChildId !== selectedChild?.id ? (
                 <p role="status">Loading your progress...</p>
               ) : (<>
               <section className="stats-grid five-up">
-                <article><strong>{snapshot.xp}</strong><span>XP earned</span></article>
-                <article><strong>{snapshot.weeklyStars}</strong><span>Weekly stars</span></article>
+                <article><strong>{snapshot.xp}</strong><span>XP Earned</span></article>
+                <article><strong>{snapshot.weeklyStars}</strong><span>Weekly Stars</span></article>
                 <article><strong>{snapshot.badges}</strong><span>Badges</span></article>
-                <article><strong>{snapshot.streak}</strong><span>Day streak</span></article>
-                <article><strong>{snapshot.completedChallenges}</strong><span>Challenges won</span></article>
+                <article><strong>{snapshot.streak}</strong><span>Day Streak</span></article>
+                <article><strong>{snapshot.completedChallenges}</strong><span>Challenges Won</span></article>
               </section>
 
               <section className="section-block">
                 <div className="section-heading">
                   <div>
                     <p className="eyebrow red">Keep Going</p>
-                    <h2>Today's adventures</h2>
+                    <h2>Today's Adventures</h2>
                   </div>
                   <span className="pill sentence-pill">Fresh challenges appear here</span>
                 </div>
@@ -870,7 +870,7 @@ function FamilyPortal({
                         </div>
                         <h3>{challenge.title}</h3>
                         <p>{challenge.description || "A new courage challenge is ready for you."}</p>
-                        <button className="secondary-button" type="button" onClick={() => showChallenge(challenge)}>Open challenge</button>
+                        <button className="secondary-button" type="button" onClick={() => showChallenge(challenge)}>Open Challenge</button>
                       </article>
                     ))}
                   </div>
@@ -1011,7 +1011,7 @@ function FamilyPortal({
                         setView("kid");
                       }}
                     >
-                      View adventure
+                      View Adventure
                     </button>
                   </article>
                 ))}
@@ -1020,7 +1020,7 @@ function FamilyPortal({
               <section className="parent-modules">
                 <article><span>Progress</span><strong>See XP, streaks, badges, and completed challenges.</strong></article>
                 <article><span>Rewards</span><strong>Review and approve rewards your kids unlock.</strong></article>
-                <article><span>Faith at Home</span><strong>Read, talk, pray, and take a practical faith step together.</strong></article>
+                <article><span>Faith At Home</span><strong>Read, talk, pray, and take a practical faith step together.</strong></article>
                 <article><span>Membership</span><strong>Manage Adventure Club access for the whole household.</strong></article>
               </section>
 
@@ -1306,7 +1306,7 @@ export default function App() {
           <Brand />
           <h1>Let’s reconnect</h1>
           <p role="alert" className="muted">{accountError}</p>
-          <button className="primary-button" onClick={() => window.location.reload()}>Try again</button>
+          <button className="primary-button" onClick={() => window.location.reload()}>Try Again</button>
         </div>
       </main>
     );
@@ -1324,10 +1324,10 @@ export default function App() {
           <div className="setup-card">
             <Brand />
             <p className="eyebrow red">Leader Invitation</p>
-            <h1>Invalid invitation link</h1>
+            <h1>Invalid Invitation Link</h1>
             <p className="muted">This organization invitation link is incomplete.</p>
             <button className="secondary-button" onClick={() => navigate("/")}>
-              Return to Adventure Club
+              Return To Adventure Club
             </button>
           </div>
         </main>
@@ -1361,9 +1361,9 @@ export default function App() {
           <div className="setup-card">
             <Brand />
             <p className="eyebrow red">Invitation</p>
-            <h1>Invalid invitation link</h1>
+            <h1>Invalid Invitation Link</h1>
             <p className="muted">This family invitation link is incomplete.</p>
-            <button className="secondary-button" onClick={() => navigate("/")}>Return to Adventure Club</button>
+            <button className="secondary-button" onClick={() => navigate("/")}>Return To Adventure Club</button>
           </div>
         </main>
       );
@@ -1393,9 +1393,9 @@ export default function App() {
           <div className="setup-card">
             <Brand />
             <p className="eyebrow red">Restricted Area</p>
-            <h1>Admin access required</h1>
+            <h1>Admin Access Required</h1>
             <p className="muted">This account is not currently assigned an Adventure Club admin role.</p>
-            <button className="secondary-button" onClick={() => navigate("/")}>Return to family area</button>
+            <button className="secondary-button" onClick={() => navigate("/")}>Return To Family Area</button>
           </div>
         </main>
       );
