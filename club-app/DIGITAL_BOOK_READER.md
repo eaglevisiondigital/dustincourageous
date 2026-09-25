@@ -25,6 +25,11 @@ Checkpoint: September 24, 2026, America/Chicago.
   metadata stores only the edition revision and SHA-256 manifest fingerprint.
 - Book publication, release date and an approved current governance fingerprint
   are required for family access. New editions return the book to draft.
+- The existing Operations Launch Gate reports private storage, prepared editions,
+  missing page files, current human approval and digital release availability.
+  Digital-content warnings must be resolved before offering that feature, while
+  an unsafe public book bucket is a production blocker. Areas with unresolved
+  warnings are labeled "Needs review" rather than "Current".
 - Books Admin prepares numbered image files, checks descriptions and order,
   uploads without overwriting, stages a draft, and previews prepared pages for
   human review. Existing book audit/governance triggers record the change.
@@ -69,6 +74,10 @@ release in this batch. No real book manifest was staged using placeholder text.
   export isolation, archived-child history, empty results, and removed-guardian
   denial using temporary fixtures. It also verifies deployed history policy,
   inventory invoker security, and the child-deletion cascade constraint.
+- `supabase/tests/digital_book_launch_gate_regression.sql` checks empty setup,
+  private/public storage, missing files, stale/current approval, release state
+  and admin denial. It uses temporary fixtures and mock release/admin helpers;
+  the reader regression separately exercises the deployed release logic.
 - All 37 actual proof images pass the client manifest/download checks in an
   isolated mocked-client test with byte sizes preserved. Saved-position calls
   in that source-file test are simulated, not live child records.

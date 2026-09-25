@@ -76,7 +76,7 @@ export function LaunchReadinessAdmin() {
           <h2>{loading?"Checking production readiness":!verified?"Production readiness unverified":ready?"Automated blockers cleared":"Not ready for production launch"}</h2>
           <p>
             This gate checks DC Governance, theology/prayer compliance, guardian safety, privacy operations,
-            communications delivery, scheduled workers, commerce, and stale operational failures.
+            communications delivery, scheduled workers, commerce, digital books, and stale operational failures.
           </p>
         </div>
         <div className="launch-gate-score">
@@ -99,7 +99,7 @@ export function LaunchReadinessAdmin() {
         <article className={!verified||warnings.length?"warn":"good"}>
           <span>Warnings</span>
           <strong>{verified?warnings.length:"?"}</strong>
-          <small>{!verified?"Not checked":warnings.length?"Recommended before launch":"Clear"}</small>
+          <small>{!verified?"Not checked":warnings.length?"Review feature launch requirements":"Clear"}</small>
         </article>
         <article className={verified?"good":"warn"}>
           <span>Passing</span>
@@ -133,7 +133,7 @@ export function LaunchReadinessAdmin() {
           <div className="section-heading compact-heading">
             <div>
               <p className="eyebrow gold">Warnings</p>
-              <h2>Recommended before launch</h2>
+              <h2>Review before enabling each feature</h2>
             </div>
           </div>
           <div className="launch-warning-list">
@@ -159,7 +159,7 @@ export function LaunchReadinessAdmin() {
             <article key={area}>
               <div className="launch-area-head">
                 <div>
-                  <span>{areaBlockers?"Needs attention":"Current"}</span>
+                  <span>{areaBlockers?"Needs attention":areaPassed<areaChecks.length?"Needs review":"Current"}</span>
                   <h3>{area}</h3>
                 </div>
                 <strong>{areaPassed}/{areaChecks.length}</strong>
