@@ -1,32 +1,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-type PendingProgress = {
-  id: string;
-  child_profile_id: string;
-  challenge_id: string;
-  submitted_at: string | null;
-  child_profiles:
-    | { display_name: string }
-    | { display_name: string }[]
-    | null;
-  challenges:
-    | {
-        title: string;
-        challenge_type: string;
-        xp_reward: number;
-      }
-    | {
-        title: string;
-        challenge_type: string;
-        xp_reward: number;
-      }[]
-    | null;
-};
-
-function firstRelation<T>(value: T | T[] | null): T | null {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
+import { readParentApprovals, confirmParentDecision, approvalRelation as firstRelation, type PendingApproval as PendingProgress } from "../lib/parentApprovals";
 
 export function ParentApprovals({
   householdId,
@@ -36,6 +11,8 @@ export function ParentApprovals({
   childIds: string[];
 }) {
   const [items, setItems] = useState<PendingProgress[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [pin, setPin] = useState("");
   const [guardianToken, setGuardianToken] = useState(
     () => sessionStorage.getItem("dc_guardian_session_token") ?? ""
@@ -52,24 +29,10 @@ export function ParentApprovals({
     setLoading(true);
     setLoadError("");
     try {
-    if (!childIds.length) {
-      setItems([]);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("child_challenge_progress")
-      .select(
-        "id,child_profile_id,challenge_id,submitted_at,child_profiles(display_name),challenges(title,challenge_type,xp_reward)"
-      )
-      .in("child_profile_id", childIds)
-      .eq("status", "pending_parent")
-      .order("submitted_at", { ascending: true });
-
+    const result = await readParentApprovals(supabase, householdId, childIds);
     if (version !== loadVersion.current) return;
-    if (error) throw error;
+    setItems(result.items); setHasMore(result.hasMore); setLoaded(true);
 
-    setItems((data ?? []) as PendingProgress[]);
     } catch {
       if (version === loadVersion.current) setLoadError("The approval queue could not be loaded. Please try again.");
     } finally {
@@ -83,14 +46,14 @@ export function ParentApprovals({
   }, [load]);
 
   useEffect(() => {
-    const handler = () => void load();
+    const handler = () => { if (!actionBusy.current) void load(); };
     window.addEventListener("dc-progress-updated", handler);
     return () => window.removeEventListener("dc-progress-updated", handler);
   }, [load]);
 
   async function unlock(event: FormEvent) {
     event.preventDefault();
-    if (actionBusy.current) return;
+    if (actionBusy.current || loading || loadError) return;
     actionBusy.current = true;
     setWorking("unlock");
     setMessage("");
@@ -118,6 +81,7 @@ export function ParentApprovals({
       setMessage("The guardian PIN could not be checked. Please try again.");
       setPin("");
     } finally {
+      await load();
       actionBusy.current = false;
       setWorking("");
     }
@@ -131,6 +95,8 @@ export function ParentApprovals({
 
   async function decide(progressId: string, decision: "approve" | "return") {
     if (actionBusy.current || loading || loadError) return;
+    const item = items.find(row => row.id === progressId && childIds.includes(row.child_profile_id));
+    if (!item) return;
     if (!guardianToken) {
       setMessage("Enter the guardian PIN before reviewing a challenge.");
       return;
@@ -156,29 +122,27 @@ export function ParentApprovals({
       throw error;
     }
 
-    const { data, error: confirmationError } = await supabase.from("child_challenge_progress")
-      .select("id,status").eq("id", progressId).single();
-    const expectedStatus = decision === "approve" ? "completed" : "in_progress";
-    if (confirmationError || data?.status !== expectedStatus) throw new Error("Status not confirmed");
+    await confirmParentDecision(supabase, progressId, item.child_profile_id, decision);
     setMessage(decision === "approve" ? "Challenge approved. Your family's progress is refreshing." : "Challenge returned to the child for another look.");
     } catch {
       setMessage("We could not confirm that action. Check the refreshed queue before trying again.");
     } finally {
+      window.dispatchEvent(new Event("dc-progress-updated"));
+      await load();
       actionBusy.current = false;
       setWorking("");
-      window.dispatchEvent(new Event("dc-progress-updated"));
     }
   }
 
   const countLabel = useMemo(
-    () => items.length + " Waiting",
-    [items.length]
+    () => items.length + (hasMore ? "+ Waiting" : " Waiting"),
+    [items.length, hasMore]
   );
 
-  if (loading) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading guardian approvals...</p></section>;
-  if (loadError) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
+  if (loading && !loaded) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading guardian approvals...</p></section>;
+  if (loadError && !loaded) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
-  if (!items.length) {
+  if (!items.length && !loading && !loadError) {
     return (
       <section className="parent-approvals-card clear">
         <div>
@@ -187,7 +151,7 @@ export function ParentApprovals({
           <p>Challenges that require a parent or guardian will appear here before XP is awarded.</p>
           {message && <p role="status">{message}</p>}
         </div>
-        <span className="status-chip done">All Clear</span>
+        <div className="family-action-buttons"><span className="status-chip done">All Clear</span><button type="button" className="text-button" onClick={() => void load()}>Refresh Approvals</button></div>
       </section>
     );
   }
@@ -202,6 +166,12 @@ export function ParentApprovals({
         <span className="pill">{countLabel}</span>
       </div>
 
+      <div className="family-action-buttons">
+        <button type="button" className="text-button" disabled={Boolean(working) || loading} onClick={() => void load()}>Refresh Approvals</button>
+      </div>
+      {loading && <p role="status">Refreshing approval progress...</p>}
+      {loadError && <p role="alert">{loadError} Displayed approvals may be out of date.</p>}
+      {hasMore && <p className="muted">Showing the first 50 waiting approvals. Reviewing these brings the next items into the queue.</p>}
       <p className="muted">
         Enter your guardian PIN to approve a challenge or return it to your child for another look.
       </p>
@@ -214,6 +184,7 @@ export function ParentApprovals({
             Guardian PIN
             <input
               required
+              disabled={Boolean(working) || loading || Boolean(loadError)}
               type="password"
               inputMode="numeric"
               autoComplete="off"
@@ -226,7 +197,7 @@ export function ParentApprovals({
               }
             />
           </label>
-          <button className="secondary-button" disabled={Boolean(working)}>
+          <button className="secondary-button" disabled={Boolean(working) || loading || Boolean(loadError)}>
             {working === "unlock" ? "Checking..." : "Unlock Approvals"}
           </button>
         </form>
@@ -234,7 +205,7 @@ export function ParentApprovals({
 
       {guardianToken && (
         <div className="guardian-session-chip">
-          <span>◆</span>
+          <span aria-hidden="true">◆</span>
           <strong>Guardian PIN Entered</strong>
           <small>You may be asked to enter it again when approving.</small>
         </div>
@@ -267,7 +238,7 @@ export function ParentApprovals({
                   className="primary-button compact"
                   disabled={
                     !guardianToken ||
-                    Boolean(working)
+                    Boolean(working) || loading || Boolean(loadError)
                   }
                   onClick={() => void decide(item.id, "approve")}
                 >
@@ -279,7 +250,7 @@ export function ParentApprovals({
                   className="text-button small"
                   disabled={
                     !guardianToken ||
-                    Boolean(working)
+                    Boolean(working) || loading || Boolean(loadError)
                   }
                   onClick={() => void decide(item.id, "return")}
                 >

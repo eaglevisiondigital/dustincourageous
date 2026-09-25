@@ -6,6 +6,21 @@ See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification an
 
 ## What the latest work actually accomplished
 
+September 25: Parent approval queues now preserve loaded rows and action feedback
+during refreshes, show stale-data errors inline, and disable decisions/PIN entry
+until the queue is current. Refresh Approvals is available in both populated and
+All Clear states. Unlock and decision attempts perform a final queue reload;
+self-generated progress events do not launch competing loads while an action runs.
+The queue explicitly scopes active children to the current household, deduplicates
+requested IDs, rejects foreign/inactive/duplicate returned rows and skips empty
+roster queries. Stable oldest-first ordering uses a 50-item page plus lookahead;
+50+ Waiting explains that reviewing those items exposes the next waiting entries.
+Decision confirmation now requires the exact progress ID, child ID and expected
+completed/in-progress status. Five tests cover queue scope, limits, empty rosters,
+invalid results and decision confirmation. All 269 tests and production build pass.
+No PIN lifetime, backend permission, approval or XP rule changes. Actual signed-in
+PIN, approval, returned-task and device interaction acceptance remains pending.
+
 September 25: Family challenge refreshes now retain the activity, participant
 selection and confirmed per-child results. Progress errors display inline and block
 writes until a successful refresh. Save completion triggers one final refresh;
