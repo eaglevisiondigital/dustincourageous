@@ -4885,6 +4885,12 @@ select:focus {
 .digital-reader-page img { display: block; margin: auto; width: auto; height: auto; max-width: 100%; max-height: 64dvh; object-fit: contain; }
 .digital-reader-page.enlarged img { width: 150%; max-width: none; max-height: none; }
 .digital-reader-page:focus-visible { outline: 3px solid #b9202c; outline-offset: 2px; }
+.digital-reader-page { touch-action: pan-y pinch-zoom; }
+.digital-reader-page.enlarged { touch-action: auto; }
+.digital-reader-help { font-size: .875rem; line-height: 1.5; }
+.digital-reader-text { margin-top: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.digital-reader-text p { white-space: pre-wrap; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.7; overflow-wrap: anywhere; }
+.digital-reader-controls button { min-height: 44px; }
 .digital-book-preparation { grid-column: 1 / -1; }
 .digital-book-preparation > label { display: block; margin: 16px 0; }
 .digital-book-preparation textarea { display: block; width: 100%; }

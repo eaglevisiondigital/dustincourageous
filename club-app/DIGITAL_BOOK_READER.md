@@ -6,6 +6,11 @@ Checkpoint: September 24, 2026, America/Chicago.
 
 - Bookshelf opens a private image-page reader with previous/next, page selection,
   fit/enlarge controls, page-error retry, and a confirmed saved place per child.
+- The focused page supports arrow keys, Home and End. Deliberate horizontal touch
+  swipes turn one page in fit mode; loading, enlargement, vertical scrolling and
+  canceled gestures do not trigger page changes. Pinch zoom remains available.
+- A larger, wrapping text panel displays the reviewed page text and description
+  from the private edition manifest. It does not generate or rewrite book text.
 - Original page/spread proportions are preserved. The current reader shows one
   supplied image at a time, so a full spread can be supplied as one image.
 - Positions are separate from Book Companion completion and XP. They reset to
@@ -60,7 +65,9 @@ release in this batch. No real book manifest was staged using placeholder text.
 
 ## Verification and remaining release gates
 
-- 186 automated app tests pass, including 12 new reader/preparation tests.
+- 190 automated app tests pass, including 12 reader/preparation tests and four
+  navigation-rule tests. The navigation tests cover target pages, bounds,
+  blocked input, swipe direction and rejected gestures, not physical devices.
 - Production TypeScript/Vite build passes. The existing main-bundle size warning
   remains.
 - `supabase/tests/digital_book_reader_regression.sql` passes against copies of
