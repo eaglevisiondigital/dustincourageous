@@ -1,48 +1,42 @@
 import { FormEvent, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { ModalDialog } from "./ModalDialog";
+import { saveOnboardingPin } from "../lib/onboarding";
 
 export function GuardianPinSetup({
   householdId,
   onComplete
 }: {
   householdId: string;
-  onComplete: () => void;
+  onComplete: () => void | Promise<void>;
 }) {
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const busy = useRef(false);
+  const [saved, setSaved] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setMessage("");
-
-    if (!/^\d{4,6}$/.test(pin)) {
-      setMessage("Choose a 4 to 6 digit guardian PIN.");
-      return;
-    }
-
-    if (pin !== confirmPin) {
-      setMessage("The PINs do not match.");
-      return;
-    }
-
+    if (busy.current) return;
+    busy.current = true;
     setWorking(true);
-    const { error } = await supabase.rpc("set_guardian_pin", {
-      p_household_id: householdId,
-      p_pin: pin
-    });
-    setWorking(false);
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
-    setPin("");
-    setConfirmPin("");
-    onComplete();
+    setMessage("");
+    let confirmed = saved;
+    try {
+      if (!confirmed) {
+        await saveOnboardingPin(supabase, householdId, pin, confirmPin);
+        confirmed = true;
+        setSaved(true);
+        setPin("");
+        setConfirmPin("");
+      }
+      await onComplete();
+    } catch (cause) {
+      setMessage(confirmed ? "Your guardian PIN was saved. Continue to open your family hub."
+        : cause instanceof Error ? cause.message : "We could not confirm your guardian PIN. Please try again before using Kid View.");
+    } finally { busy.current = false; setWorking(false); }
   }
 
   return (
@@ -68,6 +62,7 @@ export function GuardianPinSetup({
               maxLength={6}
               pattern="[0-9]*"
               value={pin}
+              disabled={working || saved}
               onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
             />
           </label>
@@ -82,12 +77,13 @@ export function GuardianPinSetup({
               maxLength={6}
               pattern="[0-9]*"
               value={confirmPin}
+              disabled={working || saved}
               onChange={(event) => setConfirmPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
             />
           </label>
-          {message && <div className="form-message">{message}</div>}
+          {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
-            {working ? "Securing..." : "Set guardian PIN"}
+            {working ? "Please wait..." : saved ? "Continue to family hub" : "Set guardian PIN"}
           </button>
         </form>
 

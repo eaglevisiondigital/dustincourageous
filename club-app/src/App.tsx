@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import { registerCurrentInstallation } from "./lib/installations";
+import { childProfileInput, householdInput, createOnboardingAttempt } from "./lib/onboarding";
 import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
 
 const AdminPortal = lazy(() =>
@@ -99,14 +100,17 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState(initialMessage);
   const [confirmationPending, setConfirmationPending] = useState(false);
+  const authBusy = useRef(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (authBusy.current) return;
+    authBusy.current = true;
     setWorking(true);
     setMessage("");
-
+    try {
     if (mode === "forgot") {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: window.location.origin + "/"
       });
       setWorking(false);
@@ -121,7 +125,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
     const result =
       mode === "signup"
         ? await supabase.auth.signUp({
-            email,
+            email: email.trim(),
             password,
             options: {
               emailRedirectTo: window.location.origin + window.location.pathname + window.location.search,
@@ -131,7 +135,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
               }
             }
           })
-        : await supabase.auth.signInWithPassword({ email, password });
+        : await supabase.auth.signInWithPassword({ email: email.trim(), password });
 
     setWorking(false);
 
@@ -148,18 +152,27 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
       setMessage("Check your email to confirm your guardian account, then come back and sign in.");
       setConfirmationPending(true);
     }
+    } catch {
+      setMessage("We could not complete that request. Check your connection and try again.");
+    } finally { authBusy.current = false; setWorking(false); }
   }
 
   async function resendConfirmation() {
-    if (!email) return;
+    if (!email.trim() || authBusy.current) return;
+    authBusy.current = true;
     setWorking(true);
+    setMessage("");
+    try {
     const { error } = await supabase.auth.resend({
       type: "signup",
-      email,
-      options: { emailRedirectTo: window.location.origin + "/" }
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin + window.location.pathname + window.location.search }
     });
     setWorking(false);
     setMessage(error ? error.message : "A new confirmation email has been requested. Please check your inbox and spam folder.");
+    } catch {
+      setMessage("We could not request another confirmation email. Please try again.");
+    } finally { authBusy.current = false; setWorking(false); }
   }
 
   return (
@@ -212,6 +225,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
                   required
                   autoComplete="given-name"
                   value={firstName}
+                  disabled={working}
                   onChange={(event) => setFirstName(event.target.value)}
                 />
               </label>
@@ -223,7 +237,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                disabled={working}
+                onChange={(event) => { setEmail(event.target.value); setConfirmationPending(false); }}
               />
             </label>
             {mode !== "forgot" && (
@@ -235,12 +250,13 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
                   type="password"
                   autoComplete={mode === "signin" ? "current-password" : "new-password"}
                   value={password}
+                  disabled={working}
                   onChange={(event) => setPassword(event.target.value)}
                 />
               </label>
             )}
 
-            {message && <div className="form-message">{message}</div>}
+            {message && <div className="form-message" role="status">{message}</div>}
 
             <button className="primary-button" disabled={working} type="submit">
               {working ? "Working..." : mode === "forgot" ? "Send secure reset link" : mode === "signin" ? "Sign in" : "Create family account"}
@@ -256,6 +272,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
             <button
               type="button"
               className="text-button"
+              disabled={working}
               onClick={() => {
                 setMode(mode === "signin" ? "signup" : "signin");
                 setMessage("");
@@ -265,7 +282,7 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
               {mode === "signin" ? "New family? Create an account" : "Back to sign in"}
             </button>
             {mode === "signin" && (
-              <button type="button" className="text-button" onClick={() => { setMode("forgot"); setMessage(""); }}>
+              <button type="button" disabled={working} className="text-button" onClick={() => { setMode("forgot"); setMessage(""); setConfirmationPending(false); }}>
                 Forgot password?
               </button>
             )}
@@ -286,9 +303,11 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
   const [confirmation, setConfirmation] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
+  const busy = useRef(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy.current) return;
     setMessage("");
     if (password.length < 8) {
       setMessage("Choose a password with at least 8 characters.");
@@ -299,15 +318,20 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
       return;
     }
 
+    busy.current = true;
     setWorking(true);
+    try {
     const { error } = await supabase.auth.updateUser({ password });
-    setWorking(false);
     if (error) {
       setMessage(error.message);
       return;
     }
-
+    setPassword("");
+    setConfirmation("");
     onComplete();
+    } catch {
+      setMessage("We could not confirm the password update. Try again, or sign in with your new password if it was saved.");
+    } finally { busy.current = false; setWorking(false); }
   }
 
   return (
@@ -320,13 +344,13 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
         <form className="form-stack" onSubmit={submit}>
           <label>
             New password
-            <input required minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+            <input required disabled={working} minLength={8} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} />
           </label>
           <label>
             Confirm new password
-            <input required minLength={8} type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
+            <input required disabled={working} minLength={8} type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
           </label>
-          {message && <div className="form-message">{message}</div>}
+          {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
             {working ? "Updating..." : "Update password"}
           </button>
@@ -342,32 +366,29 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const attempt = useRef(createOnboardingAttempt());
+  const busy = useRef(false);
+  const needsRefresh = attempt.current.state() === "saved" || attempt.current.state() === "uncertain";
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy.current) return;
+    busy.current = true;
     setWorking(true);
     setError("");
-
-    if (!acceptedTerms) {
-      setError("Please confirm the Guardian Account Terms to create your family hub.");
-      setWorking(false);
-      return;
-    }
-
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago";
-    const { error: createError } = await supabase.rpc("create_household_with_consent", {
-      p_name: name.trim(),
-      p_timezone: timezone
-    });
-
-    if (createError) {
-      setError(createError.message);
-      setWorking(false);
-      return;
-    }
-
-    await onComplete();
-    setWorking(false);
+    try {
+      if (!needsRefresh) {
+        const input = householdInput(name, acceptedTerms, Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago");
+        await attempt.current.run(() => supabase.rpc("create_household_with_consent", input));
+      }
+      await onComplete();
+    } catch (cause) {
+      setError(attempt.current.state() === "uncertain"
+        ? "We could not confirm whether your family hub was saved. Refresh your family hub to check before creating another."
+        : attempt.current.state() === "saved"
+          ? "Your family hub was created. Refresh to continue setup."
+          : cause instanceof Error ? cause.message : "We could not create your family hub. Please try again.");
+    } finally { busy.current = false; setWorking(false); }
   }
 
   return (
@@ -383,21 +404,22 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
         <form onSubmit={submit} className="form-stack">
           <label>
             Family hub name
-            <input required value={name} onChange={(event) => setName(event.target.value)} />
+            <input required disabled={working || needsRefresh} value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label className="onboarding-consent">
             <input
               type="checkbox"
               checked={acceptedTerms}
+              disabled={working || needsRefresh}
               onChange={(event) => setAcceptedTerms(event.target.checked)}
             />
             <span>
               I am the parent/guardian account holder and agree to the current Guardian Account Terms for this family hub.
             </span>
           </label>
-          {error && <div className="form-message">{error}</div>}
+          {error && <div className="form-message" role="alert">{error}</div>}
           <button className="primary-button" disabled={working}>
-            {working ? "Creating..." : "Create family hub"}
+            {working ? "Please wait..." : needsRefresh ? "Refresh family hub" : "Create family hub"}
           </button>
         </form>
       </div>
@@ -421,36 +443,29 @@ function AddChildForm({
   const [guardianConsent, setGuardianConsent] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
+  const attempt = useRef(createOnboardingAttempt());
+  const busy = useRef(false);
+  const needsRefresh = attempt.current.state() === "saved" || attempt.current.state() === "uncertain";
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy.current) return;
+    busy.current = true;
     setWorking(true);
     setError("");
-
-    if (!guardianConsent) {
-      setError("Please confirm guardian approval for this child to participate in Adventure Club.");
-      setWorking(false);
-      return;
-    }
-
-    const parsedYear = birthYear ? Number(birthYear) : undefined;
-    const { error: childError } = await supabase.rpc("create_child_with_consent", {
-      p_household_id: household.id,
-      p_display_name: name.trim(),
-      p_birth_year: parsedYear
-    });
-
-    if (childError) {
-      setError(childError.message);
-      setWorking(false);
-      return;
-    }
-
-    setName("");
-    setBirthYear("");
-    setGuardianConsent(false);
-    await onAdded();
-    setWorking(false);
+    try {
+      if (!needsRefresh) {
+        const input = childProfileInput(name, birthYear, guardianConsent);
+        await attempt.current.run(() => supabase.rpc("create_child_with_consent", { p_household_id: household.id, ...input }));
+      }
+      await onAdded();
+    } catch (cause) {
+      setError(attempt.current.state() === "uncertain"
+        ? "We could not confirm whether the profile was saved. Refresh your family profiles to check before adding this child again."
+        : attempt.current.state() === "saved"
+          ? "The child profile was saved. Refresh your family profiles to continue."
+          : cause instanceof Error ? cause.message : "We could not add this profile. Please try again.");
+    } finally { busy.current = false; setWorking(false); }
   }
 
   return (
@@ -458,7 +473,7 @@ function AddChildForm({
       <div>
         <label>
           Child's first name or nickname
-          <input required value={name} onChange={(event) => setName(event.target.value)} />
+          <input required disabled={working || needsRefresh} value={name} onChange={(event) => setName(event.target.value)} />
         </label>
       </div>
       <div>
@@ -470,6 +485,7 @@ function AddChildForm({
             max={new Date().getFullYear()}
             inputMode="numeric"
             value={birthYear}
+            disabled={working || needsRefresh}
             onChange={(event) => setBirthYear(event.target.value)}
           />
         </label>
@@ -478,15 +494,16 @@ function AddChildForm({
         <input
           type="checkbox"
           checked={guardianConsent}
+          disabled={working || needsRefresh}
           onChange={(event) => setGuardianConsent(event.target.checked)}
         />
         <span>
           I am the parent/guardian and approve this protected child profile for Adventure Club participation.
         </span>
       </label>
-      {error && <div className="form-message">{error}</div>}
+      {error && <div className="form-message" role="alert">{error}</div>}
       <button className="secondary-button" disabled={working}>
-        {working ? "Adding..." : "Add child profile"}
+        {working ? "Please wait..." : needsRefresh ? "Refresh family profiles" : "Add child profile"}
       </button>
     </form>
   );
@@ -510,7 +527,7 @@ function EmptyFamily({
         <p className="muted">
           Children do not need an email address or separate internet account. You create and manage their protected profile.
         </p>
-        <AddChildForm household={household} user={user} onAdded={onAdded} />
+        <AddChildForm key={household.id+":"+user.id} household={household} user={user} onAdded={onAdded} />
       </div>
     </main>
   );
@@ -711,6 +728,7 @@ function FamilyPortal({
           {view === "parent" && !kidLocked && addingChild && (
             <div className="side-form">
               <AddChildForm
+                key={household.id+":"+user.id}
                 compact
                 household={household}
                 user={user}
@@ -1380,6 +1398,7 @@ export default function App() {
       return (
         <Suspense fallback={<LoadingScreen />}>
         <GuardianPinSetup
+          key={household.id+":"+session.user.id}
           householdId={household.id}
           onComplete={() => setGuardianPinConfigured(true)}
         />
@@ -1443,7 +1462,7 @@ export default function App() {
   }
 
   if (!household) {
-    return <HouseholdSetup user={session.user} onComplete={() => loadFamily(session.user)} />;
+    return <HouseholdSetup key={session.user.id} user={session.user} onComplete={() => loadFamily(session.user)} />;
   }
 
   if (!children.length) {
@@ -1454,6 +1473,7 @@ export default function App() {
     return (
       <Suspense fallback={<LoadingScreen />}>
       <GuardianPinSetup
+        key={household.id+":"+session.user.id}
         householdId={household.id}
         onComplete={() => setGuardianPinConfigured(true)}
       />
