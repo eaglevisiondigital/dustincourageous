@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "re
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import { saveNotificationPreferences } from "../lib/familyActions";
+import { revokeHouseholdInvite, saveHouseholdSettings } from "../lib/householdSettings";
 
 type Plan = {
   id: string;
@@ -101,6 +102,7 @@ export function FamilySettings({
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("adult");
   const [inviteLink, setInviteLink] = useState("");
+  const [inviteLinkId,setInviteLinkId]=useState("");
   const [preferences, setPreferences] = useState<Preference>({
     email_enabled:true,
     push_enabled:true,
@@ -129,7 +131,6 @@ export function FamilySettings({
     const now = new Date().toISOString();
     setLoading(true);
     setLoadError("");
-    setMessage("");
     setSubscription(null);
     setPlanEntitlements([]);
     setGrants([]);
@@ -235,33 +236,43 @@ export function FamilySettings({
   }
 
   async function saveHousehold(event:FormEvent){
-    event.preventDefault();setWorking(true);setMessage("");
-    const {error}=await supabase.from("households").update({
-      name:name.trim(),
-      timezone:householdTimezone
-    }).eq("id",householdId);
-    setWorking(false);
-    if(error)return setMessage(error.message);
+    event.preventDefault();
+    if(preferenceBusy.current||working)return;
+    preferenceBusy.current=true;setWorking(true);setMessage("");
+    try {
+    const saved=await saveHouseholdSettings(supabase,householdId,name,householdTimezone);
+    setName(saved.name);setHouseholdTimezone(saved.timezone);
     setMessage("Family Hub settings saved.");
-    await onHouseholdUpdated();
+    try {await onHouseholdUpdated();}
+    catch {setMessage("Settings were saved, but the family view could not refresh. Reload to see the update.");}
+    } catch(error) {
+      setMessage(error instanceof Error?error.message:"Family settings could not be saved. Your edits are still here to retry.");
+    } finally {preferenceBusy.current=false;setWorking(false);}
   }
 
   async function savePin(event:FormEvent){
     event.preventDefault();setMessage("");
+    if(preferenceBusy.current||working)return;
     if(!/^\d{4,6}$/.test(pin)) return setMessage("Choose a 4 to 6 digit guardian PIN.");
     if(pin!==confirmPin) return setMessage("The PINs do not match.");
-    setWorking(true);
+    preferenceBusy.current=true;setWorking(true);
+    try {
     const {error}=await supabase.rpc("set_guardian_pin",{p_household_id:householdId,p_pin:pin});
-    setWorking(false);
-    if(error)return setMessage(error.message);
+    if(error)throw error;
     setPin("");setConfirmPin("");
     setMessage("Guardian PIN updated.");
+    } catch {
+      setMessage("The PIN update could not be confirmed. Try again before locking the device into Kid View.");
+    } finally {preferenceBusy.current=false;setWorking(false);}
   }
 
   async function createInvitation(event:FormEvent){
     event.preventDefault();
+    if(preferenceBusy.current||working)return;
+    preferenceBusy.current=true;
     setWorking(true);setMessage("");setInviteLink("");
-
+    setInviteLinkId("");
+    try {
     const {data,error}=await supabase.rpc("create_household_invitation",{
       p_household_id:householdId,
       p_email:inviteEmail.trim(),
@@ -269,17 +280,21 @@ export function FamilySettings({
       p_expires_days:7
     });
 
-    setWorking(false);
-    if(error)return setMessage(error.message);
+    if(error)throw error;
 
     const row=data?.[0];
-    if(row){
+    if(row?.invitation_id&&row.invitation_token){
       const link=`${window.location.origin}/invite?id=${encodeURIComponent(row.invitation_id)}&token=${encodeURIComponent(row.invitation_token)}`;
       setInviteLink(link);
+      setInviteLinkId(row.invitation_id);
       setMessage("Invitation created. Copy the secure link and send it to the invited adult.");
-    }
+    } else {throw new Error("Invitation response was incomplete");}
     setInviteEmail("");
-    await load();
+    } catch {
+      setMessage("The invitation link could not be confirmed. Check the refreshed pending invitations and revoke an unwanted invite before creating another.");
+    } finally {
+      await load();preferenceBusy.current=false;setWorking(false);
+    }
   }
 
   async function copyInvite(){
@@ -293,12 +308,18 @@ export function FamilySettings({
   }
 
   async function revokeInvitation(invitationId:string){
+    if(preferenceBusy.current||working)return;
+    preferenceBusy.current=true;
     setWorking(true);setMessage("");
-    const {error}=await supabase.rpc("revoke_household_invitation",{p_invitation_id:invitationId});
-    setWorking(false);
-    if(error)return setMessage(error.message);
+    try {
+    await revokeHouseholdInvite(supabase,householdId,invitationId);
+    if(inviteLinkId===invitationId){setInviteLink("");setInviteLinkId("");}
     setMessage("Invitation revoked.");
-    await load();
+    } catch {
+      setMessage("Revocation could not be confirmed. The invitation may have changed or been accepted. Review the refreshed adult access and invitation list.");
+    } finally {
+      await load();preferenceBusy.current=false;setWorking(false);
+    }
   }
 
   const toggle=(key:keyof Preference)=>{
@@ -313,11 +334,11 @@ export function FamilySettings({
     <section className="family-settings">
       <nav className="family-settings-tabs">
         {[["membership","Membership"],["notifications","Notifications"],["household","Household"],["security","Guardian PIN"]].map(([key,label])=>(
-          <button key={key} className={tab===key?"active":""} onClick={()=>setTab(key as typeof tab)}>{label}</button>
+          <button key={key} disabled={working} className={tab===key?"active":""} onClick={()=>setTab(key as typeof tab)}>{label}</button>
         ))}
       </nav>
 
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="status">{message}</div>}
 
       {tab==="membership"&&(
         <div className="settings-stack">
@@ -426,8 +447,8 @@ export function FamilySettings({
             <p className="eyebrow gold">Family Hub</p>
             <h2>Household settings</h2>
             <form className="form-stack" onSubmit={saveHousehold}>
-              <label>Family Hub name<input required value={name} onChange={e=>setName(e.target.value)}/></label>
-              <label>Timezone<input required value={householdTimezone} onChange={e=>setHouseholdTimezone(e.target.value)}/></label>
+              <label>Family Hub name<input disabled={working} required value={name} onChange={e=>setName(e.target.value)}/></label>
+              <label>Timezone<input disabled={working} required value={householdTimezone} onChange={e=>setHouseholdTimezone(e.target.value)}/></label>
               <button className="primary-button" disabled={working}>Save Household</button>
             </form>
           </section>
@@ -457,11 +478,11 @@ export function FamilySettings({
             <form className="invite-form" onSubmit={createInvitation}>
               <label>
                 Adult email
-                <input required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="parent@example.com"/>
+                <input disabled={working} required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="parent@example.com"/>
               </label>
               <label>
                 Role
-                <select value={inviteRole} onChange={e=>setInviteRole(e.target.value)}>
+                <select disabled={working} value={inviteRole} onChange={e=>setInviteRole(e.target.value)}>
                   <option value="parent">Parent</option>
                   <option value="guardian">Guardian</option>
                   <option value="adult">Approved Adult</option>
@@ -487,7 +508,7 @@ export function FamilySettings({
                       <strong>{invite.email}</strong>
                       <small>{invite.role} · expires {new Date(invite.expires_at).toLocaleDateString()}</small>
                     </div>
-                    <button className="text-button small" type="button" onClick={()=>void revokeInvitation(invite.id)}>Revoke</button>
+                    <button className="text-button small" type="button" disabled={working} onClick={()=>void revokeInvitation(invite.id)}>Revoke</button>
                   </article>
                 ))}
               </div>
@@ -502,8 +523,8 @@ export function FamilySettings({
           <h2>Change guardian PIN</h2>
           <p className="muted">The PIN protects Family Hub and parent controls when the device is handed to a child.</p>
           <form className="form-stack" onSubmit={savePin}>
-            <label>New PIN<input required type="password" inputMode="numeric" maxLength={6} value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
-            <label>Confirm PIN<input required type="password" inputMode="numeric" maxLength={6} value={confirmPin} onChange={e=>setConfirmPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
+            <label>New PIN<input disabled={working} required type="password" inputMode="numeric" maxLength={6} value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
+            <label>Confirm PIN<input disabled={working} required type="password" inputMode="numeric" maxLength={6} value={confirmPin} onChange={e=>setConfirmPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
             <button className="primary-button" disabled={working}>Update Guardian PIN</button>
           </form>
         </section>
