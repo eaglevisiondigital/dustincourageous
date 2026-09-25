@@ -967,6 +967,7 @@ function FamilyPortal({
                   <LeaderGroupsHub />
                   <ReferralSupportCard key={household.id+":"+user.id} householdId={household.id} user={user} />
                   <PrivacyDataControls
+                    key={household.id+":"+user.id}
                     householdId={household.id}
                     user={user}
                     onHouseholdUpdated={reload}

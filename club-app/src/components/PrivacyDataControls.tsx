@@ -1,5 +1,5 @@
 import { familyControlLabel } from "../lib/familyDisplay";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import type { Database } from "../types/database";
@@ -63,8 +63,16 @@ export function PrivacyDataControls({
   const [working,setWorking]=useState("");
   const [message,setMessage]=useState("");
 
+  const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState("");
+  const actionPending=useRef(false);
+  const loadVersion=useRef(0);
+
   const load=useCallback(async()=>{
-    setMessage("");
+    const version=++loadVersion.current;
+    setLoading(true);
+    setLoadError("");
+    try {
     const [childResult,policyResult,consentResult,requestResult,inventoryResult]=await Promise.all([
       supabase
         .from("child_profiles")
@@ -94,10 +102,10 @@ export function PrivacyDataControls({
         .order("display_name")
     ]);
 
+    if(version!==loadVersion.current)return;
     const error=childResult.error||policyResult.error||consentResult.error||requestResult.error||inventoryResult.error;
     if(error){
-      setMessage(error.message);
-      return;
+      throw error;
     }
 
     const nextChildren=(childResult.data??[]) as Child[];
@@ -106,10 +114,30 @@ export function PrivacyDataControls({
     setConsents((consentResult.data??[]) as Consent[]);
     setRequests((requestResult.data??[]) as PrivacyRequest[]);
     setInventory((inventoryResult.data??[]) as Inventory[]);
-    if(!selectedChildId&&nextChildren[0])setSelectedChildId(nextChildren[0].id);
-  },[householdId,selectedChildId]);
+    setSelectedChildId(current=>nextChildren.some(child=>child.id===current)?current:nextChildren[0]?.id??"");
+    } catch {
+      if(version===loadVersion.current)setLoadError("We could not refresh your privacy controls. Retry before making another change.");
+    } finally {
+      if(version===loadVersion.current)setLoading(false);
+    }
+  },[householdId]);
 
-  useEffect(()=>{void load();},[load]);
+  useEffect(()=>{void load();return()=>{loadVersion.current++;};},[load]);
+
+  async function runAction(key:string,action:()=>Promise<void>){
+    if(actionPending.current||loading||loadError)return;
+    actionPending.current=true;
+    setWorking(key);
+    setMessage("");
+    try { await action(); }
+    catch {
+      setMessage("We could not confirm the result. Refresh your privacy controls before trying again; the change may have saved.");
+      await load();
+    } finally {
+      actionPending.current=false;
+      setWorking("");
+    }
+  }
 
   const selectedInventory=useMemo(
     ()=>inventory.find((item)=>item.child_profile_id===selectedChildId)??null,
@@ -124,19 +152,18 @@ export function PrivacyDataControls({
   }
 
   async function recordConsent(policy:ConsentPolicy,action:"granted"|"revoked",childId:string|null){
-    setWorking("consent:"+policy.consent_key+":"+(childId??"household"));
-    setMessage("");
-    const {error}=await supabase.rpc("record_household_consent",{
-      p_household_id:householdId,
-      p_consent_key:policy.consent_key,
-      p_action:action,
-      p_child_profile_id:childId||undefined,
-      p_metadata:{surface:"privacy_controls",guardian_user_id:user.id}
+    await runAction("consent:"+policy.consent_key+":"+(childId??"household"),async()=>{
+      const {error}=await supabase.rpc("record_household_consent",{
+        p_household_id:householdId,
+        p_consent_key:policy.consent_key,
+        p_action:action,
+        p_child_profile_id:childId||undefined,
+        p_metadata:{surface:"privacy_controls",guardian_user_id:user.id}
     });
-    setWorking("");
     if(error){setMessage(error.message);return;}
     setMessage(action==="granted"?"Consent recorded.":"Consent preference revoked.");
     await load();
+    });
   }
 
   async function submitRequest(){
@@ -146,21 +173,20 @@ export function PrivacyDataControls({
       return;
     }
 
-    setWorking("request");
-    setMessage("");
+    await runAction("request",async()=>{
 
-    const {error}=await supabase.rpc("request_data_privacy_action",{
-      p_household_id:householdId,
-      p_request_type:requestType,
-      p_child_profile_id:needsChild?selectedChildId:undefined,
-      p_reason:reason.trim()||undefined
+      const {error}=await supabase.rpc("request_data_privacy_action",{
+        p_household_id:householdId,
+        p_request_type:requestType,
+        p_child_profile_id:needsChild?selectedChildId:undefined,
+        p_reason:reason.trim()||undefined
     });
 
-    setWorking("");
     if(error){setMessage(error.message);return;}
     setReason("");
     setMessage("Privacy request submitted for review.");
     await load();
+    });
   }
 
   async function openExport(request:PrivacyRequest){
@@ -170,17 +196,15 @@ export function PrivacyDataControls({
       && new Date(request.export_expires_at!).getTime() > Date.now();
 
     const action=exportStillAvailable?"download":"generate";
-    setWorking("export:"+request.id);
-    setMessage("");
+    await runAction("export:"+request.id,async()=>{
 
-    const {data,error}=await supabase.functions.invoke("privacy-export",{
-      body:{
-        action,
-        request_id:request.id
-      }
+      const {data,error}=await supabase.functions.invoke("privacy-export",{
+        body:{
+          action,
+          request_id:request.id
+        }
     });
 
-    setWorking("");
 
     if(error){
       setMessage(error.message);
@@ -207,35 +231,36 @@ export function PrivacyDataControls({
     }
 
     setMessage("The export is not ready yet.");
+    });
   }
 
   async function cancelRequest(id:string){
-    setWorking("cancel:"+id);setMessage("");
-    const {error}=await supabase.rpc("cancel_data_privacy_request",{p_request_id:id});
-    setWorking("");
-    if(error){setMessage(error.message);return;}
-    setMessage("Privacy request canceled.");
-    await load();
+    await runAction("cancel:"+id,async()=>{
+      const {error}=await supabase.rpc("cancel_data_privacy_request",{p_request_id:id});
+      if(error){setMessage(error.message);return;}
+      setMessage("Privacy request canceled.");
+      await load();
+    });
   }
 
   async function archiveChild(childId:string){
-    setWorking("archive:"+childId);setMessage("");
-    const {error}=await supabase.rpc("archive_child_profile",{p_child_profile_id:childId});
-    setWorking("");
-    if(error){setMessage(error.message);return;}
-    setMessage("Child profile archived. Progress is preserved and group participation is withdrawn.");
-    await load();
-    await onHouseholdUpdated();
+    await runAction("archive:"+childId,async()=>{
+      const {error}=await supabase.rpc("archive_child_profile",{p_child_profile_id:childId});
+      if(error){setMessage(error.message);return;}
+      setMessage("Child profile archived. Progress is preserved and group participation is withdrawn.");
+      await load();
+      await onHouseholdUpdated();
+    });
   }
 
   async function restoreChild(childId:string){
-    setWorking("restore:"+childId);setMessage("");
-    const {error}=await supabase.rpc("restore_child_profile",{p_child_profile_id:childId});
-    setWorking("");
-    if(error){setMessage(error.message);return;}
-    setMessage("Child profile restored.");
-    await load();
-    await onHouseholdUpdated();
+    await runAction("restore:"+childId,async()=>{
+      const {error}=await supabase.rpc("restore_child_profile",{p_child_profile_id:childId});
+      if(error){setMessage(error.message);return;}
+      setMessage("Child profile restored.");
+      await load();
+      await onHouseholdUpdated();
+    });
   }
 
   const childPolicies=policies.filter((item)=>item.applies_to_child);
@@ -255,7 +280,12 @@ export function PrivacyDataControls({
         Adventure Club keeps child profiles inside the family household. Permanent deletion requests are reviewed before destructive action. Archiving is immediate and preserves progress.
       </p>
 
-      {message&&<div className="form-message">{message}</div>}
+      {message&&<div className="form-message" role="status">{message}</div>}
+      {loadError&&<div className="form-error" role="alert">{loadError}</div>}
+      <button type="button" className="secondary-button" disabled={loading||Boolean(working)} onClick={()=>void load()}>
+        {loading?"Refreshing...":"Refresh Privacy Controls"}
+      </button>
+      <fieldset aria-label="Privacy Actions" className="privacy-action-fields" disabled={loading||Boolean(working)||Boolean(loadError)} aria-busy={loading||Boolean(working)}>
 
       <div className="privacy-two-column">
         <article className="privacy-panel">
@@ -327,7 +357,7 @@ export function PrivacyDataControls({
               <p className="eyebrow gold">What We Store</p>
               <h3>{selectedInventory.display_name}'s Adventure Club Data</h3>
             </div>
-            <span className="status-chip">{selectedInventory.status}</span>
+            <span className="status-chip">{(selectedInventory.status??"Unknown").replace(/\b\w/g,letter=>letter.toUpperCase())}</span>
           </div>
 
           <div className="privacy-inventory-grid">
@@ -394,10 +424,10 @@ export function PrivacyDataControls({
           {requests.map((request)=>(
             <div key={request.id}>
               <div>
-                <strong>{request.request_type.replaceAll("_"," ")}</strong>
+                <strong>{request.request_type.replaceAll("_"," ").replace(/\b\w/g,letter=>letter.toUpperCase())}</strong>
                 <span>{new Date(request.created_at).toLocaleString()}</span>
               </div>
-              <span className={request.status==="completed"||request.status==="ready"?"status-chip done":"status-chip"}>{request.status.replaceAll("_"," ")}</span>
+              <span className={request.status==="completed"||request.status==="ready"?"status-chip done":"status-chip"}>{request.status.replaceAll("_"," ").replace(/\b\w/g,letter=>letter.toUpperCase())}</span>
               {request.request_type.startsWith("export_")&&!["canceled","rejected","completed"].includes(request.status)&&(
                 <button
                   className="secondary-button compact"
@@ -409,8 +439,8 @@ export function PrivacyDataControls({
                     : request.export_reference
                       && request.export_expires_at
                       && new Date(request.export_expires_at).getTime()>Date.now()
-                        ?"Download export"
-                        :"Generate export"}
+                        ?"Download Export"
+                        :"Generate Export"}
                 </button>
               )}
               {["requested","identity_confirmed"].includes(request.status)&&(
@@ -420,9 +450,10 @@ export function PrivacyDataControls({
               )}
             </div>
           ))}
-          {!requests.length&&<p className="muted">No privacy requests have been submitted.</p>}
+          {!loading&&!loadError&&!requests.length&&<p className="muted">No privacy requests have been submitted.</p>}
         </div>
       </article>
+      </fieldset>
     </section>
   );
 }

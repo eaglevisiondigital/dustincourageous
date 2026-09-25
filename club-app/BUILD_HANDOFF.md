@@ -16,6 +16,17 @@ Read ALPHA_VERIFICATION.md for the latest deployed authorization evidence.
 
 ## Latest completed implementation
 
+September 25: Privacy-controls feedback and refresh reliability improved. Success
+messages survive the follow-up refresh. Loading failures have a separate alert and
+Refresh Privacy Controls action; controls are disabled until a successful reload.
+A shared in-flight guard blocks overlapping actions and releases on thrown errors,
+with an uncertain-result message instead of leaving controls stuck. Child selection
+no longer triggers redundant network reloads. Stale load responses are ignored and
+the component remounts for household/account changes. Request/status/export labels
+use initial capitals. Existing 240 tests pass; production build passes. No database,
+permission, consent-policy or export-content changes. Signed-in device acceptance
+of privacy actions remains pending.
+
 September 25: Closed the direct-assignment discovery gap. Family Assignments now
 combines existing household/child challenge_assignments with active-group
 assignments, without changing the sidebar child. Direct entries are scoped to the
