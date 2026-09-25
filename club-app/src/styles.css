@@ -54,6 +54,11 @@ a { color: inherit; }
 label { display: grid; gap: 8px; font-size: .82rem; font-weight: 760; color: #e9e5df; }
 input { width: 100%; padding: 14px 15px; color: #fff; background: #0b0b0b; border: 1px solid rgba(255,255,255,.14); border-radius: 13px; outline: none; transition: border .2s, box-shadow .2s; }
 input:focus { border-color: var(--red-bright); box-shadow: 0 0 0 4px rgba(239,52,52,.12); }
+.password-field { display: grid; gap: 8px; }
+.password-field-controls { display: flex; align-items: stretch; gap: 8px; }
+.password-field-controls input { min-width: 0; flex: 1; }
+.password-field-controls .password-visibility { flex: 0 0 auto; min-width: 66px; min-height: 44px; padding: 10px 12px; }
+.password-visibility:focus-visible { outline: 2px solid var(--red-bright); outline-offset: 3px; }
 .form-message { padding: 12px 14px; border-radius: 12px; background: rgba(198,40,40,.13); border: 1px solid rgba(239,52,52,.25); color: #ffb7b7; font-size: .86rem; line-height: 1.45; }
 
 .primary-button, .secondary-button, .text-button, .mode, .add-link {
