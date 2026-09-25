@@ -1024,6 +1024,7 @@ function FamilyPortal({
               />
 
               <ParentProgressOverview
+                key={household.id+":"+user.id}
                 householdId={household.id}
                 selectedChildId={selectedChild?.id ?? ""}
                 onSelectChild={selectChild}

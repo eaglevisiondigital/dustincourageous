@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { readTrophyData } from "../lib/trophyData";
 
 type LevelProgress = {
   total_xp: number | null;
@@ -112,69 +113,15 @@ export function TrophyRoom({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const loadVersion = useRef(0);
   const load = useCallback(async () => {
+    const version = ++loadVersion.current;
     setLoading(true);
     setError("");
 
-    const [
-      levelResult,
-      starsResult,
-      streakResult,
-      streakBadgeResult,
-      progressResult,
-      awardsResult,
-      historyResult
-    ] = await Promise.all([
-      supabase
-        .from("child_level_progress")
-        .select("*")
-        .eq("child_profile_id", childId)
-        .maybeSingle(),
-      supabase
-        .from("child_token_totals")
-        .select("total")
-        .eq("child_profile_id", childId)
-        .eq("token_type", "weekly_star")
-        .maybeSingle(),
-      supabase
-        .from("child_series_streak_status")
-        .select("challenge_series_id,series_name,active_weeks,best_weeks,current_cycle,last_completed_period,is_active")
-        .eq("child_profile_id", childId)
-        .order("series_name", { ascending: true }),
-      supabase
-        .from("child_active_streak_badges")
-        .select("challenge_series_id,badge_id,badge_name,badge_tier,consecutive_weeks_required,current_weeks,best_weeks,is_active")
-        .eq("child_profile_id", childId)
-        .order("consecutive_weeks_required", { ascending: true }),
-      supabase.rpc("get_child_achievement_progress", {
-        p_child_profile_id: childId
-      }),
-      supabase
-        .from("badge_awards")
-        .select("id,awarded_at,badges(id,name,description,badge_scope,badge_tier,rarity)")
-        .eq("child_profile_id", childId)
-        .order("awarded_at", { ascending: false }),
-      supabase
-        .from("streak_badge_earnings")
-        .select("id,earned_at,streak_cycle,streak_weeks_at_earn,badges(name,badge_tier),challenge_series(name)")
-        .eq("child_profile_id", childId)
-        .order("earned_at", { ascending: false })
-    ]);
-
-    const firstError =
-      levelResult.error ||
-      starsResult.error ||
-      streakResult.error ||
-      streakBadgeResult.error ||
-      progressResult.error ||
-      awardsResult.error ||
-      historyResult.error;
-
-    if (firstError) {
-      setError(firstError.message);
-      setLoading(false);
-      return;
-    }
+    try {
+    const {levelResult, starsResult, streakResult, streakBadgeResult, progressResult, awardsResult, historyResult} = await readTrophyData(supabase, childId);
+    if (version !== loadVersion.current) return;
 
     setLevel((levelResult.data ?? null) as LevelProgress | null);
     setWeeklyStars(Number(starsResult.data?.total ?? 0));
@@ -183,11 +130,16 @@ export function TrophyRoom({
     setAchievementProgress((progressResult.data ?? []) as AchievementProgress[]);
     setLifetimeAwards((awardsResult.data ?? []) as BadgeAward[]);
     setStreakHistory((historyResult.data ?? []) as StreakEarning[]);
-    setLoading(false);
+    } catch {
+      if (version === loadVersion.current) setError("Your Trophy Room could not be loaded. Please try again.");
+    } finally { if (version === loadVersion.current) setLoading(false); }
   }, [childId]);
 
   useEffect(() => {
     void load();
+    const refresh = () => void load();
+    window.addEventListener("dc-progress-updated", refresh);
+    return () => { loadVersion.current++; window.removeEventListener("dc-progress-updated", refresh); };
   }, [load]);
 
   const nextBadges = useMemo(
@@ -215,6 +167,8 @@ export function TrophyRoom({
       </section>
     );
   }
+
+  if (error) return <section className="trophy-loading"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
 
   return (
     <div className="trophy-room">

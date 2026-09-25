@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { readParentChildSnapshot } from "../lib/parentChildSnapshot";
 
 type Level = {
   total_xp: number | null;
@@ -35,38 +36,8 @@ export function ParentChildProgress({
     setLoading(true);
     setError("");
     try {
-    const [
-      levelResult,
-      starResult,
-      badgeResult,
-      activeBadgeResult,
-      verseResult,
-      devotionalResult,
-      bookResult,
-      streakResult
-    ] = await Promise.all([
-      supabase.from("child_level_progress").select("*").eq("child_profile_id", childId).maybeSingle(),
-      supabase.from("child_token_totals").select("total").eq("child_profile_id", childId).eq("token_type", "weekly_star").maybeSingle(),
-      supabase.from("badge_awards").select("id", { count: "exact", head: true }).eq("child_profile_id", childId),
-      supabase.from("child_active_streak_badges").select("badge_id", { count: "exact", head: true }).eq("child_profile_id", childId).eq("is_active", true),
-      supabase.from("child_scripture_progress").select("id", { count: "exact", head: true }).eq("child_profile_id", childId).eq("status", "memorized"),
-      supabase.from("child_devotional_progress").select("id", { count: "exact", head: true }).eq("child_profile_id", childId).eq("status", "completed"),
-      supabase.from("child_book_progress").select("id", { count: "exact", head: true }).eq("child_profile_id", childId).in("status", ["completed","adventure_completed"]),
-      supabase.from("child_series_streak_status").select("active_weeks,best_weeks").eq("child_profile_id", childId)
-    ]);
-
-    const firstError =
-      levelResult.error ||
-      starResult.error ||
-      badgeResult.error ||
-      activeBadgeResult.error ||
-      verseResult.error ||
-      devotionalResult.error ||
-      bookResult.error ||
-      streakResult.error;
-
+    const {levelResult, starResult, badgeResult, activeBadgeResult, verseResult, devotionalResult, bookResult, streakResult} = await readParentChildSnapshot(supabase, childId);
     if (version !== loadVersion.current) return;
-    if (firstError) throw firstError;
 
     setLevel((levelResult.data ?? null) as Level | null);
     setWeeklyStars(Number(starResult.data?.total ?? 0));

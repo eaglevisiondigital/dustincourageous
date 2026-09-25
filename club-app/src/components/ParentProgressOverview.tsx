@@ -1,34 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-type ChildSummary = {
-  child_profile_id: string;
-  household_id: string;
-  display_name: string;
-  total_xp: number;
-  weekly_stars: number;
-  lifetime_badges: number;
-  completed_challenges: number;
-  verses_memorized: number;
-  devotional_days_completed: number;
-  books_completed: number;
-  unlocked_rewards: number;
-};
-
-type BookRow = {
-  id: string;
-  book_number: number | null;
-  title: string;
-};
-
-type BookAdventureSummary = {
-  total_steps: number;
-  required_steps: number;
-  completed_steps: number;
-  completed_required_steps: number;
-  progress_percent: number;
-  ready_for_adventure_completion: boolean;
-};
+import { readFamilyProgress, type ChildSummary, type BookAdventureSummary } from "../lib/familyProgress";
+type BookRow = { id: string; book_number: number | null; title: string; };
 
 export function ParentProgressOverview({
   householdId,
@@ -46,76 +20,42 @@ export function ParentProgressOverview({
   const [bookProgress, setBookProgress] = useState<Record<string, BookAdventureSummary>>({});
   const [error, setError] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [bookErrors, setBookErrors] = useState<Record<string, boolean>>({});
+  const loadVersion = useRef(0);
+
   const load = useCallback(async () => {
-    setError("");
-
-    const [summaryResult, bookResult] = await Promise.all([
-      supabase
-        .from("parent_child_progress_summary")
-        .select("*")
-        .eq("household_id", householdId)
-        .order("display_name", { ascending: true }),
-      supabase
-        .from("books")
-        .select("id,book_number,title")
-        .in("status", ["coming_soon", "published"])
-        .order("book_number", { ascending: true })
-        .limit(1)
-        .maybeSingle()
-    ]);
-
-    const firstError = summaryResult.error || bookResult.error;
-    if (firstError) {
-      setError(firstError.message);
-      return;
-    }
-
-    const nextSummaries = (summaryResult.data ?? []) as ChildSummary[];
-    const nextBook = (bookResult.data ?? null) as BookRow | null;
-    setSummaries(nextSummaries);
-    setPrimaryBook(nextBook);
-
-    if (!nextBook || !nextSummaries.length) {
-      setBookProgress({});
-      return;
-    }
-
-    const resultPairs = await Promise.all(
-      nextSummaries.map(async (child) => {
-        const { data, error } = await supabase.rpc("get_child_book_adventure_summary", {
-          p_child_profile_id: child.child_profile_id,
-          p_book_id: nextBook.id
-        });
-
-        if (error) return [child.child_profile_id, null] as const;
-        return [
-          child.child_profile_id,
-          ((data ?? [])[0] ?? null) as BookAdventureSummary | null
-        ] as const;
-      })
-    );
-
-    setBookProgress(
-      Object.fromEntries(
-        resultPairs.filter(([, value]) => value !== null)
-      ) as Record<string, BookAdventureSummary>
-    );
+    const version = ++loadVersion.current;
+    setLoading(true); setError("");
+    try {
+      const result = await readFamilyProgress(supabase, householdId);
+      if (version !== loadVersion.current) return;
+      setSummaries(result.summaries);
+      setPrimaryBook(result.book);
+      setBookProgress(result.bookProgress);
+      setBookErrors(result.bookErrors);
+    } catch {
+      if (version === loadVersion.current) setError("Family progress could not be loaded. Please try again.");
+    } finally { if (version === loadVersion.current) setLoading(false); }
   }, [householdId]);
 
   useEffect(() => {
     void load();
-  }, [load]);
-
-  useEffect(() => {
-    const handler = () => void load();
-    window.addEventListener("dc-progress-updated", handler);
-    return () => window.removeEventListener("dc-progress-updated", handler);
+    const refresh = () => void load();
+    window.addEventListener("dc-progress-updated", refresh);
+    return () => {
+      loadVersion.current++;
+      window.removeEventListener("dc-progress-updated", refresh);
+    };
   }, [load]);
 
   const selected = useMemo(
-    () => summaries.find((item) => item.child_profile_id === selectedChildId) ?? summaries[0] ?? null,
+    () => summaries.find((item) => item.child_profile_id === selectedChildId) ?? null,
     [summaries, selectedChildId]
   );
+
+  if (loading) return <section className="parent-progress-overview" aria-busy="true"><p role="status">Loading family progress...</p></section>;
+  if (error) return <section className="parent-progress-overview"><p role="alert">{error}</p><button className="secondary-button" onClick={() => void load()}>Try again</button></section>;
 
   return (
     <section className="parent-progress-overview">
@@ -127,7 +67,8 @@ export function ParentProgressOverview({
         <span className="pill">{summaries.length} adventurer{summaries.length === 1 ? "" : "s"}</span>
       </div>
 
-      {error && <div className="form-message">{error}</div>}
+      {!summaries.length && <p className="muted">No active child profiles to display.</p>}
+      {summaries.length > 0 && !selected && <p className="muted">Choose a child to see their progress.</p>}
 
       <div className="parent-child-progress-tabs">
         {summaries.map((child) => (
@@ -135,6 +76,7 @@ export function ParentProgressOverview({
             type="button"
             key={child.child_profile_id}
             className={selected?.child_profile_id === child.child_profile_id ? "parent-child-tab active" : "parent-child-tab"}
+            aria-pressed={selected?.child_profile_id === child.child_profile_id}
             onClick={() => onSelectChild(child.child_profile_id)}
           >
             <span>{child.display_name.slice(0,1).toUpperCase()}</span>
@@ -156,6 +98,7 @@ export function ParentProgressOverview({
             <article><strong>{selected.unlocked_rewards}</strong><span>Unlocked Rewards</span></article>
           </div>
 
+          {primaryBook && bookErrors[selected.child_profile_id] && <div className="form-message" role="status">Book Adventure progress is unavailable for this child. <button className="text-button" onClick={() => void load()}>Retry</button></div>}
           {primaryBook && bookProgress[selected.child_profile_id] && (
             <article className="parent-book-progress-card">
               <div>
