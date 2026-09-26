@@ -34,4 +34,8 @@ suites and real concurrent PIN attempts, then rechecks the catalog. Schedules ar
 installed inactive in the same transaction. Auth, Storage HTTP, provider callbacks
 and browser user journeys need separate end-to-end acceptance.
 
+The Supabase runner uses the existing administrator inside the fixed disposable
+CLI container to restore captured owner default ACLs. It never grants client roles
+extra privileges or reads production credentials.
+
 No `db push`, `db reset`, link, migration repair or production credentials are used.

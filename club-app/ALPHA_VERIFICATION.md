@@ -1,5 +1,12 @@
 # Adventure Club Alpha verification
 
+> September 26 recovery update: all ten Edge sources and a separate current-state
+> database bootstrap are now tracked. Native isolated restoration, ten SQL suites
+> and concurrent PIN checks pass; see [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md)
+> for the Supabase CI evidence and [the recovery runbook](../docs/recovery/RECOVERY_RUNBOOK.md).
+> Earlier statements below about missing source or unapproved recovery are historical.
+> Content, Auth/Storage/browser/device and provider acceptance remain separate.
+
 > September 26 security repair: the 13 deployed household RLS checks passed
 > again. PIN/RPC repairs passed 85 new actual-role checks plus a real six-session
 > PIN concurrency test. The full launch gate works for established admin roles

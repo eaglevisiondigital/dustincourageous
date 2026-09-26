@@ -28,6 +28,8 @@ def main():
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error('Use a non-system local test port')
+    if args.supabase and args.port != 55432:
+        parser.error('The fixed isolated Supabase project uses port 55432')
     if args.native_socket:
         socket = Path(args.native_socket).resolve()
         if not socket.is_dir() or not str(socket).startswith(('/private/tmp/dc-recovery-', '/tmp/dc-recovery-')):
@@ -71,18 +73,19 @@ def main():
         jobs = json.loads((ROOT / 'platform.json').read_text())['jobs']
         from generate import literal
         for job in jobs:
+            assert job['username'] == 'postgres' and job['database'] == 'postgres', 'Review changed cron owner/database'
             if args.native_socket:
                 sql('INSERT INTO cron.job(jobname,schedule,command,active) VALUES (' +
                     ','.join(literal(job[k]) for k in ('jobname', 'schedule', 'command')) + ',false);')
             else:
                 # Install then disable in the SAME transaction: no active job is visible.
-                sql('BEGIN; SELECT cron.schedule(' + ','.join(literal(job[k]) for k in ('jobname', 'schedule', 'command'))
+                sql('BEGIN; SET LOCAL ROLE postgres; SELECT cron.schedule(' + ','.join(literal(job[k]) for k in ('jobname', 'schedule', 'command'))
                     + '); UPDATE cron.job SET active=false WHERE jobname=' + literal(job['jobname']) + '; COMMIT;')
     actual = json.loads(sql((ROOT / 'catalog-query.sql').read_text(), capture=True))
     from verify import verify_catalog
     verify_catalog(actual, native=bool(args.native_socket))
     sql((ROOT / 'invariants.sql').read_text())
-    jobs = json.loads(sql("select json_agg(json_build_object('jobname',jobname,'schedule',schedule,'command',command,'active',active) order by jobname) from cron.job;", capture=True))
+    jobs = json.loads(sql("select json_agg(json_build_object('jobname',jobname,'schedule',schedule,'command',command,'active',active,'username',username,'database',database) order by jobname) from cron.job;", capture=True))
     expected_jobs = json.loads((ROOT / 'platform.json').read_text())['jobs']
     assert jobs == [dict(j, active=False) for j in expected_jobs], 'Cron representation drift or active schedule'
     if args.verify_only:

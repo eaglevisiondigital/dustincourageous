@@ -62,6 +62,7 @@ def privileges_sql(entries, target, prefix='GRANT ', suffix='', column=None):
 
 def render():
     c = json.loads((ROOT / 'catalog.json').read_text())
+    assert not any(c['unsupported_features'].values()), 'New catalog features need explicit recovery support'
     assert not c['types'], 'Add reviewed rendering for new custom types'
     assert not c['event_triggers'] and not c['publication_tables']
     tables = [r for r in c['relations'] if r['kind'] == 'r']

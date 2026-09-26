@@ -1,16 +1,11 @@
 # Verified build state
 
-Recovery package in progress (September 26, 2026): current schema and all ten Edge
-Function sources have been captured without production writes. A native isolated
-PostgreSQL restore matches the full captured application catalog/effective ACLs;
-ten SQL suites and concurrent PIN checks pass. Supabase-platform CI and the final
-forensic mapping/report are pending. See `supabase/recovery/`; do not replay its
-historical evidence or the incomplete root migration chain against production.
-
-Updated September 26, 2026 after the authorized guardian security/RPC repair.
-Implementation checkpoint: baa054d, following baseline documentation commit 786a89a.
-Detailed evidence: [security repair report](docs/audits/2026-09-26-security-repair.md).
-The earlier [baseline](docs/audits/2026-09-26-baseline.md) remains historical evidence.
+Updated September 26, 2026 after the authorized security repair and source recovery.
+Security implementation: `baa054d`; recovery implementation checkpoints: `0df0c18`,
+`98c0cd0`. Detailed evidence: [recovery report](docs/audits/2026-09-26-recovery.md),
+[runbook](docs/recovery/RECOVERY_RUNBOOK.md) and
+[security repair report](docs/audits/2026-09-26-security-repair.md).
+The original [baseline](docs/audits/2026-09-26-baseline.md) remains historical evidence.
 
 ## Identity and history
 
@@ -47,29 +42,61 @@ The earlier [baseline](docs/audits/2026-09-26-baseline.md) remains historical ev
 
 ## Database and recovery
 
-112 public tables with RLS, 298 public policies, eight private tables with no client table grants, 25 security-invoker views, 213 public/private functions.
-The one new function is private.award_completed_book_adventure.
-One forward migration was applied: 20260926212852_guardian_pin_and_rpc_security_repair.sql.
-There are now 40 live migration entries and 24 repository files. The original 16 missing names and 12 historical timestamp mismatches are unchanged. No historical migration was renamed/replayed/repaired.
-Ten deployed Edge Functions were identified at baseline; six lack checked-in source. This package changes no Edge deployment.
-See the historical [inventory](docs/audits/2026-09-26-inventory.md) and the repair report. The repository is still not a replayable database baseline.
+112 public tables with RLS, 298 public policies, eight private tables without
+client table grants, 25 security-invoker views, and 213 public/private functions.
+The prior security repair added private.award_completed_book_adventure and applied
+`20260926212852_guardian_pin_and_rpc_security_repair.sql`. **No new live migration,
+production test fixture, Edge deployment or history change occurred in recovery.**
+
+All 40 live migration SQL records are now archived and mapped against the 24
+unchanged root files: 12 same-version matches, 12 timestamp differences, 16
+previously untracked records. Twenty-one related SQL bodies are byte-exact; three
+have equal parsed SQL with only comment/whitespace differences. Current definitions
+for 70 tables and 131 functions absent from recorded CREATE history are recovered
+in the separate catalog/bootstrap. Historical chronology remains incomplete;
+clean restoration no longer depends on inventing that history.
+
+All ten deployed Edge sources are tracked and match the captured bundles. Six
+missing directories and two import maps were restored. Legacy endpoints remain
+unchanged. See [migration map](docs/recovery/MIGRATION_HISTORY_MAP.md),
+[Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md) and
+[legacy ACL inventory](docs/recovery/LEGACY_GRANTS.md).
 
 ## Verification
 
-- Four new actual-role SQL suites: 85 checks passed (PIN 29, guardian RPC 21, Book Adventure 19, admin gate 16).
-- Independent-session PIN concurrency test: six blocked requests observed, six successful test executions, zero failed executions, persistent cooldown, zero issued tokens.
-- Six existing SQL suites passed: deployed household RLS (13 checks), onboarding, guardian decisions, digital reader, reading privacy and digital launch gate.
-- App tests: 280 passed, zero failed/skipped. Production TypeScript/Vite build and CI-equivalent Edge syntax check passed. The existing 522.38 kB main-chunk warning remains.
-- [GitHub CI at implementation commit baa054d](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36275730607): success.
-- All synthetic records and temporary concurrency jobs/run records were removed; cleanup was reverified after an app restart.
-- Database-role tests do not substitute for Auth-issued sessions, Storage HTTP, signed-in browsers or devices. SQL suites are not yet run in GitHub CI because isolated database restoration remains unresolved.
+- Fresh native PostgreSQL 17.11 restore matches the complete captured application
+  catalog/effective ACLs, before and after tests.
+- Full local Supabase restoration and SQL CI pass at `98c0cd0`:
+  [GitHub run 36278291652](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36278291652).
+- Ten isolated SQL suites include the four security suites (85 checks: PIN 29,
+  guardian RPC 21, Book Adventure 19, admin gate 16), household RLS (13 checks),
+  onboarding, guardian decisions, digital reader, reading privacy and digital gate.
+- Real independent PIN transactions contend on the household row lock, return
+  denial, persist cooldown and issue zero tokens. Correct PIN during cooldown is
+  denied; fixture cleanup is verified. The native clean run observed five blocked
+  requests at one sampling point out of six attempts.
+- 280 application tests pass; production build and all ten Edge syntax checks pass
+  locally and in CI. The existing 522.38 kB main-chunk warning remains.
+- Buckets/policies and five inactive cron definitions are represented. No providers
+  or live jobs are activated. CI has no production credentials or hosted link.
+- Source recovery does not prove Auth-issued sessions, Storage HTTP, browser/device
+  journeys, real provider behavior or complete customer-data/file restoration.
 
 ## Remaining issues and next package
 
-- Recover migration/bootstrap history and the six missing Edge sources; establish reproducible isolated restoration and SQL CI.
-- Supabase Auth leaked-password protection remains disabled.
-- The advisor flags the intentionally authenticated SECURITY DEFINER revoke-session RPC. Its body restricts updates to the caller's sessions in a managed household; private tables remain inaccessible. See SECURITY_MODEL.md.
-- Full authoritative Bible and Master Production Manual files, final Book 1 assets/content approval, provider readiness and signed-in/device acceptance remain outstanding.
-- Broader legacy grant review remains outside this package.
+- Supabase Auth leaked-password protection remains disabled; unchanged.
+- The advisor still flags the intentionally authenticated SECURITY DEFINER revoke
+  RPC. Its body restricts access to the caller's managed household and sessions.
+- Broad legacy table/view/default ACLs and seven implicit PUBLIC helper grants
+  require a separate dependency-aware least-privilege review. No sweeping cleanup
+  was included in recovery.
+- Edge legacy CORS/rate limits, adapter HTTPS/secrets, privacy races and live browser
+  invocation require the targeted follow-up described in the Edge audit.
+- Encrypted data/Auth/file backups, full Auth configuration, approved reference
+  data and fresh destination secrets remain separate recovery inputs.
+- Full authoritative Bible/Production Manual files, final Book 1 assets/approval,
+  provider readiness and signed-in/device acceptance remain outstanding.
 
-Recommended next package: database/deployment recovery and reproducibility, subject to PRIMARY CHAT approval. It has not begun.
+Recommended next package: Chat-reviewed least-privilege/Auth launch hardening,
+with targeted Edge/Work acceptance scoped from the recovery audit. It has not
+been started. Recovery source completion is not launch or content approval.

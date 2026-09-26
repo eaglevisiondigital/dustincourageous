@@ -20,7 +20,27 @@ Recorded September 26, 2026 from the user's supplied handoff, existing repositor
 
 The user subsequently authorized the focused PIN/RPC repair package. Its persistent failure contract is NULL/no token, not an exception that rolls back the PIN counter. Public decision/Book/admin RPCs retain invoker/RLS behavior; only guarded private helpers receive the necessary EXECUTE permissions. Book awards use a narrow trusted completion wrapper, and the existing revoke RPC uses explicit user/household checks inside a definer boundary. These are security implementation decisions within that approved package, not new product rules.
 
-Evidence: [security repair report](docs/audits/2026-09-26-security-repair.md). The next recovery package still requires Chat approval.
+Evidence: [security repair report](docs/audits/2026-09-26-security-repair.md).
+
+## September 26 authorized recovery package
+
+The user subsequently authorized database/Edge source recovery, migration-history
+forensics, an isolated restoration test and SQL CI. The original 40 live records
+and 24 root migration files remain unchanged. Exact historical SQL is archived
+outside the executable migration path; a separate current-state catalog/bootstrap
+recovers definitions missing from history without pretending to recreate original
+change records. All ten Edge sources are preserved exactly, including legacy
+versions; nothing is deployed or retired in this package.
+
+Recovery fidelity includes explicit legacy ACL inventory, not a new product
+permission policy. The isolated runner alone restores that evidence; provider
+jobs remain inactive and no live secret/data values are copied. Native PostgreSQL
+tests and full local Supabase CI are distinguished from live Auth/Storage/provider
+acceptance. These choices implement the authorized recovery scope, not launch
+approval or permission for the next major package.
+
+See [the recovery runbook](docs/recovery/RECOVERY_RUNBOOK.md) and
+[migration mapping](docs/recovery/MIGRATION_HISTORY_MAP.md).
 
 ## Unresolved decisions and inputs
 
@@ -28,6 +48,6 @@ Evidence: [security repair report](docs/audits/2026-09-26-security-repair.md). T
 - Authoritative full Founder’s Edition v2026.1 Bible and Master Production Manual files: not found in repository or accessible attachment filename search. Database registry descriptions are not full copies.
 - Corrected original Book 1 art, accessible text, reading order and human release approval.
 - Authorized signed-in/device acceptance arrangements.
-- Chat approval of the separate database/deployment recovery and reproducibility package.
+- Chat selection/approval of the next package, including legacy least-privilege/Auth hardening and the order of live acceptance work.
 
 Technical defects and missing source/history are tracked in SECURITY_MODEL.md and the baseline report, not treated as new product decisions.

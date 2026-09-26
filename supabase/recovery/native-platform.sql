@@ -35,7 +35,8 @@ GRANT USAGE ON SCHEMA auth, storage TO anon, authenticated, service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON storage.objects TO anon, authenticated, service_role;
 -- Empty representation, with the same columns used by current app functions.
 CREATE TABLE cron.job (jobid bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
- jobname text UNIQUE, schedule text, command text, active boolean NOT NULL DEFAULT false);
+ jobname text UNIQUE, schedule text, command text, active boolean NOT NULL DEFAULT false,
+ username text NOT NULL DEFAULT 'postgres', database text NOT NULL DEFAULT 'postgres');
 CREATE VIEW vault.decrypted_secrets AS
  SELECT NULL::text AS name, NULL::text AS decrypted_secret WHERE false;
 CREATE FUNCTION net.http_post(url text, body jsonb DEFAULT '{}'::jsonb,

@@ -2,6 +2,15 @@
 set search_path='';
 select jsonb_build_object(
  'server_version',current_setting('server_version'),
+ 'unsupported_features',jsonb_build_object(
+  'custom_types',(select count(*) from pg_type t join pg_namespace n on n.oid=t.typnamespace left join pg_class c on c.oid=t.typrelid where n.nspname in ('public','private') and (t.typtype in ('e','d','r','m') or (t.typtype='c' and c.relkind='c'))),
+  'inheritance',(select count(*) from pg_inherits i join pg_class c on c.oid=i.inhrelid join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','private')),
+  'custom_collation_columns',(select count(*) from pg_attribute a join pg_class c on c.oid=a.attrelid join pg_namespace n on n.oid=c.relnamespace join pg_type t on t.oid=a.atttypid where n.nspname in ('public','private') and a.attnum>0 and not a.attisdropped and a.attcollation<>t.typcollation),
+  'custom_rules',(select count(*) from pg_rewrite r join pg_class c on c.oid=r.ev_class join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','private') and r.rulename<>'_RETURN'),
+  'custom_operators',(select count(*) from pg_operator o join pg_namespace n on n.oid=o.oprnamespace where n.nspname in ('public','private')),
+  'custom_foreign_tables',(select count(*) from pg_foreign_table f join pg_class c on c.oid=f.ftrelid join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','private')),
+  'unlogged_tables',(select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','private') and c.relpersistence<>'p'),
+  'global_default_acl_records',(select count(*) from pg_default_acl where defaclnamespace=0)),
  'extensions',(select jsonb_agg(jsonb_build_object('name',e.extname,'version',e.extversion,'schema',n.nspname) order by e.extname) from pg_extension e join pg_namespace n on n.oid=e.extnamespace),
  'schemas',(select jsonb_agg(jsonb_build_object('name',n.nspname,'owner',pg_get_userbyid(n.nspowner),'acl',n.nspacl::text) order by n.nspname) from pg_namespace n where n.nspname in ('public','private')),
  'types',(select coalesce(jsonb_agg(jsonb_build_object('schema',n.nspname,'name',t.typname,'kind',t.typtype,'enum_labels',(select jsonb_agg(e.enumlabel order by e.enumsortorder) from pg_enum e where e.enumtypid=t.oid),'base',format_type(t.typbasetype,t.typtypmod),'not_null',t.typnotnull,'default',t.typdefault) order by n.nspname,t.typname),'[]'::jsonb) from pg_type t join pg_namespace n on n.oid=t.typnamespace where n.nspname in ('public','private') and t.typtype in ('e','d')),

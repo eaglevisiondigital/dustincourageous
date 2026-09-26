@@ -2,6 +2,14 @@
 
 These functions belong to the standalone Dustin Courageous / Adventure Club Supabase project.
 
+September 26 recovery: all ten deployed sources are now tracked. Four existing
+bundles matched; six missing bundles were recovered exactly, including their
+import maps. No Edge Function was deployed or deleted. See the
+[source/security/usage audit](../../docs/recovery/EDGE_FUNCTION_AUDIT.md),
+[per-file source manifest](../recovery/edge-source-manifest.json) and the inert
+`deployed-settings.toml` gateway configuration evidence. Legacy versions remain
+available as source until their external callers are reviewed.
+
 ## Architecture
 
 Supabase remains the source of truth for:
@@ -98,7 +106,9 @@ Payment callback recovery:
 ### integration-provider-test
 Authenticated operations-only safe connectivity checker.
 
-It never sends a family notification or creates a charge.
+It requests safe tests without a family notification or charge. For push and
+commerce, that guarantee depends on the external adapter honoring the documented
+dry-run contract; a response flag alone does not prove absence of side effects.
 
 Supported safe checks:
 - email-primary: read-only provider credential validation where supported

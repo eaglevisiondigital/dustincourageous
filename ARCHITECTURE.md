@@ -38,12 +38,26 @@ The database owns totals, checkout state, entitlements and payment replay protec
 Provider configuration is absent, so this is a foundation, not accepted live payments.
 
 Notification queues/preferences, campaign/reminder cron jobs and delivery workers are present; provider adapters handle outbound delivery.
-Privacy export/cleanup functions are deployed; their source is missing from the checkout.
+Privacy export/cleanup functions are deployed; their exact source was recovered in the September 26 recovery package.
 Public forms, admin integration diagnostics and legacy Edge versions also exist.
 See the audit inventory for all ten deployed functions and five scheduled jobs.
 
 ## Recovery boundary
 
-The repository does not yet contain a complete schema/bootstrap or every deployed Edge source.
-Migration names/timestamps differ from live history. No supabase/config.toml was found.
-Do not infer that a fresh database can be reconstructed from current files.
+The separately authorized recovery package now supplies `supabase/recovery/` and
+all ten deployed Edge sources. The current-state bootstrap represents 120 tables,
+25 views, 213 functions, triggers, indexes, constraints, RLS, ACLs and bucket
+definitions. A full catalog comparison verifies the isolated reconstruction.
+Historical root migrations remain unchanged: 40 recorded live migrations map to
+24 root files, with 12 timestamp differences. Exact SQL for all 40 is archived
+separately; 70 current tables and 131 functions have no recorded CREATE in that
+history. Do not replay the archive or repair history merely to align counts.
+
+The isolated CLI project in `supabase/recovery/local` uses a fixed local container,
+no hosted project credentials, synthetic reference data, and five inactive cron
+definitions. It preserves the security repair and explicitly inventories legacy
+grants. Families, Auth accounts/configuration, approved content, actual Storage
+files and secret values require separate verified backups and a reviewed recovery
+plan. See [the runbook](docs/recovery/RECOVERY_RUNBOOK.md),
+[migration map](docs/recovery/MIGRATION_HISTORY_MAP.md) and
+[Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md).

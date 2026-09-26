@@ -51,12 +51,32 @@ PIN expiry is simulated by expiring only the synthetic timestamp, rather than wa
 - Existing warning: [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). Auth configuration was not changed.
 - New, reviewed warning: [authenticated SECURITY DEFINER execution](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable) on public.revoke_guardian_unlock_sessions. This exposure is intentional: the RPC must revoke a caller's protected sessions and has explicit guardian/household/user checks. The tests deny anonymous, foreign-household and non-guardian use and verify another guardian cannot revoke the issuing user's session. Do not claim a zero-warning advisor result.
 
+## Isolated recovery security evidence
+
+The subsequent authorized recovery package preserves current function bodies,
+RLS, owners and effective ACLs in a separate bootstrap. Native isolated restoration
+passes the full catalog comparison, four current actual-role suites (85 checks),
+household RLS (13 checks), onboarding and four older regression suites, plus real
+concurrent PIN attempts. Production receives no writes or test fixtures in this
+package. Supabase-platform CI status is recorded in CURRENT_BUILD_STATE.md.
+
+The local Supabase runner uses the existing container-only `supabase_admin` role
+to restore owner default privileges; it does not grant additional privileges to
+client roles. Tests switch to authenticated/anon and check that those roles cannot
+bypass RLS. All cron definitions are inactive; there are no Vault secret values or
+outbound provider calls. Native PostgreSQL uses explicitly documented platform
+adapters, not substitutes for the application authorization functions.
+
+All ten Edge sources now match captured deployed files. Review found legacy CORS,
+adapter transport/secret, rate-limit, privacy-race and error-handling concerns;
+no deployed behavior was changed. See [the Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md).
+
 ## Unresolved recovery and hardening
 
-- 16 historical migration names lack files; 12 timestamps differ. The new forward migration matches its live timestamp, making totals 40 live entries / 24 files without changing that old debt.
-- Six deployed Edge sources remain missing. Fresh restoration and isolated SQL CI remain unverified.
-- Older public tables retain broad SQL grants, including TRUNCATE/REFERENCES/TRIGGER; RLS does not govern TRUNCATE. No browser/REST truncate exploit was demonstrated. Broader grant review remains separate.
-- Some old private helpers retain inherited anonymous EXECUTE despite anon lacking schema USAGE; broad grant cleanup is separate.
+- All 40 historical SQL records are now archived and mapped to the 24 unchanged root migrations; 12 timestamps still differ. Original creation history for 70 tables and 131 functions remains missing, but their current definitions are recovered.
+- Data/file backups, production sequence values, full Auth configuration and fresh destination secrets are outside the schema/source baseline. No disaster-recovery cutover is certified by synthetic tests.
+- Both client roles retain TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on 111 public tables, broad view grants and six broad default ACL records. RLS does not govern TRUNCATE. These are explicitly captured for isolated fidelity, not approved for launch. See [the per-object inventory](docs/recovery/LEGACY_GRANTS.md). No browser/REST truncate exploit was demonstrated; sweeping cleanup remains separate.
+- Seven private helpers retain implicit PUBLIC EXECUTE despite anon lacking schema USAGE. Three admin helpers remain internally guarded, three are trigger functions, and one evaluates challenge access. Review individual dependencies before changing grants.
 - Real Auth sessions, Storage HTTP, browser/device acceptance and provider lifecycle checks remain pending.
 - Legacy deployed functions and aggregated adult catalog/media access still need broader dependency/acceptance review.
 
