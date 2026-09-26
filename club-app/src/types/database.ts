@@ -7782,7 +7782,7 @@ export type Database = {
       }
       create_guardian_unlock_session: {
         Args: { p_household_id: string; p_pin: string }
-        Returns: string
+        Returns: string | null
       }
       create_household_invitation: {
         Args: {
