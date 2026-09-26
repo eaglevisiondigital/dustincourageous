@@ -80,7 +80,7 @@ def main():
             else:
                 # Install then disable in the SAME transaction: no active job is visible.
                 sql('BEGIN; SET LOCAL ROLE postgres; SELECT cron.schedule(' + ','.join(literal(job[k]) for k in ('jobname', 'schedule', 'command'))
-                    + '); UPDATE cron.job SET active=false WHERE jobname=' + literal(job['jobname']) + '; COMMIT;')
+                    + '); RESET ROLE; UPDATE cron.job SET active=false WHERE jobname=' + literal(job['jobname']) + '; COMMIT;')
     actual = json.loads(sql((ROOT / 'catalog-query.sql').read_text(), capture=True))
     from verify import verify_catalog
     verify_catalog(actual, native=bool(args.native_socket))
