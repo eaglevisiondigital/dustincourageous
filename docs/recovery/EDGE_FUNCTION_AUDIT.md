@@ -21,7 +21,7 @@ environment names are in `supabase/recovery/edge-source-manifest.json` and
 | integration-provider-test | 1 | true | Deployed-only, recovered | `IntegrationHealthAdmin.tsx` invokes it |
 
 Invocation evidence is an aggregate of `function_edge_logs` in the default last
-24-hour window at inspection (September 26, approximately 22:35 UTC). No other
+24-hour window at inspection on September 26. No other
 function IDs appeared in that sample. Absence in a one-day window does **not** prove
 an endpoint is unused, and HTTP 200 does not prove delivery/provider acceptance.
 No request bodies, headers, IP addresses, tokens or family records were collected.

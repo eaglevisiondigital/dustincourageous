@@ -9,7 +9,7 @@
 - Inspect actual code, migrations, database state, tests and configuration. Historical test counts and migration filenames do not prove current deployment state.
 - The September 26 baseline found substantial completed implementation. Do not rebuild the backend or repeat completed batches.
 - The next major package requires Chat review of docs/audits/2026-09-26-baseline.md.
-- The focused security repair and subsequent recovery package were authorized. Read docs/audits/2026-09-26-security-repair.md, CURRENT_BUILD_STATE.md and docs/recovery/RECOVERY_RUNBOOK.md before continuing; do not restart either completed implementation.
+- The focused security repair and subsequent recovery package were authorized and completed. Read docs/audits/2026-09-26-security-repair.md, docs/audits/2026-09-26-recovery.md, CURRENT_BUILD_STATE.md and docs/recovery/RECOVERY_RUNBOOK.md before continuing; do not restart either completed implementation.
 
 ## Division of responsibility
 

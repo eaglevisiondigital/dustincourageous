@@ -2,7 +2,7 @@
 
 Updated September 26, 2026 after the authorized security repair and source recovery.
 Security implementation: `baa054d`; recovery implementation checkpoints: `0df0c18`,
-`98c0cd0`. Detailed evidence: [recovery report](docs/audits/2026-09-26-recovery.md),
+`98c0cd0`, `5958a64`, `ae9e6e7`. Detailed evidence: [recovery report](docs/audits/2026-09-26-recovery.md),
 [runbook](docs/recovery/RECOVERY_RUNBOOK.md) and
 [security repair report](docs/audits/2026-09-26-security-repair.md).
 The original [baseline](docs/audits/2026-09-26-baseline.md) remains historical evidence.
@@ -66,15 +66,15 @@ unchanged. See [migration map](docs/recovery/MIGRATION_HISTORY_MAP.md),
 
 - Fresh native PostgreSQL 17.11 restore matches the complete captured application
   catalog/effective ACLs, before and after tests.
-- Full local Supabase restoration and SQL CI pass at `98c0cd0`:
-  [GitHub run 36278291652](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36278291652).
+- Full local Supabase restoration and SQL CI pass at final implementation `ae9e6e7`:
+  [GitHub run 36278951290](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36278951290), including captured cron ownership and inactive jobs.
 - Ten isolated SQL suites include the four security suites (85 checks: PIN 29,
   guardian RPC 21, Book Adventure 19, admin gate 16), household RLS (13 checks),
   onboarding, guardian decisions, digital reader, reading privacy and digital gate.
 - Real independent PIN transactions contend on the household row lock, return
   denial, persist cooldown and issue zero tokens. Correct PIN during cooldown is
-  denied; fixture cleanup is verified. The native clean run observed five blocked
-  requests at one sampling point out of six attempts.
+  denied; fixture cleanup is verified. The final native clean run observed all six blocked
+  requests at one sampling point.
 - 280 application tests pass; production build and all ten Edge syntax checks pass
   locally and in CI. The existing 522.38 kB main-chunk warning remains.
 - Buckets/policies and five inactive cron definitions are represented. No providers
