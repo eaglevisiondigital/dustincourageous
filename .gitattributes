@@ -1,0 +1,2 @@
+# Preserve byte-exact migration-history evidence, including historical EOF spacing.
+supabase/recovery/history/*.sql whitespace=-blank-at-eof

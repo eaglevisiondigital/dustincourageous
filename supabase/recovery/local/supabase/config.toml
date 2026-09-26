@@ -1,0 +1,40 @@
+# Isolated test project. Never link this directory to a hosted project.
+# Root historical migrations are deliberately outside this project's migration path.
+project_id = "dc-recovery-isolated"
+
+[api]
+enabled = true
+port = 55431
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+auto_expose_new_tables = false
+
+[db]
+port = 55432
+shadow_port = 55430
+major_version = 17
+health_timeout = "3m"
+
+[db.migrations]
+enabled = false
+schema_paths = []
+
+[db.seed]
+enabled = false
+sql_paths = []
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:55431"
+
+[storage]
+enabled = true
+
+[studio]
+enabled = false
+
+[analytics]
+enabled = false
+
+[edge_runtime]
+enabled = false

@@ -1,5 +1,12 @@
 # Verified build state
 
+Recovery package in progress (September 26, 2026): current schema and all ten Edge
+Function sources have been captured without production writes. A native isolated
+PostgreSQL restore matches the full captured application catalog/effective ACLs;
+ten SQL suites and concurrent PIN checks pass. Supabase-platform CI and the final
+forensic mapping/report are pending. See `supabase/recovery/`; do not replay its
+historical evidence or the incomplete root migration chain against production.
+
 Updated September 26, 2026 after the authorized guardian security/RPC repair.
 Implementation checkpoint: baa054d, following baseline documentation commit 786a89a.
 Detailed evidence: [security repair report](docs/audits/2026-09-26-security-repair.md).
