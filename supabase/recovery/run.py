@@ -3,7 +3,8 @@
 
 Usage: run.py --native-socket /tmp/dc-recovery-pgsocket --port 55439
        run.py --supabase --port 55432
-Database/user are fixed to postgres; no production credentials are read.
+Database is fixed; managed restoration uses the isolated container administrator.
+No production credentials are read.
 """
 import argparse
 import json
@@ -37,10 +38,11 @@ def main():
     # Discard all inherited libpq options (including services/host overrides/secrets).
     env = {k: v for k, v in os.environ.items() if not k.startswith('PG')}
     env.update(PGHOST=host, PGPORT=str(args.port), PGUSER='postgres', PGDATABASE='postgres',
-               PGPASSWORD='postgres' if args.supabase else '', PGPASSFILE='/dev/null',
+               PGPASSWORD='', PGPASSFILE='/tmp/dc-recovery-no-password-file',
                PGOPTIONS='-c dc.recovery_mode=isolated -c client_min_messages=warning',
                PGCONNECT_TIMEOUT='5')
-    psql = env.get('PSQL', 'psql')
+    psql = str(ROOT / 'local-admin-psql.sh') if args.supabase else env.get('PSQL', 'psql')
+    env['PSQL'] = psql
 
     def sql(value, capture=False):
         result = subprocess.run([psql, '-X', '-qAt', '-v', 'ON_ERROR_STOP=1'],
