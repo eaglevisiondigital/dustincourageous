@@ -1,5 +1,12 @@
 # Adventure Club Alpha verification
 
+> September 26 continuity audit: the 13 deployed household RLS checks passed
+> again, but new PIN lockout and RPC/helper permission diagnostics found defects
+> outside that suite. The overall launch gate is not operational under the
+> authenticated role. See [SECURITY_MODEL.md](../SECURITY_MODEL.md) and the
+> [audit report](../docs/audits/2026-09-26-baseline.md). Signed-in/device acceptance
+> remains pending; earlier evidence below retains its stated test boundaries.
+
 Evidence recorded September 25, 2026 UTC, September 24 America/Chicago.
 Development branch only. This is an evidence ledger, not a completion percentage.
 

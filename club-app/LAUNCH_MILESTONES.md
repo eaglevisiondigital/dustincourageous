@@ -1,5 +1,11 @@
 # Adventure Club launch milestones
 
+> September 26: [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md) and the
+> [audit report](../docs/audits/2026-09-26-baseline.md) supersede historical status
+> summaries below. Current app tests: 280 passed. PIN lockout and RPC privilege
+> repairs are the recommended next package, subject to Chat review. Device,
+> provider and content-approval gates remain open.
+
 Status checkpoint: September 24, 2026, America/Chicago.
 Latest milestone: protected digital-reader and Books Admin preparation foundation.
 See [digital book reader checkpoint](DIGITAL_BOOK_READER.md) for verification and source-file findings.

@@ -1,5 +1,12 @@
 # Dustin Courageous build checkpoint
 
+> September 26 audit: [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md) is the
+> verified baseline at application commit `80565df` (280 tests). The audit found
+> PIN lockout and private-helper permission defects plus incomplete database/Edge
+> recovery sources. See [audit report](../docs/audits/2026-09-26-baseline.md).
+> Entries and test counts below are historical; do not interpret an older
+> zero-advisor finding or next-step paragraph as the current release status.
+
 Updated September 25, 2026 UTC (September 24 in America/Chicago).
 
 ## Resume here
