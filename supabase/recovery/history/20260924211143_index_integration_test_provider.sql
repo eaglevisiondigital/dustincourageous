@@ -1,0 +1,1 @@
+create index if not exists integration_test_runs_provider_id_idx on public.integration_test_runs(provider_id);

@@ -1,0 +1,72 @@
+name: Adventure Club CI
+
+on:
+  push:
+    branches:
+      - build/adventure-club-app
+    paths:
+      - "club-app/**"
+      - "supabase/functions/**"
+      - "supabase/migrations/**"
+      - "supabase/tests/**"
+      - "supabase/recovery/**"
+      - ".github/workflows/adventure-club-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check deterministic recovery source
+        run: |
+          python3 supabase/recovery/generate.py
+          git diff --exit-code -- supabase/recovery/bootstrap.sql
+      - name: Start isolated Supabase platform
+        run: >-
+          npx --yes supabase@2.118.0 start --workdir supabase/recovery/local
+          --exclude studio,postgres-meta,realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
+      - name: Restore and verify database security
+        run: python3 supabase/recovery/run.py --supabase --port 55432
+      - name: Stop isolated Supabase platform
+        if: always()
+        run: npx --yes supabase@2.118.0 stop --workdir supabase/recovery/local --no-backup
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: club-app
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Typecheck and build
+        run: npm run build
+
+      - name: Progress regression checks
+        run: npm test
+
+      - name: Check Edge Function syntax
+        run: >-
+          ./node_modules/.bin/tsc --ignoreConfig --noEmit --noCheck --noResolve
+          --skipLibCheck --target es2022 --module esnext
+          ../supabase/functions/*/index.ts
