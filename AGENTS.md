@@ -9,6 +9,7 @@
 - Inspect actual code, migrations, database state, tests and configuration. Historical test counts and migration filenames do not prove current deployment state.
 - The September 26 baseline found substantial completed implementation. Do not rebuild the backend or repeat completed batches.
 - The next major package requires Chat review of docs/audits/2026-09-26-baseline.md.
+- The focused security repair was subsequently authorized and completed. Read docs/audits/2026-09-26-security-repair.md before continuing. The recommended recovery package has not been authorized or started.
 
 ## Division of responsibility
 
@@ -38,7 +39,7 @@ Never include tokens, credentials or family records in documentation, logs or co
 Install committed dependencies in club-app with `npm ci --ignore-scripts`; run `npm test` and `npm run build`.
 CI Edge syntax check: from club-app, `./node_modules/.bin/tsc --ignoreConfig --noEmit --noCheck --noResolve --skipLibCheck --target es2022 --module esnext ../supabase/functions/*/index.ts`. This is syntax validation, not full Deno runtime typechecking.
 SQL regressions must be reviewed before execution. Some temporarily replace functions/policies and require live locks even though they roll back; do not blindly run all files on production.
-Database recovery is incomplete: 39 live migration entries versus 23 files, including 12 timestamp mismatches. Do not run db push/reset or repair migration history without an approved reconciliation plan.
+Database recovery is incomplete: the baseline had 39 live migration entries versus 23 files, including 12 timestamp mismatches. The matched security forward migration brings totals to 40 live entries / 24 files; the 16 missing names and 12 old timestamp mismatches are unchanged. Do not run db push/reset or repair migration history without an approved reconciliation plan.
 
 ## Completion and continuity
 

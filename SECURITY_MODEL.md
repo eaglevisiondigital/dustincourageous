@@ -1,66 +1,63 @@
-# Security model and audit findings
+# Security model and verified repair
 
-Verified September 26, 2026. This is a bounded implementation audit, not a certification of launch readiness.
+Updated September 26, 2026. This is bounded implementation evidence, not launch certification.
+See [repair evidence](docs/audits/2026-09-26-security-repair.md) and the historical [baseline](docs/audits/2026-09-26-baseline.md).
 
 ## Established controls
 
-- Public tables: 112/112 RLS enabled, 298 policies. Public views: 25/25 security_invoker.
+- Public tables: 112/112 with RLS; 298 policies. Views: 25/25 security_invoker.
 - Active household membership gates family/child reads; owner/parent/guardian roles gate child management.
-- Household membership mutation, paid entitlements, XP and privileged admin operations use controlled policies/RPCs.
-- The audited browser uses a publishable key; no secret/service-role token found by the tracked-file pattern scan.
-- Private tables have no direct anon/authenticated grants. Authenticated has private-schema USAGE for authorized helpers; anon does not. Effective Data API schema configuration was not verified through dashboard/HTTP.
-- Inspected SECURITY DEFINER functions set search_path. Public privileged service functions deny anon/authenticated EXECUTE.
-- Admin roles are stored in app_admins, not editable user metadata. Direct self-admin and self-entitlement INSERT checks were denied.
-- Digital reader ownership, current approval, edition release and child-household entitlements protect manifests and private images.
-- Service adapters validate authenticated users or dedicated worker/webhook secrets before privileged operations.
-- Live advisor reports one warning: [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
+- Private tables have no anon/authenticated table grants. Authenticated has private-schema USAGE for authorized helpers; anon does not.
+- Admin roles come from active app_admins records, not editable metadata. Self-admin and self-entitlement writes remain prohibited.
+- The browser uses a publishable key and Auth session. The baseline tracked-file scan found no secret/service-role token; this is not a full Git-history/runtime-secret audit.
+- Digital reader ownership, release approval and child-household entitlements protect manifests/private images.
+- Service adapters validate users or dedicated worker/webhook secrets before privileged operations.
 
-## Findings requiring the next repair package
+## S1: PIN rollback defect — repaired
 
-### S1: PIN unlock failures do not retain lockout state
+Previously, the verifier updated failed_attempts/locked_until and the outer unlock function raised on failure, rolling those updates back. The baseline diagnostic observed six wrong attempts leaving zero attempts and no cooldown. The new real-role regression independently reproduced the exception before repair.
 
-private.verify_guardian_pin_impl updates failed_attempts/locked_until.
-private.create_guardian_unlock_session_impl then raises on a false result.
-That exception rolls back the failed-attempt update. The UI calls create_guardian_unlock_session.
-A rollback-only synthetic authenticated fixture made six wrong-PIN unlock calls; final failed_attempts=0 and locked_until remained null.
-Impact: the intended five-attempt/15-minute protection is ineffective on this path. Supabase Auth session ownership is still required; this is not evidence of anonymous login bypass.
-Repair the failure contract so attempts persist while callers get a denial without a token. Preserve household ownership, token binding, expiry/revocation and concurrency behavior; add actual-role tests.
+The unlock RPC now returns NULL for verification failure. This is a successful database transaction carrying an application denial: no token means no authorization. Both existing UI callers already reject missing data; the RPC TypeScript return type is now string | null. Do not reintroduce an exception around this normal denial.
 
-Reproduction: [rollback-only PIN diagnostic](docs/audits/pin-lockout-diagnostic.sql).
+The verifier retains SELECT FOR UPDATE on the household's private PIN row. It evaluates wall-clock time after acquiring that lock, increments failures serially, and at five failures resets the counter to zero while persisting a 15-minute locked_until. Further attempts, including the correct PIN, remain denied during cooldown. Correct PIN after expiry resets state and issues the existing 30-minute user/household-bound token.
 
-### S2: Authorized user RPCs call helpers they cannot execute
+A real six-session test observed six requests blocked on this mutex. Six test executions succeeded, all returned denial, the cooldown persisted, no sessions were issued and the correct PIN remained denied during lockout.
 
-| Invoker RPC | Private helper lacking authenticated EXECUTE |
-| --- | --- |
-| approve_parent_challenge / return_parent_challenge | guardian_unlock_session_valid |
-| complete_child_book_adventure | award_xp_event; evaluate_child_badges |
-| admin_get_production_launch_gate | admin_get_production_launch_gate_impl |
+## S2: RPC/helper boundaries — repaired
 
-Direct authenticated-role invocation reproduced SQLSTATE 42501 for the guardian helper and full launch-gate RPC. Book completion's deployed body and ACLs show the same unreachable helper boundary once prerequisite checks pass; a full ready-book user journey was not executed.
-The launch UI correctly reports unverified status after errors; this is not a false green launch result.
-Do not broadly GRANT unguarded XP/badge functions or make all public wrappers SECURITY DEFINER. Implement the narrowest authorized boundary and test own-family success, foreign-family denial, ordinary guardian/admin separation and duplicate-credit protection.
-The existing guardian decision regression substitutes a temporary unlock helper, so it cannot detect this live ACL failure.
+| Path | Authorized boundary | Why client privilege stays limited |
+| --- | --- | --- |
+| Guardian approve/return | Public invoker RPCs; authenticated EXECUTE on private.guardian_unlock_session_valid | Helper checks Auth user, managed household, token hash, expiry and revocation; only touches last_used_at on the matching session |
+| Guardian revocation | Existing public.revoke_guardian_unlock_sessions becomes a guarded SECURITY DEFINER | Checks can_manage_household and only updates sessions with user_id=auth.uid() in that household |
+| Book Adventure completion | Public invoker/RLS mutation plus private.award_completed_book_adventure | Wrapper checks Auth, child management, target-household access, persisted completion, book visibility and authoritative required steps; XP amount/source are server-selected |
+| Admin production gate | Public invoker plus authenticated EXECUTE on existing private.admin_get_production_launch_gate_impl | No arguments; existing private.is_app_admin checks active server-side app_admins before returning gate data |
 
-Evidence query: [read-only privilege diagnostic](docs/audits/rpc-helper-privilege-diagnostic.sql).
+All changed/new definer bodies use an empty search_path and qualified objects. Anonymous EXECUTE is denied on these entry points. No private table access was granted. Raw award_xp_event/evaluate_child_badges remain uncallable by authenticated clients.
 
-### S3: Recovery and deployment coverage is incomplete
+The session validator now checks and touches its row in one UPDATE. Expiry uses wall-clock time, and concurrent row changes are rechecked after lock acquisition. Revocation's missing private-table privilege was reproduced by the required revoked-token regression; the narrow fix was included to preserve that requested behavior.
 
-16 recorded migrations have no name-matching file; 12 of the 23 matches have timestamp differences. Six deployed Edge Functions are missing source directories.
-This prevents declaring reproducible restoration or complete deployment review. Recover and review sources/history without replaying changes or deleting legacy functions blindly.
+The Book wrapper locks completed progress before credit and rechecks authoritative required steps. An incomplete linked requirement hidden by catalog RLS cannot become an award shortcut. The existing XP unique source-event index, badge child/badge uniqueness and reward child/reward uniqueness preserve repeat-credit protection. Synthetic completion produced exactly seven configured XP, one configured badge and one configured reward across repeated calls.
 
-## Hardening and verification backlog
+## Test boundaries and cleanup
 
-- Older public tables retain broad anon/authenticated SQL grants including TRUNCATE/REFERENCES/TRIGGER. Current RLS blocks tested row mutations, but these grants exceed least privilege; TRUNCATE is not governed by RLS. No browser/REST truncate exploit was demonstrated. Review and narrow grants with compatibility tests.
-- Some private helpers retain inherited anonymous EXECUTE although anon lacks schema USAGE. Audit helper privilege intent before changing exposure.
-- Private tables have no RLS; direct client access is denied. Review defense in depth without breaking protected helpers.
-- Real Auth-issued sessions, Storage HTTP, guardian/free/premium browser behavior, devices/accessibility and provider lifecycle tests remain unverified.
-- Legacy deployed functions remain active. Authentication guards were inspected, but external usage/decommissioning requirements are unknown.
-- Pattern-based secret scanning is not full Git-history or runtime-secret auditing.
-- No claim that passing 280 unit/mock tests proves all authorization paths safe.
+The four new SQL suites use actual deployed functions, tables, triggers, authenticated/anon roles and Auth claims set only by the test administrator. They do not replace authorization helpers or policies. Synthetic book/challenge publication visibility is set only inside a rolled-back fixture transaction, temporarily disabling triggers for those setup UPDATEs; triggers are restored before any tested operation. No real content or governance approval is changed.
 
-## Tests run
+PIN expiry is simulated by expiring only the synthetic timestamp, rather than waiting 15/30 minutes. The concurrency harness briefly commits a synthetic household to make it visible to independent connections. The connector-compatible driver uses six temporary pg_cron jobs on the existing extension; each switches to authenticated for the tested RPC. Its controller unregisters the batch after completion. All fixture rows, jobs and test run records were removed and verified absent, including after the app restart.
 
-Six existing SQL scripts passed with rollback: deployed_household_rls_regression (13 checks), household_onboarding_regression, payment_checkout_lock_regression (10 checks), digital_book_reader_regression, reading_privacy_regression and digital_book_launch_gate_regression.
-First three exercise actual deployed tables/roles; reader/privacy/subgate tests use copied function bodies or temporary mocks plus selected live catalog assertions.
-Additional self-escalation checks passed. PIN and helper-ACL diagnostics exposed the failures above.
-No production schema, policies, grants, migrations, Auth settings or Edge deployments were changed.
+85 new checks, the six-session concurrency test and six existing SQL suites passed. The household RLS suite retains its 13 passing checks. The older guardian/reader/privacy/subgate suites retain their documented copied-helper/mock boundaries; their results are supplemented by the new actual-role tests.
+
+## Advisor findings
+
+- Existing warning: [leaked-password protection disabled](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). Auth configuration was not changed.
+- New, reviewed warning: [authenticated SECURITY DEFINER execution](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable) on public.revoke_guardian_unlock_sessions. This exposure is intentional: the RPC must revoke a caller's protected sessions and has explicit guardian/household/user checks. The tests deny anonymous, foreign-household and non-guardian use and verify another guardian cannot revoke the issuing user's session. Do not claim a zero-warning advisor result.
+
+## Unresolved recovery and hardening
+
+- 16 historical migration names lack files; 12 timestamps differ. The new forward migration matches its live timestamp, making totals 40 live entries / 24 files without changing that old debt.
+- Six deployed Edge sources remain missing. Fresh restoration and isolated SQL CI remain unverified.
+- Older public tables retain broad SQL grants, including TRUNCATE/REFERENCES/TRIGGER; RLS does not govern TRUNCATE. No browser/REST truncate exploit was demonstrated. Broader grant review remains separate.
+- Some old private helpers retain inherited anonymous EXECUTE despite anon lacking schema USAGE; broad grant cleanup is separate.
+- Real Auth sessions, Storage HTTP, browser/device acceptance and provider lifecycle checks remain pending.
+- Legacy deployed functions and aggregated adult catalog/media access still need broader dependency/acceptance review.
+
+Recovery guidance: prefer a corrective forward migration. Revoking the three newly added helper EXECUTE grants fails the affected paths closed; restoring the old unlock body would restore the lockout defect. Reverting revocation to invoker would again break its private-table access. Do not replay or edit historical migrations.

@@ -1,5 +1,10 @@
 # September 26, 2026 implementation inventory
 
+> Historical inventory. The later [security repair](2026-09-26-security-repair.md)
+> adds one matching forward migration and one private function: totals are now
+> 40 live migrations / 24 files and 213 functions. The 16 missing names and 12
+> old timestamp mismatches below are unchanged.
+
 Observed against Supabase `vrixketvinzhsfwwcqiu` and code `80565df`.
 No family rows, credentials or secret values are included. Name matching is not a statement-level migration equivalence proof.
 

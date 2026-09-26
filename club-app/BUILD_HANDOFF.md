@@ -1,9 +1,10 @@
 # Dustin Courageous build checkpoint
 
-> September 26 audit: [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md) is the
-> verified baseline at application commit `80565df` (280 tests). The audit found
-> PIN lockout and private-helper permission defects plus incomplete database/Edge
-> recovery sources. See [audit report](../docs/audits/2026-09-26-baseline.md).
+> September 26 security repair: [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md)
+> and the [repair report](../docs/audits/2026-09-26-security-repair.md) record the
+> completed PIN/RPC fixes at `baa054d`: 85 new SQL checks, real six-session PIN
+> concurrency, 280 app tests, build and GitHub CI passed. Recovery sources remain
+> incomplete; the next recovery package requires Chat approval.
 > Entries and test counts below are historical; do not interpret an older
 > zero-advisor finding or next-step paragraph as the current release status.
 

@@ -17,6 +17,8 @@ User-editable family_relationship is a display label, not a role. Admin authoriz
 Child sessions are guardian-owned participation views, not separate child authentication identities.
 Guardian unlock tokens are stored in sessionStorage; hashes, expiry and revocation are server-side. Ordinary family ownership and explicit PIN-required decisions are distinct controls.
 
+The September 26 security repair makes a failed PIN return NULL so its attempt/cooldown transaction commits. A per-household row lock serializes attempts. Guardian decision RPCs remain invokers using a guarded token helper; the revoke RPC is an explicitly authorized definer restricted to the caller's own sessions. The complete admin gate remains an invoker over guarded private components.
+
 Households own subscriptions, entitlement grants and book access. Child-specific entitlement helpers scope access to the selected child's household. Some catalog/media helpers aggregate the adult's household access; that is an existing boundary requiring further HTTP/acceptance review, not proof that every premium path is isolated.
 
 ## Progress and content
@@ -24,6 +26,7 @@ Households own subscriptions, entitlement grants and book access. Child-specific
 Challenge/step, adventure, scripture, devotional, prayer, content and book progress drive trusted database triggers for XP, badges, streaks and rewards.
 Family actions accept explicit participants, preserve per-child credit and distinguish participation/pending approval from completion.
 Saved digital reading positions do not award XP and are separate from Book Companion completion.
+Book Adventure completion remains an invoker/RLS mutation and now calls private.award_completed_book_adventure for privileged credit. That wrapper validates Auth, child management, child-household access, persisted completion and authoritative required steps before selecting configured XP and evaluating badges. Raw award helpers remain unavailable to ordinary clients. See SECURITY_MODEL.md and the security repair report.
 Protected digital manifests live in private.digital_book_manifests; catalog metadata contains revision/fingerprint only. Private page storage, current governance approval, release availability and household entitlement govern access.
 Admin preparation stages immutable page paths and draft editions. Human approval remains required.
 

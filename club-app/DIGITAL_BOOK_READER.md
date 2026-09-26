@@ -2,8 +2,10 @@
 
 > September 26 audit: the reader, privacy and digital subgate SQL regressions were
 > rerun successfully; live prepared manifest count remains zero. The overall
-> production launch gate has a separate helper-permission defect, and the Auth
-> advisor now reports leaked-password protection disabled. Historical test counts
+> production launch gate helper-permission defect was subsequently repaired and
+> the reader/privacy/subgate suites passed again. Auth leaked-password protection
+> remains disabled. See the [repair report](../docs/audits/2026-09-26-security-repair.md).
+> Historical test counts
 > and zero-finding statements below apply to their original checkpoint. See
 > [CURRENT_BUILD_STATE.md](../CURRENT_BUILD_STATE.md).
 
