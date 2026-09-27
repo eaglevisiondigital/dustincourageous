@@ -50,7 +50,7 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
       const results = await saveFamilyParticipation(supabase,householdId,challengeId,validSelected,"challenge",action,checked);
       setResults(results);
       setStatuses(current=>({...current,...Object.fromEntries(results.map(row=>[row.child_profile_id,statusLabel(row.status)]))}));
-      setMessage(results.some(row=>row.status==="pending_parent") ? "Saved for the selected children. Challenges awaiting approval need guardian PIN approval before XP is awarded." : action === "participate" ? "Participation saved for each selected child. Completion XP is awarded when the challenge is completed." : "Completion confirmed for each selected child. Existing completion credit is kept without duplication.");
+      setMessage(results.some(row=>row.status==="pending_parent") ? "Saved for the selected children. Challenges awaiting approval need PIN approval before XP is awarded." : action === "participate" ? "Participation saved for each selected child. Completion XP is awarded when the challenge is completed." : "Completion confirmed for each selected child. Existing completion credit is kept without duplication.");
       window.dispatchEvent(new Event("dc-progress-updated"));
       if (onSaved) await onSaved().catch(()=>{});
     } catch { setMessage("We could not confirm every child's save. Refresh progress before retrying. Each selected child must have access and complete the required steps.");  }
@@ -67,7 +67,7 @@ export function FamilyChallengeActivity({ householdId, children, challengeId, on
     {!!steps.length && <fieldset className="family-participants" disabled={working || loading || failed || suspended}><legend>Shared Challenge Steps</legend><p>Confirm each step was completed by every child you selected.</p>
       {steps.map(step=><label className="family-step-choice" key={step.id}><input type="checkbox" checked={checked.includes(step.id)} onChange={e=>setChecked(e.target.checked?[...checked,step.id]:checked.filter(id=>id!==step.id))}/><span><strong>{step.title}{step.is_required?" (Required)":""}</strong>{step.instructions&&<small>{step.instructions}</small>}</span></label>)}
     </fieldset>}
-    {challenge.parent_approval_required&&<p className="guardian-note">Completion goes to guardian approval for each child before XP is awarded.</p>}
+    {challenge.parent_approval_required&&<p className="guardian-note">Completion goes to adult approval for each child before XP is awarded.</p>}
     {message&&<p className="form-message" role="status">{message}</p>}
     <FamilySaveResults results={results} children={children}/>
     <div className="family-action-buttons"><button className="secondary-button" disabled={working||loading||failed||suspended||!validSelected.length} onClick={()=>void save("participate")}>Save Participation</button><button className="primary-button" disabled={working||loading||failed||suspended||!validSelected.length||steps.some(step=>step.is_required&&!checked.includes(step.id))} onClick={()=>void save("complete")}>{working?"Saving...":"Complete For Selected Children"}</button><button className="text-button" disabled={working || loading || suspended} onClick={()=>{setLoading(true);setChecked([]);setReload(v=>v+1);}}>Refresh Progress</button></div>
