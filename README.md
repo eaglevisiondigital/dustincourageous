@@ -1,5 +1,17 @@
 # DustinCourageous.com — Netlify Build
 
+## Development branch continuity
+
+This README below describes the historical static website. On
+`build/adventure-club-app`, root `netlify.toml` instead builds `club-app` and
+publishes its `dist` directory. Do not use the static-site deployment steps below
+for this branch or merge its deployment configuration to `main` without approval.
+
+Start with [CURRENT_BUILD_STATE.md](CURRENT_BUILD_STATE.md),
+[AGENTS.md](AGENTS.md) and the [September 26 audit](docs/audits/2026-09-26-baseline.md).
+The public website remains on `main`; historical prices and release notes below
+are not authority to change Adventure Club pricing.
+
 Static multi-page site using the approved Dustin Courageous assets supplied in this project.
 
 ## Deploy

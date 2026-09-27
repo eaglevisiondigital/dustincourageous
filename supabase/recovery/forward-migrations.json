@@ -1,0 +1,35 @@
+{
+  "historical_archive": "history/ (40 unchanged records; mapping frozen at 60e151c)",
+  "records": [
+    {
+      "version": "20260927013941",
+      "name": "dependency_aware_client_privileges",
+      "root_file": "supabase/migrations/20260927013941_dependency_aware_client_privileges.sql",
+      "recorded_sql_file": "supabase/recovery/forward/20260927013941_dependency_aware_client_privileges.sql",
+      "sql_sha256": "1ed570cca37faebce857d231ac7ddcb7641ec2d6f25033f22c9a75a43f406d87",
+      "statements": 1,
+      "byte_equal": true,
+      "treatment": "new approved forward ACL migration; no replay or history repair"
+    },
+    {
+      "version": "20260927022208",
+      "name": "secure_checkout_order_creation",
+      "root_file": "supabase/migrations/20260927022208_secure_checkout_order_creation.sql",
+      "recorded_sql_file": "supabase/recovery/forward/20260927022208_secure_checkout_order_creation.sql",
+      "sql_sha256": "70e0bd91c8f46cc7e37695d70d56e61ec96fd5ddba4fa7f67796a1def5eef3af",
+      "statements": 1,
+      "byte_equal": true,
+      "treatment": "new approved guarded checkout creation repair; no historical replay or history repair"
+    },
+    {
+      "version": "20260927030254",
+      "name": "secure_checkout_provider_handoff",
+      "root_file": "supabase/migrations/20260927030254_secure_checkout_provider_handoff.sql",
+      "recorded_sql_file": "supabase/recovery/forward/20260927030254_secure_checkout_provider_handoff.sql",
+      "sql_sha256": "7885b1561b5e890928805ccd8ed0e03f51a3185944078d960b9eef10a38a1583",
+      "statements": 1,
+      "byte_equal": true,
+      "treatment": "new approved provider-handoff claim/receipt/finalization repair; no historical replay or history repair"
+    }
+  ]
+}
