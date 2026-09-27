@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLower } from "../lib/familyDisplay";
 import { downloadDigitalPage, getDigitalBook, saveDigitalBookPosition, type DigitalBook, type ReadyDigitalBook } from "../lib/digitalBooks";
 import { ModalDialog } from "./ModalDialog";
 import { readerKeyPage, readerSwipePage } from "../lib/readerNavigation";
 
-export function DigitalBookEntry({ childId, bookId, title }: { childId: string; bookId: string; title: string }) {
+export function DigitalBookEntry({ childId, bookId, title, relationship }: { childId: string; bookId: string; title: string; relationship?: unknown }) {
+  const roleLower = familyRoleLower(relationship);
   const [book, setBook] = useState<DigitalBook | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -24,7 +26,7 @@ export function DigitalBookEntry({ childId, bookId, title }: { childId: string; 
     {loading ? <p role="status">Checking digital book availability...</p>
       : error ? <p role="alert">Digital book availability could not be checked. <button className="text-button" onClick={() => void load()}>Try Again</button></p>
       : book?.availability === "ready" ? <button className="primary-button compact" onClick={() => setOpen(true)}>{book.page_number > 1 ? "Continue digital book" : "Open digital book"}</button>
-      : <p className="muted">{book?.availability === "locked" ? "A guardian can check this family's digital book access in Family Hub." : "The digital edition is not available yet. You can still enjoy the Book Companion below."}</p>}
+      : <p className="muted">{book?.availability === "locked" ? "A {roleLower} can check this family's digital book access in Family Hub." : "The digital edition is not available yet. You can still enjoy the Book Companion below."}</p>}
     {open && book?.availability === "ready" && <DigitalBookReader childId={childId} bookId={bookId} title={title} book={book}
       onClose={() => { setOpen(false); void load(); }} />}
   </div>;
