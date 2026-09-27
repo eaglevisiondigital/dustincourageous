@@ -9,7 +9,7 @@ import { registerCurrentInstallation } from "./lib/installations";
 import { childProfileInput, householdInput, createOnboardingAttempt } from "./lib/onboarding";
 import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
 import { PasswordField } from "./components/PasswordField";
-import { familyControlLabel, type FamilyRelationship } from "./lib/familyDisplay";
+import { familyControlLabel, familyRoleLabel, familyRoleLower, type FamilyRelationship } from "./lib/familyDisplay";
 
 const AdminPortal = lazy(() =>
   import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
@@ -216,11 +216,11 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
           <p className="eyebrow">Faith. Courage. Victory.</p>
           <h1>Big adventures begin with knowing who you are in Christ.</h1>
           <p>
-            A guardian-controlled family experience where kids grow in faith, take on courageous
+            A family experience controlled by a parent or guardian, where kids grow in faith, take on courageous
             challenges, learn God's Word, earn rewards, and keep moving forward.
           </p>
           <div className="trust-row">
-            <span>Guardian Controlled</span>
+            <span>Parent/Guardian Controlled</span>
             <span>No Child Email Required</span>
             <span>Family First</span>
           </div>
@@ -345,7 +345,8 @@ function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   );
 }
 
-function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
+function ResetPasswordScreen({ onComplete, relationship }: { onComplete: () => void; relationship?: unknown }) {
+  const roleLabel = familyRoleLabel(relationship);
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [working, setWorking] = useState(false);
@@ -404,7 +405,7 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
     <main className="setup-page">
       <div className="setup-card">
         <Brand />
-        <p className="eyebrow red">Guardian Account</p>
+        <p className="eyebrow red">{roleLabel} Account</p>
         <h1>Choose a new password</h1>
         <p className="muted">This updates the password for the adult Adventure Club account.</p>
         <form className="form-stack" onSubmit={submit}>
@@ -422,6 +423,8 @@ function ResetPasswordScreen({ onComplete }: { onComplete: () => void }) {
 }
 
 function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Promise<void> }) {
+  const roleLabel = familyRoleLabel(user.user_metadata?.family_relationship);
+  const roleLower = familyRoleLower(user.user_metadata?.family_relationship);
   const defaultName = user.user_metadata?.last_name ? `${user.user_metadata.last_name} Family` : "My Family";
   const [name, setName] = useState(defaultName);
   const [working, setWorking] = useState(false);
@@ -475,7 +478,7 @@ function HouseholdSetup({ user, onComplete }: { user: User; onComplete: () => Pr
               onChange={(event) => setAcceptedTerms(event.target.checked)}
             />
             <span>
-              I am the parent/guardian account holder and agree to the current Guardian Account Terms for this family hub.
+              I am the {roleLower} account holder and agree to the current {roleLabel} Account Terms for this family hub.
             </span>
           </label>
           {error && <div className="form-message" role="alert">{error}</div>}
@@ -499,6 +502,7 @@ function AddChildForm({
   onAdded: () => Promise<void>;
   compact?: boolean;
 }) {
+  const roleLower = familyRoleLower(user.user_metadata?.family_relationship);
   const [name, setName] = useState("");
   const [birthYear, setBirthYear] = useState("");
   const [guardianConsent, setGuardianConsent] = useState(false);
@@ -559,7 +563,7 @@ function AddChildForm({
           onChange={(event) => setGuardianConsent(event.target.checked)}
         />
         <span>
-          I am the parent/guardian and approve this protected child profile for Adventure Club participation.
+          I am the {roleLower} and approve this protected child profile for Adventure Club participation.
         </span>
       </label>
       {error && <div className="form-message" role="alert">{error}</div>}
@@ -609,6 +613,9 @@ function FamilyPortal({
   adminRole: string | null;
   onAdmin: () => void;
 }) {
+  const relationship = user.user_metadata?.family_relationship;
+  const roleLabel = familyRoleLabel(relationship);
+  const roleLower = familyRoleLower(relationship);
   const [selectedChildId, setSelectedChildId] = useState(children[0]?.id ?? "");
   const [snapshot, setSnapshot] = useState<ChildSnapshot>({
     xp: 0,
@@ -864,6 +871,7 @@ function FamilyPortal({
                   onOpenChallenge={(challengeId) => void openChallengeById(challengeId)}
                   onOpenBible={() => setKidSection("bible")}
                   onOpenActivities={() => setKidSection("activities")}
+                  relationship={relationship}
                 />
               ) : kidSection === "activities" && selectedChild ? (
                 <ActivitiesHub
@@ -1023,7 +1031,7 @@ function FamilyPortal({
                   <div><p className="eyebrow gold">Together As A Family</p><h1>Family Activities</h1><p className="muted">Choose an activity, check who took part, and save each child’s participation or completion.</p></div>
                   <FamilyAssignments householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                   <FamilyChallenges householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
-                  <ParentApprovals key={household.id} householdId={household.id} childIds={children.map(child=>child.id)} />
+                  <ParentApprovals key={household.id} householdId={household.id} childIds={children.map(child=>child.id)} relationship={relationship} />
                   <FamilyFaithAtHome key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                   <FamilyActivityHistory key={household.id} householdId={household.id} children={children.map(child=>({id:child.id,display_name:child.display_name}))}/>
                 </div>
@@ -1085,6 +1093,7 @@ function FamilyPortal({
               <ParentApprovals
                 householdId={household.id}
                 childIds={children.map((child) => child.id)}
+                relationship={relationship}
               />
 
               <ParentProgressOverview
@@ -1103,7 +1112,7 @@ function FamilyPortal({
                 <>
                   <ParentChildProgress key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
                   <div className="family-detail-grid">
-                    <RewardsPanel key={selectedChild.id} childId={selectedChild.id} userId={user.id} />
+                    <RewardsPanel key={selectedChild.id} childId={selectedChild.id} userId={user.id} relationship={relationship} />
                     <NotificationsPanel key={user.id} userId={user.id} />
                   </div>
                 </>
@@ -1136,6 +1145,7 @@ function FamilyPortal({
         <Suspense fallback={null}>
         <GuardianUnlockDialog
           householdId={household.id}
+          relationship={relationship}
           onClose={() => setUnlockOpen(false)}
           onUnlock={(token) => {
             sessionStorage.setItem("dc_guardian_session_token", token);
@@ -1178,6 +1188,8 @@ export default function App() {
   const [hasOrganizationAccess, setHasOrganizationAccess] = useState(false);
   const [guardianPinConfigured, setGuardianPinConfigured] = useState<boolean | null>(null);
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
+  const accountRoleLabel = familyRoleLabel(session?.user.user_metadata?.family_relationship);
+  const accountRoleLower = familyRoleLower(session?.user.user_metadata?.family_relationship);
   const [passwordRecovery, setPasswordRecovery] = useState(
     () => window.location.hash.includes("type=recovery") || new URLSearchParams(window.location.search).get("type") === "recovery"
   );
@@ -1355,6 +1367,7 @@ export default function App() {
   if (session?.user && passwordRecovery) {
     return (
       <ResetPasswordScreen
+        relationship={session.user.user_metadata?.family_relationship}
         onComplete={() => {
           window.history.replaceState({}, document.title, "/");
           setPasswordRecovery(false);
@@ -1474,6 +1487,7 @@ export default function App() {
         <GuardianPinSetup
           key={household.id+":"+session.user.id}
           householdId={household.id}
+          relationship={session.user.user_metadata?.family_relationship}
           onComplete={() => setGuardianPinConfigured(true)}
         />
         </Suspense>
@@ -1485,11 +1499,11 @@ export default function App() {
         <main className="setup-page">
           <div className="setup-card">
             <Brand />
-            <p className="eyebrow red">Guardian Only</p>
+            <p className="eyebrow red">{accountRoleLabel} Only</p>
             <h1>Unlock Family Hub first</h1>
-            <p className="muted">Admin controls are available only after the guardian PIN unlocks Kid View.</p>
+            <p className="muted">Admin controls are available only after the {accountRoleLower} PIN unlocks Kid View.</p>
             <button className="primary-button" type="button" onClick={() => setAdminUnlockOpen(true)}>
-              Enter guardian PIN
+              Enter {accountRoleLower} PIN
             </button>
             <button className="text-button" type="button" onClick={() => navigate("/")}>
               Return to Kid View
@@ -1499,6 +1513,7 @@ export default function App() {
             <Suspense fallback={null}>
             <GuardianUnlockDialog
               householdId={household.id}
+              relationship={session.user.user_metadata?.family_relationship}
               onClose={() => setAdminUnlockOpen(false)}
               onUnlock={(token) => {
                 sessionStorage.setItem("dc_guardian_session_token", token);
