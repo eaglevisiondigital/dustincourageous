@@ -43,7 +43,11 @@ lines += [
 'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON FUNCTIONS FROM PUBLIC, anon, authenticated;',
 '-- Existing service_role and platform-owner defaults are retained. New client exposure requires explicit reviewed grants.',
 "NOTIFY pgrst, 'reload schema';",'']
-(ROOT/'supabase/migrations/20260927011823_dependency_aware_client_privileges.sql').write_text('\n'.join(lines))
+migration_path=ROOT/'supabase/migrations/20260927013941_dependency_aware_client_privileges.sql'
+rendered='\n'.join(lines)
+# This migration is already deployed. Future policy changes need a NEW migration.
+assert migration_path.read_text()==rendered, 'Applied migration is immutable; create a new reviewed forward migration'
+
 (ROOT/'supabase/security/proposed-policy.json').write_text(json.dumps(p,indent=2)+'\n')
 md=['# Client privilege matrix','',
 'Prepared before production revocation from commit `60e151c5556a407982342a81c8bac42579597699`. This is a reviewed positive allowlist, not a blanket CRUD grant based on the presence of RLS. The current catalog, SQL policies, invoker views, triggers and all 213 function bodies were inspected. PostgreSQL 17 parsing found no unreviewed dynamic SQL or failed expressions.','',

@@ -39,3 +39,10 @@ CLI container to restore captured owner default ACLs. It never grants client rol
 extra privileges or reads production credentials.
 
 No `db push`, `db reset`, link, migration repair or production credentials are used.
+
+
+Current baseline: deployed least-privilege migration `20260927013941`.
+See [the current report](../../docs/audits/2026-09-26-privilege-hardening.md).
+The frozen 40-record historical archive is unchanged; `forward/` preserves the
+new exact recorded SQL. Internal platform-owner defaults and hosted leaked-password
+protection remain unresolved; do not treat restore success as their completion.

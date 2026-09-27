@@ -48,6 +48,24 @@ See [the recovery runbook](docs/recovery/RECOVERY_RUNBOOK.md) and
 - Authoritative full Founder’s Edition v2026.1 Bible and Master Production Manual files: not found in repository or accessible attachment filename search. Database registry descriptions are not full copies.
 - Corrected original Book 1 art, accessible text, reading order and human release approval.
 - Authorized signed-in/device acceptance arrangements.
-- Chat selection/approval of the next package, including legacy least-privilege/Auth hardening and the order of live acceptance work.
+- Chat review of the completed ACL implementation, outstanding platform/Auth actions, verified checkout blocker, and Work-led acceptance scope.
 
 Technical defects and missing source/history are tracked in SECURITY_MODEL.md and the baseline report, not treated as new product decisions.
+
+## September 26 approved dependency-aware hardening
+
+The user authorized a bounded least-privilege/Auth package after recovery: map
+actual dependencies first, remove excessive current/default client permissions,
+preserve repaired boundaries and isolated recovery, and enable leaked-password
+protection without unrelated Auth/provider changes. Migration `20260927013941`
+implements the available database scope. The matrix is explicit about caller
+versus owner execution and narrow column permissions. Three inspection helpers
+use invoker RLS; no new privileged mutation boundary was introduced.
+
+Two actions are not silently marked complete: internal supabase_admin defaults
+need supported platform help; leaked-password protection needs an authorized
+configuration connection or dashboard session. Exact handoffs are in docs/security.
+The existing checkout SQL error was reproduced before/after ACL changes; its repair
+requires Chat-scoped follow-up. No broad Edge/provider redesign or legacy endpoint
+retirement was included. The user directs Work-led signed-in/browser/device
+acceptance next, after Chat reviews this report.

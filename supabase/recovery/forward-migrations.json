@@ -1,0 +1,15 @@
+{
+  "historical_archive": "history/ (40 unchanged records; mapping frozen at 60e151c)",
+  "records": [
+    {
+      "version": "20260927013941",
+      "name": "dependency_aware_client_privileges",
+      "root_file": "supabase/migrations/20260927013941_dependency_aware_client_privileges.sql",
+      "recorded_sql_file": "supabase/recovery/forward/20260927013941_dependency_aware_client_privileges.sql",
+      "sql_sha256": "1ed570cca37faebce857d231ac7ddcb7641ec2d6f25033f22c9a75a43f406d87",
+      "statements": 1,
+      "byte_equal": true,
+      "treatment": "new approved forward ACL migration; no replay or history repair"
+    }
+  ]
+}

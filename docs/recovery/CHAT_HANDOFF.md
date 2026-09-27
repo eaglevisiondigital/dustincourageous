@@ -1,3 +1,5 @@
+> Historical recovery-package handoff. Its recommended hardening package was subsequently authorized and implemented. Use [the current report](../audits/2026-09-26-privilege-hardening.md) for status and next steps.
+
 RECOMMENDED THINKING LEVEL: HIGH
 
 CHAT DECISION NEEDED

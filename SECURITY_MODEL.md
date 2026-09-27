@@ -71,13 +71,37 @@ All ten Edge sources now match captured deployed files. Review found legacy CORS
 adapter transport/secret, rate-limit, privacy-race and error-handling concerns;
 no deployed behavior was changed. See [the Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md).
 
-## Unresolved recovery and hardening
+## Current least-privilege policy
 
-- All 40 historical SQL records are now archived and mapped to the 24 unchanged root migrations; 12 timestamps still differ. Original creation history for 70 tables and 131 functions remains missing, but their current definitions are recovered.
-- Data/file backups, production sequence values, full Auth configuration and fresh destination secrets are outside the schema/source baseline. No disaster-recovery cutover is certified by synthetic tests.
-- Both client roles retain TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on 111 public tables, broad view grants and six broad default ACL records. RLS does not govern TRUNCATE. These are explicitly captured for isolated fidelity, not approved for launch. See [the per-object inventory](docs/recovery/LEGACY_GRANTS.md). No browser/REST truncate exploit was demonstrated; sweeping cleanup remains separate.
-- Seven private helpers retain implicit PUBLIC EXECUTE despite anon lacking schema USAGE. Three admin helpers remain internally guarded, three are trigger functions, and one evaluates challenge access. Review individual dependencies before changing grants.
-- Real Auth sessions, Storage HTTP, browser/device acceptance and provider lifecycle checks remain pending.
-- Legacy deployed functions and aggregated adult catalog/media access still need broader dependency/acceptance review.
+The subsequent approved hardening migration `20260927013941` is deployed and its
+full metadata matches the tested baseline. Ordinary clients lack all application
+TRUNCATE/REFERENCES/TRIGGER/MAINTAIN, view writes and sequence rights. Anonymous
+application data/RPC grants are removed; public-site Edge forms retain service
+access. Authenticated CRUD is an explicit dependency allowlist, not a consequence
+of having RLS. All seven implicit PUBLIC private-function grants are removed.
 
-Recovery guidance: prefer a corrective forward migration. Revoking the three newly added helper EXECUTE grants fails the affected paths closed; restoring the old unlock body would restore the lockout defect. Reverting revocation to invoker would again break its private-table access. Do not replay or edit historical migrations.
+Content payload/fingerprint and household paid-status helpers now use caller RLS;
+existing owner-internal calls retain owner access. Raw awards/private tables remain
+protected. No new definer, policy, admin role, entitlement rule or child identity
+model was added. The full matrix includes invoker dependencies, role/policy checks,
+PostgREST embeddings and row-lock column grants. See
+[CLIENT_PRIVILEGE_MATRIX.md](docs/security/CLIENT_PRIVILEGE_MATRIX.md).
+
+Postgres defaults now require explicit client exposure, including global PUBLIC
+function EXECUTE revocation. Three platform-owned supabase_admin defaults remain
+unresolved because the hosted connection cannot administer that role; they are
+still compared exactly by recovery. Do not hide this limitation or elevate a role.
+
+28 privilege checks, 15 household checks, the retained 85 repair checks, remaining
+SQL suites, concurrency and 51 real Auth/PostgREST checks pass. The older internal
+digital-entitlement predicate test now uses an explicitly labeled temporary owner
+wrapper; it does not restore a production client helper grant. Real HTTP digital
+reader tests independently verify actual client access. No production data test,
+provider activation, secret extraction or customer-data capture occurred.
+
+Leaked-password protection is still disabled; Auth UI/configuration access is the
+remaining action described in [AUTH_HARDENING.md](docs/security/AUTH_HARDENING.md).
+Existing checkout is fail-closed on ambiguous order_number, reproduced under both
+old/new ACLs; it is not accepted for payments. Existing Edge/provider/content/
+backup/real-device concerns retain their prior scope. See the
+[complete hardening report](docs/audits/2026-09-26-privilege-hardening.md).

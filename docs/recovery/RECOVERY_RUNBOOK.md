@@ -48,6 +48,8 @@ python3 supabase/recovery/generate.py
 git diff --exit-code -- supabase/recovery/bootstrap.sql
 npx --yes supabase@2.118.0 start --workdir supabase/recovery/local --exclude studio,postgres-meta,realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
 python3 supabase/recovery/run.py --supabase --port 55432
+python3 supabase/tests/client_http_regression.py
+python3 supabase/recovery/run.py --supabase --port 55432 --verify-only
 npx --yes supabase@2.118.0 stop --workdir supabase/recovery/local --no-backup
 ```
 
@@ -80,7 +82,7 @@ The gate performs:
    grants, RLS, view options and ownership must match the captured source.
 5. Additional client-role/private-table/guarded-RPC invariants; no active jobs or
    Vault secrets are allowed.
-6. Four current security suites (85 checks), household RLS (13 checks), onboarding,
+6. Four current security suites (85 checks), household RLS (15 checks), client privilege denial (28 checks), onboarding,
    guardian decisions, reader, reading privacy and digital launch-gate regressions.
 7. Six independent authenticated PIN attempts contending on the real household
    row lock, persistent cooldown, correct-PIN denial during cooldown, zero tokens,
@@ -96,8 +98,8 @@ seed/suites. Neither option permits remote connection parameters.
 The workflow `.github/workflows/adventure-club-ci.yml` uses the same gate on a
 fresh GitHub runner. It has no production database URL, access token, project link
 or provider secret. Startup runs actual local Supabase Auth and Storage services;
-the SQL tests impersonate database roles with synthetic claims, not browser Auth
-sessions. Normal application tests/build and all ten Edge entrypoint syntax checks
+the SQL tests impersonate database roles with synthetic claims. The separate HTTP
+suite obtains real local Auth sessions and tests PostgREST with those tokens. Normal application tests/build and all ten Edge entrypoint syntax checks
 run in the companion CI job.
 
 ## Native PostgreSQL development fallback
@@ -176,3 +178,33 @@ rounding. Run a fresh isolated gate and update this report with the commit/CI
 evidence. Compare live metadata before any future deployment. The optional
 offline `forensics.py` uses `pglast==7.11` to regenerate the historical mapping;
 ordinary restore/CI needs only Python's standard library.
+
+## Current ACL baseline after approved hardening
+
+Migration `20260927013941` is live and the full post-deployment catalog equals the
+tested least-privilege baseline. The original 40-record archive/map is historical
+and immutable. `forward/` and `forward-migrations.json` preserve the new exact live
+SQL record separately: 41 live records / 25 root files, with the old 12 timestamp
+mismatches unchanged. No historical source was replayed or renamed.
+
+Capture/render/verification now explicitly handles global default ACL records
+for postgres/supabase_admin tables, sequences and functions, with a NULL schema
+rendered without IN SCHEMA. Other unsupported global defaults still fail the
+feature gate. All effective ACLs, including the three unresolved platform-owner
+defaults, remain compared. Do not drop default ACLs or privileges from the verifier.
+
+The gate has 11 SQL suites plus concurrency. CI additionally runs 51 actual local
+Auth/PostgREST checks and re-verifies the catalog after synthetic HTTP fixtures.
+The separate local Auth config autoconfirms fixture signup so no email is sent.
+Credentials stay in memory; the fixed disposable container is removed at teardown.
+This still does not prove hosted HIBP activation or real-device/provider behavior.
+
+`client_privilege_regression.sql` must NEVER run against production: its negative
+probes deliberately attempt TRUNCATE/trigger/reference/maintenance operations,
+which would succeed under the insecure historical grants. The fixed local runner
+and transaction are mandatory. Use read-only metadata comparison on production.
+
+Historical provenance is preserved in `supabase/security/legacy-capture-provenance.json`
+and commit `60e151c`. Current provenance records the applied forward migration and
+post-deployment capture. See the [hardening report](../audits/2026-09-26-privilege-hardening.md)
+for evidence, remaining platform/Auth actions and the pre-existing checkout blocker.

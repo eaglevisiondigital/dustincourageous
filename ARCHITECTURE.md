@@ -61,3 +61,24 @@ files and secret values require separate verified backups and a reviewed recover
 plan. See [the runbook](docs/recovery/RECOVERY_RUNBOOK.md),
 [migration map](docs/recovery/MIGRATION_HISTORY_MAP.md) and
 [Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md).
+
+## September 26 authorization hardening
+
+The current recovery baseline now reflects deployed migration `20260927013941`:
+positive client CRUD/EXECUTE allowlists, no dangerous client table rights, read-only
+client views, no client identity-sequence grants, and explicit postgres defaults.
+Content inspection and paid-status helpers use caller RLS. Existing invoker RPCs,
+guarded owner helpers, Storage policies and ten Edge sources retain their design.
+The dependency matrix covers browser/admin/worker calls, RLS, invoker triggers,
+embedded PostgREST reads and column-only row-lock requirements.
+
+The original 40-record archive stays frozen; the new exact forward record is
+separate. Live/root counts are 41/25 with the old 12 timestamp mismatches unchanged.
+Recovery supports and verifies explicit global function defaults. CI now issues
+local Auth sessions and tests PostgREST as well as database roles. Local signup
+autoconfirmation is fixture configuration only, never hosted Auth policy.
+
+Remaining boundaries are explicit: platform-owned defaults need supported action,
+leaked-password protection needs dashboard/Management API access, and the unchanged
+checkout RPC has a pre-existing ambiguous order_number failure. Work-led signed-in
+acceptance is next after Chat review; this is not a provider or launch package.

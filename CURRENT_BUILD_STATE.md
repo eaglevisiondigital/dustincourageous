@@ -1,11 +1,14 @@
 # Verified build state
 
-Updated September 26, 2026 after the authorized security repair and source recovery.
-Security implementation: `baa054d`; recovery implementation checkpoints: `0df0c18`,
-`98c0cd0`, `5958a64`, `ae9e6e7`. Detailed evidence: [recovery report](docs/audits/2026-09-26-recovery.md),
-[runbook](docs/recovery/RECOVERY_RUNBOOK.md) and
-[security repair report](docs/audits/2026-09-26-security-repair.md).
-The original [baseline](docs/audits/2026-09-26-baseline.md) remains historical evidence.
+Updated September 26, 2026 (Chicago) after the approved least-privilege package.
+Starting checkpoint `60e151c`; tested implementation `8ec568f`; live forward
+migration `20260927013941_dependency_aware_client_privileges.sql`.
+[Current hardening report](docs/audits/2026-09-26-privilege-hardening.md) records the
+verified changes and remaining actions. **Database ACL hardening is deployed;
+platform-owner defaults and hosted leaked-password protection remain unresolved.**
+The earlier [security repair](docs/audits/2026-09-26-security-repair.md) and
+[recovery](docs/audits/2026-09-26-recovery.md) are completed historical packages.
+Do not rebuild them.
 
 ## Identity and history
 
@@ -48,8 +51,8 @@ The prior security repair added private.award_completed_book_adventure and appli
 `20260926212852_guardian_pin_and_rpc_security_repair.sql`. **No new live migration,
 production test fixture, Edge deployment or history change occurred in recovery.**
 
-All 40 live migration SQL records are now archived and mapped against the 24
-unchanged root files: 12 same-version matches, 12 timestamp differences, 16
+The original 40 migration SQL records are archived and mapped against the 24
+unchanged historical root files: 12 same-version matches, 12 timestamp differences, 16
 previously untracked records. Twenty-one related SQL bodies are byte-exact; three
 have equal parsed SQL with only comment/whitespace differences. Current definitions
 for 70 tables and 131 functions absent from recorded CREATE history are recovered
@@ -62,41 +65,59 @@ unchanged. See [migration map](docs/recovery/MIGRATION_HISTORY_MAP.md),
 [Edge audit](docs/recovery/EDGE_FUNCTION_AUDIT.md) and
 [legacy ACL inventory](docs/recovery/LEGACY_GRANTS.md).
 
+The new ACL migration adds one exact forward record: live history is now 41,
+root migrations 25. The original 40 hashes and 12 timestamp differences are
+unchanged. `supabase/recovery/forward-migrations.json` maps the new record.
+The current bootstrap uses the new approved client ACLs, including explicit global
+function defaults. The legacy capture remains available in Git and the labeled
+security inventory. Three inaccessible platform-owner defaults remain captured.
+
 ## Verification
 
-- Fresh native PostgreSQL 17.11 restore matches the complete captured application
-  catalog/effective ACLs, before and after tests.
-- Full local Supabase restoration and SQL CI pass at final implementation `ae9e6e7`:
-  [GitHub run 36278951290](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36278951290), including captured cron ownership and inactive jobs.
-- Ten isolated SQL suites include the four security suites (85 checks: PIN 29,
-  guardian RPC 21, Book Adventure 19, admin gate 16), household RLS (13 checks),
-  onboarding, guardian decisions, digital reader, reading privacy and digital gate.
-- Real independent PIN transactions contend on the household row lock, return
-  denial, persist cooldown and issue zero tokens. Correct PIN during cooldown is
-  denied; fixture cleanup is verified. The final native clean run observed all six blocked
-  requests at one sampling point.
-- 280 application tests pass; production build and all ten Edge syntax checks pass
-  locally and in CI. The existing 522.38 kB main-chunk warning remains.
-- Buckets/policies and five inactive cron definitions are represented. No providers
-  or live jobs are activated. CI has no production credentials or hosted link.
-- Source recovery does not prove Auth-issued sessions, Storage HTTP, browser/device
-  journeys, real provider behavior or complete customer-data/file restoration.
+- Pre-deployment Supabase CI passes at `8ec568f`:
+  [run 36286074438](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36286074438).
+- Eleven SQL suites pass: PIN 29, guardian RPC 21, Book Adventure 19, admin 16,
+  household RLS 15, privilege 28, onboarding and four older regressions.
+- Six independent authenticated PIN attempts serialize, persist cooldown, issue
+  zero tokens and deny the correct PIN during lockout; fixtures are cleaned.
+- 51 actual isolated Auth/PostgREST checks pass, including approved table/view
+  reads, embeddings, onboarding, invitations, PIN, privacy, admin, digital reader,
+  activity/Book completion, identity inserts, duplicate XP and password/recovery.
+- 282 application tests, production build and all ten Edge syntax checks pass.
+  The existing large main-chunk warning remains; syntax is not full Deno validation.
+- Fresh native PostgreSQL 17.11 and local Supabase 17.6 restore the new ACL model.
+  Full catalog comparison passes before/after SQL and HTTP tests. A read-only
+  post-deployment capture matches the tested new baseline exactly.
+- Production received only ACL/default changes, three invoker-flag reductions,
+  schema-cache notification and one new migration record. No family/Auth/commerce/
+  Storage rows, jobs, providers, historical records or Auth settings were written.
 
-## Remaining issues and next package
+## Current authorization policy
 
-- Supabase Auth leaked-password protection remains disabled; unchanged.
-- The advisor still flags the intentionally authenticated SECURITY DEFINER revoke
-  RPC. Its body restricts access to the caller's managed household and sessions.
-- Broad legacy table/view/default ACLs and seven implicit PUBLIC helper grants
-  require a separate dependency-aware least-privilege review. No sweeping cleanup
-  was included in recovery.
-- Edge legacy CORS/rate limits, adapter HTTPS/secrets, privacy races and live browser
-  invocation require the targeted follow-up described in the Edge audit.
-- Encrypted data/Auth/file backups, full Auth configuration, approved reference
-  data and fresh destination secrets remain separate recovery inputs.
-- Full authoritative Bible/Production Manual files, final Book 1 assets/approval,
-  provider readiness and signed-in/device acceptance remain outstanding.
+No client TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on application tables; no anonymous
+application table/view/function access; no client view writes or sequence grants.
+Authenticated table SELECT/INSERT/UPDATE/DELETE counts are 104/58/51/1, plus narrow
+column-only updates for group withdrawal and checkout row locking. Twenty invoker
+views retain client SELECT. Function EXECUTE is 147 authenticated, nine service,
+zero anon/PUBLIC. All private tables and raw award helpers remain protected.
+See [the dependency matrix](docs/security/CLIENT_PRIVILEGE_MATRIX.md).
 
-Recommended next package: Chat-reviewed least-privilege/Auth launch hardening,
-with targeted Edge/Work acceptance scoped from the recovery audit. It has not
-been started. Recovery source completion is not launch or content approval.
+## Remaining issues and next step
+
+- Leaked-password protection remains disabled. The Auth config tool is unavailable
+  and the dashboard needs sign-in. [Exact action](docs/security/AUTH_HARDENING.md).
+- Three supabase_admin-owned public default ACLs need a supported platform action;
+  the hosted postgres connection cannot act as that internal role.
+  [Chat handoff](docs/security/PLATFORM_DEFAULTS_HANDOFF.md).
+- The pre-existing checkout RPC fails on ambiguous `order_number` in both legacy
+  and hardened isolated restores. Other invoker dependencies need review in a
+  Chat-scoped checkout fix; no payment acceptance is claimed.
+- The intentionally guarded revoke-session definer still triggers an advisor warning.
+- Existing Edge/CORS/races/adapter concerns, real email/Storage/browser/device/provider
+  acceptance, protected data/file/Auth backups, full creative authority files and
+  Book 1 assets/human approval remain outstanding.
+
+Next: Chat review of the hardening report, resolution/routing of the two external
+security actions, then **Work-led real signed-in/browser/device acceptance**.
+No broad Edge/provider, launch or new major Codex package is authorized by this
+recommendation.

@@ -1,5 +1,12 @@
 # Legacy grant inventory — 2026-09-26
 
+**Historical snapshot at `60e151c`, not the current production policy.** The
+approved forward migration `20260927013941` supersedes the client object grants
+and postgres defaults below. Current permissions are in
+[CLIENT_PRIVILEGE_MATRIX.md](../security/CLIENT_PRIVILEGE_MATRIX.md). The three
+supabase_admin defaults remain an explicitly unresolved exception. The original
+inventory is preserved below as evidence of what recovery captured.
+
 The isolated bootstrap preserves the captured **effective** object and column privileges. Full catalog comparison fails on additions/removals/changed grant options. No live grants changed. Historical default ACLs are explicit, not inherited accidentally from whichever Supabase CLI version happens to run. This is forensic fidelity, **not launch approval** for broad client privileges.
 
 ## Material concerns requiring a separate Chat-approved hardening package
