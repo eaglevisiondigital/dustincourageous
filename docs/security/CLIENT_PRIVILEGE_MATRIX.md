@@ -1,5 +1,23 @@
 # Client privilege matrix
 
+## Current checkout delta
+
+The approved checkout repair adds only authenticated EXECUTE on
+`private.create_checkout_order_impl(uuid,jsonb,text)`, a guarded private definer.
+PUBLIC/anon/service_role have no EXECUTE on it. Every existing ACL, column grant,
+sequence/default permission and RLS policy is unchanged. Authenticated function
+execution therefore increases from 147 to 148; the other nine service RPCs remain.
+`public.create_checkout_order` remains an invoker and delegates to this operation.
+Auth UID, active guardian membership and server pricing guard all trusted writes.
+
+The dependency graph now parses all 214 functions. The original allowlist/reasons
+below and `proposed-policy.json` preserve the historical ACL package: former
+checkout invoker table/column grants are retained, still restricted by unchanged
+RLS, even though checkout creation now executes behind the guarded boundary.
+They are not new permissions. See the [checkout report](../audits/2026-09-26-checkout-repair.md).
+
+## Original ACL package evidence
+
 Prepared before production revocation from commit `60e151c5556a407982342a81c8bac42579597699`. This is a reviewed positive allowlist, not a blanket CRUD grant based on the presence of RLS. The current catalog, SQL policies, invoker views, triggers and all 213 function bodies were inspected. PostgreSQL 17 parsing found no unreviewed dynamic SQL or failed expressions.
 
 `supabase/security/dependencies.json` records 443 concrete browser/Edge call sites, the two conditional RPC paths, every parsed function/view dependency, RLS helpers, and trigger dependencies. `proposed-policy.json` records each retained operation and its sources. Admins and guardians share the authenticated database role; trusted membership/admin checks and unchanged RLS decide which rows each may use.

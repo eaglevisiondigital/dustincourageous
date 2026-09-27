@@ -1,5 +1,19 @@
 # Verified build state
 
+## Approved checkout repair in verification
+
+Starting at `bbd0b13`, the focused checkout creation repair is implemented in
+candidate migration `20260927020843_secure_checkout_order_creation.sql`.
+A fresh native restore passes 13 SQL suites (42 new checkout checks and ten
+retained payment-lock checks), PIN/checkout concurrency, and exact catalog/ACL
+comparison. All 282 app tests, build and ten Edge syntax checks pass.
+Full Supabase Auth/PostgREST CI and hosted deployment are pending.
+See [checkout repair report](docs/audits/2026-09-26-checkout-repair.md).
+The separate provider-handoff invoker/write-policy defect remains unresolved;
+provider activation and payments are outside this package.
+
+## Completed preceding baseline
+
 Updated September 26, 2026 (Chicago) after the approved least-privilege package.
 Starting checkpoint `60e151c`; tested implementation `8ec568f`; live forward
 migration `20260927013941_dependency_aware_client_privileges.sql`.

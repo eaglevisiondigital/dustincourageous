@@ -4234,6 +4234,42 @@
       "definer": true,
       "trigger": false
     },
+    "private.create_checkout_order_impl": {
+      "relations": {
+        "public.orders": [
+          "DELETE",
+          "INSERT",
+          "SELECT",
+          "UPDATE"
+        ],
+        "public.checkout_sessions": [
+          "INSERT",
+          "SELECT"
+        ],
+        "public.products": [
+          "SELECT"
+        ],
+        "public.product_variants": [
+          "SELECT"
+        ],
+        "public.inventory_reservations": [
+          "INSERT",
+          "SELECT"
+        ],
+        "public.order_items": [
+          "INSERT"
+        ],
+        "public.promo_codes": [
+          "SELECT"
+        ]
+      },
+      "functions": [
+        "private.can_manage_household",
+        "private.household_is_paid_member"
+      ],
+      "definer": true,
+      "trigger": false
+    },
     "private.create_group_join_code_impl": {
       "relations": {
         "private.group_join_codes": [
@@ -4803,7 +4839,7 @@
         ]
       },
       "functions": [],
-      "definer": true,
+      "definer": false,
       "trigger": false
     },
     "private.initialize_household": {
@@ -6349,37 +6385,9 @@
       "trigger": false
     },
     "public.create_checkout_order": {
-      "relations": {
-        "public.orders": [
-          "DELETE",
-          "INSERT",
-          "SELECT",
-          "UPDATE"
-        ],
-        "public.checkout_sessions": [
-          "INSERT",
-          "SELECT"
-        ],
-        "public.products": [
-          "SELECT"
-        ],
-        "public.product_variants": [
-          "SELECT"
-        ],
-        "public.inventory_reservations": [
-          "INSERT",
-          "SELECT"
-        ],
-        "public.order_items": [
-          "INSERT"
-        ],
-        "public.promo_codes": [
-          "SELECT"
-        ]
-      },
+      "relations": {},
       "functions": [
-        "private.can_manage_household",
-        "private.household_is_paid_member"
+        "private.create_checkout_order_impl"
       ],
       "definer": false,
       "trigger": false

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Render the reviewed positive allowlist; does not connect or apply changes."""
+"""Historical ACL-package renderer; does not connect or apply changes.
+
+The checkout forward delta is documented separately. Never overwrite its current
+matrix with the older proposed-policy snapshot.
+"""
 import json
 from pathlib import Path
 from collections import Counter
@@ -49,6 +53,10 @@ rendered='\n'.join(lines)
 assert migration_path.read_text()==rendered, 'Applied migration is immutable; create a new reviewed forward migration'
 
 (ROOT/'supabase/security/proposed-policy.json').write_text(json.dumps(p,indent=2)+'\n')
+# Preserve the independently reviewed current forward-delta section.
+matrix_path=ROOT/'docs/security/CLIENT_PRIVILEGE_MATRIX.md'
+current=matrix_path.read_text()
+delta=current.split('## Original ACL package evidence',1)[0] if '## Original ACL package evidence' in current else None
 md=['# Client privilege matrix','',
 'Prepared before production revocation from commit `60e151c5556a407982342a81c8bac42579597699`. This is a reviewed positive allowlist, not a blanket CRUD grant based on the presence of RLS. The current catalog, SQL policies, invoker views, triggers and all 213 function bodies were inspected. PostgreSQL 17 parsing found no unreviewed dynamic SQL or failed expressions.','',
 '`supabase/security/dependencies.json` records 443 concrete browser/Edge call sites, the two conditional RPC paths, every parsed function/view dependency, RLS helpers, and trigger dependencies. `proposed-policy.json` records each retained operation and its sources. Admins and guardians share the authenticated database role; trusted membership/admin checks and unchanged RLS decide which rows each may use.','',
@@ -78,5 +86,7 @@ md += ['','## Seven historical implicit PUBLIC helpers','',
 'For postgres, public table/view/sequence/function defaults lose client grants; a global function default removes implicit PUBLIC EXECUTE in every schema. service_role/platform-owner defaults remain. New client grants must be explicit.',
 '','The hosted SQL role is postgres, is not a superuser, and is not a member of supabase_admin. The three supabase_admin-owned public default ACLs cannot be altered through that connection. They remain a named unresolved platform dependency, never treated as hardened or ignored by recovery verification. All current application objects are owned by postgres. Support must apply the owner-specific default revocations through a supported privileged platform path; no attempt is made to assume the internal role.',
 '','Historical ACL evidence remains in `docs/recovery/LEGACY_GRANTS.md` and the catalog at commit `60e151c`. Current recovery must intentionally capture the resulting ACLs, including the unresolved platform defaults.','']
-(ROOT/'docs/security/CLIENT_PRIVILEGE_MATRIX.md').write_text('\n'.join(md))
+body='\n'.join(md)
+if delta: body=delta+'## Original ACL package evidence\n'+body.split('\n',1)[1]
+matrix_path.write_text(body)
 print('Policy counts',dict(Counter((o['kind'],bool(o['authenticated'])) for o in p['objects'])))

@@ -70,6 +70,8 @@ for user in (a,b):
  user['home']=rpc('create_household_with_consent',{'p_name':'Synthetic HTTP family','p_timezone':'UTC'},user['token'])
  user['child']=rpc('create_child_with_consent',{'p_household_id':user['home'],'p_display_name':'Synthetic child'},user['token'])
 check(a['home']!=b['home'] and a['child']!=b['child'],'independent household/child onboarding')
+from checkout_http_checks import run as checkout_http_checks
+checkout_http_checks(a,b,sql,rpc,good,denied,check)
 for relation,idcol,value in [('households','id',b['home']),('child_profiles','id',b['child'])]:
  check(good('/rest/v1/'+relation+'?'+idcol+'=eq.'+value,token=a['token'])==[],'cross-household '+relation+' read denied')
  check(good('/rest/v1/'+relation+'?'+idcol+'=eq.'+value,'PATCH',{'name':'Denied'} if relation=='households' else {'display_name':'Denied'},a['token'],headers={'Prefer':'return=representation'})==[],'cross-household '+relation+' update denied')

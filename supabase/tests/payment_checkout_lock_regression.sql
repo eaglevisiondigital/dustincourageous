@@ -26,6 +26,7 @@ begin
  if exists(select 1 from public.payment_webhook_events where order_id=(select order_id from payment_lock_fixture)) then raise exception 'Failed payment left a receipt'; end if;
  insert into payment_lock_results values(label);
 end $$;
+grant execute on function pg_temp.confirm_fixture_payment(bigint,text,text,text),pg_temp.expect_payment_denied(text,bigint,text,text,text) to service_role;
 set local role service_role;
 select pg_temp.expect_payment_denied('Expired checkout rejected inside payment transaction');
 update public.checkout_sessions set expires_at=now()+interval '1 hour' where id=(select session_id from payment_lock_fixture);
