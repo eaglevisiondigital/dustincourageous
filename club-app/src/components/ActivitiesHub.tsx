@@ -143,7 +143,7 @@ export function ActivitiesHub({
       else {setReadyLink({id:item.id,url});setError("Your activity is ready. Use the open link below.");}
     } catch {
       tab?.close();
-      setError("This activity could not be opened. Please try again or ask your ${roleLower} for help.");
+      setError(`This activity could not be opened. Please try again or ask your ${roleLower} for help.`);
     } finally {actionBusy.current=false;setWorkingId(null);}
   }
 
