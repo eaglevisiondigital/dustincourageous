@@ -204,7 +204,7 @@ export function AnalyticsPrivacyAdmin({ role }: { role: string }) {
       <section className="admin-two-column">
         <article className="admin-card">
           <div className="section-heading compact-heading">
-            <div><p className="eyebrow red">Privacy Operations</p><h2>Guardian requests</h2></div>
+            <div><p className="eyebrow red">Privacy Operations</p><h2>Family privacy requests</h2></div>
             <span className="pill">{privacy.filter((item)=>!["completed","canceled","rejected"].includes(item.status)).length} open</span>
           </div>
 
@@ -240,7 +240,7 @@ export function AnalyticsPrivacyAdmin({ role }: { role: string }) {
             <span className="pill">{snapshot?.queued_external_notifications??0} queued</span>
           </div>
 
-          <p className="muted">Email and push rows queue now according to guardian preferences. They stay queued until an actual provider or GoodBarber push connector is configured.</p>
+          <p className="muted">Email and push rows queue now according to adult notification preferences. They stay queued until an actual provider or GoodBarber push connector is configured.</p>
 
           <div className="admin-list">
             {deliveries.slice(0,20).map((item)=>{
