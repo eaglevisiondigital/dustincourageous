@@ -85,6 +85,6 @@ export function FamilyRelationshipSettings({ user }: { user: User }) {
         <button type="button" className="text-button" onClick={() => setConfirmRefresh(false)}>Keep Editing</button>
       </div>
     </div>}
-    <p className="muted">This download contains your saved adult name, email, optional contact number and Parent or Guardian choice. For household and child records, use Privacy &amp; Data Controls.</p>
+    <p className="muted">This download contains your saved adult name, email, optional contact number and family relationship choice. For household and child records, use Privacy &amp; Data Controls.</p>
   </section>;
 }
