@@ -2423,12 +2423,19 @@
       "authenticated": [
         "SELECT"
       ],
-      "columns": {},
+      "columns": {
+        "UPDATE": [
+          "id"
+        ]
+      },
       "anon": [],
       "reasons": {
         "SELECT": [
           "club-app/src/components/FamilyStore.tsx:187 (PostgREST embedding)",
           "invoker public.create_checkout_order"
+        ],
+        "UPDATE(id)": [
+          "public.create_checkout_order row locking (FOR SHARE / FOR UPDATE); RLS still applies"
         ]
       }
     },
@@ -2488,7 +2495,11 @@
         "INSERT",
         "SELECT"
       ],
-      "columns": {},
+      "columns": {
+        "UPDATE": [
+          "id"
+        ]
+      },
       "anon": [],
       "reasons": {
         "INSERT": [
@@ -2497,6 +2508,9 @@
         "SELECT": [
           "invoker public.admin_create_promo_code",
           "invoker public.create_checkout_order"
+        ],
+        "UPDATE(id)": [
+          "public.create_checkout_order row locking (FOR SHARE / FOR UPDATE); RLS still applies"
         ]
       }
     },

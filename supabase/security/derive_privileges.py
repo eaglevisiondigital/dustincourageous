@@ -42,6 +42,9 @@ for k,r in rel.items():
  cols={}
  if k=='public.child_group_memberships' and 'UPDATE' in grants[k]['authenticated']:
   grants[k]['authenticated'].remove('UPDATE');cols={'UPDATE':['status','ended_at']}
+ if k in ('public.product_variants','public.promo_codes'):
+  cols={'UPDATE':['id']}
+  reasons[k]['UPDATE(id)'].add('public.create_checkout_order row locking (FOR SHARE / FOR UPDATE); RLS still applies')
  objects.append(dict(object=k,kind=r['kind'],authenticated=sorted(grants[k]['authenticated']),columns=cols,anon=[],reasons={op:sorted(v) for op,v in reasons[k].items()}))
 for k,f in fns.items():
  g=sorted(grants[k]['authenticated']);dep=d['functions'][k]

@@ -28553,7 +28553,7 @@
       "schema": "public",
       "columns": [
         {
-          "acl": null,
+          "acl": "{authenticated=w/postgres}",
           "name": "id",
           "type": "uuid",
           "comment": null,
@@ -29174,7 +29174,7 @@
       "schema": "public",
       "columns": [
         {
-          "acl": null,
+          "acl": "{authenticated=w/postgres}",
           "name": "id",
           "type": "uuid",
           "comment": null,

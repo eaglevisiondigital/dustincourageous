@@ -24,6 +24,7 @@ create temporary table dc_rls_fixture as select
   gen_random_uuid() as child_a, gen_random_uuid() as child_b,
   gen_random_uuid() as notice_a, gen_random_uuid() as notice_b,
   gen_random_uuid() as ticket_a, gen_random_uuid() as ticket_b,
+  gen_random_uuid() as paid_plan,
   (select id from public.books order by book_number limit 1) as book_id;
 create temporary table dc_rls_results(check_name text primary key);
 grant select on dc_rls_fixture to authenticated, anon;
@@ -56,6 +57,12 @@ insert into public.support_tickets(id,ticket_number,user_id,household_id,subject
 insert into public.household_entitlement_grants(household_id,entitlement_key,source_type)
   select home_b,'digital_books','manual' from dc_rls_fixture;
 
+-- Subscription-state inspection must obey the same family boundary.
+insert into public.membership_plans(id,plan_key,name)
+ select paid_plan,'dc-acl-'||paid_plan,'Synthetic membership fixture' from dc_rls_fixture;
+insert into public.household_subscriptions(household_id,plan_id,status)
+ select home_b,paid_plan,'active' from dc_rls_fixture;
+
 select set_config('request.jwt.claim.sub',(select user_a::text from dc_rls_fixture),true);
 select set_config('request.jwt.claims',jsonb_build_object('sub',(select user_a from dc_rls_fixture),'role','authenticated')::text,true);
 set local role authenticated;
@@ -74,6 +81,8 @@ begin
   if (select count(*) from public.child_profiles where id in (f.child_a,f.child_b))<>1 or
      not exists(select 1 from public.child_profiles where id=f.child_a) then raise exception 'Child read isolation failed'; end if;
   insert into dc_rls_results values ('Guardian sees own household and child, not another family');
+  if private.household_is_paid_member(f.home_b) then raise exception 'Foreign household paid status leaked'; end if;
+  insert into dc_rls_results values ('Foreign household subscription status is not disclosed');
 
   if (select count(*) from public.child_book_reading_positions where child_profile_id in (f.child_a,f.child_b))<>1 or
      not exists(select 1 from public.child_book_reading_positions where child_profile_id=f.child_a) then raise exception 'Reading history isolation failed'; end if;
@@ -130,6 +139,8 @@ do $$ declare f record; begin
   select * into f from dc_rls_fixture;
   if pg_temp.digital_access(f.child_a,f.book_id) then raise exception 'Dual-household entitlement leaked to free child'; end if;
   if not pg_temp.digital_access(f.child_b,f.book_id) then raise exception 'Paid household child access missing'; end if;
+  if not private.household_is_paid_member(f.home_b) then raise exception 'Own household paid status hidden'; end if;
+  insert into dc_rls_results values ('Own household subscription status remains available');
   insert into dc_rls_results values ('Dual-household guardian digital access follows the selected child');
 end $$;
 reset role;

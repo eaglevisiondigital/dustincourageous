@@ -19719,6 +19719,8 @@ GRANT MAINTAIN ON TABLE "public"."product_variants" TO "service_role";
 
 GRANT SELECT ON TABLE "public"."product_variants" TO "authenticated";
 
+GRANT UPDATE ("id") ON TABLE "public"."product_variants" TO "authenticated";
+
 ALTER TABLE "public"."products" OWNER TO "postgres";
 
 REVOKE ALL ON TABLE "public"."products" FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
@@ -19840,6 +19842,8 @@ GRANT MAINTAIN ON TABLE "public"."promo_codes" TO "service_role";
 GRANT INSERT ON TABLE "public"."promo_codes" TO "authenticated";
 
 GRANT SELECT ON TABLE "public"."promo_codes" TO "authenticated";
+
+GRANT UPDATE ("id") ON TABLE "public"."promo_codes" TO "authenticated";
 
 ALTER TABLE "public"."public_site_pipeline_summary" OWNER TO "postgres";
 
