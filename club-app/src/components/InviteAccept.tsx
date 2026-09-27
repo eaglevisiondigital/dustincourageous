@@ -44,7 +44,7 @@ export function InviteAccept({
         <p className="eyebrow gold">Family Invitation</p>
         <h1>Join this Dustin Courageous family</h1>
         <p className="muted">
-          This invitation adds your own adult login to an existing Family Hub. You will not share another guardian's password.
+          This invitation adds your own adult login to an existing Family Hub. You will not share another adult's password.
         </p>
 
         <p className="muted">Signed in as {signedInEmail}.</p>
