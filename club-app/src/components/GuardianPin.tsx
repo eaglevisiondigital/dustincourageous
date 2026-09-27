@@ -2,14 +2,19 @@ import { FormEvent, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { ModalDialog } from "./ModalDialog";
 import { saveOnboardingPin } from "../lib/onboarding";
+import { familyRoleLabel, familyRoleLower } from "../lib/familyDisplay";
 
 export function GuardianPinSetup({
   householdId,
+  relationship,
   onComplete
 }: {
   householdId: string;
+  relationship?: unknown;
   onComplete: () => void | Promise<void>;
 }) {
+  const roleLabel = familyRoleLabel(relationship);
+  const roleLower = familyRoleLower(relationship);
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const [working, setWorking] = useState(false);
@@ -34,8 +39,8 @@ export function GuardianPinSetup({
       }
       await onComplete();
     } catch (cause) {
-      setMessage(confirmed ? "Your guardian PIN was saved. Continue to open your family hub."
-        : cause instanceof Error ? cause.message : "We could not confirm your guardian PIN. Please try again before using Kid View.");
+      setMessage(confirmed ? `Your ${roleLower} PIN was saved. Continue to open your family hub.`
+        : cause instanceof Error ? cause.message : `We could not confirm your ${roleLower} PIN. Please try again before using Kid View.`);
     } finally { busy.current = false; setWorking(false); }
   }
 
@@ -44,7 +49,7 @@ export function GuardianPinSetup({
       <div className="setup-card">
         <div className="guardian-lock-icon">◆</div>
         <p className="eyebrow red">Step 3 of 3 · Family Protection</p>
-        <h1>Create your guardian PIN</h1>
+        <h1>Create your {roleLower} PIN</h1>
         <p className="muted">
           When you hand the Adventure Club to a child, this PIN unlocks the Family Hub,
           rewards, account settings, and admin controls.
@@ -52,7 +57,7 @@ export function GuardianPinSetup({
 
         <form className="form-stack" onSubmit={submit}>
           <label>
-            Guardian PIN
+            {roleLabel} PIN
             <input
               required
               type="password"
@@ -83,7 +88,7 @@ export function GuardianPinSetup({
           </label>
           {message && <div className="form-message" role="alert">{message}</div>}
           <button className="primary-button" disabled={working}>
-            {working ? "Please wait..." : saved ? "Continue to family hub" : "Set guardian PIN"}
+            {working ? "Please wait..." : saved ? "Continue to family hub" : `Set ${roleLower} PIN`}
           </button>
         </form>
 
@@ -97,15 +102,19 @@ export function GuardianPinSetup({
 
 export function GuardianUnlockDialog({
   householdId,
+  relationship,
   onUnlock,
   onClose,
   onSignOut
 }: {
   householdId: string;
+  relationship?: unknown;
   onUnlock: (token: string) => void;
   onClose: () => void;
   onSignOut: () => Promise<void>;
 }) {
+  const roleLabel = familyRoleLabel(relationship);
+  const roleLower = familyRoleLower(relationship);
   const [pin, setPin] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
@@ -129,7 +138,7 @@ export function GuardianUnlockDialog({
     }
 
     if (!data) {
-      setMessage("That PIN was not accepted. After repeated attempts, the guardian lock temporarily pauses PIN entry.");
+      setMessage(`That PIN was not accepted. After repeated attempts, the ${roleLower} lock temporarily pauses PIN entry.`);
       setPin("");
       return;
     }
@@ -137,7 +146,7 @@ export function GuardianUnlockDialog({
     setPin("");
     onUnlock(String(data));
     } catch {
-      setMessage("We could not check your guardian PIN. Please try again.");
+      setMessage(`We could not check your ${roleLower} PIN. Please try again.`);
       setPin("");
     } finally {
       busyRef.current = false;
@@ -169,13 +178,13 @@ export function GuardianUnlockDialog({
           ×
         </button>
         <div className="guardian-lock-icon small">◆</div>
-        <p className="eyebrow red">Guardian Only</p>
+        <p className="eyebrow red">{roleLabel} Only</p>
         <h2 id="guardian-unlock-title">Unlock Family Hub</h2>
-        <p className="muted">Enter the guardian PIN to leave locked Kid View.</p>
+        <p className="muted">Enter the {roleLower} PIN to leave locked Kid View.</p>
 
         <form className="form-stack" onSubmit={submit}>
           <label>
-            Guardian PIN
+            {roleLabel} PIN
             <input
               autoFocus
               required
@@ -196,7 +205,7 @@ export function GuardianUnlockDialog({
         </form>
 
         <button className="text-button recovery-button" type="button" disabled={working} onClick={() => void recover()}>
-          Forgot the PIN? Sign out and sign back in as the guardian
+          Forgot the PIN? Sign out and sign back in as the {roleLower}
         </button>
       </ModalDialog>
   );
