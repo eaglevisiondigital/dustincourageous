@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLower } from "../lib/familyDisplay";
 import { readBookAdventure, saveBookStatus, finishBookAdventure, completeBookStep } from "../lib/bookActions";
 import { DigitalBookEntry } from "./DigitalBookReader";
 
@@ -127,7 +128,8 @@ export function Bookshelf({
   onProgress,
   onOpenChallenge,
   onOpenBible,
-  onOpenActivities
+  onOpenActivities,
+  relationship
 }: {
   childId: string;
   childName: string;
@@ -135,7 +137,9 @@ export function Bookshelf({
   onOpenChallenge: (challengeId: string) => void;
   onOpenBible: () => void;
   onOpenActivities: () => void;
+  relationship?: unknown;
 }) {
+  const roleLower = familyRoleLower(relationship);
   const [books, setBooks] = useState<Book[]>([]);
   const [progress, setProgress] = useState<BookProgress[]>([]);
   const [bookAccess, setBookAccess] = useState<Record<string, boolean>>({});
@@ -517,7 +521,7 @@ export function Bookshelf({
 
             {!selectedHasAccess && (
               <div className="form-message">
-                This Book Companion is locked for this family. A guardian can unlock it through membership, a book purchase, a gift, or a bundle.
+                This Book Companion is locked for this family. A {roleLower} can unlock it through membership, a book purchase, a gift, or a bundle.
               </div>
             )}
             {selectedHasAccess && (
