@@ -541,7 +541,7 @@ export function LeaderGroupsHub(){
         <>
           <div className="leader-code-card">
             <div>
-              <span>Guardian Join Code</span>
+              <span>Family Join Code</span>
               <strong>{joinCode||"Generate a new 30-day code"}</strong>
               <small>Families must sign in, preview the group, choose their child, and explicitly approve joining.</small>
             </div>
