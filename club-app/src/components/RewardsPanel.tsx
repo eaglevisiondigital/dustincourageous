@@ -1,6 +1,7 @@
 import { requestUnlockedReward, rewardStatusLabel } from "../lib/rewardRequests";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLower } from "../lib/familyDisplay";
 
 type Unlock = {
   id: string;
@@ -27,7 +28,8 @@ type Redemption = {
   status: string;
 };
 
-export function RewardsPanel({ childId, userId }: { childId: string; userId: string }) {
+export function RewardsPanel({ childId, userId, relationship }: { childId: string; userId: string; relationship?: unknown }) {
+  const roleLower = familyRoleLower(relationship);
   const [unlocks, setUnlocks] = useState<Unlock[]>([]);
   const [redemptions, setRedemptions] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
@@ -126,7 +128,7 @@ export function RewardsPanel({ childId, userId }: { childId: string; userId: str
             <h2>Unlocked Rewards</h2>
           </div>
         </div>
-        <p className="muted">Rewards earned through Adventure Club progress will appear here for guardian review.</p>
+        <p className="muted">Rewards earned through Adventure Club progress will appear here for {roleLower} review.</p>
         {error && <p role="alert">{error}</p>}
         {message && <p role="status">{message}</p>}
         <button type="button" className="text-button" onClick={() => void load()}>Refresh Rewards</button>
