@@ -1,5 +1,13 @@
 # Edge Function recovery audit — 2026-09-26
 
+Current update: the subsequent approved provider-handoff package deploys only
+commerce-checkout v4 with a durable claim/receipt/finalize lifecycle. Both source
+files match the deployed bundle and JWT verification remains enabled. The manifest
+records current hashes; the table and findings below preserve the earlier recovery
+inspection. See [handoff report](../audits/2026-09-26-provider-handoff-repair.md).
+Hosted leaked-password protection is now enabled per September 26, 2026 Work
+verification supplied by PRIMARY CHAT; earlier disabled status below is historical.
+
 All ten deployed bundles were retrieved read-only. Four previously tracked
 functions match exactly; six deployed-only functions are now restored byte-for-byte
 under `supabase/functions/<slug>/`. No deployed function was changed, deleted or

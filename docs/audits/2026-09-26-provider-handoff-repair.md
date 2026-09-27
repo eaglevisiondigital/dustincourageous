@@ -3,8 +3,9 @@
 ## CURRENT HEAD
 
 - Start: `29b3d29111704dabb2d9f3082da119444f985577`, `build/adventure-club-app`.
-- Candidate migration: `20260927024333_secure_checkout_provider_handoff.sql`.
-- Status: native/Edge/application checks passed; Supabase HTTP CI and deployment pending.
+- Tested implementation: `fabf9b16469df46c4948ccd703334502b3615f23`; deployment evidence/documentation checkpoint follows on the same development branch.
+- Applied migration: `20260927030254_secure_checkout_provider_handoff.sql`.
+- Status: native, full Supabase recovery, Auth/PostgREST, Edge and application checks passed; database and commerce-checkout v4 deployed and verified.
 - Main remains outside this package; no provider activation or real charge.
 
 ## DEFECT REPRODUCED
@@ -92,7 +93,8 @@ provider_pending sessions can reuse the durable receipt. The adapter call has a
 20-second timeout and rejects redirects. Raw adapter bodies, URLs, credentials
 and network/database error text are excluded from telemetry/client errors.
 Telemetry failure cannot undo a completed handoff or cause a new external request.
-JWT verification remains enabled. No other Edge function is changed.
+JWT verification remains enabled. Deployed version 4 contains byte-exact index.ts
+and handoff.ts sources. No other Edge function is changed.
 
 ## FILES CHANGED
 
@@ -107,6 +109,9 @@ One private RLS-enabled attempt table, five new functions and the existing publi
 handoff definition replaced. No existing price, stock, creation, callback, policy,
 trigger, default privilege, provider configuration or family row is modified.
 All 40 original historical records and two prior forward migrations stay immutable.
+Live history is 43 records; root migrations are 27. The new migration SQL is
+byte-identical to the reviewed file and separately archived third forward record.
+Only its new candidate filename was aligned to the actual managed timestamp.
 
 ## TESTS PERFORMED
 
@@ -119,12 +124,18 @@ All 40 original historical records and two prior forward migrations stay immutab
   and foreign denial, duplicate/concurrent calls, failures, retry and secret handling.
 - 296 app tests, production build, all ten Edge entrypoint syntax checks plus module.
 - Fresh native recovery, all 14 SQL suites and PIN/checkout/handoff concurrency.
-- Actual Supabase Auth/PostgREST and full recovery CI: pending.
+- 94 actual Supabase Auth/PostgREST checks (75 retained plus 19 handoff), full
+  isolated Supabase recovery and post-HTTP catalog comparison pass in GitHub CI.
 
 ## RESULTS
 
-Native isolated tests pass. No external provider or production test fixture is
-used. Hosted deployment and final CI evidence will be recorded after verification.
+All implementation checks pass at `fabf9b1`:
+[GitHub CI 36290092180](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36290092180).
+Live read-only catalog comparison equals the tested recovery baseline. Deployment
+source retrieval confirms commerce-checkout v4 and gateway JWT verification.
+No external provider or production test fixture is used. Main remains
+`57b37be469569b909095172de0cd5bc392a755b8`; the ending checkpoint and its CI are
+reported in the completion handoff.
 
 ## SECURITY VERIFICATION
 
@@ -139,6 +150,13 @@ Hosted leaked-password protection is **enabled**, attributed to September 26,
 This package does not alter Auth configuration. Supabase Support's platform-owner
 default-ACL question remains pending and does not block this work or Work acceptance.
 
+Post-deployment Security Advisor reports the existing reviewed guardian-session
+revocation definer warning ([advisor guidance](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable)).
+Its new informational RLS-without-policy notice is intentional for the private
+attempt table, which has no direct grants and is accessed only through guarded
+definers ([advisor guidance](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)).
+No new warning/error or leaked-password warning is present.
+
 ## CALLBACK COMPATIBILITY
 
 The unchanged ten-check payment-lock suite passes. A real new claim/receipt/finalize
@@ -151,7 +169,10 @@ are retained. No guardian gains paid-state authority.
 Fresh native restoration includes 121 tables (112 public, nine private), 25 views,
 219 functions and unchanged 298 public policies. Full metadata/ACL comparison runs
 before and after tests. Historical archives remain separate from the current-state
-bootstrap. Supabase CI and final live capture are pending.
+bootstrap. Full Supabase CI and final live capture pass. Native PostgreSQL is
+17.11 and hosted is 17.6; the verified application catalog/effective ACLs match,
+while native platform adapters intentionally omit managed extensions.
+Bootstrap SHA-256: `5f6b856a914919fff2d7462edda0f21f6f1453a0ac374541b4ef4336eeb986b5`.
 
 ## RECONCILIATION AND ROLLBACK
 

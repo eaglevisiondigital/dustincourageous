@@ -19,8 +19,8 @@ recovery. A successful synthetic test does not authorize production cutover.
 | `supabase/functions/deployed-settings.toml` | Inert gateway JWT/import/entrypoint configuration evidence |
 | `test-seed.sql` | Synthetic consent policy, entitlement and reference book for isolated tests only |
 
-The current-state snapshot includes 112 public tables with RLS, eight private
-tables, 25 invoker views, 214 functions, 298 public and seven Storage policies,
+The current-state snapshot includes 112 public tables with RLS, nine private
+tables, 25 invoker views, 219 functions, 298 public and seven Storage policies,
 166 application/Auth triggers, four identity sequences, constraints, indexes,
 defaults, owners and effective ACLs. Sequence definitions are preserved; production
 sequence positions are data-backup responsibilities. No custom enums/domains,
@@ -136,7 +136,7 @@ differ; the verifier requires PostgreSQL major 17 and the required extension set
 | Approved reference/business data | Current plans/entitlements, consent versions/text, products/pricing, governance registry/approvals and content; historical seed SQL is not current authority |
 | Storage content | Object metadata plus actual files; four bucket definitions alone do not restore artwork, book pages or exports |
 | Auth configuration | Site/redirect URLs, email/templates/provider settings, rate limits and security settings need a separate protected configuration record; full Auth configuration was not exported here |
-| Leaked-password protection | Still disabled; unchanged, unresolved launch-hardening decision |
+| Leaked-password protection | Enabled per September 26, 2026 external Work verification supplied by PRIMARY CHAT; Auth settings are separate protected recovery inputs |
 | Private security rows | Existing PIN/token/invitation hashes belong in encrypted operational backups; never source control |
 | Vault/Edge/provider secrets | Generate/rotate in the new destination; never reuse production secrets in tests |
 | Edge deployment/runtime | Deploy recovered source with captured gateway flags only after destination review; TypeScript syntax checking is not full Deno/provider execution |
@@ -193,7 +193,7 @@ rendered without IN SCHEMA. Other unsupported global defaults still fail the
 feature gate. All effective ACLs, including the three unresolved platform-owner
 defaults, remain compared. Do not drop default ACLs or privileges from the verifier.
 
-The current gate has 13 SQL suites plus PIN/checkout concurrency. CI additionally runs 75 actual local
+The current gate has 14 SQL suites plus PIN/checkout/handoff concurrency. CI additionally runs 94 actual local
 Auth/PostgREST checks and re-verifies the catalog after synthetic HTTP fixtures.
 The separate local Auth config autoconfirms fixture signup so no email is sent.
 Credentials stay in memory; the fixed disposable container is removed at teardown.
@@ -210,7 +210,7 @@ post-deployment capture. See the [hardening report](../audits/2026-09-26-privile
 for historical evidence and remaining platform/Auth actions. The checkout creation blocker is subsequently repaired below.
 
 
-## Current checkout recovery baseline
+## Historical checkout creation recovery checkpoint
 
 Migration `20260927022208` adds the guarded checkout implementation and replaces
 only its public wrapper. Current live/root counts are 42/26 with two exact forward
@@ -220,3 +220,21 @@ bootstrap exactly match the deployed result and pass native and full Supabase CI
 The new creator's stock locks are verified with independent guardian transactions;
 no production data is used in fixtures. See the
 [checkout report](../audits/2026-09-26-checkout-repair.md).
+
+## Current provider-handoff recovery baseline
+
+Migration `20260927030254` adds one private RLS-enabled attempt table, five narrow
+functions and a replacement public handoff wrapper. The 121-table/219-function
+catalog is captured from live and matches the tested isolated baseline; all
+existing table/default/function ACLs and policies remain unchanged. Private schema
+USAGE for the service receipt wrapper does not grant existing private object access.
+Current live/root counts are 43/27 with three exact forward records. All original
+40 history hashes and both earlier forward hashes are unchanged.
+
+The deterministic bootstrap passes fresh native recovery and full Supabase CI,
+including 14 SQL suites, three concurrency suites and 94 Auth/PostgREST checks.
+commerce-checkout v4 is deployed, its two source files are byte-exact, and JWT
+verification stays enabled. Other Edge sources and provider configuration remain
+unchanged. See the [handoff report](../audits/2026-09-26-provider-handoff-repair.md)
+for evidence and reconciliation/rollback instructions. Do not discard attempts
+or reintroduce adapter-before-claim ordering during recovery.

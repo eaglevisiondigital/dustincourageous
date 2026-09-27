@@ -132,3 +132,35 @@ The separate provider-handoff invoker RPC fails on a fresh owned session because
 its row-lock/write path lacks an UPDATE policy. Its repair/provider activation is
 not part of this creation-only change. Current verification/deployment evidence
 is in [the checkout report](docs/audits/2026-09-26-checkout-repair.md).
+
+## Approved provider-handoff boundary
+
+The handoff repair preserves every existing client/table/column/default/sequence
+ACL and public policy. Authenticated gains only explicit execution of the claim
+wrapper/private implementation and private finalizer. Service gains only receipt
+wrapper/helper EXECUTE plus private-schema USAGE for resolving that helper; none
+of the existing private tables/functions becomes available to service. The new
+private RLS-enabled attempt table has no direct guardian/anon/service table grants.
+
+All guardian implementations check Auth UID, active guardian membership, original
+session creator, order purchaser/household consistency, valid state and current
+expiry under checkout/order locks. Service receipt recording independently checks
+the trusted service JWT role. The finalizer accepts only the immutable recorded
+reference and cannot choose arbitrary totals, paid state or entitlements. The
+public handoff signature and invoker status are retained.
+
+Only one durable claim can authorize an external request. Repeated claims cannot
+redispatch after process/network/database uncertainty. A receipt survives local
+finalization failure; trusted reconciliation can record a recovered result without
+resetting the claim. Expired/canceled/paid sessions remain ineligible. No raw adapter
+response, hosted URL, secret or network error text is copied into telemetry.
+
+50 new actual-role checks, independent claim/finalization/expiry contention,
+controlled actual-Edge/module tests and real local Auth/PostgREST supplement the
+unchanged checkout, privilege, household, entitlement, PIN and payment-lock suites.
+See [current report](docs/audits/2026-09-26-provider-handoff-repair.md).
+
+The prior leaked-password warning is cleared: PRIMARY CHAT supplied September 26,
+2026 Work verification that hosted protection is enabled. This is an externally
+verified configuration fact; no Auth configuration is changed by this package.
+The separate Supabase Support default-ACL question remains pending, nonblocking.

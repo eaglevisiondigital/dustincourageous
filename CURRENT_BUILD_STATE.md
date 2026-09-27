@@ -1,11 +1,25 @@
 # Verified build state
 
-## Approved provider-handoff continuation in verification
+## Completed provider-handoff repair
 
-Starting at `29b3d29`, the handoff repair is implemented and isolated verification
-passes: 50 new actual-role checks, independent claim/finalization/expiry contention,
-14 SQL suites, 296 app tests, build and Edge syntax checks. Supabase HTTP CI and
-hosted deployment are pending. See [handoff report](docs/audits/2026-09-26-provider-handoff-repair.md).
+Starting at `29b3d29`, tested implementation `fabf9b1` is deployed to the dedicated
+Dustin project: migration `20260927030254_secure_checkout_provider_handoff.sql`
+and commerce-checkout Edge version 4 (JWT verification enabled, source byte-exact).
+Verified: 50 new actual-role checks, independent claim/finalization/expiry
+contention, 14 SQL suites, 94 real local Auth/PostgREST checks, 296 app tests,
+production build, Edge syntax, fresh native and full Supabase CI recovery.
+[Implementation CI](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36290092180).
+Live metadata matches the tested baseline: 121 tables, 219 functions; all existing
+table/function/default ACLs and RLS policies are preserved. Private schema USAGE
+is added only for the service receipt helper. Live/root migration counts are 43/27
+with three exact forward records and 40 immutable historical records.
+
+The fresh-owned-session handoff defect is fixed. Durable claim -> service receipt
+-> guarded finalization prevents repeated external dispatch; uncertain outcomes
+require reconciliation. Provider configuration and paid checkout stay disabled.
+No real payment, production fixture or main change occurred. Chat review should
+authorize Work-led signed-in/browser/device acceptance through the safe pre-provider
+boundary. See [handoff report](docs/audits/2026-09-26-provider-handoff-repair.md).
 
 **Hosted leaked-password protection is enabled**, attributed to September 26,
 2026 Work verification supplied by PRIMARY CHAT. Its advisor warning cleared.
@@ -14,7 +28,7 @@ remains pending with Supabase Support and does not block this package or Work
 acceptance. Earlier disabled/unverified descriptions below are historical.
 
 
-## Completed targeted checkout creation repair
+## Historical checkpoint: completed checkout creation repair
 
 Starting at `bbd0b13`, tested implementation `22d9394` repairs checkout creation.
 Migration `20260927022208_secure_checkout_order_creation.sql` is applied to
@@ -136,26 +150,27 @@ No client TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on application tables; no anonymo
 application table/view/function access; no client view writes or sequence grants.
 Authenticated table SELECT/INSERT/UPDATE/DELETE counts are 104/58/51/1, plus narrow
 column-only updates for group withdrawal and checkout row locking. Twenty invoker
-views retain client SELECT. Function EXECUTE is 147 authenticated, nine service,
+views retain client SELECT. Function EXECUTE is 151 authenticated, eleven service,
 zero anon/PUBLIC. All private tables and raw award helpers remain protected.
 See [the dependency matrix](docs/security/CLIENT_PRIVILEGE_MATRIX.md).
 
 ## Remaining issues and next step
 
-- Leaked-password protection remains disabled. The Auth config tool is unavailable
-  and the dashboard needs sign-in. [Exact action](docs/security/AUTH_HARDENING.md).
+- Leaked-password protection is enabled per September 26, 2026 Work verification
+  supplied by PRIMARY CHAT. [Attributed evidence](docs/security/AUTH_HARDENING.md).
 - Three supabase_admin-owned public default ACLs need a supported platform action;
   the hosted postgres connection cannot act as that internal role.
   [Chat handoff](docs/security/PLATFORM_DEFAULTS_HANDOFF.md).
-- The pre-existing checkout RPC fails on ambiguous `order_number` in both legacy
-  and hardened isolated restores. Other invoker dependencies need review in a
-  Chat-scoped checkout fix; no payment acceptance is claimed.
+- Checkout creation and provider handoff are repaired. Provider configuration,
+  sandbox contract acceptance and reconciliation remain separate commerce work;
+  no real payment acceptance is claimed.
 - The intentionally guarded revoke-session definer still triggers an advisor warning.
-- Existing Edge/CORS/races/adapter concerns, real email/Storage/browser/device/provider
+- Existing unrelated Edge/CORS/worker-race/provider-test concerns, real email/Storage/browser/device/provider
   acceptance, protected data/file/Auth backups, full creative authority files and
   Book 1 assets/human approval remain outstanding.
 
-Next: Chat review of the hardening report, resolution/routing of the two external
-security actions, then **Work-led real signed-in/browser/device acceptance**.
+Next: Chat review of the handoff report, then **Work-led real signed-in/browser/device
+acceptance**, including checkout through the safe pre-provider boundary. The pending
+Supabase Support default-ACL answer does not block this acceptance.
 No broad Edge/provider, launch or new major Codex package is authorized by this
 recommendation.

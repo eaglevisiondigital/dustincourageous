@@ -532,3 +532,19 @@ Paid checkout must remain disabled. The separate begin_checkout_provider_handoff
 invoker RPC is verified blocked by its checkout_sessions UPDATE-policy boundary;
 Chat must scope that repair before provider integration. No adapter configuration,
 live charge, provider choice or paid entitlement activation occurs here.
+
+
+## September 26 provider-handoff continuation
+
+The targeted package replaces the earlier handoff authorization defect with a
+guarded claim/receipt/finalize path and durable one-attempt reconciliation state.
+The Edge adapter is called only after a successful new claim; replay reuses the
+recorded reference and uncertain attempts never dispatch again automatically.
+See [current handoff report](../docs/audits/2026-09-26-provider-handoff-repair.md)
+for verification/deployment and operational recovery instructions.
+
+Provider configuration/readiness remains unchanged and paid checkout must remain
+disabled. Return to PRIMARY CHAT for Work-led signed-in/browser/device acceptance
+through the safe pre-provider boundary. Hosted leaked-password protection is now
+enabled per September 26 Work verification supplied by Chat; pending platform-
+owner default-ACL support does not block that acceptance.

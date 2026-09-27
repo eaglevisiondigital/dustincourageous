@@ -100,3 +100,26 @@ uncertain retries. This package does not add server idempotency keys. The separa
 `begin_checkout_provider_handoff` invoker/write-policy defect is verified and
 remains a prerequisite to provider activation. See the
 [creation repair report](docs/audits/2026-09-26-checkout-repair.md).
+
+## Approved provider-handoff continuation
+
+The separate handoff package now uses three bounded operations: guardian claim,
+service-only receipt recording, guardian finalization. One private RLS-enabled
+attempt per checkout commits before the Edge adapter POST. Existing public states
+stay created/draft until the verified receipt atomically transitions them to
+provider_pending/pending_payment. Matching retries reuse the recorded result;
+uncertain results retain their durable claim and require reconciliation.
+
+Lock order is checkout -> order -> attempt, compatible with existing callback and
+expiry paths. The service receipt writer locks only the attempt. Public guardian
+wrappers stay invokers; private definers independently check identity, guardian
+membership, ownership, relationship, state and wall-clock expiry. Service-only
+receipt attestation prevents guardians from inventing provider references.
+No new generic client UPDATE or paid/entitlement capability is introduced.
+See [the focused handoff report](docs/audits/2026-09-26-provider-handoff-repair.md)
+for current verification/deployment status and reconciliation steps.
+
+Hosted leaked-password protection is enabled per September 26, 2026 Work
+verification supplied by PRIMARY CHAT. Earlier Auth access limitations above are
+historical; Codex does not change Auth settings in this package. The separate
+platform-owner default-ACL support question remains pending and nonblocking.

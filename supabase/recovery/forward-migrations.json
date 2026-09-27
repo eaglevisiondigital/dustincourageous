@@ -20,6 +20,16 @@
       "statements": 1,
       "byte_equal": true,
       "treatment": "new approved guarded checkout creation repair; no historical replay or history repair"
+    },
+    {
+      "version": "20260927030254",
+      "name": "secure_checkout_provider_handoff",
+      "root_file": "supabase/migrations/20260927030254_secure_checkout_provider_handoff.sql",
+      "recorded_sql_file": "supabase/recovery/forward/20260927030254_secure_checkout_provider_handoff.sql",
+      "sql_sha256": "7885b1561b5e890928805ccd8ed0e03f51a3185944078d960b9eef10a38a1583",
+      "statements": 1,
+      "byte_equal": true,
+      "treatment": "new approved provider-handoff claim/receipt/finalization repair; no historical replay or history repair"
     }
   ]
 }

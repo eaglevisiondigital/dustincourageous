@@ -8,7 +8,7 @@
 - Read CURRENT_BUILD_STATE.md, ARCHITECTURE.md, SECURITY_MODEL.md and DECISIONS.md before changes. Also read club-app/BUILD_HANDOFF.md, club-app/LAUNCH_MILESTONES.md, club-app/DIGITAL_BOOK_READER.md and club-app/ALPHA_VERIFICATION.md for the relevant work.
 - Inspect actual code, migrations, database state, tests and configuration. Historical test counts and migration filenames do not prove current deployment state.
 - The September 26 baseline found substantial completed implementation. Do not rebuild the backend or repeat completed batches.
-- The next major package requires Chat review of docs/audits/2026-09-26-privilege-hardening.md. Work-led signed-in/browser/device acceptance is the intended next phase.
+- The next major package requires Chat review of docs/audits/2026-09-26-provider-handoff-repair.md. Work-led signed-in/browser/device acceptance through the safe pre-provider boundary is the intended next phase.
 - The focused security repair and subsequent recovery package were authorized and completed. Read docs/audits/2026-09-26-security-repair.md, docs/audits/2026-09-26-recovery.md, CURRENT_BUILD_STATE.md and docs/recovery/RECOVERY_RUNBOOK.md before continuing; do not restart either completed implementation.
 
 ## Division of responsibility
@@ -54,8 +54,8 @@ Read docs/security/CLIENT_PRIVILEGE_MATRIX.md and the current hardening report.
 Migration 20260927013941 is applied; do not replay it. Existing objects use narrow
 client grants. New postgres objects have no implicit client access: grant only
 reviewed capabilities, including explicit test-helper EXECUTE where needed.
-All 40 historical SQL records stay unchanged; two exact forward records live
-in supabase/recovery/forward (42 live / 26 root files). Do not alter the frozen
+All 40 historical SQL records stay unchanged; three exact forward records live
+in supabase/recovery/forward (43 live / 27 root files). Do not alter the frozen
 history map to suggest the old chronology gaps vanished.
 
 The supabase_admin default-ACL support question remains pending; do not treat it as fixed.
@@ -64,7 +64,10 @@ supplied by PRIMARY CHAT. Do not alter Auth configuration; see docs/security/AUT
 Checkout creation is repaired by migration 20260927022208; do not replay it.
 Read docs/audits/2026-09-26-checkout-repair.md before commerce work. Preserve the
 public invoker/private guarded creation boundary, exclusive reservation locks,
-server pricing and unchanged existing ACLs. The separate provider-handoff RPC
-is verified blocked by its UPDATE-policy boundary; Chat must scope that repair.
+server pricing and unchanged existing ACLs. Provider handoff is repaired by
+migration 20260927030254 and commerce-checkout v4; do not replay it. Read the
+handoff repair report and preserve claim/receipt/finalization, one dispatch per
+checkout, service-only receipts and operator reconciliation after uncertainty.
 No provider activation or paid-checkout readiness is approved. Recovery now runs
-13 SQL suites, PIN/checkout concurrency and 75 local Auth/PostgREST checks.
+14 SQL suites, PIN/checkout/handoff concurrency and 94 local Auth/PostgREST checks;
+296 app tests and production build pass.

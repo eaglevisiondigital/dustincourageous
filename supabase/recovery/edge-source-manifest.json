@@ -102,13 +102,17 @@
   },
   {
     "slug": "commerce-checkout",
-    "version": 3,
+    "version": 4,
     "verify_jwt": true,
     "initial_classification": "tracked and exact-match",
     "files": [
       {
         "path": "supabase/functions/commerce-checkout/index.ts",
-        "sha256": "d8718135b271bc9b099b590f807b0ec7d7a81a3ec3209f56068d4f26bfbe92be"
+        "sha256": "c79ab1a537aa799728427b760183ba22ce11d1f111a146abd5ec68f41fbca699"
+      },
+      {
+        "path": "supabase/functions/commerce-checkout/handoff.ts",
+        "sha256": "fd7e601577a9eb8dab5485840624cb4aedacc4f8173babffa3fede278daee778"
       }
     ],
     "environment_names": [
@@ -118,7 +122,8 @@
       "SUPABASE_PUBLISHABLE_KEYS",
       "SUPABASE_SECRET_KEYS",
       "SUPABASE_URL"
-    ]
+    ],
+    "current_classification": "approved handoff forward repair; deployed sources verified byte-exact"
   },
   {
     "slug": "commerce-payment-webhook",

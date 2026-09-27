@@ -84,3 +84,23 @@ provider-handoff authorization defect is returned to Chat for a subsequent scope
 package. Existing separate-draft repeated-request semantics and payment-counted
 promo redemptions are retained, not new product decisions. See the
 [checkout report](docs/audits/2026-09-26-checkout-repair.md).
+
+## September 26 approved bounded provider-handoff repair
+
+PRIMARY CHAT authorized correcting the handoff permission boundary and the unsafe
+adapter-before-persistence sequence, including only the minimal claim/retry state
+needed for a recoverable external handoff. The implementation keeps public order
+and checkout states and the existing finalization signature. A private one-attempt
+record, guardian claim/finalization and service-only receipt attestation provide
+that boundary without generic client updates.
+
+After uncertainty, the same checkout must not automatically dispatch the adapter
+again. Operators reconcile using the durable attempt/checkout correlation key;
+a recorded successful receipt supports local finalization retry. No automatic
+refund, cancellation, provider selection or global payment semantics are invented.
+Provider contract/sandbox acceptance and live activation remain separate approvals.
+
+PRIMARY CHAT also supplies external September 26 Work verification that leaked-
+password protection is enabled and its warning cleared. Supabase Support's default-
+ACL question remains pending and does not block Work's acceptance pass. These facts
+supersede the earlier unresolved Auth configuration notes, not historical evidence.
