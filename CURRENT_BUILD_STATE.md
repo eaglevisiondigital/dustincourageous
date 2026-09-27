@@ -1,5 +1,27 @@
 # Verified build state
 
+## Relationship-aware Parent / Guardian terminology
+
+Verified code checkpoint: `cc26d9b789f825a28dac3779c3008dca86408823`.
+The adult account's saved `family_relationship` now drives user-facing family
+terminology across onboarding, PIN setup/unlock, approvals, privacy, rewards,
+digital books, activities, challenge submission and family settings. Parent
+accounts see Parent/parent wording; Guardian accounts see Guardian/guardian.
+Before selection, signup may use Parent or Guardian. Multi-family staff/admin
+copy uses neutral family/adult terminology.
+
+This remains presentation-only: existing database roles, RPC names, internal
+guardian/parent identifiers and authorization logic are unchanged. Changing the
+relationship in Adult Account settings updates Auth metadata and the existing
+same-user `USER_UPDATED` session path refreshes visible wording without replacing
+the family workspace.
+
+Regression coverage adds three family-display vocabulary tests; application test
+count is now 299. Typecheck/build, regression tests, Edge syntax checks and the
+full isolated recovery/Auth/PostgREST CI passed. Netlify reported the deploy
+preview ready for the tested commit. No schema, RLS, payment/provider, content,
+main-branch or production-data change is part of this UX batch.
+
 ## Completed provider-handoff repair
 
 Starting at `29b3d29`, tested implementation `fabf9b1` is deployed to the dedicated
