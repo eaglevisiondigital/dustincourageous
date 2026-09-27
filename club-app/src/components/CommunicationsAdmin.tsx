@@ -347,7 +347,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
     setCampaignName("");
     setCampaignKey("");
     setScheduledAt(localDateTimeValue());
-    setMessage("Guardian campaign scheduled. The dispatcher checks due campaigns every five minutes.");
+    setMessage("Family campaign scheduled. The dispatcher checks due campaigns every five minutes.");
     await load();
     await previewAudience();
   }
@@ -444,7 +444,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
 
       <section className="communications-hero">
         <div>
-          <p className="eyebrow gold">Guardian Communications</p>
+          <p className="eyebrow gold">Family Communications</p>
           <h2>In-app, email queue & push queue</h2>
           <p>
             Campaigns are sent to guardian accounts only. Message templates must pass DC Governance before they can be scheduled.
@@ -452,7 +452,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
         </div>
         <div className="communications-audience">
           <strong>{audienceCount ?? "–"}</strong>
-          <span>guardian accounts in current audience</span>
+          <span>family adult accounts in current audience</span>
         </div>
       </section>
 
@@ -582,7 +582,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
               </article>
             ))}
             {!templates.length && (
-              <p className="muted">No guardian message templates yet.</p>
+              <p className="muted">No family message templates yet.</p>
             )}
           </div>
         </section>
@@ -717,7 +717,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
                   />
                   Push queue
                 </label>
-                <small>In-app is always included. Each source event/challenge can trigger only once per guardian per rule.</small>
+                <small>In-app is always included. Each source event/challenge can trigger only once per adult account per rule.</small>
               </div>
 
               <button className="secondary-button full" disabled={working === "reminder"}>
@@ -925,7 +925,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
 
               <div className="communications-preview full">
                 <strong>{audienceCount ?? 0}</strong>
-                <span>guardian account{audienceCount === 1 ? "" : "s"} currently match this audience</span>
+                <span>family adult account{audienceCount === 1 ? "" : "s"} currently match this audience</span>
               </div>
 
               <button
@@ -988,7 +988,7 @@ export function CommunicationsAdmin({ role }: { role: string }) {
               );
             })}
             {!campaigns.length && (
-              <p className="muted">No guardian campaigns have been scheduled.</p>
+              <p className="muted">No family campaigns have been scheduled.</p>
             )}
           </div>
         </section>
