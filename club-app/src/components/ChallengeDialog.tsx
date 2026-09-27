@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLabel, familyRoleLower } from "../lib/familyDisplay";
 import { saveChallengeCompletion } from "../lib/challengeProgress";
 import { FamilyChallengeActivity } from "./FamilyChallengeActivity";
 import { ModalDialog } from "./ModalDialog";
@@ -26,15 +27,19 @@ export function ChallengeDialog({
   challenge,
   childId,
   family,
+  relationship,
   onClose,
   onCompleted
 }: {
   challenge: Challenge;
   childId: string;
   family?: {householdId:string;children:{id:string;display_name:string}[]};
+  relationship?: unknown;
   onClose: () => void;
   onCompleted: () => Promise<void>;
 }) {
+  const roleLabel = familyRoleLabel(relationship);
+  const roleLower = familyRoleLower(relationship);
   const [familyMode,setFamilyMode] = useState(false);
   const [steps, setSteps] = useState<Step[]>([]);
   const [progressId, setProgressId] = useState<string | null>(null);
@@ -290,8 +295,8 @@ export function ChallengeDialog({
                 </div>
               ) : status === "pending_parent" ? (
                 <div className="success-banner pending">
-                  <strong>Sent to your guardian!</strong>
-                  <span>Your required steps are finished. XP will be awarded after guardian approval.</span>
+                  <strong>Sent to your {roleLower}!</strong>
+                  <span>Your required steps are finished. XP will be awarded after {roleLower} approval.</span>
                 </div>
               ) : (
                 <button className="primary-button" type="button" disabled={working} onClick={() => void completeChallenge()}>
@@ -300,7 +305,7 @@ export function ChallengeDialog({
                       ? "Submitting..."
                       : "Completing..."
                     : challenge.parent_approval_required
-                      ? "Submit to guardian"
+                      ? `Submit to ${roleLower}`
                       : "Complete challenge"}
                 </button>
               )}
