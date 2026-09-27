@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { saveNotificationPreferences } from "../lib/familyActions";
 import { revokeHouseholdInvite, saveHouseholdSettings } from "../lib/householdSettings";
 import { FamilyRelationshipSettings } from "./FamilyRelationshipSettings";
+import { familyRoleLabel, familyRoleLower } from "../lib/familyDisplay";
 
 type Plan = {
   id: string;
@@ -93,6 +94,8 @@ export function FamilySettings({
   timezone: string;
   onHouseholdUpdated: () => Promise<void>;
 }) {
+  const roleLabel = familyRoleLabel(user.user_metadata?.family_relationship);
+  const roleLower = familyRoleLower(user.user_metadata?.family_relationship);
   const [tab, setTab] = useState<"membership"|"notifications"|"household"|"security">("membership");
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -254,14 +257,14 @@ export function FamilySettings({
   async function savePin(event:FormEvent){
     event.preventDefault();setMessage("");
     if(preferenceBusy.current||working)return;
-    if(!/^\d{4,6}$/.test(pin)) return setMessage("Choose a 4 to 6 digit guardian PIN.");
+    if(!/^\d{4,6}$/.test(pin)) return setMessage(`Choose a 4 to 6 digit ${roleLower} PIN.`);
     if(pin!==confirmPin) return setMessage("The PINs do not match.");
     preferenceBusy.current=true;setWorking(true);
     try {
     const {error}=await supabase.rpc("set_guardian_pin",{p_household_id:householdId,p_pin:pin});
     if(error)throw error;
     setPin("");setConfirmPin("");
-    setMessage("Guardian PIN updated.");
+    setMessage(`${roleLabel} PIN updated.`);
     } catch {
       setMessage("The PIN update could not be confirmed. Try again before locking the device into Kid View.");
     } finally {preferenceBusy.current=false;setWorking(false);}
@@ -334,7 +337,7 @@ export function FamilySettings({
   return (
     <section className="family-settings">
       <nav className="family-settings-tabs">
-        {[["membership","Membership"],["notifications","Notifications"],["household","Household"],["security","Guardian PIN"]].map(([key,label])=>(
+        {[["membership","Membership"],["notifications","Notifications"],["household","Household"],["security",`${roleLabel} PIN`]].map(([key,label])=>(
           <button key={key} disabled={working} className={tab===key?"active":""} onClick={()=>setTab(key as typeof tab)}>{label}</button>
         ))}
       </nav>
@@ -388,7 +391,7 @@ export function FamilySettings({
 
       {tab==="notifications"&&(
         <section className="settings-card">
-          <p className="eyebrow red">Parent Notifications</p>
+          <p className="eyebrow red">{roleLabel} Notifications</p>
           <h2>Choose what reaches you</h2>
           <div className="preference-list">
             {[
@@ -521,13 +524,13 @@ export function FamilySettings({
 
       {tab==="security"&&(
         <section className="settings-card">
-          <p className="eyebrow red">Guardian Security</p>
-          <h2>Change Guardian PIN</h2>
-          <p className="muted">The PIN protects Family Hub and parent controls when the device is handed to a child.</p>
+          <p className="eyebrow red">{roleLabel} Security</p>
+          <h2>Change {roleLabel} PIN</h2>
+          <p className="muted">The PIN protects Family Hub and {roleLower} controls when the device is handed to a child.</p>
           <form className="form-stack" onSubmit={savePin}>
             <label>New PIN<input disabled={working} required type="password" inputMode="numeric" maxLength={6} value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
             <label>Confirm PIN<input disabled={working} required type="password" inputMode="numeric" maxLength={6} value={confirmPin} onChange={e=>setConfirmPin(e.target.value.replace(/\D/g,"").slice(0,6))}/></label>
-            <button className="primary-button" disabled={working}>Update Guardian PIN</button>
+            <button className="primary-button" disabled={working}>Update {roleLabel} PIN</button>
           </form>
         </section>
       )}
