@@ -1,4 +1,4 @@
-import { familyControlLabel } from "../lib/familyDisplay";
+import { familyControlLabel, familyRoleLabel } from "../lib/familyDisplay";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
@@ -52,6 +52,7 @@ export function PrivacyDataControls({
   user: User;
   onHouseholdUpdated: () => Promise<void>;
 }) {
+  const roleLabel = familyRoleLabel(user.user_metadata?.family_relationship);
   const [children,setChildren]=useState<Child[]>([]);
   const [policies,setPolicies]=useState<ConsentPolicy[]>([]);
   const [consents,setConsents]=useState<Consent[]>([]);
@@ -270,7 +271,7 @@ export function PrivacyDataControls({
     <section className="privacy-controls-card">
       <div className="section-heading">
         <div>
-          <p className="eyebrow red">Guardian Privacy</p>
+          <p className="eyebrow red">{roleLabel} Privacy</p>
           <h2>Data & Consent Controls</h2>
         </div>
         <span className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</span>
