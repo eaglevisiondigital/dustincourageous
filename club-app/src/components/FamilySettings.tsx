@@ -483,7 +483,7 @@ export function FamilySettings({
             <form className="invite-form" onSubmit={createInvitation}>
               <label>
                 Adult Email
-                <input disabled={working} required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="parent@example.com"/>
+                <input disabled={working} required type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="adult@example.com"/>
               </label>
               <label>
                 Role
