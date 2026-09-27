@@ -1,16 +1,26 @@
 # Verified build state
 
-## Approved checkout repair in verification
+## Completed targeted checkout creation repair
 
-Starting at `bbd0b13`, the focused checkout creation repair is implemented in
-candidate migration `20260927020843_secure_checkout_order_creation.sql`.
-A fresh native restore passes 13 SQL suites (42 new checkout checks and ten
-retained payment-lock checks), PIN/checkout concurrency, and exact catalog/ACL
-comparison. All 282 app tests, build and ten Edge syntax checks pass.
-Full Supabase Auth/PostgREST CI and hosted deployment are pending.
+Starting at `bbd0b13`, tested implementation `22d9394` repairs checkout creation.
+Migration `20260927022208_secure_checkout_order_creation.sql` is applied to
+`vrixketvinzhsfwwcqiu`. Full live metadata equals the isolated/CI-tested baseline;
+every pre-existing ACL/default/policy and all other function definitions are
+unchanged. One guarded private helper is added; 214 functions are now captured.
+
+Verified: 42 new checkout checks, ten retained payment-lock checks, 13 SQL suites,
+PIN and product/variant checkout concurrency, 75 real Auth/PostgREST checks,
+282 app tests, production build and all ten Edge syntax checks. Fresh native and
+Supabase CI restoration pass. [Implementation CI](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36288178737).
+The 40 historical records and earlier ACL forward are unchanged; live/root counts
+are 42/26, with two exact forward records and the original 12 timestamp mismatches.
+
 See [checkout repair report](docs/audits/2026-09-26-checkout-repair.md).
-The separate provider-handoff invoker/write-policy defect remains unresolved;
-provider activation and payments are outside this package.
+**Checkout creation is repaired; paid checkout remains unavailable.** The separate
+provider-handoff invoker/write-policy defect requires a Chat-scoped follow-up
+before provider integration. No provider activation, real charge, Edge deployment,
+production fixture or main merge occurred. Platform-default and Auth configuration
+actions from the preceding package remain unresolved and unchanged by this work.
 
 ## Completed preceding baseline
 

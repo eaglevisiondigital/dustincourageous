@@ -4,8 +4,10 @@
 
 - Starting development commit: `bbd0b138f5f57bd9305f8b01579f762e0ba34b90`.
 - Branch: `build/adventure-club-app`; main is not changed.
-- Candidate migration: `20260927020843_secure_checkout_order_creation.sql`.
-- Status: isolated SQL verification passed; full Supabase HTTP/CI and deployment pending.
+- Applied migration: `20260927022208_secure_checkout_order_creation.sql`.
+- Tested implementation: `22d9394dfb6ebb5b87ae319bdcfe2af497a12f5c`.
+- Status: deployed; full live metadata matches the tested baseline. Final documentation/recovery checkpoint is the repository HEAD returned with this report.
+- [Implementation CI](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/36288178737): passed.
 
 ## DEFECT REPRODUCED
 
@@ -87,27 +89,53 @@ provider configuration, production rows or historical SQL.
 - Retained payment-lock regression: ten checks, including valid synthetic
   callback/replay and expired/canceled/mismatched callback denial.
 - All existing SQL security suites and concurrent PIN attempts retained.
-- Full local Auth/PostgREST, application, build, Edge syntax and CI: pending.
+- 75 real local Auth/PostgREST checks (24 new checkout checks); actual Auth-issued
+  JWTs prove own checkout and Edge summary reads, foreign/anonymous denial,
+  authoritative totals, rollback, repeated-request semantics and protected writes.
+- 282 application tests; production build; syntax checks for all ten Edge functions.
+  Syntax checks are not full Deno runtime typechecking. The pre-existing >500 kB
+  bundle warning remains; no build errors.
+- Fresh native PostgreSQL 17.11 restoration and real Supabase recovery CI, including
+  exact catalog/ACL comparison before and after the SQL and HTTP suites.
 
 ## RESULTS
 
-Native isolated checkout and payment-lock tests pass. Remaining verification and
-deployment are tracked above; no payment provider or real transaction was used.
+All required verification passed and the new forward migration is deployed to
+Dustin's dedicated project. No provider, real charge, production test fixture,
+Edge deployment or main merge occurred. Checkout creation is usable through the
+intended authenticated RPC; provider handoff/paid commerce remains blocked.
 
 ## SECURITY VERIFICATION
 
-Exact before/after catalog comparison confirms that all pre-existing permissions,
+Exact before/after catalog comparison, repeated against live metadata after deployment, confirms that all pre-existing permissions,
 policies and application definitions outside the public checkout function remain
 unchanged. Raw awards, private tables, admin membership and entitlement writes
 retain their earlier protection. The new operation checks Auth and guardian
 authorization before its first protected lookup/write.
 
+The post-change security advisor returned only the existing, reviewed
+[public guardian-revocation definer warning](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
+It reported no new finding for this private helper. This response does not verify
+hosted leaked-password protection; that prior Auth action remains unconfirmed.
+
 ## RECOVERY VERIFICATION
 
-Current bootstrap contains 214 functions. Historical archive/history mapping and
-the earlier ACL forward migration remain unchanged. Fresh restore and Supabase
-CI results will be recorded after completion; this package does not repair or
-replay historical migration chronology.
+Current bootstrap contains 214 functions. Full live capture equals the tested restore,
+including every effective ACL and default. All 40 historical SQL hashes and the
+prior ACL forward hash remain unchanged. The new SQL record is byte-identical to
+its root file and forward archive. Managed apply assigned timestamp
+`20260927022208`; only this new, previously unapplied draft filename was aligned
+from CLI-created `20260927020843`. No historical filename or record was repaired.
+
+Live history now has 42 records; root migrations 26; exact forward records two.
+The 12 old timestamp mismatches remain. Bootstrap SHA-256:
+`04ce90db7642c229d09afc77ce0bdd0d553702aa1480e340f54f5ad86ca8674b`.
+Fresh native and full Supabase-platform restoration pass.
+
+Rollback requires a reviewed new forward change (for example, fail-closed removal
+of checkout creation access); do not replay old migrations or delete existing
+orders/reservations. Restoring the original function would restore its known
+failure. No data rollback or payment reversal is required by this schema change.
 
 ## UNRESOLVED COMMERCE ITEMS
 

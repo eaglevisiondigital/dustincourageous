@@ -105,3 +105,30 @@ Existing checkout is fail-closed on ambiguous order_number, reproduced under bot
 old/new ACLs; it is not accepted for payments. Existing Edge/provider/content/
 backup/real-device concerns retain their prior scope. See the
 [complete hardening report](docs/audits/2026-09-26-privilege-hardening.md).
+
+## Approved checkout creation repair
+
+`public.create_checkout_order` preserves its signature, client ACL and invoker
+status. Its private implementation is a narrow trusted mutation: it independently
+checks `auth.uid()` and active owner/parent/guardian membership before reading the
+caller's Auth email or writing an order. Client-supplied totals, price, user,
+paid state and currency never become authoritative. Authenticated users gain only
+EXECUTE on that guarded helper. Existing table/column/sequence/default/function
+ACLs, RLS and all raw award/admin/entitlement protections remain unchanged.
+
+Product/variant FOR UPDATE locks close a reproduced final-unit reservation race;
+reservation counts include other households under owner execution without
+returning their records. SQL NULL/empty carts fail. Exceptions roll back order,
+line, session and reservation writes. No creation path marks paid or grants
+entitlements, even when an existing promo yields a zero total.
+
+42 actual-role checkout checks, two independent inventory-contention cases and
+the retained ten payment-lock checks cover these boundaries. The new private
+helper checks authorization even when called directly; anonymous EXECUTE and
+ordinary Auth-table SELECT remain denied. These supplement the existing suites,
+not replace them. All fixtures and synthetic payment confirmations are isolated.
+
+The separate provider-handoff invoker RPC fails on a fresh owned session because
+its row-lock/write path lacks an UPDATE policy. Its repair/provider activation is
+not part of this creation-only change. Current verification/deployment evidence
+is in [the checkout report](docs/audits/2026-09-26-checkout-repair.md).

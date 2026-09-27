@@ -69,3 +69,18 @@ The existing checkout SQL error was reproduced before/after ACL changes; its rep
 requires Chat-scoped follow-up. No broad Edge/provider redesign or legacy endpoint
 retirement was included. The user directs Work-led signed-in/browser/device
 acceptance next, after Chat reviews this report.
+
+## September 26 approved targeted checkout repair
+
+The user authorized repair of the existing create_checkout_order ambiguity and
+its identity/write boundary, preserving pricing rules, prior security work and
+recovery. A public invoker plus one explicitly guarded private checkout operation
+implements that authorization. The public API and every pre-existing ACL/policy
+remain unchanged. A reproduced same-function inventory race requires exclusive
+product/variant row locks; SQL NULL carts obey the existing nonempty-cart rule.
+
+This is neither provider selection/activation nor payment acceptance. The separate
+provider-handoff authorization defect is returned to Chat for a subsequent scoped
+package. Existing separate-draft repeated-request semantics and payment-counted
+promo redemptions are retained, not new product decisions. See the
+[checkout report](docs/audits/2026-09-26-checkout-repair.md).

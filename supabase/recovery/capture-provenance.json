@@ -1,13 +1,13 @@
 {
   "project_ref": "vrixketvinzhsfwwcqiu",
-  "captured_date": "2026-09-26 (America/Chicago); live migration 2026-09-27 01:39:41 UTC",
+  "captured_date": "2026-09-26 (America/Chicago); live checkout migration 2026-09-27 02:22:08 UTC",
   "source_checkpoint_before_recovery": "7f2f7a102fdc757635a8cbb9db40e205f641f54c",
   "production_postgresql_version": "17.6",
   "counts": {
     "public_tables": 112,
     "private_tables": 8,
     "views": 25,
-    "functions": 213,
+    "functions": 214,
     "triggers": 166,
     "constraints": 631,
     "indexes": 432,
@@ -15,24 +15,24 @@
     "storage_policies": 7,
     "identity_sequences": 4,
     "buckets": 4,
-    "live_migration_records": 41,
-    "root_migration_files": 25,
+    "live_migration_records": 42,
+    "root_migration_files": 26,
     "deployed_functions": 10,
     "previously_missing_edge_directories": 6,
     "cron_jobs": 5,
     "historical_archive_records": 40,
-    "new_forward_records": 1
+    "new_forward_records": 2
   },
   "sha256": {
-    "catalog.json": "dbebd6d4ac9f8e0504230f091792dfb34f4ecf99ffc7c2c93ee95287b403647b",
+    "catalog.json": "362ad8ff82fdfb5525324f2f447b009ad356442b7b382c5542c37a01fc99d234",
     "catalog-query.sql": "88517785c5e0ed45157ffead48f658e598b72cc255e5b5fbadc3226c41cc2600",
-    "bootstrap.sql": "658bdffe0db610c4cc5dc42ac13088c091d10e145cb374523885ae48a7d2a5dd",
+    "bootstrap.sql": "04ce90db7642c229d09afc77ce0bdd0d553702aa1480e340f54f5ad86ca8674b",
     "platform.json": "f2d93da5288ed7ca844cdc7ab03ed32440690480aed67a87147041c519ddf9fc",
     "history-map.json": "764431ce535744d7b21a69de24d925a5a0e10b7feed90f8300500312cb30a033",
     "edge-source-manifest.json": "9619f6cd2f984ab0849185e4787a8956bbef8a4975035ac62b95bc9b3e14aff5",
-    "forward-migrations.json": "2b6a99d9f32fa2663707f48b23b9ff9ffb33b14f561d50289c48ff2771de7cdd"
+    "forward-migrations.json": "208c57eb217bccd2923a8fa4c448174b441389ea495f28c0a5f9ee759f0c9e1b"
   },
-  "live_end_check": "Read-only full live catalog comparison equals the tested new ACL baseline after migration 20260927013941. Application rows, cron, Storage data, providers and Auth configuration received no writes.",
+  "live_end_check": "Read-only full live catalog equals the isolated/CI-tested checkout baseline after migration 20260927022208. Existing ACLs/defaults/policies and all prior definitions except public.create_checkout_order are unchanged. No production fixtures, provider, cron, Storage, Auth or application-row writes.",
   "scope": "Schema and deployed source only; no family/Auth rows, files or secret values. Synthetic test data is not production reference data.",
   "current_acl_source_checkpoint": "8ec568fe4bc3859bc003e202fe1c0a7220d40fb8",
   "previous_capture": "../security/legacy-capture-provenance.json",
@@ -40,6 +40,8 @@
     "supabase_admin default ACLs require supported platform action",
     "Leaked-password protection remains disabled; Auth config connector unavailable and dashboard requires sign-in"
   ],
-  "verified_live_catalog_canonical_sha256": "88dcde313b594047ebe1316dafe161894032c4adc93f62ae060dd4896810014a",
-  "historical_end_check": "All 40 recorded historical SQL SHA-256 values unchanged after forward migration; new record byte-equal to root and forward archive."
+  "verified_live_catalog_canonical_sha256": "d475a5073c41ca5c9b26b4ca9575abdf53b9fb336e3a4efa978d2e23e6d62e9b",
+  "historical_end_check": "All 40 historical records and the earlier ACL forward SQL SHA-256 values unchanged; new checkout record byte-equal to root and forward archive.",
+  "current_checkout_source_checkpoint": "22d9394dfb6ebb5b87ae319bdcfe2af497a12f5c",
+  "canonical_hash_encoding": "UTF-8 canonical(catalog) JSON, sorted keys, compact separators"
 }

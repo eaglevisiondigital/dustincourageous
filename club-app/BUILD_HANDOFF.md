@@ -517,3 +517,18 @@ not approved release assets.
 User authorizes continued development and development-branch pushes. Keep
 batches concrete, verify once against the relevant risks, and report what
 changed and what remains untested. No live main merge is authorized.
+
+
+## September 26 targeted checkout creation repair
+
+The approved creation-only package preserves the UI/Edge API and provider-readiness
+guard. A guarded private database operation now authorizes the Auth/guardian-bound,
+server-priced draft order and reservations; explicit order-number qualification
+fixes the ambiguity and exclusive stock locks prevent the reproduced double
+reservation. See [current report](../docs/audits/2026-09-26-checkout-repair.md) for
+verification and deployment state.
+
+Paid checkout must remain disabled. The separate begin_checkout_provider_handoff
+invoker RPC is verified blocked by its checkout_sessions UPDATE-policy boundary;
+Chat must scope that repair before provider integration. No adapter configuration,
+live charge, provider choice or paid entitlement activation occurs here.

@@ -46,7 +46,7 @@ See the audit inventory for all ten deployed functions and five scheduled jobs.
 
 The separately authorized recovery package now supplies `supabase/recovery/` and
 all ten deployed Edge sources. The current-state bootstrap represents 120 tables,
-25 views, 213 functions, triggers, indexes, constraints, RLS, ACLs and bucket
+25 views, 214 functions, triggers, indexes, constraints, RLS, ACLs and bucket
 definitions. A full catalog comparison verifies the isolated reconstruction.
 Historical root migrations remain unchanged: 40 recorded live migrations map to
 24 root files, with 12 timestamp differences. Exact SQL for all 40 is archived
@@ -82,3 +82,21 @@ Remaining boundaries are explicit: platform-owned defaults need supported action
 leaked-password protection needs dashboard/Management API access, and the unchanged
 checkout RPC has a pre-existing ambiguous order_number failure. Work-led signed-in
 acceptance is next after Chat review; this is not a provider or launch package.
+
+## Approved checkout creation boundary
+
+The new creation repair keeps `public.create_checkout_order` as the browser-facing
+invoker API and moves the existing server-priced transaction into
+`private.create_checkout_order_impl`. That postgres-owned, empty-search-path
+operation explicitly requires Auth UID and active household guardian management.
+It reads only the caller's Auth email and writes a draft order, server-selected
+lines, a created session and expiring reservations. No table grants or RLS policies
+are widened. Product/variant FOR UPDATE locks serialize inventory reservations;
+existing promo locking and pricing formulas remain.
+
+The application still blocks checkout when no provider is configured. Independent
+repeated RPC calls produce distinct drafts; the UI guards concurrent clicks and
+uncertain retries. This package does not add server idempotency keys. The separate
+`begin_checkout_provider_handoff` invoker/write-policy defect is verified and
+remains a prerequisite to provider activation. See the
+[creation repair report](docs/audits/2026-09-26-checkout-repair.md).

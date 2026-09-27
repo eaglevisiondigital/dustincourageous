@@ -20,7 +20,7 @@ recovery. A successful synthetic test does not authorize production cutover.
 | `test-seed.sql` | Synthetic consent policy, entitlement and reference book for isolated tests only |
 
 The current-state snapshot includes 112 public tables with RLS, eight private
-tables, 25 invoker views, 213 functions, 298 public and seven Storage policies,
+tables, 25 invoker views, 214 functions, 298 public and seven Storage policies,
 166 application/Auth triggers, four identity sequences, constraints, indexes,
 defaults, owners and effective ACLs. Sequence definitions are preserved; production
 sequence positions are data-backup responsibilities. No custom enums/domains,
@@ -179,7 +179,7 @@ evidence. Compare live metadata before any future deployment. The optional
 offline `forensics.py` uses `pglast==7.11` to regenerate the historical mapping;
 ordinary restore/CI needs only Python's standard library.
 
-## Current ACL baseline after approved hardening
+## Preserved ACL baseline after approved hardening
 
 Migration `20260927013941` is live and the full post-deployment catalog equals the
 tested least-privilege baseline. The original 40-record archive/map is historical
@@ -193,7 +193,7 @@ rendered without IN SCHEMA. Other unsupported global defaults still fail the
 feature gate. All effective ACLs, including the three unresolved platform-owner
 defaults, remain compared. Do not drop default ACLs or privileges from the verifier.
 
-The gate has 11 SQL suites plus concurrency. CI additionally runs 51 actual local
+The current gate has 13 SQL suites plus PIN/checkout concurrency. CI additionally runs 75 actual local
 Auth/PostgREST checks and re-verifies the catalog after synthetic HTTP fixtures.
 The separate local Auth config autoconfirms fixture signup so no email is sent.
 Credentials stay in memory; the fixed disposable container is removed at teardown.
@@ -207,4 +207,16 @@ and transaction are mandatory. Use read-only metadata comparison on production.
 Historical provenance is preserved in `supabase/security/legacy-capture-provenance.json`
 and commit `60e151c`. Current provenance records the applied forward migration and
 post-deployment capture. See the [hardening report](../audits/2026-09-26-privilege-hardening.md)
-for evidence, remaining platform/Auth actions and the pre-existing checkout blocker.
+for historical evidence and remaining platform/Auth actions. The checkout creation blocker is subsequently repaired below.
+
+
+## Current checkout recovery baseline
+
+Migration `20260927022208` adds the guarded checkout implementation and replaces
+only its public wrapper. Current live/root counts are 42/26 with two exact forward
+records. The original 40 historical records, previous ACL forward SQL and 12 old
+timestamp mismatches are unchanged. The captured 214-function catalog and rebuilt
+bootstrap exactly match the deployed result and pass native and full Supabase CI.
+The new creator's stock locks are verified with independent guardian transactions;
+no production data is used in fixtures. See the
+[checkout report](../audits/2026-09-26-checkout-repair.md).

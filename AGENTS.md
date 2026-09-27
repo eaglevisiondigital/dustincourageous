@@ -54,11 +54,16 @@ Read docs/security/CLIENT_PRIVILEGE_MATRIX.md and the current hardening report.
 Migration 20260927013941 is applied; do not replay it. Existing objects use narrow
 client grants. New postgres objects have no implicit client access: grant only
 reviewed capabilities, including explicit test-helper EXECUTE where needed.
-All 40 historical SQL records stay unchanged; one new exact forward record lives
-in supabase/recovery/forward (41 live / 25 root files). Do not alter the frozen
+All 40 historical SQL records stay unchanged; two exact forward records live
+in supabase/recovery/forward (42 live / 26 root files). Do not alter the frozen
 history map to suggest the old chronology gaps vanished.
 
 Do not treat supabase_admin defaults or leaked-password protection as fixed.
-Their precise external actions are documented in docs/security. The pre-existing
-checkout order_number ambiguity is verified under old and new grants; do not
-claim payment readiness. Preserve all three limitations in future handoffs.
+Their precise external actions are documented in docs/security.
+Checkout creation is repaired by migration 20260927022208; do not replay it.
+Read docs/audits/2026-09-26-checkout-repair.md before commerce work. Preserve the
+public invoker/private guarded creation boundary, exclusive reservation locks,
+server pricing and unchanged existing ACLs. The separate provider-handoff RPC
+is verified blocked by its UPDATE-policy boundary; Chat must scope that repair.
+No provider activation or paid-checkout readiness is approved. Recovery now runs
+13 SQL suites, PIN/checkout concurrency and 75 local Auth/PostgREST checks.
