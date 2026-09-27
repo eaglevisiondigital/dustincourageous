@@ -102,7 +102,7 @@ function OpenChallenges({ householdId, children, childKey, working, onOpen }: { 
     <div className="section-heading"><h3>In Progress & Awaiting Approval</h3>
       <button type="button" className="text-button" disabled={loading} onClick={() => setRefresh(value => value + 1)}>Refresh Participation</button>
     </div>
-    <p className="muted">Current challenge status, including saved participation. Review pending completions in Guardian Approvals above.</p>
+    <p className="muted">Current challenge status, including saved participation. Review pending completions in the approvals section above.</p>
     {loading && <p role="status">Refreshing participation...</p>}
     {error && <p role="alert">Participation could not be refreshed. Previously displayed statuses may be out of date. Use Refresh Participation to retry.</p>}
     {!loading && !error && !items.length && <p className="muted">No challenges in progress or awaiting approval for this selection.</p>}
