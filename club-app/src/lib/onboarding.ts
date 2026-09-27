@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../types/database";
 
 export function childProfileInput(name: string, year: string, consent: boolean, currentYear = new Date().getFullYear()) {
-  if (!consent) throw new Error("Please confirm guardian approval for this child to participate in Adventure Club.");
+  if (!consent) throw new Error("Please confirm your approval for this child to participate in Adventure Club.");
   const displayName = name.trim();
   if (!displayName) throw new Error("Enter your child's first name or nickname.");
   const value = year.trim();
@@ -13,7 +13,7 @@ export function childProfileInput(name: string, year: string, consent: boolean, 
 }
 
 export function householdInput(name: string, consent: boolean, timezone: string) {
-  if (!consent) throw new Error("Please confirm the Guardian Account Terms to create your family hub.");
+  if (!consent) throw new Error("Please confirm the Account Terms to create your family hub.");
   if (!name.trim()) throw new Error("Enter a name for your family hub.");
   return { p_name: name.trim(), p_timezone: timezone };
 }
@@ -44,11 +44,11 @@ export function createOnboardingAttempt() {
 }
 
 export async function saveOnboardingPin(client: SupabaseClient<Database>, householdId: string, pin: string, confirmation: string) {
-  if (!/^\d{4,6}$/.test(pin)) throw new Error("Choose a 4 to 6 digit guardian PIN.");
+  if (!/^\d{4,6}$/.test(pin)) throw new Error("Choose a 4 to 6 digit PIN.");
   if (pin !== confirmation) throw new Error("The PINs do not match.");
   const { error } = await client.rpc("set_guardian_pin", { p_household_id: householdId, p_pin: pin });
   if (error) throw error;
   const { data, error: checkError } = await client.rpc("guardian_pin_status", { p_household_id: householdId });
   if (checkError) throw checkError;
-  if (data?.[0]?.configured !== true) throw new Error("Your guardian PIN setup could not be confirmed. Please try again.");
+  if (data?.[0]?.configured !== true) throw new Error("Your PIN setup could not be confirmed. Please try again.");
 }
