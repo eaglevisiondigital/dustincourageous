@@ -4,6 +4,20 @@
 -- This verifies database-role authorization, NOT Auth login or Storage HTTP.
 begin;
 set local statement_timeout = '30s';
+-- This predicate is now owner-only; production get_digital_book reaches it under
+-- a guarded definer. Exercise its claim/household logic separately, without
+-- restoring a client grant on the application helper.
+do $$ begin
+ if has_function_privilege('authenticated','private.child_has_digital_book_access(uuid,uuid)','EXECUTE') then
+  raise exception 'Internal digital predicate unexpectedly client executable';
+ end if;
+end $$;
+create function pg_temp.digital_access(child_id uuid,book_id uuid) returns boolean
+language sql security definer set search_path='' as $$
+ select private.child_has_digital_book_access(child_id,book_id);
+$$;
+grant execute on function pg_temp.digital_access(uuid,uuid) to authenticated;
+
 create temporary table dc_rls_fixture as select
   gen_random_uuid() as user_a, gen_random_uuid() as user_b,
   gen_random_uuid() as home_a, gen_random_uuid() as home_b,
@@ -101,7 +115,7 @@ begin
   end;
   insert into dc_rls_results values ('Direct bookmark writes denied; protected RPC required');
 
-  if private.child_has_digital_book_access(f.child_a,f.book_id) or private.child_has_digital_book_access(f.child_b,f.book_id) then
+  if pg_temp.digital_access(f.child_a,f.book_id) or pg_temp.digital_access(f.child_b,f.book_id) then
     raise exception 'Another household digital entitlement leaked';
   end if;
   insert into dc_rls_results values ('Free household does not inherit another family digital access');
@@ -114,8 +128,8 @@ insert into public.household_members(household_id,user_id,role,status)
 set local role authenticated;
 do $$ declare f record; begin
   select * into f from dc_rls_fixture;
-  if private.child_has_digital_book_access(f.child_a,f.book_id) then raise exception 'Dual-household entitlement leaked to free child'; end if;
-  if not private.child_has_digital_book_access(f.child_b,f.book_id) then raise exception 'Paid household child access missing'; end if;
+  if pg_temp.digital_access(f.child_a,f.book_id) then raise exception 'Dual-household entitlement leaked to free child'; end if;
+  if not pg_temp.digital_access(f.child_b,f.book_id) then raise exception 'Paid household child access missing'; end if;
   insert into dc_rls_results values ('Dual-household guardian digital access follows the selected child');
 end $$;
 reset role;
@@ -125,7 +139,7 @@ update public.household_entitlement_grants set ends_at=now()-interval '1 minute'
 set local role authenticated;
 do $$ declare f record; begin
   select * into f from dc_rls_fixture;
-  if private.child_has_digital_book_access(f.child_b,f.book_id) then raise exception 'Expired digital entitlement allowed'; end if;
+  if pg_temp.digital_access(f.child_b,f.book_id) then raise exception 'Expired digital entitlement allowed'; end if;
   insert into dc_rls_results values ('Expired digital entitlement denied');
 end $$;
 reset role;

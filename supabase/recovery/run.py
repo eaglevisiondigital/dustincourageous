@@ -98,6 +98,7 @@ def main():
         'deployed_household_rls_regression.sql', 'household_onboarding_regression.sql',
         'guardian_decision_regression.sql', 'digital_book_reader_regression.sql',
         'reading_privacy_regression.sql', 'digital_book_launch_gate_regression.sql',
+        'client_privilege_regression.sql',
     ]
     for name in suites:
         print('Running ' + name, flush=True)
@@ -108,7 +109,7 @@ def main():
     # Transactional regressions must leave all application definitions unchanged.
     verify_catalog(json.loads(sql((ROOT / 'catalog-query.sql').read_text(), capture=True)), native=bool(args.native_socket))
     sql((ROOT / 'invariants.sql').read_text())
-    print('PASS: isolated restoration, 10 SQL suites, concurrency and post-test catalog verification', flush=True)
+    print('PASS: isolated restoration, 11 SQL suites, concurrency and post-test catalog verification', flush=True)
 
 
 if __name__ == '__main__':

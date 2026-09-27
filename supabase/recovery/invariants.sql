@@ -33,6 +33,18 @@ BEGIN
    AND (has_function_privilege('authenticated',p.oid,'EXECUTE') OR has_function_privilege('anon',p.oid,'EXECUTE'))) THEN
   RAISE EXCEPTION 'Raw XP/badge helper exposed to a client';
  END IF;
+ IF EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace ns ON ns.oid=c.relnamespace
+  WHERE ns.nspname IN ('public','private') AND c.relkind IN ('r','v') AND
+   (has_table_privilege('anon',c.oid,'TRUNCATE,REFERENCES,TRIGGER,MAINTAIN') OR
+    has_table_privilege('authenticated',c.oid,'TRUNCATE,REFERENCES,TRIGGER,MAINTAIN'))) THEN
+  RAISE EXCEPTION 'Dangerous client SQL privilege';
+ END IF;
+ IF EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace ns ON ns.oid=c.relnamespace
+  WHERE ns.nspname='public' AND c.relkind='v' AND
+   (has_table_privilege('anon',c.oid,'INSERT,UPDATE,DELETE') OR
+    has_table_privilege('authenticated',c.oid,'INSERT,UPDATE,DELETE'))) THEN
+  RAISE EXCEPTION 'Client write on view';
+ END IF;
  IF EXISTS (SELECT 1 FROM cron.job WHERE active) THEN
   RAISE EXCEPTION 'Recovery scheduled an active job';
  END IF;

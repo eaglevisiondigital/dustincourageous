@@ -10,6 +10,7 @@ on:
       - "supabase/migrations/**"
       - "supabase/tests/**"
       - "supabase/recovery/**"
+      - "supabase/security/**"
       - ".github/workflows/adventure-club-ci.yml"
   workflow_dispatch:
 
@@ -37,6 +38,10 @@ jobs:
           --exclude studio,postgres-meta,realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
       - name: Restore and verify database security
         run: python3 supabase/recovery/run.py --supabase --port 55432
+      - name: Verify Auth and PostgREST client compatibility
+        run: python3 supabase/tests/client_http_regression.py
+      - name: Verify schema unchanged after HTTP fixtures
+        run: python3 supabase/recovery/run.py --supabase --port 55432 --verify-only
       - name: Stop isolated Supabase platform
         if: always()
         run: npx --yes supabase@2.118.0 stop --workdir supabase/recovery/local --no-backup

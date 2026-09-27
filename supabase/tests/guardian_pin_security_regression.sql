@@ -41,6 +41,8 @@ insert into public.child_profiles(id,household_id,display_name,created_by)
 select set_config('request.jwt.claim.sub',(select a::text from dc_security_fixture),true);
 select set_config('request.jwt.claims','{}',true);
 
+-- Test helpers need explicit execution after global PUBLIC defaults are hardened.
+grant execute on function pg_temp.check(boolean,text), pg_temp.denied(text,text) to authenticated,anon;
 set local role authenticated;
 select pg_temp.check(current_user='authenticated' and not (select rolbypassrls from pg_roles where rolname=current_user),'actual authenticated role enforces RLS');
 select public.set_guardian_pin((select home_a from dc_security_fixture),'739251');

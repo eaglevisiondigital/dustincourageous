@@ -43,6 +43,8 @@ select set_config('request.jwt.claims','{}',true);
 
 reset role;
 insert into public.app_admins(user_id,role,status) select a,'super_admin','active' from dc_security_fixture;
+-- Test helpers need explicit execution after global PUBLIC defaults are hardened.
+grant execute on function pg_temp.check(boolean,text), pg_temp.denied(text,text) to authenticated,anon;
 set local role authenticated;
 create temp table dc_gate_actual as select * from public.admin_get_production_launch_gate();
 select pg_temp.check((select count(*) from dc_gate_actual)>18,'admin receives full combined launch gate');

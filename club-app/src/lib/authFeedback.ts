@@ -1,4 +1,4 @@
-type AuthProblem = { code?: string; status?: number; message?: string };
+type AuthProblem = { code?: string; status?: number; message?: string; reasons?: string[] };
 export function authIsRateLimited(error: AuthProblem): boolean {
   return error.status === 429 || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit";
 }
@@ -8,7 +8,8 @@ export function authFeedback(error: AuthProblem): string {
   if (error.code === "invalid_credentials") return "The email or password was not accepted. Check your email spelling and password, or use Forgot Password.";
   if (error.code === "same_password") return "Choose a different password from your current password.";
   if (["session_not_found", "session_expired", "refresh_token_not_found", "refresh_token_already_used"].includes(error.code ?? "")) return "Your recovery session is no longer available. Return to sign-in and use Forgot Password to request a fresh link.";
-  if (error.code === "weak_password") return "Choose a stronger password with at least 8 characters, including uppercase and lowercase letters, numbers and symbols.";
+  if (error.code === "weak_password" && error.reasons?.includes("pwned")) return "That password has appeared in a known data breach. Choose a different, unique password. A password manager can help you create one.";
+  if (error.code === "weak_password") return "Choose a longer, unique password with uppercase and lowercase letters, numbers and symbols. Avoid common or previously used passwords.";
   if (error.code === "signup_disabled" || error.code === "email_provider_disabled") return "New email accounts are temporarily unavailable. Please try again later.";
   return "We could not complete that request. Check your details and connection, then try again. If the problem continues, try again later.";
 }

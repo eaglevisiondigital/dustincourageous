@@ -4935,7 +4935,7 @@
       "identity_args": "p_days integer"
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_book_launch_gate_impl",
       "owner": "postgres",
       "schema": "private",
@@ -4944,7 +4944,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_book_release_gate_impl",
       "owner": "postgres",
       "schema": "private",
@@ -4971,7 +4971,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_membership_tier_gate_impl",
       "owner": "postgres",
       "schema": "private",
@@ -5178,7 +5178,7 @@
       "identity_args": "p_registration_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "child_can_access_adventure",
       "owner": "postgres",
       "schema": "private",
@@ -5205,7 +5205,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "child_has_digital_book_access",
       "owner": "postgres",
       "schema": "private",
@@ -5264,7 +5264,7 @@
       "owner": "postgres",
       "schema": "private",
       "comment": null,
-      "definition": "CREATE OR REPLACE FUNCTION private.dc_entity_fingerprint(p_entity_type text, p_entity_id uuid)\n RETURNS text\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_payload jsonb;\nbegin\n  v_payload := private.dc_entity_payload(p_entity_type,p_entity_id);\n  if v_payload is null then return null; end if;\n\n  if p_entity_type <> 'product' then\n    v_payload := v_payload\n      - array['created_at','updated_at','status','available_from','available_until','is_featured']::text[];\n  end if;\n\n  return encode(extensions.digest(v_payload::text,'sha256'),'hex');\nend;\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION private.dc_entity_fingerprint(p_entity_type text, p_entity_id uuid)\n RETURNS text\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\ndeclare\n  v_payload jsonb;\nbegin\n  v_payload := private.dc_entity_payload(p_entity_type,p_entity_id);\n  if v_payload is null then return null; end if;\n\n  if p_entity_type <> 'product' then\n    v_payload := v_payload\n      - array['created_at','updated_at','status','available_from','available_until','is_featured']::text[];\n  end if;\n\n  return encode(extensions.digest(v_payload::text,'sha256'),'hex');\nend;\n$function$\n",
       "identity_args": "p_entity_type text, p_entity_id uuid"
     },
     {
@@ -5273,7 +5273,7 @@
       "owner": "postgres",
       "schema": "private",
       "comment": null,
-      "definition": "CREATE OR REPLACE FUNCTION private.dc_entity_payload(p_entity_type text, p_entity_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_payload jsonb;\nbegin\n  case p_entity_type\n    when 'book' then select to_jsonb(t) into v_payload from public.books t where t.id=p_entity_id;\n    when 'adventure' then select to_jsonb(t) into v_payload from public.adventures t where t.id=p_entity_id;\n    when 'challenge' then select to_jsonb(t) into v_payload from public.challenges t where t.id=p_entity_id;\n    when 'content_item' then select to_jsonb(t) into v_payload from public.content_items t where t.id=p_entity_id;\n    when 'scripture_passage' then select to_jsonb(t) into v_payload from public.scripture_passages t where t.id=p_entity_id;\n    when 'power_verse' then select to_jsonb(t) into v_payload from public.power_verses t where t.id=p_entity_id;\n    when 'devotional_series' then select to_jsonb(t) into v_payload from public.devotional_series t where t.id=p_entity_id;\n    when 'prayer_prompt' then select to_jsonb(t) into v_payload from public.prayer_prompts t where t.id=p_entity_id;\n    when 'identity_truth' then select to_jsonb(t) into v_payload from public.identity_truths t where t.id=p_entity_id;\n    when 'family_faith_guide' then select to_jsonb(t) into v_payload from public.family_faith_guides t where t.id=p_entity_id;\n    when 'event' then select to_jsonb(t) into v_payload from public.events t where t.id=p_entity_id;\n    when 'media_asset' then select to_jsonb(t) into v_payload from public.media_assets t where t.id=p_entity_id;\n    when 'product' then\n      select jsonb_build_object(\n        'name',t.name,\n        'product_type',t.product_type,\n        'description',t.description,\n        'image_asset_key',t.image_asset_key,\n        'metadata',t.metadata\n      )\n      into v_payload\n      from public.products t\n      where t.id=p_entity_id;\n    else raise exception 'Unsupported DC governance entity type: %',p_entity_type;\n  end case;\n  return v_payload;\nend;\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION private.dc_entity_payload(p_entity_type text, p_entity_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\ndeclare\n  v_payload jsonb;\nbegin\n  case p_entity_type\n    when 'book' then select to_jsonb(t) into v_payload from public.books t where t.id=p_entity_id;\n    when 'adventure' then select to_jsonb(t) into v_payload from public.adventures t where t.id=p_entity_id;\n    when 'challenge' then select to_jsonb(t) into v_payload from public.challenges t where t.id=p_entity_id;\n    when 'content_item' then select to_jsonb(t) into v_payload from public.content_items t where t.id=p_entity_id;\n    when 'scripture_passage' then select to_jsonb(t) into v_payload from public.scripture_passages t where t.id=p_entity_id;\n    when 'power_verse' then select to_jsonb(t) into v_payload from public.power_verses t where t.id=p_entity_id;\n    when 'devotional_series' then select to_jsonb(t) into v_payload from public.devotional_series t where t.id=p_entity_id;\n    when 'prayer_prompt' then select to_jsonb(t) into v_payload from public.prayer_prompts t where t.id=p_entity_id;\n    when 'identity_truth' then select to_jsonb(t) into v_payload from public.identity_truths t where t.id=p_entity_id;\n    when 'family_faith_guide' then select to_jsonb(t) into v_payload from public.family_faith_guides t where t.id=p_entity_id;\n    when 'event' then select to_jsonb(t) into v_payload from public.events t where t.id=p_entity_id;\n    when 'media_asset' then select to_jsonb(t) into v_payload from public.media_assets t where t.id=p_entity_id;\n    when 'product' then\n      select jsonb_build_object(\n        'name',t.name,\n        'product_type',t.product_type,\n        'description',t.description,\n        'image_asset_key',t.image_asset_key,\n        'metadata',t.metadata\n      )\n      into v_payload\n      from public.products t\n      where t.id=p_entity_id;\n    else raise exception 'Unsupported DC governance entity type: %',p_entity_type;\n  end case;\n  return v_payload;\nend;\n$function$\n",
       "identity_args": "p_entity_type text, p_entity_id uuid"
     },
     {
@@ -5331,7 +5331,7 @@
       "identity_args": "p_path text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "digital_book_released",
       "owner": "postgres",
       "schema": "private",
@@ -5367,7 +5367,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres}",
       "name": "enforce_child_book_access",
       "owner": "postgres",
       "schema": "private",
@@ -5376,7 +5376,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres}",
       "name": "enforce_child_challenge_access",
       "owner": "postgres",
       "schema": "private",
@@ -5421,7 +5421,7 @@
       "identity_args": "p_child_profile_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "event_audience_allows_registration",
       "owner": "postgres",
       "schema": "private",
@@ -5592,7 +5592,7 @@
       "identity_args": "p_household_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "is_household_owner",
       "owner": "postgres",
       "schema": "private",
@@ -5673,7 +5673,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres}",
       "name": "prevent_book_progress_regression",
       "owner": "postgres",
       "schema": "private",
@@ -5871,7 +5871,7 @@
       "identity_args": ""
     },
     {
-      "acl": null,
+      "acl": "{postgres=X/postgres}",
       "name": "user_can_access_challenge",
       "owner": "postgres",
       "schema": "private",
@@ -5952,7 +5952,7 @@
       "identity_args": "p_household_id uuid, p_pin text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "accept_household_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -5961,7 +5961,7 @@
       "identity_args": "p_invitation_id uuid, p_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "accept_organization_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -5970,7 +5970,7 @@
       "identity_args": "p_invitation_id uuid, p_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_add_devotional_day",
       "owner": "postgres",
       "schema": "public",
@@ -5979,7 +5979,7 @@
       "identity_args": "p_series_id uuid, p_day_number integer, p_title text, p_body text, p_scripture_id uuid, p_prayer_prompt text, p_action_step text, p_xp_reward integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_cancel_notification_campaign",
       "owner": "postgres",
       "schema": "public",
@@ -5988,7 +5988,7 @@
       "identity_args": "p_campaign_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "admin_create_badge_with_rule",
       "owner": "postgres",
       "schema": "public",
@@ -5997,7 +5997,7 @@
       "identity_args": "p_badge_key text, p_name text, p_description text, p_rarity text, p_rule_type text, p_threshold_value integer, p_streak_key text, p_challenge_type text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_book",
       "owner": "postgres",
       "schema": "public",
@@ -6006,7 +6006,7 @@
       "identity_args": "p_book_number integer, p_title text, p_slug text, p_description text, p_cover_asset_key text, p_release_date date, p_status text, p_completion_xp integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_challenge",
       "owner": "postgres",
       "schema": "public",
@@ -6015,7 +6015,7 @@
       "identity_args": "p_title text, p_slug text, p_challenge_type text, p_description text, p_instructions text, p_access_level text, p_xp_reward integer, p_parent_approval_required boolean, p_status text, p_steps jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_challenge_series",
       "owner": "postgres",
       "schema": "public",
@@ -6024,7 +6024,7 @@
       "identity_args": "p_series_key text, p_name text, p_description text, p_token_type text, p_token_amount integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_content_item",
       "owner": "postgres",
       "schema": "public",
@@ -6033,7 +6033,7 @@
       "identity_args": "p_content_type text, p_title text, p_slug text, p_summary text, p_category text, p_asset_key text, p_thumbnail_asset_key text, p_access_level text, p_status text, p_is_featured boolean, p_completion_xp integer, p_body jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_devotional_series",
       "owner": "postgres",
       "schema": "public",
@@ -6042,7 +6042,7 @@
       "identity_args": "p_title text, p_slug text, p_description text, p_access_level text, p_status text, p_is_featured boolean"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_family_faith_guide",
       "owner": "postgres",
       "schema": "public",
@@ -6051,7 +6051,7 @@
       "identity_args": "p_guide_key text, p_title text, p_book_id uuid, p_description text, p_scripture_passage_id uuid, p_discussion_prompt text, p_prayer_prompt text, p_family_action text, p_access_level text, p_status text, p_sort_order integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_identity_truth",
       "owner": "postgres",
       "schema": "public",
@@ -6060,7 +6060,7 @@
       "identity_args": "p_title text, p_slug text, p_statement text, p_explanation text, p_scripture_id uuid, p_say_it text, p_sort_order integer, p_access_level text, p_status text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_lifetime_badge_level",
       "owner": "postgres",
       "schema": "public",
@@ -6069,7 +6069,7 @@
       "identity_args": "p_badge_key text, p_name text, p_rule_type text, p_threshold_value integer, p_description text, p_badge_family_key text, p_tier text, p_rarity text, p_streak_key text, p_challenge_type text, p_token_type text, p_activity_event_type text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_notification_reminder_rule",
       "owner": "postgres",
       "schema": "public",
@@ -6078,7 +6078,7 @@
       "identity_args": "p_rule_key text, p_name text, p_rule_type text, p_template_id uuid, p_lead_minutes integer, p_delivery_channels text[], p_organization_id uuid, p_group_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_notification_template",
       "owner": "postgres",
       "schema": "public",
@@ -6087,7 +6087,7 @@
       "identity_args": "p_template_key text, p_name text, p_notification_type text, p_title text, p_body text, p_deep_link text, p_priority text, p_default_channels text[]"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_organization",
       "owner": "postgres",
       "schema": "public",
@@ -6096,7 +6096,7 @@
       "identity_args": "p_organization_key text, p_name text, p_organization_type text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_power_verse",
       "owner": "postgres",
       "schema": "public",
@@ -6105,7 +6105,7 @@
       "identity_args": "p_scripture_id uuid, p_title text, p_slug text, p_explanation text, p_say_it text, p_live_it text, p_give_it_away text, p_memorize_xp integer, p_access_level text, p_status text, p_is_featured boolean"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_prayer_prompt",
       "owner": "postgres",
       "schema": "public",
@@ -6114,7 +6114,7 @@
       "identity_args": "p_title text, p_slug text, p_prompt_text text, p_category text, p_scripture_id uuid, p_xp_reward integer, p_access_level text, p_status text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_product",
       "owner": "postgres",
       "schema": "public",
@@ -6123,7 +6123,7 @@
       "identity_args": "p_product_key text, p_name text, p_product_type text, p_description text, p_sku text, p_base_price_cents integer, p_member_price_cents integer, p_status text, p_track_inventory boolean, p_inventory_quantity integer, p_allow_backorder boolean, p_is_featured boolean"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "admin_create_product_variant",
       "owner": "postgres",
       "schema": "public",
@@ -6132,7 +6132,7 @@
       "identity_args": "p_product_id uuid, p_variant_key text, p_name text, p_sku text, p_price_delta_cents integer, p_member_price_delta_cents integer, p_inventory_quantity integer, p_attributes jsonb, p_sort_order integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_promo_code",
       "owner": "postgres",
       "schema": "public",
@@ -6141,7 +6141,7 @@
       "identity_args": "p_code text, p_description text, p_discount_type text, p_discount_value integer, p_starts_at timestamp with time zone, p_ends_at timestamp with time zone, p_max_redemptions integer, p_minimum_order_cents integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_reward",
       "owner": "postgres",
       "schema": "public",
@@ -6150,7 +6150,7 @@
       "identity_args": "p_reward_key text, p_name text, p_description text, p_reward_type text, p_xp_required integer, p_access_level text, p_inventory_quantity integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_scripture",
       "owner": "postgres",
       "schema": "public",
@@ -6159,7 +6159,7 @@
       "identity_args": "p_reference text, p_translation text, p_verse_text text, p_theme_key text, p_status text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_series_streak_badge",
       "owner": "postgres",
       "schema": "public",
@@ -6168,7 +6168,7 @@
       "identity_args": "p_series_id uuid, p_badge_key text, p_name text, p_consecutive_weeks integer, p_description text, p_tier text, p_rarity text, p_active_only_while_current_streak boolean"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_create_weekly_challenge",
       "owner": "postgres",
       "schema": "public",
@@ -6177,7 +6177,7 @@
       "identity_args": "p_series_id uuid, p_title text, p_slug text, p_period_start date, p_description text, p_challenge_type text, p_access_level text, p_xp_reward integer, p_parent_approval_required boolean, p_status text, p_steps jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_daily_metrics",
       "owner": "postgres",
       "schema": "public",
@@ -6186,7 +6186,7 @@
       "identity_args": "p_days integer"
     },
     {
-      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_digital_book",
       "owner": "postgres",
       "schema": "public",
@@ -6195,7 +6195,7 @@
       "identity_args": "p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_platform_snapshot",
       "owner": "postgres",
       "schema": "public",
@@ -6204,7 +6204,7 @@
       "identity_args": ""
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_get_production_launch_gate",
       "owner": "postgres",
       "schema": "public",
@@ -6213,7 +6213,7 @@
       "identity_args": ""
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_link_book_experience",
       "owner": "postgres",
       "schema": "public",
@@ -6222,7 +6222,7 @@
       "identity_args": "p_book_id uuid, p_item_type text, p_item_id uuid, p_sort_order integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_link_book_reward",
       "owner": "postgres",
       "schema": "public",
@@ -6231,7 +6231,7 @@
       "identity_args": "p_book_id uuid, p_reward_id uuid, p_milestone text"
     },
     {
-      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_prepare_digital_book",
       "owner": "postgres",
       "schema": "public",
@@ -6240,7 +6240,7 @@
       "identity_args": "p_book_id uuid, p_manifest jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_preview_notification_audience",
       "owner": "postgres",
       "schema": "public",
@@ -6249,7 +6249,7 @@
       "identity_args": "p_audience_type text, p_membership_plan_id uuid, p_household_id uuid, p_organization_id uuid, p_group_id uuid, p_event_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_schedule_notification_campaign",
       "owner": "postgres",
       "schema": "public",
@@ -6258,7 +6258,7 @@
       "identity_args": "p_campaign_key text, p_name text, p_template_id uuid, p_audience_type text, p_scheduled_at timestamp with time zone, p_delivery_channels text[], p_membership_plan_id uuid, p_household_id uuid, p_organization_id uuid, p_group_id uuid, p_event_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "admin_set_order_status",
       "owner": "postgres",
       "schema": "public",
@@ -6267,7 +6267,7 @@
       "identity_args": "p_order_id uuid, p_status text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "approve_dc_content_review",
       "owner": "postgres",
       "schema": "public",
@@ -6276,7 +6276,7 @@
       "identity_args": "p_review_id uuid, p_creative_alignment boolean, p_word_of_faith_alignment boolean, p_scripture_verified boolean, p_identity_in_christ_alignment boolean, p_child_age_appropriate boolean, p_church_affirming boolean, p_approved_assets_only boolean, p_character_continuity boolean, p_language_style_pass boolean, p_notes text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "approve_parent_challenge",
       "owner": "postgres",
       "schema": "public",
@@ -6285,7 +6285,7 @@
       "identity_args": "p_progress_id uuid, p_guardian_session_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "archive_child_profile",
       "owner": "postgres",
       "schema": "public",
@@ -6294,7 +6294,7 @@
       "identity_args": "p_child_profile_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "attribute_referral",
       "owner": "postgres",
       "schema": "public",
@@ -6303,7 +6303,7 @@
       "identity_args": "p_code text, p_referred_household_id uuid, p_source text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "begin_checkout_provider_handoff",
       "owner": "postgres",
       "schema": "public",
@@ -6312,7 +6312,7 @@
       "identity_args": "p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "cancel_checkout_session",
       "owner": "postgres",
       "schema": "public",
@@ -6321,7 +6321,7 @@
       "identity_args": "p_checkout_session_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "cancel_data_privacy_request",
       "owner": "postgres",
       "schema": "public",
@@ -6330,7 +6330,7 @@
       "identity_args": "p_request_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "cancel_event_registration",
       "owner": "postgres",
       "schema": "public",
@@ -6339,7 +6339,7 @@
       "identity_args": "p_registration_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "cancel_organization_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -6357,7 +6357,7 @@
       "identity_args": "p_lead_type text, p_source_page text, p_parent_guardian_name text, p_email text, p_child_first_name text, p_child_age smallint, p_parent_guardian_consent boolean, p_marketing_consent boolean, p_consent_text text, p_ip_hash text, p_user_agent_hash text, p_metadata jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "claim_marketing_leads_for_household",
       "owner": "postgres",
       "schema": "public",
@@ -6375,7 +6375,7 @@
       "identity_args": "p_limit integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "complete_child_book_adventure",
       "owner": "postgres",
       "schema": "public",
@@ -6384,7 +6384,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "complete_family_faith_participants",
       "owner": "postgres",
       "schema": "public",
@@ -6402,7 +6402,7 @@
       "identity_args": "p_delivery_id uuid, p_status text, p_provider text, p_provider_message_id text, p_last_error text, p_retry_minutes integer, p_metadata jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_adventure_group",
       "owner": "postgres",
       "schema": "public",
@@ -6411,7 +6411,7 @@
       "identity_args": "p_organization_id uuid, p_group_key text, p_name text, p_group_type text, p_description text, p_minimum_age smallint, p_maximum_age smallint"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_checkout_order",
       "owner": "postgres",
       "schema": "public",
@@ -6420,7 +6420,7 @@
       "identity_args": "p_household_id uuid, p_items jsonb, p_promo_code text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_child_with_consent",
       "owner": "postgres",
       "schema": "public",
@@ -6429,7 +6429,7 @@
       "identity_args": "p_household_id uuid, p_display_name text, p_birth_year smallint"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_group_join_code",
       "owner": "postgres",
       "schema": "public",
@@ -6438,7 +6438,7 @@
       "identity_args": "p_group_id uuid, p_expires_in_days integer, p_max_uses integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_guardian_unlock_session",
       "owner": "postgres",
       "schema": "public",
@@ -6447,7 +6447,7 @@
       "identity_args": "p_household_id uuid, p_pin text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_household_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -6456,7 +6456,7 @@
       "identity_args": "p_household_id uuid, p_email text, p_role text, p_expires_days integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_household_with_consent",
       "owner": "postgres",
       "schema": "public",
@@ -6465,7 +6465,7 @@
       "identity_args": "p_name text, p_timezone text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "create_organization_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -6474,7 +6474,7 @@
       "identity_args": "p_organization_id uuid, p_email text, p_organization_role text, p_group_id uuid, p_group_role text, p_expires_in_days integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "dc_preflight_scan",
       "owner": "postgres",
       "schema": "public",
@@ -6483,7 +6483,7 @@
       "identity_args": "p_entity_type text, p_entity_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "deactivate_app_installation",
       "owner": "postgres",
       "schema": "public",
@@ -6492,7 +6492,7 @@
       "identity_args": "p_installation_key text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_checkout_readiness",
       "owner": "postgres",
       "schema": "public",
@@ -6501,7 +6501,7 @@
       "identity_args": ""
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_child_achievement_progress",
       "owner": "postgres",
       "schema": "public",
@@ -6510,7 +6510,7 @@
       "identity_args": "p_child_profile_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_child_book_adventure_steps",
       "owner": "postgres",
       "schema": "public",
@@ -6519,7 +6519,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_child_book_adventure_summary",
       "owner": "postgres",
       "schema": "public",
@@ -6528,7 +6528,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_digital_book",
       "owner": "postgres",
       "schema": "public",
@@ -6537,7 +6537,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_group_progress_summary",
       "owner": "postgres",
       "schema": "public",
@@ -6546,7 +6546,7 @@
       "identity_args": "p_group_id uuid, p_challenge_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_group_roster",
       "owner": "postgres",
       "schema": "public",
@@ -6555,7 +6555,7 @@
       "identity_args": "p_group_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_household_adults",
       "owner": "postgres",
       "schema": "public",
@@ -6573,7 +6573,7 @@
       "identity_args": "p_delivery_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "get_or_create_referral_code",
       "owner": "postgres",
       "schema": "public",
@@ -6582,7 +6582,7 @@
       "identity_args": "p_household_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "guardian_pin_status",
       "owner": "postgres",
       "schema": "public",
@@ -6591,7 +6591,7 @@
       "identity_args": "p_household_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "has_book_access",
       "owner": "postgres",
       "schema": "public",
@@ -6600,7 +6600,7 @@
       "identity_args": "p_book_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "join_child_to_group",
       "owner": "postgres",
       "schema": "public",
@@ -6618,7 +6618,7 @@
       "identity_args": "p_order_id uuid, p_provider text, p_provider_payment_id text, p_provider_customer_id text, p_provider_event_id text, p_event_type text, p_shipping_name text, p_shipping_address jsonb, p_payload jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "preview_group_join_code",
       "owner": "postgres",
       "schema": "public",
@@ -6627,7 +6627,7 @@
       "identity_args": "p_code text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "preview_organization_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -6636,7 +6636,7 @@
       "identity_args": "p_invitation_id uuid, p_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "privacy_export_payload",
       "owner": "postgres",
       "schema": "public",
@@ -6645,7 +6645,7 @@
       "identity_args": "p_request_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "publish_dc_entity",
       "owner": "postgres",
       "schema": "public",
@@ -6654,7 +6654,7 @@
       "identity_args": "p_entity_type text, p_entity_id uuid, p_target_status text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "record_household_consent",
       "owner": "postgres",
       "schema": "public",
@@ -6672,7 +6672,7 @@
       "identity_args": "p_provider_key text, p_event_type text, p_direction text, p_entity_type text, p_entity_id uuid, p_status text, p_idempotency_key text, p_request_payload jsonb, p_response_payload jsonb, p_last_error text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "register_app_installation",
       "owner": "postgres",
       "schema": "public",
@@ -6681,7 +6681,7 @@
       "identity_args": "p_installation_key text, p_app_channel text, p_platform text, p_app_version text, p_device_name text, p_push_provider text, p_push_token text, p_capabilities jsonb, p_metadata jsonb"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "register_for_event",
       "owner": "postgres",
       "schema": "public",
@@ -6690,7 +6690,7 @@
       "identity_args": "p_event_id uuid, p_household_id uuid, p_child_profile_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres}",
       "name": "remove_household_adult",
       "owner": "postgres",
       "schema": "public",
@@ -6699,7 +6699,7 @@
       "identity_args": "p_household_id uuid, p_user_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "request_data_privacy_action",
       "owner": "postgres",
       "schema": "public",
@@ -6708,7 +6708,7 @@
       "identity_args": "p_household_id uuid, p_request_type text, p_child_profile_id uuid, p_reason text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "request_dc_content_review",
       "owner": "postgres",
       "schema": "public",
@@ -6717,7 +6717,7 @@
       "identity_args": "p_entity_type text, p_entity_id uuid, p_notes text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "restore_child_profile",
       "owner": "postgres",
       "schema": "public",
@@ -6726,7 +6726,7 @@
       "identity_args": "p_child_profile_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "return_parent_challenge",
       "owner": "postgres",
       "schema": "public",
@@ -6735,7 +6735,7 @@
       "identity_args": "p_progress_id uuid, p_guardian_session_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "revoke_guardian_unlock_sessions",
       "owner": "postgres",
       "schema": "public",
@@ -6744,7 +6744,7 @@
       "identity_args": "p_household_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "revoke_household_invitation",
       "owner": "postgres",
       "schema": "public",
@@ -6753,7 +6753,7 @@
       "identity_args": "p_invitation_id uuid"
     },
     {
-      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "save_digital_book_position",
       "owner": "postgres",
       "schema": "public",
@@ -6762,7 +6762,7 @@
       "identity_args": "p_child_profile_id uuid, p_book_id uuid, p_revision text, p_page_number integer"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "save_family_challenge_participants",
       "owner": "postgres",
       "schema": "public",
@@ -6771,7 +6771,7 @@
       "identity_args": "p_household_id uuid, p_challenge_id uuid, p_child_ids uuid[], p_action text, p_step_ids uuid[]"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "set_guardian_pin",
       "owner": "postgres",
       "schema": "public",
@@ -6798,7 +6798,7 @@
       "identity_args": "p_token_key text, p_token text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "verify_guardian_pin",
       "owner": "postgres",
       "schema": "public",
@@ -6816,7 +6816,7 @@
       "identity_args": "p_secret text"
     },
     {
-      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "withdraw_child_from_group",
       "owner": "postgres",
       "schema": "public",
@@ -7660,7 +7660,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "achievement_token_ledger",
@@ -7844,7 +7844,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "admin_audit_log",
@@ -8044,7 +8044,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=awdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": false,
       "kind": "v",
       "name": "admin_daily_metrics",
@@ -8184,7 +8184,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=awdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": false,
       "kind": "v",
       "name": "admin_platform_snapshot",
@@ -8324,7 +8324,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "adventure_challenges",
@@ -8426,7 +8426,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "adventure_content_links",
@@ -8528,7 +8528,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "adventure_groups",
@@ -8764,7 +8764,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "adventures",
@@ -9078,7 +9078,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "app_admins",
@@ -9203,7 +9203,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "app_channel_health",
@@ -9277,7 +9277,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": false,
       "kind": "v",
       "name": "app_installation_summary",
@@ -9362,7 +9362,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "app_installations",
@@ -9591,7 +9591,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "automated_notification_log",
@@ -9765,7 +9765,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "badge_awards",
@@ -9905,7 +9905,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "badge_rules",
@@ -10125,7 +10125,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "badges",
@@ -10332,7 +10332,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_challenges",
@@ -10434,7 +10434,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_content_links",
@@ -10547,7 +10547,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_devotional_series",
@@ -10649,7 +10649,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_identity_truths",
@@ -10751,7 +10751,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_power_verses",
@@ -10853,7 +10853,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_prayer_prompts",
@@ -10955,7 +10955,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "book_reward_rules",
@@ -11096,7 +11096,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "books",
@@ -11309,7 +11309,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "challenge_assignments",
@@ -11488,7 +11488,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "challenge_series",
@@ -11668,7 +11668,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "challenge_steps",
@@ -11836,7 +11836,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "challenges",
@@ -12210,7 +12210,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "checkout_session_summary",
@@ -12427,7 +12427,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "checkout_sessions",
@@ -12644,7 +12644,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_active_streak_badges",
@@ -12806,7 +12806,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_activity_events",
@@ -12984,7 +12984,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_adventure_progress",
@@ -13136,7 +13136,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_book_progress",
@@ -13412,7 +13412,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_challenge_progress",
@@ -13619,7 +13619,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_content_progress",
@@ -13776,7 +13776,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_data_inventory",
@@ -14004,7 +14004,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_devotional_progress",
@@ -14161,7 +14161,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=rdDxtm/postgres,authenticated=rdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_group_memberships",
@@ -14340,7 +14340,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_identity_progress",
@@ -14480,7 +14480,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_level_progress",
@@ -14609,7 +14609,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_prayer_progress",
@@ -14727,7 +14727,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_profiles",
@@ -14896,7 +14896,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_scripture_progress",
@@ -15081,7 +15081,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_series_streak_status",
@@ -15210,7 +15210,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_series_streaks",
@@ -15363,7 +15363,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_series_weekly_completions",
@@ -15536,7 +15536,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_step_progress",
@@ -15671,7 +15671,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "child_streaks",
@@ -15785,7 +15785,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_token_totals",
@@ -15837,7 +15837,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "child_xp_totals",
@@ -15878,7 +15878,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "commerce_readiness_summary",
@@ -16018,7 +16018,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "commerce_recent_webhooks",
@@ -16136,7 +16136,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "consent_policies",
@@ -16276,7 +16276,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "contact_inquiries",
@@ -16437,7 +16437,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "content_items",
@@ -16756,7 +16756,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "current_household_consents",
@@ -16918,7 +16918,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "data_privacy_requests",
@@ -17191,7 +17191,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_blueprint_requirements",
@@ -17359,7 +17359,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_brand_assets",
@@ -17588,7 +17588,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_character_profiles",
@@ -17778,7 +17778,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_content_blueprints",
@@ -17940,7 +17940,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_content_reviews",
@@ -18267,7 +18267,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "dc_governance_entity_catalog",
@@ -18341,7 +18341,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "dc_governance_review_status",
@@ -18459,7 +18459,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_governance_rules",
@@ -18655,7 +18655,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "dc_governance_standards",
@@ -18823,7 +18823,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "delivery_worker_health",
@@ -18930,7 +18930,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "delivery_worker_runs",
@@ -19111,7 +19111,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "devotional_days",
@@ -19318,7 +19318,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "devotional_series",
@@ -19514,7 +19514,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "entitlement_definitions",
@@ -19610,7 +19610,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "event_registrations",
@@ -19821,7 +19821,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "events",
@@ -20150,7 +20150,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "family_faith_guides",
@@ -20418,7 +20418,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "fulfillments",
@@ -20586,7 +20586,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "group_challenge_assignments",
@@ -20737,7 +20737,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "group_leaders",
@@ -20878,7 +20878,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_book_access",
@@ -21041,7 +21041,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_consents",
@@ -21209,7 +21209,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_entitlement_grants",
@@ -21372,7 +21372,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_faith_sessions",
@@ -21545,7 +21545,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_invitations",
@@ -21751,7 +21751,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=rwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_members",
@@ -21892,7 +21892,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "household_membership_summary",
@@ -22032,7 +22032,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "household_subscriptions",
@@ -22238,7 +22238,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "households",
@@ -22368,7 +22368,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "identity_truths",
@@ -22580,7 +22580,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "integration_events",
@@ -22836,7 +22836,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "integration_health_summary",
@@ -22987,7 +22987,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "integration_latest_tests",
@@ -23083,7 +23083,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "integration_providers",
@@ -23302,7 +23302,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "integration_test_runs",
@@ -23491,7 +23491,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "inventory_reservations",
@@ -23648,7 +23648,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "levels",
@@ -23811,7 +23811,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": false,
       "kind": "v",
       "name": "marketing_conversion_summary",
@@ -23874,7 +23874,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": false,
       "kind": "v",
       "name": "marketing_lead_summary",
@@ -23948,7 +23948,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "marketing_leads",
@@ -24280,7 +24280,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "media_assets",
@@ -24570,7 +24570,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "membership_plans",
@@ -24722,7 +24722,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_campaign_recipients",
@@ -24868,7 +24868,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_campaigns",
@@ -25241,7 +25241,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_deliveries",
@@ -25476,7 +25476,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "notification_delivery_health",
@@ -25561,7 +25561,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_preferences",
@@ -25740,7 +25740,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_reminder_rules",
@@ -26008,7 +26008,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "notification_templates",
@@ -26237,7 +26237,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "order_items",
@@ -26467,7 +26467,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arwd/postgres}",
       "rls": true,
       "kind": "r",
       "name": "orders",
@@ -26851,7 +26851,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "organization_invitations",
@@ -27091,7 +27091,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "organization_members",
@@ -27232,7 +27232,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "organizations",
@@ -27417,7 +27417,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "parent_child_progress_summary",
@@ -27557,7 +27557,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "payment_webhook_events",
@@ -27730,7 +27730,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "plan_entitlements",
@@ -27810,7 +27810,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "power_verses",
@@ -28078,7 +28078,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "prayer_prompts",
@@ -28285,7 +28285,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "product_book_access_rules",
@@ -28415,7 +28415,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "product_entitlement_rules",
@@ -28545,7 +28545,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "product_variants",
@@ -28768,7 +28768,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "products",
@@ -29053,7 +29053,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "profiles",
@@ -29166,7 +29166,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "promo_codes",
@@ -29397,7 +29397,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": false,
       "kind": "v",
       "name": "public_site_pipeline_summary",
@@ -29471,7 +29471,7 @@
       "replica_identity": "n"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "push_devices",
@@ -29656,7 +29656,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "referral_attributions",
@@ -29780,7 +29780,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "referral_codes",
@@ -29915,7 +29915,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "reward_redemptions",
@@ -30067,7 +30067,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "reward_unlocks",
@@ -30207,7 +30207,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "rewards",
@@ -30415,7 +30415,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "scripture_passages",
@@ -30577,7 +30577,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=ar/postgres}",
       "rls": true,
       "kind": "r",
       "name": "series_badge_rules",
@@ -30745,7 +30745,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "streak_badge_earnings",
@@ -30941,7 +30941,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "support_tickets",
@@ -31192,7 +31192,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=rw/postgres}",
       "rls": true,
       "kind": "r",
       "name": "user_notifications",
@@ -31432,7 +31432,7 @@
       "replica_identity": "d"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}",
       "rls": true,
       "kind": "r",
       "name": "xp_ledger",
@@ -31579,7 +31579,7 @@
   ],
   "sequences": [
     {
-      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "acl": "{postgres=rwU/postgres,service_role=rwU/postgres}",
       "max": "9223372036854775807",
       "min": "1",
       "name": "admin_audit_log_id_seq",
@@ -31598,7 +31598,7 @@
       "increment": "1"
     },
     {
-      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "acl": "{postgres=rwU/postgres,service_role=rwU/postgres}",
       "max": "9223372036854775807",
       "min": "1",
       "name": "child_activity_events_id_seq",
@@ -31617,7 +31617,7 @@
       "increment": "1"
     },
     {
-      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "acl": "{postgres=rwU/postgres,service_role=rwU/postgres}",
       "max": "9223372036854775807",
       "min": "1",
       "name": "orders_order_number_seq",
@@ -31636,7 +31636,7 @@
       "increment": "1"
     },
     {
-      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "acl": "{postgres=rwU/postgres,service_role=rwU/postgres}",
       "max": "9223372036854775807",
       "min": "1",
       "name": "support_tickets_ticket_number_seq",
@@ -31728,22 +31728,28 @@
   ],
   "default_privileges": [
     {
-      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "acl": "{postgres=rwU/postgres,service_role=rwU/postgres}",
       "type": "S",
       "owner": "postgres",
       "schema": "public"
     },
     {
-      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
       "type": "f",
       "owner": "postgres",
       "schema": "public"
     },
     {
-      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
       "type": "r",
       "owner": "postgres",
       "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "type": "f",
+      "owner": "postgres",
+      "schema": null
     },
     {
       "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
@@ -31766,13 +31772,13 @@
   ],
   "publication_tables": [],
   "unsupported_features": {
-    "custom_types": 0,
     "inheritance": 0,
-    "custom_collation_columns": 0,
     "custom_rules": 0,
+    "custom_types": 0,
+    "unlogged_tables": 0,
     "custom_operators": 0,
     "custom_foreign_tables": 0,
-    "unlogged_tables": 0,
-    "global_default_acl_records": 0
+    "custom_collation_columns": 0,
+    "unsupported_global_default_acl_records": 0
   }
 }

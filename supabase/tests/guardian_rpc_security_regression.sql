@@ -53,6 +53,8 @@ insert into public.child_challenge_progress(id,child_profile_id,challenge_id,sta
  select progress_a,child_a,challenge,'pending_parent',now() from dc_security_fixture
  union all select progress_b,child_b,challenge,'pending_parent',now() from dc_security_fixture;
 select set_config('request.jwt.claim.sub',(select a::text from dc_security_fixture),true);
+-- Test helpers need explicit execution after global PUBLIC defaults are hardened.
+grant execute on function pg_temp.check(boolean,text), pg_temp.denied(text,text) to authenticated,anon;
 set local role authenticated;
 select public.set_guardian_pin(home_a,'739251') from dc_security_fixture;
 insert into dc_security_tokens select 'valid',public.create_guardian_unlock_session(home_a,'739251') from dc_security_fixture;

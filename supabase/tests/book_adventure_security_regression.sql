@@ -61,6 +61,8 @@ insert into public.badge_rules(badge_id,rule_type,threshold_value) select badge,
 insert into public.rewards(id,reward_key,name,reward_type) select reward,'dc-security-'||reward,'Synthetic adventure reward','digital' from dc_security_fixture;
 insert into public.book_reward_rules(book_id,reward_id,milestone) select book,reward,'adventure_completed' from dc_security_fixture;
 select set_config('request.jwt.claim.sub',(select a::text from dc_security_fixture),true);
+-- Test helpers need explicit execution after global PUBLIC defaults are hardened.
+grant execute on function pg_temp.check(boolean,text), pg_temp.denied(text,text) to authenticated,anon;
 set local role authenticated;
 
 -- Pre-fix fails at the real raw XP helper, after readiness and RLS succeed.

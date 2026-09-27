@@ -38,3 +38,7 @@ enabled = false
 
 [edge_runtime]
 enabled = false
+
+# Disposable HTTP tests only: no external email delivery during fixture signup.
+[auth.email]
+enable_confirmations = false

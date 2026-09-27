@@ -25,3 +25,18 @@ test('failed email links offer recovery without displaying untrusted URL descrip
 test('expired recovery session and reused password have actionable next steps',()=>{
  assert.match(authFeedback({code:'session_expired'}),/fresh link/);assert.match(authFeedback({code:'same_password'}),/different password/);
 });
+
+test('leaked passwords give the same safe guidance for signup and password reset',()=>{
+ const message=authFeedback({code:'weak_password',reasons:['pwned'],message:'untrusted provider detail'});
+ assert.match(message,/known data breach/);
+ assert.match(message,/different, unique password/);
+ assert.ok(!message.includes('untrusted'));
+ assert.ok(!message.includes('account was compromised'));
+});
+test('weak passwords without a recognized reason have useful policy-independent guidance',()=>{
+ for(const reasons of [undefined,[],['length'],['characters'],['future_reason']]){
+  const message=authFeedback({code:'weak_password',reasons});
+  assert.match(message,/longer, unique password/);
+  assert.ok(!message.includes('data breach'));
+ }
+});

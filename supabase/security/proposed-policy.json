@@ -1,0 +1,5873 @@
+{
+  "objects": [
+    {
+      "object": "private.digital_book_manifests",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.group_join_codes",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.guardian_unlock_sessions",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.household_guardian_security",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.household_invitation_tokens",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.organization_invitation_tokens",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.system_secret_hashes",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "private.worker_auth_tokens",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.achievement_token_ledger",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_token_totals"
+        ]
+      }
+    },
+    {
+      "object": "public.admin_audit_log",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.admin_daily_metrics",
+      "kind": "v",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.admin_platform_snapshot",
+      "kind": "v",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.adventure_challenges",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.adventure_content_links",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.adventure_groups",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:154",
+          "club-app/src/components/EventsAdmin.tsx:50",
+          "club-app/src/components/FamilyGroupsCard.tsx:98 (PostgREST embedding)",
+          "club-app/src/components/LeaderGroupsHub.tsx:160",
+          "club-app/src/components/LeaderGroupsHub.tsx:186 (PostgREST embedding)",
+          "club-app/src/lib/familyAssignments.ts:17 (PostgREST embedding)",
+          "invoker public.admin_create_notification_reminder_rule",
+          "invoker public.create_adventure_group",
+          "invoker trigger private.validate_notification_reminder_scope on public.notification_reminder_rules"
+        ],
+        "INSERT": [
+          "invoker public.create_adventure_group"
+        ]
+      }
+    },
+    {
+      "object": "public.adventures",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker private.dc_entity_payload",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.app_admins",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.contact_inquiries.contact_inquiries_support_update",
+          "RLS public.marketing_leads.marketing_leads_operations_update",
+          "RLS public.support_tickets.support_tickets_admin_update",
+          "RLS public.support_tickets.support_tickets_user_read",
+          "club-app/src/App.tsx:1192",
+          "supabase/functions/integration-provider-test/index.ts:47"
+        ]
+      }
+    },
+    {
+      "object": "public.app_channel_health",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:110"
+        ]
+      }
+    },
+    {
+      "object": "public.app_installation_summary",
+      "kind": "v",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.app_installations",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker public.register_app_installation",
+          "invoker view public.app_channel_health"
+        ],
+        "INSERT": [
+          "invoker public.register_app_installation"
+        ],
+        "UPDATE": [
+          "invoker public.register_app_installation"
+        ]
+      }
+    },
+    {
+      "object": "public.automated_notification_log",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.badge_awards",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childDashboard.ts:16",
+          "club-app/src/lib/parentChildSnapshot.ts:18",
+          "club-app/src/lib/trophyData.ts:39",
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.badge_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AdminPortal.tsx:791 (PostgREST embedding)",
+          "invoker public.get_child_achievement_progress"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_lifetime_badge_level"
+        ]
+      }
+    },
+    {
+      "object": "public.badges",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.badge_rules.badge_rules_read",
+          "club-app/src/components/AdminPortal.tsx:789",
+          "club-app/src/components/WeeklySeriesAdmin.tsx:92 (PostgREST embedding)",
+          "club-app/src/lib/trophyData.ts:41 (PostgREST embedding)",
+          "club-app/src/lib/trophyData.ts:46 (PostgREST embedding)",
+          "invoker public.admin_create_lifetime_badge_level",
+          "invoker public.admin_create_series_streak_badge",
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_active_streak_badges"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_lifetime_badge_level",
+          "invoker public.admin_create_series_streak_badge"
+        ]
+      }
+    },
+    {
+      "object": "public.book_challenges",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:203",
+          "invoker public.admin_link_book_experience",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_content_links",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:207",
+          "invoker public.admin_link_book_experience",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_devotional_series",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:191",
+          "invoker public.admin_link_book_experience",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_identity_truths",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:199",
+          "invoker public.admin_link_book_experience",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_power_verses",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:187",
+          "invoker public.admin_link_book_experience",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_prayer_prompts",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:195",
+          "invoker public.admin_link_book_experience",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_experience"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_experience"
+        ]
+      }
+    },
+    {
+      "object": "public.book_reward_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyFaithAdmin.tsx:78",
+          "invoker public.admin_link_book_reward"
+        ],
+        "INSERT": [
+          "invoker public.admin_link_book_reward"
+        ],
+        "UPDATE": [
+          "invoker public.admin_link_book_reward"
+        ]
+      }
+    },
+    {
+      "object": "public.books",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.book_challenges.book_challenges_read",
+          "RLS public.book_content_links.book_content_links_read",
+          "RLS public.book_devotional_series.book_devotional_series_read",
+          "RLS public.book_identity_truths.book_identity_truths_read",
+          "RLS public.book_power_verses.book_power_verses_read",
+          "RLS public.book_prayer_prompts.book_prayer_prompts_read",
+          "RLS public.book_reward_rules.book_reward_rules_read",
+          "club-app/src/components/BookAdmin.tsx:49",
+          "club-app/src/components/Bookshelf.tsx:178",
+          "club-app/src/components/CommerceAdmin.tsx:78",
+          "club-app/src/components/FamilyFaithAdmin.tsx:74",
+          "club-app/src/components/FamilyFaithAdmin.tsx:77 (PostgREST embedding)",
+          "club-app/src/components/FamilyFaithAdmin.tsx:78 (PostgREST embedding)",
+          "club-app/src/components/KidHomeFocus.tsx:73",
+          "club-app/src/lib/childReadingHistory.ts:7 (PostgREST embedding)",
+          "club-app/src/lib/familyProgress.ts:13",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_book",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_book"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.challenge_assignments",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/familyAssignments.ts:50",
+          "invoker public.archive_child_profile"
+        ],
+        "UPDATE": [
+          "invoker public.archive_child_profile"
+        ]
+      }
+    },
+    {
+      "object": "public.challenge_series",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/WeeklySeriesAdmin.tsx:81",
+          "club-app/src/lib/trophyData.ts:46 (PostgREST embedding)",
+          "invoker public.admin_create_challenge_series",
+          "invoker public.admin_create_series_streak_badge",
+          "invoker public.admin_create_weekly_challenge",
+          "invoker view public.child_series_streak_status"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_challenge_series"
+        ]
+      }
+    },
+    {
+      "object": "public.challenge_steps",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ChallengeDialog.tsx:64",
+          "club-app/src/lib/familyChallengeState.ts:10",
+          "invoker public.dc_preflight_scan",
+          "invoker public.save_family_challenge_participants",
+          "invoker trigger private.validate_challenge_completion on public.child_challenge_progress"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_challenge",
+          "invoker public.admin_create_weekly_challenge"
+        ]
+      }
+    },
+    {
+      "object": "public.challenges",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.challenge_steps.challenge_steps_read",
+          "club-app/src/App.tsx:704",
+          "club-app/src/components/AdminPortal.tsx:785",
+          "club-app/src/components/BookAdmin.tsx:54",
+          "club-app/src/components/Bookshelf.tsx:205 (PostgREST embedding)",
+          "club-app/src/components/FamilyChallengeActivity.tsx:81",
+          "club-app/src/components/FamilyGroupsCard.tsx:115 (PostgREST embedding)",
+          "club-app/src/components/LeaderGroupsHub.tsx:129",
+          "club-app/src/components/WeeklySeriesAdmin.tsx:85",
+          "club-app/src/lib/childDashboard.ts:21",
+          "club-app/src/lib/familyActivityHistory.ts:41 (PostgREST embedding)",
+          "club-app/src/lib/familyAssignments.ts:32 (PostgREST embedding)",
+          "club-app/src/lib/familyAssignments.ts:51 (PostgREST embedding)",
+          "club-app/src/lib/familyChallengeState.ts:9",
+          "club-app/src/lib/leaderGroupData.ts:8 (PostgREST embedding)",
+          "club-app/src/lib/parentApprovals.ts:16 (PostgREST embedding)",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_challenge",
+          "invoker public.admin_create_weekly_challenge",
+          "invoker public.approve_parent_challenge",
+          "invoker public.get_child_achievement_progress",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker public.save_family_challenge_participants",
+          "invoker trigger private.validate_challenge_completion on public.child_challenge_progress",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "UPDATE": [
+          "club-app/src/components/AdminPortal.tsx:205",
+          "invoker public.publish_dc_entity"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_challenge",
+          "invoker public.admin_create_weekly_challenge"
+        ]
+      }
+    },
+    {
+      "object": "public.checkout_session_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyStore.tsx:142",
+          "supabase/functions/commerce-checkout/index.ts:81"
+        ]
+      }
+    },
+    {
+      "object": "public.checkout_sessions",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.inventory_reservations.inventory_reservations_household_read",
+          "invoker public.begin_checkout_provider_handoff",
+          "invoker public.create_checkout_order",
+          "invoker view public.checkout_session_summary",
+          "invoker view public.commerce_readiness_summary"
+        ],
+        "INSERT": [
+          "invoker public.create_checkout_order"
+        ],
+        "UPDATE": [
+          "invoker public.begin_checkout_provider_handoff"
+        ]
+      }
+    },
+    {
+      "object": "public.child_active_streak_badges",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childDashboard.ts:17",
+          "club-app/src/lib/parentChildSnapshot.ts:19",
+          "club-app/src/lib/trophyData.ts:31"
+        ]
+      }
+    },
+    {
+      "object": "public.child_activity_events",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/familyActivityHistory.ts:14",
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_data_inventory"
+        ]
+      }
+    },
+    {
+      "object": "public.child_adventure_progress",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_data_inventory"
+        ]
+      }
+    },
+    {
+      "object": "public.child_book_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/Bookshelf.tsx:183",
+          "club-app/src/components/KidHomeFocus.tsx:117",
+          "club-app/src/lib/bookActions.ts:15",
+          "club-app/src/lib/bookActions.ts:26",
+          "club-app/src/lib/bookActions.ts:38",
+          "club-app/src/lib/parentChildSnapshot.ts:22",
+          "invoker public.complete_child_book_adventure",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/bookActions.ts:24",
+          "club-app/src/lib/bookActions.ts:26",
+          "invoker public.complete_child_book_adventure"
+        ],
+        "INSERT": [
+          "club-app/src/lib/bookActions.ts:26",
+          "invoker public.complete_child_book_adventure"
+        ]
+      }
+    },
+    {
+      "object": "public.child_book_reading_positions",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childReadingHistory.ts:6",
+          "invoker view public.child_data_inventory"
+        ]
+      }
+    },
+    {
+      "object": "public.child_challenge_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ChallengeDialog.tsx:142",
+          "club-app/src/components/ChallengeDialog.tsx:69",
+          "club-app/src/lib/challengeProgress.ts:11",
+          "club-app/src/lib/childDashboard.ts:20",
+          "club-app/src/lib/familyActivityHistory.ts:40",
+          "club-app/src/lib/familyChallengeState.ts:11",
+          "club-app/src/lib/parentApprovals.ts:15",
+          "club-app/src/lib/parentApprovals.ts:29",
+          "invoker public.approve_parent_challenge",
+          "invoker public.get_child_achievement_progress",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.return_parent_challenge",
+          "invoker public.save_family_challenge_participants",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ],
+        "INSERT": [
+          "club-app/src/components/ChallengeDialog.tsx:142",
+          "invoker public.save_family_challenge_participants"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/challengeProgress.ts:11",
+          "invoker public.approve_parent_challenge",
+          "invoker public.return_parent_challenge",
+          "invoker public.save_family_challenge_participants"
+        ]
+      }
+    },
+    {
+      "object": "public.child_content_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ActivitiesHub.tsx:72",
+          "club-app/src/lib/activityActions.ts:29",
+          "club-app/src/lib/activityActions.ts:38",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/activityActions.ts:36",
+          "club-app/src/lib/activityActions.ts:38"
+        ],
+        "INSERT": [
+          "club-app/src/lib/activityActions.ts:38"
+        ]
+      }
+    },
+    {
+      "object": "public.child_data_inventory",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/PrivacyDataControls.tsx:98"
+        ]
+      }
+    },
+    {
+      "object": "public.child_devotional_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:137",
+          "club-app/src/components/BibleHub.tsx:274",
+          "club-app/src/lib/parentChildSnapshot.ts:21",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ],
+        "INSERT": [
+          "club-app/src/components/BibleHub.tsx:274"
+        ],
+        "UPDATE": [
+          "club-app/src/components/BibleHub.tsx:274"
+        ]
+      }
+    },
+    {
+      "object": "public.child_group_memberships",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {
+        "UPDATE": [
+          "status",
+          "ended_at"
+        ]
+      },
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.adventure_groups.adventure_groups_read",
+          "RLS public.group_challenge_assignments.group_challenge_assignments_read",
+          "club-app/src/components/FamilyGroupsCard.tsx:96",
+          "club-app/src/lib/familyAssignments.ts:16",
+          "club-app/src/lib/groupMembership.ts:32",
+          "invoker public.archive_child_profile",
+          "invoker public.withdraw_child_from_group",
+          "invoker view public.child_data_inventory"
+        ],
+        "UPDATE": [
+          "invoker public.archive_child_profile",
+          "invoker public.withdraw_child_from_group"
+        ]
+      }
+    },
+    {
+      "object": "public.child_identity_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:146",
+          "club-app/src/components/BibleHub.tsx:330",
+          "club-app/src/lib/bookActions.ts:46",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory"
+        ],
+        "INSERT": [
+          "club-app/src/components/BibleHub.tsx:330",
+          "club-app/src/lib/bookActions.ts:46"
+        ],
+        "UPDATE": [
+          "club-app/src/components/BibleHub.tsx:330",
+          "club-app/src/lib/bookActions.ts:46"
+        ]
+      }
+    },
+    {
+      "object": "public.child_level_progress",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/parentChildSnapshot.ts:16",
+          "club-app/src/lib/trophyData.ts:15"
+        ]
+      }
+    },
+    {
+      "object": "public.child_prayer_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:155",
+          "club-app/src/lib/bookActions.ts:51",
+          "club-app/src/lib/bookActions.ts:54",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory"
+        ],
+        "INSERT": [
+          "club-app/src/components/BibleHub.tsx:304",
+          "club-app/src/lib/bookActions.ts:51"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/bookActions.ts:51"
+        ]
+      }
+    },
+    {
+      "object": "public.child_profiles",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.data_privacy_requests.data_privacy_requests_guardian_insert",
+          "RLS public.household_consents.household_consents_insert_guardian",
+          "RLS public.household_faith_sessions.household_faith_sessions_insert",
+          "club-app/src/App.tsx:1238",
+          "club-app/src/components/AdminPortal.tsx:799 (PostgREST embedding)",
+          "club-app/src/components/PrivacyDataControls.tsx:77",
+          "club-app/src/lib/familyActivityHistory.ts:41 (PostgREST embedding)",
+          "club-app/src/lib/familyProgress.ts:12",
+          "club-app/src/lib/parentApprovals.ts:16 (PostgREST embedding)",
+          "invoker public.approve_parent_challenge",
+          "invoker public.archive_child_profile",
+          "invoker public.complete_family_faith_participants",
+          "invoker public.create_child_with_consent",
+          "invoker public.record_household_consent",
+          "invoker public.request_data_privacy_action",
+          "invoker public.restore_child_profile",
+          "invoker public.return_parent_challenge",
+          "invoker public.save_family_challenge_participants",
+          "invoker public.withdraw_child_from_group",
+          "invoker view public.child_data_inventory",
+          "invoker view public.child_level_progress",
+          "invoker view public.child_series_streak_status",
+          "invoker view public.parent_child_progress_summary"
+        ],
+        "INSERT": [
+          "invoker public.create_child_with_consent"
+        ],
+        "UPDATE": [
+          "invoker public.archive_child_profile",
+          "invoker public.restore_child_profile"
+        ]
+      }
+    },
+    {
+      "object": "public.child_scripture_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:123",
+          "club-app/src/components/BibleHub.tsx:214",
+          "club-app/src/components/BibleHub.tsx:243",
+          "club-app/src/lib/parentChildSnapshot.ts:20",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ],
+        "INSERT": [
+          "club-app/src/components/BibleHub.tsx:214",
+          "club-app/src/components/BibleHub.tsx:243"
+        ],
+        "UPDATE": [
+          "club-app/src/components/BibleHub.tsx:214",
+          "club-app/src/components/BibleHub.tsx:243"
+        ]
+      }
+    },
+    {
+      "object": "public.child_series_streak_status",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/parentChildSnapshot.ts:23",
+          "club-app/src/lib/trophyData.ts:26",
+          "invoker view public.child_active_streak_badges"
+        ]
+      }
+    },
+    {
+      "object": "public.child_series_streaks",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker view public.child_series_streak_status"
+        ]
+      }
+    },
+    {
+      "object": "public.child_series_weekly_completions",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.child_step_progress",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ChallengeDialog.tsx:167",
+          "club-app/src/components/ChallengeDialog.tsx:89",
+          "invoker public.save_family_challenge_participants",
+          "invoker trigger private.validate_challenge_completion on public.child_challenge_progress"
+        ],
+        "INSERT": [
+          "club-app/src/components/ChallengeDialog.tsx:167",
+          "invoker public.save_family_challenge_participants"
+        ],
+        "UPDATE": [
+          "club-app/src/components/ChallengeDialog.tsx:167",
+          "invoker public.save_family_challenge_participants"
+        ]
+      }
+    },
+    {
+      "object": "public.child_streaks",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childDashboard.ts:19",
+          "invoker public.get_child_achievement_progress"
+        ]
+      }
+    },
+    {
+      "object": "public.child_token_totals",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childDashboard.ts:18",
+          "club-app/src/lib/parentChildSnapshot.ts:17",
+          "club-app/src/lib/trophyData.ts:20",
+          "invoker view public.parent_child_progress_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.child_xp_totals",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/childDashboard.ts:15",
+          "invoker view public.parent_child_progress_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.commerce_readiness_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:116"
+        ]
+      }
+    },
+    {
+      "object": "public.commerce_recent_webhooks",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:120"
+        ]
+      }
+    },
+    {
+      "object": "public.consent_policies",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/PrivacyDataControls.tsx:82",
+          "invoker public.create_child_with_consent",
+          "invoker public.create_household_with_consent",
+          "invoker public.record_household_consent",
+          "invoker view public.current_household_consents"
+        ]
+      }
+    },
+    {
+      "object": "public.contact_inquiries",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/LeadsAdmin.tsx:56",
+          "invoker view public.public_site_pipeline_summary"
+        ],
+        "UPDATE": [
+          "club-app/src/components/LeadsAdmin.tsx:91"
+        ]
+      }
+    },
+    {
+      "object": "public.content_items",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ActivitiesHub.tsx:65",
+          "club-app/src/components/BookAdmin.tsx:55",
+          "club-app/src/components/Bookshelf.tsx:209 (PostgREST embedding)",
+          "club-app/src/components/ContentAdmin.tsx:46",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_content_item",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_content_item"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.current_household_consents",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/PrivacyDataControls.tsx:88"
+        ]
+      }
+    },
+    {
+      "object": "public.data_privacy_requests",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:81",
+          "club-app/src/components/PrivacyDataControls.tsx:92",
+          "invoker public.cancel_data_privacy_request",
+          "invoker public.request_data_privacy_action",
+          "supabase/functions/privacy-export/index.ts:79"
+        ],
+        "UPDATE": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:131",
+          "invoker public.cancel_data_privacy_request"
+        ],
+        "INSERT": [
+          "invoker public.request_data_privacy_action"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_blueprint_requirements",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:163 (PostgREST embedding)"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_brand_assets",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:153"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_character_profiles",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:157"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_content_blueprints",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.dc_blueprint_requirements.dc_blueprint_requirements_read",
+          "club-app/src/components/GovernanceAdmin.tsx:161"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_content_reviews",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:171",
+          "invoker public.approve_dc_content_review",
+          "invoker public.request_dc_content_review",
+          "invoker view public.dc_governance_review_status"
+        ],
+        "INSERT": [
+          "invoker public.request_dc_content_review"
+        ],
+        "UPDATE": [
+          "invoker public.approve_dc_content_review",
+          "invoker public.request_dc_content_review"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_governance_entity_catalog",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker view public.dc_governance_review_status"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_governance_review_status",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:166",
+          "invoker view public.commerce_readiness_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_governance_rules",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:148"
+        ]
+      }
+    },
+    {
+      "object": "public.dc_governance_standards",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/GovernanceAdmin.tsx:143",
+          "club-app/src/components/GovernanceAdmin.tsx:150 (PostgREST embedding)",
+          "invoker public.dc_preflight_scan"
+        ]
+      }
+    },
+    {
+      "object": "public.delivery_worker_health",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:109"
+        ]
+      }
+    },
+    {
+      "object": "public.delivery_worker_runs",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:111",
+          "invoker view public.delivery_worker_health"
+        ]
+      }
+    },
+    {
+      "object": "public.devotional_days",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:133",
+          "invoker public.admin_add_devotional_day",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps"
+        ],
+        "INSERT": [
+          "invoker public.admin_add_devotional_day"
+        ]
+      }
+    },
+    {
+      "object": "public.devotional_series",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.devotional_days.devotional_days_read_authenticated",
+          "club-app/src/components/BibleHub.tsx:127",
+          "club-app/src/components/BookAdmin.tsx:51",
+          "club-app/src/components/Bookshelf.tsx:193 (PostgREST embedding)",
+          "club-app/src/components/FaithContentAdmin.tsx:79",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_devotional_series",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_devotional_series"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.entitlement_definitions",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommerceAdmin.tsx:79"
+        ]
+      }
+    },
+    {
+      "object": "public.event_registrations",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyEventsCard.tsx:119",
+          "club-app/src/components/FamilyEventsCard.tsx:59",
+          "invoker view public.child_data_inventory"
+        ]
+      }
+    },
+    {
+      "object": "public.events",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:159",
+          "club-app/src/components/EventsAdmin.tsx:48",
+          "club-app/src/components/FamilyEventsCard.tsx:53",
+          "invoker private.dc_entity_payload",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "club-app/src/components/EventsAdmin.tsx:67"
+        ],
+        "UPDATE": [
+          "club-app/src/components/EventsAdmin.tsx:95",
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.family_faith_guides",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.household_faith_sessions.household_faith_sessions_insert",
+          "club-app/src/components/FamilyFaithAdmin.tsx:77",
+          "club-app/src/components/FamilyFaithAtHome.tsx:64",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_family_faith_guide",
+          "invoker public.complete_family_faith_participants",
+          "invoker public.dc_preflight_scan",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_family_faith_guide"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.fulfillments",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/OrderHistoryCard.tsx:51 (PostgREST embedding)"
+        ]
+      }
+    },
+    {
+      "object": "public.group_challenge_assignments",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyGroupsCard.tsx:113",
+          "club-app/src/components/LeaderGroupsHub.tsx:335",
+          "club-app/src/lib/familyAssignments.ts:31",
+          "club-app/src/lib/leaderGroupData.ts:7"
+        ],
+        "INSERT": [
+          "club-app/src/components/LeaderGroupsHub.tsx:335"
+        ],
+        "UPDATE": [
+          "club-app/src/components/LeaderGroupsHub.tsx:335"
+        ]
+      }
+    },
+    {
+      "object": "public.group_leaders",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.household_book_access",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.household_consents",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "invoker public.create_child_with_consent",
+          "invoker public.create_household_with_consent",
+          "invoker public.record_household_consent"
+        ],
+        "SELECT": [
+          "invoker public.record_household_consent",
+          "invoker view public.current_household_consents"
+        ]
+      }
+    },
+    {
+      "object": "public.household_entitlement_grants",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilySettings.tsx:154",
+          "invoker view public.household_membership_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.household_faith_sessions",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyFaithAtHome.tsx:70",
+          "club-app/src/lib/familyActions.ts:30",
+          "club-app/src/lib/familyActions.ts:35"
+        ],
+        "INSERT": [
+          "club-app/src/lib/familyActions.ts:30",
+          "invoker public.complete_family_faith_participants"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/familyActions.ts:30"
+        ]
+      }
+    },
+    {
+      "object": "public.household_invitations",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilySettings.tsx:165",
+          "club-app/src/lib/householdSettings.ts:21",
+          "invoker public.revoke_household_invitation"
+        ],
+        "UPDATE": [
+          "invoker public.revoke_household_invitation"
+        ]
+      }
+    },
+    {
+      "object": "public.household_members",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/App.tsx:1211"
+        ]
+      }
+    },
+    {
+      "object": "public.household_membership_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyStore.tsx:191",
+          "club-app/src/components/MembershipAccessCard.tsx:39"
+        ]
+      }
+    },
+    {
+      "object": "public.household_subscriptions",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilySettings.tsx:146",
+          "invoker view public.household_membership_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.households",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/App.tsx:1213 (PostgREST embedding)",
+          "club-app/src/lib/householdSettings.ts:11",
+          "invoker view public.child_series_streak_status",
+          "invoker view public.household_membership_summary"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/householdSettings.ts:11"
+        ],
+        "INSERT": [
+          "invoker public.create_household_with_consent"
+        ]
+      }
+    },
+    {
+      "object": "public.identity_truths",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:141",
+          "club-app/src/components/BookAdmin.tsx:53",
+          "club-app/src/components/Bookshelf.tsx:201 (PostgREST embedding)",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_identity_truth",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_identity_truth"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.integration_events",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:161",
+          "invoker view public.integration_health_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.integration_health_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:107"
+        ]
+      }
+    },
+    {
+      "object": "public.integration_latest_tests",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:124"
+        ]
+      }
+    },
+    {
+      "object": "public.integration_providers",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker public.get_checkout_readiness",
+          "invoker view public.commerce_readiness_summary",
+          "invoker view public.integration_health_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.integration_test_runs",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker view public.integration_latest_tests"
+        ]
+      }
+    },
+    {
+      "object": "public.inventory_reservations",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "invoker public.create_checkout_order"
+        ],
+        "SELECT": [
+          "invoker public.create_checkout_order"
+        ]
+      }
+    },
+    {
+      "object": "public.levels",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker view public.child_level_progress"
+        ]
+      }
+    },
+    {
+      "object": "public.marketing_conversion_summary",
+      "kind": "v",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.marketing_lead_summary",
+      "kind": "v",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.marketing_leads",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/LeadsAdmin.tsx:51",
+          "invoker view public.public_site_pipeline_summary"
+        ],
+        "UPDATE": [
+          "club-app/src/components/LeadsAdmin.tsx:81"
+        ]
+      }
+    },
+    {
+      "object": "public.media_assets",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "Storage policy dc_members_authorized_read",
+          "club-app/src/components/ActivitiesHub.tsx:92",
+          "club-app/src/components/ContentAdmin.tsx:45",
+          "club-app/src/components/MediaAdmin.tsx:55",
+          "invoker private.dc_entity_payload"
+        ],
+        "INSERT": [
+          "club-app/src/components/MediaAdmin.tsx:102"
+        ]
+      }
+    },
+    {
+      "object": "public.membership_plans",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.plan_entitlements.plan_entitlements_read_active",
+          "club-app/src/components/CommunicationsAdmin.tsx:144",
+          "club-app/src/components/FamilySettings.tsx:141",
+          "club-app/src/components/FamilySettings.tsx:148 (PostgREST embedding)",
+          "invoker view public.household_membership_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_campaign_recipients",
+      "kind": "r",
+      "authenticated": [],
+      "columns": {},
+      "anon": [],
+      "reasons": {}
+    },
+    {
+      "object": "public.notification_campaigns",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:135",
+          "invoker public.admin_cancel_notification_campaign",
+          "invoker public.admin_schedule_notification_campaign"
+        ],
+        "INSERT": [
+          "invoker public.admin_schedule_notification_campaign"
+        ],
+        "UPDATE": [
+          "invoker public.admin_cancel_notification_campaign"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_deliveries",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:86",
+          "invoker view public.notification_delivery_health"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_delivery_health",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/IntegrationHealthAdmin.tsx:108"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_preferences",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilySettings.tsx:159",
+          "club-app/src/lib/familyActions.ts:21"
+        ],
+        "INSERT": [
+          "club-app/src/lib/familyActions.ts:21"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/familyActions.ts:21"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_reminder_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:140",
+          "invoker public.admin_create_notification_reminder_rule"
+        ],
+        "UPDATE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:405"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_notification_reminder_rule"
+        ]
+      }
+    },
+    {
+      "object": "public.notification_templates",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:131",
+          "club-app/src/components/CommunicationsAdmin.tsx:137 (PostgREST embedding)",
+          "club-app/src/components/CommunicationsAdmin.tsx:142 (PostgREST embedding)",
+          "invoker public.admin_create_notification_reminder_rule",
+          "invoker public.admin_create_notification_template",
+          "invoker public.admin_schedule_notification_campaign",
+          "invoker public.dc_preflight_scan"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_notification_template"
+        ]
+      }
+    },
+    {
+      "object": "public.order_items",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/OrderHistoryCard.tsx:51 (PostgREST embedding)",
+          "supabase/functions/commerce-checkout/index.ts:103"
+        ],
+        "INSERT": [
+          "invoker public.create_checkout_order"
+        ]
+      }
+    },
+    {
+      "object": "public.orders",
+      "kind": "r",
+      "authenticated": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.fulfillments.fulfillments_order_read",
+          "RLS public.order_items.order_items_household_read",
+          "club-app/src/components/CommerceAdmin.tsx:77",
+          "club-app/src/components/OrderHistoryCard.tsx:49",
+          "invoker public.admin_set_order_status",
+          "invoker public.begin_checkout_provider_handoff",
+          "invoker public.create_checkout_order",
+          "invoker view public.checkout_session_summary",
+          "invoker view public.commerce_readiness_summary"
+        ],
+        "UPDATE": [
+          "invoker public.admin_set_order_status",
+          "invoker public.begin_checkout_provider_handoff",
+          "invoker public.create_checkout_order"
+        ],
+        "DELETE": [
+          "invoker public.create_checkout_order"
+        ],
+        "INSERT": [
+          "invoker public.create_checkout_order"
+        ]
+      }
+    },
+    {
+      "object": "public.organization_invitations",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/LeaderGroupsHub.tsx:184",
+          "invoker public.cancel_organization_invitation"
+        ],
+        "UPDATE": [
+          "invoker public.cancel_organization_invitation"
+        ]
+      }
+    },
+    {
+      "object": "public.organization_members",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/App.tsx:1201",
+          "club-app/src/components/LeaderGroupsHub.tsx:124"
+        ]
+      }
+    },
+    {
+      "object": "public.organizations",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/CommunicationsAdmin.tsx:149",
+          "club-app/src/components/EventsAdmin.tsx:49",
+          "club-app/src/components/FamilyGroupsCard.tsx:98 (PostgREST embedding)",
+          "club-app/src/components/LeaderGroupsHub.tsx:126 (PostgREST embedding)",
+          "club-app/src/components/OrganizationsAdmin.tsx:26",
+          "invoker public.admin_create_organization"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_organization"
+        ]
+      }
+    },
+    {
+      "object": "public.parent_child_progress_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/familyProgress.ts:11"
+        ]
+      }
+    },
+    {
+      "object": "public.payment_webhook_events",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker view public.commerce_readiness_summary",
+          "invoker view public.commerce_recent_webhooks"
+        ]
+      }
+    },
+    {
+      "object": "public.plan_entitlements",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilySettings.tsx:187",
+          "invoker view public.household_membership_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.power_verses",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:117",
+          "club-app/src/components/BookAdmin.tsx:50",
+          "club-app/src/components/Bookshelf.tsx:189 (PostgREST embedding)",
+          "club-app/src/components/KidHomeFocus.tsx:80",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_power_verse",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_power_verse"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.prayer_prompts",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:150",
+          "club-app/src/components/BookAdmin.tsx:52",
+          "club-app/src/components/Bookshelf.tsx:197 (PostgREST embedding)",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_prayer_prompt",
+          "invoker public.dc_preflight_scan",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_prayer_prompt"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.product_book_access_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "club-app/src/components/CommerceAdmin.tsx:142"
+        ],
+        "SELECT": [
+          "club-app/src/components/CommerceAdmin.tsx:142"
+        ],
+        "UPDATE": [
+          "club-app/src/components/CommerceAdmin.tsx:142"
+        ]
+      }
+    },
+    {
+      "object": "public.product_entitlement_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "club-app/src/components/CommerceAdmin.tsx:155"
+        ],
+        "SELECT": [
+          "club-app/src/components/CommerceAdmin.tsx:155"
+        ],
+        "UPDATE": [
+          "club-app/src/components/CommerceAdmin.tsx:155"
+        ]
+      }
+    },
+    {
+      "object": "public.product_variants",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/FamilyStore.tsx:187 (PostgREST embedding)",
+          "invoker public.create_checkout_order"
+        ]
+      }
+    },
+    {
+      "object": "public.products",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.product_variants.product_variants_public_read",
+          "club-app/src/components/CommerceAdmin.tsx:76",
+          "club-app/src/components/FamilyStore.tsx:185",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_product",
+          "invoker public.create_checkout_order",
+          "invoker public.publish_dc_entity",
+          "invoker view public.commerce_readiness_summary",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_product"
+        ],
+        "UPDATE": [
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.profiles",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/adultSignup.ts:19",
+          "club-app/src/lib/adultSignup.ts:32"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/adultSignup.ts:32"
+        ]
+      }
+    },
+    {
+      "object": "public.promo_codes",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "invoker public.admin_create_promo_code"
+        ],
+        "SELECT": [
+          "invoker public.admin_create_promo_code",
+          "invoker public.create_checkout_order"
+        ]
+      }
+    },
+    {
+      "object": "public.public_site_pipeline_summary",
+      "kind": "v",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/LeadsAdmin.tsx:61"
+        ]
+      }
+    },
+    {
+      "object": "public.push_devices",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "INSERT": [
+          "invoker public.register_app_installation"
+        ],
+        "SELECT": [
+          "invoker public.register_app_installation"
+        ],
+        "UPDATE": [
+          "invoker public.register_app_installation"
+        ]
+      }
+    },
+    {
+      "object": "public.referral_attributions",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ReferralSupportCard.tsx:55"
+        ]
+      }
+    },
+    {
+      "object": "public.referral_codes",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.referral_attributions.referral_attributions_owner_read",
+          "club-app/src/components/ReferralSupportCard.tsx:44"
+        ]
+      }
+    },
+    {
+      "object": "public.reward_redemptions",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AdminPortal.tsx:797",
+          "club-app/src/components/RewardsPanel.tsx:64",
+          "club-app/src/lib/rewardRequests.ts:10",
+          "club-app/src/lib/rewardRequests.ts:14"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/rewardRequests.ts:10"
+        ],
+        "INSERT": [
+          "club-app/src/lib/rewardRequests.ts:14"
+        ]
+      }
+    },
+    {
+      "object": "public.reward_unlocks",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "RLS public.reward_redemptions.reward_redemptions_insert",
+          "RLS public.reward_redemptions.reward_redemptions_read",
+          "club-app/src/components/AdminPortal.tsx:799 (PostgREST embedding)",
+          "club-app/src/components/RewardsPanel.tsx:48",
+          "invoker view public.child_data_inventory",
+          "invoker view public.parent_child_progress_summary"
+        ]
+      }
+    },
+    {
+      "object": "public.rewards",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AdminPortal.tsx:793",
+          "club-app/src/components/AdminPortal.tsx:799 (PostgREST embedding)",
+          "club-app/src/components/FamilyFaithAdmin.tsx:76",
+          "club-app/src/components/FamilyFaithAdmin.tsx:78 (PostgREST embedding)",
+          "club-app/src/components/RewardsPanel.tsx:50 (PostgREST embedding)",
+          "invoker public.admin_create_reward"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_reward"
+        ]
+      }
+    },
+    {
+      "object": "public.scripture_passages",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/BibleHub.tsx:119 (PostgREST embedding)",
+          "club-app/src/components/BibleHub.tsx:135 (PostgREST embedding)",
+          "club-app/src/components/BibleHub.tsx:143 (PostgREST embedding)",
+          "club-app/src/components/BibleHub.tsx:152 (PostgREST embedding)",
+          "club-app/src/components/Bookshelf.tsx:189 (PostgREST embedding)",
+          "club-app/src/components/FaithContentAdmin.tsx:78",
+          "club-app/src/components/FamilyFaithAdmin.tsx:75",
+          "club-app/src/components/FamilyFaithAtHome.tsx:66 (PostgREST embedding)",
+          "club-app/src/components/KidHomeFocus.tsx:82 (PostgREST embedding)",
+          "invoker private.dc_entity_payload",
+          "invoker public.admin_create_scripture",
+          "invoker public.get_child_book_adventure_steps",
+          "invoker public.publish_dc_entity",
+          "invoker view public.dc_governance_entity_catalog"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_scripture"
+        ],
+        "UPDATE": [
+          "invoker public.admin_create_scripture",
+          "invoker public.publish_dc_entity"
+        ]
+      }
+    },
+    {
+      "object": "public.series_badge_rules",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/WeeklySeriesAdmin.tsx:90",
+          "invoker view public.child_active_streak_badges"
+        ],
+        "INSERT": [
+          "invoker public.admin_create_series_streak_badge"
+        ]
+      }
+    },
+    {
+      "object": "public.streak_badge_earnings",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/lib/trophyData.ts:44"
+        ]
+      }
+    },
+    {
+      "object": "public.support_tickets",
+      "kind": "r",
+      "authenticated": [
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/ReferralSupportCard.tsx:45",
+          "club-app/src/components/SupportAdmin.tsx:31",
+          "club-app/src/lib/adminOperations.ts:16",
+          "club-app/src/lib/supportHistory.ts:9",
+          "club-app/src/lib/supportTicket.ts:16",
+          "club-app/src/lib/supportTicket.ts:9"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/adminOperations.ts:16"
+        ],
+        "INSERT": [
+          "club-app/src/lib/supportTicket.ts:16"
+        ]
+      }
+    },
+    {
+      "object": "public.user_notifications",
+      "kind": "r",
+      "authenticated": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:88 (PostgREST embedding)",
+          "club-app/src/lib/familyActions.ts:45",
+          "club-app/src/lib/familyActions.ts:57",
+          "club-app/src/lib/notificationHistory.ts:18"
+        ],
+        "UPDATE": [
+          "club-app/src/lib/familyActions.ts:45",
+          "club-app/src/lib/familyActions.ts:57"
+        ]
+      }
+    },
+    {
+      "object": "public.xp_ledger",
+      "kind": "r",
+      "authenticated": [
+        "SELECT"
+      ],
+      "columns": {},
+      "anon": [],
+      "reasons": {
+        "SELECT": [
+          "invoker public.get_child_achievement_progress",
+          "invoker view public.child_data_inventory",
+          "invoker view public.child_level_progress",
+          "invoker view public.child_xp_totals"
+        ]
+      }
+    },
+    {
+      "object": "private.accept_household_invitation_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.accept_household_invitation"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.accept_organization_invitation_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.accept_organization_invitation"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_daily_metrics_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_daily_metrics"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_book_launch_gate_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_production_launch_gate"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_book_release_gate_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_production_launch_gate"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_digital_book_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_digital_book"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_digital_book_launch_gate_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_production_launch_gate"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_membership_tier_gate_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_production_launch_gate"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_get_production_launch_gate_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_production_launch_gate"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_platform_snapshot_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_get_platform_snapshot"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.admin_prepare_digital_book_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_prepare_digital_book"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.after_token_insert_evaluate_badges",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.after_xp_insert_evaluate_badges",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.attribute_referral_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.attribute_referral"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.audit_admin_mutation",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.award_completed_book_adventure",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.complete_child_book_adventure"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.award_xp_event",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.can_approve_dc_governance",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.approve_dc_content_review"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_lead_group",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventure_groups.adventure_groups_read",
+          "RLS public.events.events_admin_insert",
+          "RLS public.group_challenge_assignments.group_challenge_assignments_insert",
+          "RLS public.group_challenge_assignments.group_challenge_assignments_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_challenge_progress",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.child_step_progress.child_step_progress_insert",
+          "RLS public.child_step_progress.child_step_progress_read",
+          "RLS public.child_step_progress.child_step_progress_update"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_child",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.child_book_progress.child_book_progress_insert",
+          "RLS public.child_book_progress.child_book_progress_update",
+          "RLS public.child_book_reading_positions.dc_read_own_book_position",
+          "RLS public.child_challenge_progress.child_challenge_progress_insert",
+          "RLS public.child_challenge_progress.child_challenge_progress_update",
+          "RLS public.child_content_progress.child_content_progress_update",
+          "RLS public.child_devotional_progress.child_devotional_progress_insert",
+          "RLS public.child_devotional_progress.child_devotional_progress_update",
+          "RLS public.child_group_memberships.child_group_memberships_update",
+          "RLS public.child_identity_progress.child_identity_progress_insert",
+          "RLS public.child_identity_progress.child_identity_progress_update",
+          "RLS public.child_prayer_progress.child_prayer_progress_insert",
+          "RLS public.child_scripture_progress.child_scripture_progress_insert",
+          "RLS public.child_scripture_progress.child_scripture_progress_update",
+          "RLS public.reward_redemptions.reward_redemptions_insert",
+          "invoker public.archive_child_profile",
+          "invoker public.complete_child_book_adventure",
+          "invoker public.restore_child_profile",
+          "invoker public.withdraw_child_from_group",
+          "invoker trigger private.validate_challenge_completion on public.child_challenge_progress"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_event",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.event_registrations.event_registrations_read",
+          "RLS public.events.events_admin_update",
+          "RLS public.events.events_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_household",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.child_profiles.child_profiles_insert_manager",
+          "RLS public.child_profiles.child_profiles_update_manager",
+          "RLS public.data_privacy_requests.data_privacy_requests_guardian_insert",
+          "RLS public.household_consents.household_consents_insert_guardian",
+          "RLS public.household_faith_sessions.household_faith_sessions_insert",
+          "RLS public.household_invitations.household_invitations_read_manager",
+          "RLS public.households.households_update_manager",
+          "invoker public.cancel_data_privacy_request",
+          "invoker public.complete_family_faith_participants",
+          "invoker public.create_checkout_order",
+          "invoker public.create_child_with_consent",
+          "invoker public.record_household_consent",
+          "invoker public.request_data_privacy_action",
+          "invoker public.revoke_household_invitation",
+          "invoker public.save_family_challenge_participants"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_org",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventure_groups.adventure_groups_insert",
+          "RLS public.adventure_groups.adventure_groups_read",
+          "RLS public.events.events_admin_insert",
+          "RLS public.organization_invitations.organization_invitations_manager_read",
+          "RLS public.organization_members.organization_members_manage",
+          "RLS public.organization_members.organization_members_read",
+          "invoker public.cancel_organization_invitation",
+          "invoker public.create_adventure_group"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_manage_privacy_requests",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.data_privacy_requests.data_privacy_requests_admin_update"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_record_child_activity",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.child_content_progress.child_content_progress_insert",
+          "RLS public.child_content_progress.child_content_progress_update"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_schedule_notifications",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.notification_campaigns.notification_campaigns_admin_insert",
+          "RLS public.notification_campaigns.notification_campaigns_admin_update",
+          "RLS public.notification_reminder_rules.notification_reminder_rules_admin_insert",
+          "RLS public.notification_reminder_rules.notification_reminder_rules_admin_update",
+          "invoker public.admin_create_notification_reminder_rule",
+          "invoker public.admin_schedule_notification_campaign"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_view_child",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.achievement_token_ledger.achievement_token_read_child",
+          "RLS public.adventure_groups.adventure_groups_read",
+          "RLS public.badge_awards.badge_awards_read",
+          "RLS public.child_adventure_progress.child_adventure_progress_read",
+          "RLS public.child_book_progress.child_book_progress_read",
+          "RLS public.child_challenge_progress.child_challenge_progress_read",
+          "RLS public.child_content_progress.child_content_progress_read",
+          "RLS public.child_devotional_progress.child_devotional_progress_read",
+          "RLS public.child_group_memberships.child_group_memberships_read",
+          "RLS public.child_identity_progress.child_identity_progress_read",
+          "RLS public.child_prayer_progress.child_prayer_progress_read",
+          "RLS public.child_scripture_progress.child_scripture_progress_read",
+          "RLS public.child_series_streaks.child_series_streaks_read",
+          "RLS public.child_streaks.child_streaks_read",
+          "RLS public.group_challenge_assignments.group_challenge_assignments_read",
+          "RLS public.reward_redemptions.reward_redemptions_read",
+          "RLS public.reward_unlocks.reward_unlocks_read",
+          "RLS public.streak_badge_earnings.streak_badge_earnings_read",
+          "RLS public.xp_ledger.xp_ledger_read",
+          "invoker public.get_child_achievement_progress",
+          "invoker public.get_child_book_adventure_steps"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.can_view_event",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.events.events_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.cancel_event_registration_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.cancel_event_registration"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.child_can_access_adventure",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.child_can_access_challenge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.save_family_challenge_participants"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.child_has_book_companion_access",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.complete_child_book_adventure"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.child_has_digital_book_access",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.claim_marketing_leads_for_household_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.claim_marketing_leads_for_household"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.create_group_join_code_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.create_group_join_code"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.create_guardian_unlock_session_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.create_guardian_unlock_session"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.create_household_invitation_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.create_household_invitation"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.create_organization_invitation_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.create_organization_invitation"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.dc_entity_fingerprint",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.approve_dc_content_review",
+          "invoker view public.dc_governance_review_status"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.dc_entity_payload",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "invoker private.dc_entity_fingerprint",
+          "invoker public.dc_preflight_scan"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.dc_row_fingerprint",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "invoker trigger private.demote_changed_dc_content on public.challenges",
+          "invoker trigger private.demote_changed_notification_template on public.notification_templates"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.demote_changed_dc_content",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.demote_changed_dc_product",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.demote_changed_notification_template",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.digital_book_manifest_valid",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.digital_book_object_readable",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "Storage policy dc_digital_book_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.digital_book_released",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.dispatch_automated_notification_reminders",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.dispatch_due_notification_campaigns",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.enforce_child_adventure_access",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.enforce_child_book_access",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.enforce_child_challenge_access",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.enforce_dc_prayer_opening",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.enforce_dc_publish_gate",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.evaluate_badges_after_progress",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.evaluate_child_badges",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.event_audience_allows_registration",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.expire_checkout_sessions",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.get_digital_book_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.get_digital_book"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.get_group_progress_summary_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.get_group_progress_summary"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.get_group_roster_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.get_group_roster"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.get_household_adults_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.get_household_adults"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.get_or_create_referral_code_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.get_or_create_referral_code"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.guardian_pin_status_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.guardian_pin_status"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.guardian_unlock_session_valid",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.approve_parent_challenge",
+          "invoker public.return_parent_challenge"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.handle_new_auth_user",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.has_approved_dc_review",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.publish_dc_entity",
+          "invoker trigger private.enforce_dc_publish_gate on public.challenges"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.household_has_active_entitlement",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.household_faith_sessions.household_faith_sessions_insert",
+          "invoker public.complete_family_faith_participants"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.household_is_paid_member",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.create_checkout_order"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.initialize_household",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.initialize_organization",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.invoke_notification_delivery_worker",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.is_app_admin",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventures.adventures_admin_select_all",
+          "RLS public.app_installations.app_installations_read",
+          "RLS public.badge_rules.badge_rules_admin_select_all",
+          "RLS public.badges.badges_admin_select_all",
+          "RLS public.book_content_links.book_content_links_admin_select_all",
+          "RLS public.books.books_admin_select_all",
+          "RLS public.challenge_series.challenge_series_admin_select_all",
+          "RLS public.challenge_series.challenge_series_read_active",
+          "RLS public.challenge_steps.challenge_steps_admin_select_all",
+          "RLS public.challenges.challenges_admin_select_all",
+          "RLS public.checkout_sessions.checkout_sessions_household_read",
+          "RLS public.child_group_memberships.child_group_memberships_read",
+          "RLS public.consent_policies.consent_policies_admin_write",
+          "RLS public.consent_policies.consent_policies_read",
+          "RLS public.contact_inquiries.contact_inquiries_admin_read",
+          "RLS public.content_items.content_items_admin_select_all",
+          "RLS public.data_privacy_requests.data_privacy_requests_household_read",
+          "RLS public.dc_blueprint_requirements.dc_blueprint_requirements_admin_write",
+          "RLS public.dc_blueprint_requirements.dc_blueprint_requirements_read",
+          "RLS public.dc_brand_assets.dc_brand_assets_admin_write",
+          "RLS public.dc_brand_assets.dc_brand_assets_read",
+          "RLS public.dc_character_profiles.dc_character_profiles_admin_write",
+          "RLS public.dc_character_profiles.dc_character_profiles_read",
+          "RLS public.dc_content_blueprints.dc_content_blueprints_admin_write",
+          "RLS public.dc_content_blueprints.dc_content_blueprints_read",
+          "RLS public.dc_content_reviews.dc_content_reviews_admin_read",
+          "RLS public.dc_content_reviews.dc_content_reviews_admin_update",
+          "RLS public.dc_governance_rules.dc_governance_rules_admin_write",
+          "RLS public.dc_governance_rules.dc_governance_rules_read",
+          "RLS public.dc_governance_standards.dc_governance_standards_admin_write",
+          "RLS public.dc_governance_standards.dc_governance_standards_read",
+          "RLS public.delivery_worker_runs.delivery_worker_runs_admin_read",
+          "RLS public.devotional_days.devotional_days_read_authenticated",
+          "RLS public.devotional_series.devotional_series_read_authenticated",
+          "RLS public.events.events_admin_insert",
+          "RLS public.family_faith_guides.family_faith_guides_read",
+          "RLS public.fulfillments.fulfillments_order_read",
+          "RLS public.household_consents.household_consents_admin_select_all",
+          "RLS public.household_entitlement_grants.household_entitlement_grants_admin_select_all",
+          "RLS public.household_subscriptions.household_subscriptions_admin_select_all",
+          "RLS public.identity_truths.identity_truths_read_authenticated",
+          "RLS public.integration_events.integration_events_admin_read",
+          "RLS public.integration_providers.integration_providers_admin_read",
+          "RLS public.integration_providers.integration_providers_admin_write",
+          "RLS public.integration_test_runs.integration_test_runs_admin_read",
+          "RLS public.inventory_reservations.inventory_reservations_household_read",
+          "RLS public.levels.levels_admin_select_all",
+          "RLS public.marketing_leads.marketing_leads_admin_read",
+          "RLS public.media_assets.media_assets_read_authenticated",
+          "RLS public.notification_campaigns.notification_campaigns_admin_read",
+          "RLS public.notification_deliveries.notification_deliveries_user_read",
+          "RLS public.notification_reminder_rules.notification_reminder_rules_admin_read",
+          "RLS public.notification_templates.notification_templates_admin_read",
+          "RLS public.order_items.order_items_household_read",
+          "RLS public.orders.orders_household_read",
+          "RLS public.organization_invitations.organization_invitations_manager_read",
+          "RLS public.organization_members.organization_members_read",
+          "RLS public.organizations.organizations_insert_admin",
+          "RLS public.organizations.organizations_read_member",
+          "RLS public.payment_webhook_events.payment_webhook_events_admin_read",
+          "RLS public.power_verses.power_verses_read_authenticated",
+          "RLS public.prayer_prompts.prayer_prompts_read_authenticated",
+          "RLS public.product_book_access_rules.product_book_access_rules_admin_read",
+          "RLS public.product_entitlement_rules.product_entitlement_rules_admin_read",
+          "RLS public.product_variants.product_variants_public_read",
+          "RLS public.products.products_public_read",
+          "RLS public.promo_codes.promo_codes_admin_read",
+          "RLS public.push_devices.push_devices_read",
+          "RLS public.referral_attributions.referral_attributions_owner_read",
+          "RLS public.referral_codes.referral_codes_household_read",
+          "RLS public.reward_redemptions.reward_redemptions_admin_select_all",
+          "RLS public.rewards.rewards_admin_select_all",
+          "RLS public.scripture_passages.scripture_passages_read_authenticated",
+          "RLS public.series_badge_rules.series_badge_rules_admin_select_all",
+          "RLS public.series_badge_rules.series_badge_rules_read",
+          "Storage policy dc_members_authorized_read",
+          "invoker public.admin_cancel_notification_campaign",
+          "invoker public.admin_create_organization",
+          "invoker trigger private.prevent_completed_progress_reversal on public.child_challenge_progress"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.is_content_admin",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventures.adventures_admin_update",
+          "RLS public.badge_rules.badge_rules_admin_insert",
+          "RLS public.badges.badges_admin_insert",
+          "RLS public.book_challenges.book_challenges_admin_write",
+          "RLS public.book_content_links.book_content_links_admin_insert",
+          "RLS public.book_content_links.book_content_links_admin_update",
+          "RLS public.book_devotional_series.book_devotional_series_admin_write",
+          "RLS public.book_identity_truths.book_identity_truths_admin_write",
+          "RLS public.book_power_verses.book_power_verses_admin_write",
+          "RLS public.book_prayer_prompts.book_prayer_prompts_admin_write",
+          "RLS public.book_reward_rules.book_reward_rules_admin_insert",
+          "RLS public.book_reward_rules.book_reward_rules_admin_update",
+          "RLS public.books.books_admin_insert",
+          "RLS public.books.books_admin_update",
+          "RLS public.challenge_series.challenge_series_admin_insert",
+          "RLS public.challenge_steps.challenge_steps_admin_insert",
+          "RLS public.challenges.challenges_admin_insert",
+          "RLS public.challenges.challenges_admin_update",
+          "RLS public.content_items.content_items_admin_insert",
+          "RLS public.content_items.content_items_admin_update",
+          "RLS public.dc_content_reviews.dc_content_reviews_content_insert",
+          "RLS public.devotional_days.devotional_days_admin_insert",
+          "RLS public.devotional_series.devotional_series_admin_insert",
+          "RLS public.devotional_series.devotional_series_admin_update",
+          "RLS public.family_faith_guides.family_faith_guides_admin_insert",
+          "RLS public.family_faith_guides.family_faith_guides_admin_update",
+          "RLS public.identity_truths.identity_truths_admin_insert",
+          "RLS public.identity_truths.identity_truths_admin_update",
+          "RLS public.media_assets.media_assets_admin_insert",
+          "RLS public.notification_templates.notification_templates_content_insert",
+          "RLS public.power_verses.power_verses_admin_insert",
+          "RLS public.power_verses.power_verses_admin_update",
+          "RLS public.prayer_prompts.prayer_prompts_admin_insert",
+          "RLS public.prayer_prompts.prayer_prompts_admin_update",
+          "RLS public.product_book_access_rules.product_book_access_rules_admin_write",
+          "RLS public.product_entitlement_rules.product_entitlement_rules_admin_write",
+          "RLS public.products.products_admin_insert",
+          "RLS public.products.products_admin_update",
+          "RLS public.promo_codes.promo_codes_admin_write",
+          "RLS public.rewards.rewards_admin_insert",
+          "RLS public.scripture_passages.scripture_passages_admin_insert",
+          "RLS public.scripture_passages.scripture_passages_admin_update",
+          "RLS public.series_badge_rules.series_badge_rules_admin_insert",
+          "Storage policy dc_digital_book_read",
+          "Storage policy dc_digital_book_upload",
+          "Storage policy dc_storage_admin_delete",
+          "Storage policy dc_storage_admin_insert",
+          "Storage policy dc_storage_admin_select",
+          "Storage policy dc_storage_admin_update",
+          "invoker public.admin_add_devotional_day",
+          "invoker public.admin_create_book",
+          "invoker public.admin_create_challenge",
+          "invoker public.admin_create_challenge_series",
+          "invoker public.admin_create_content_item",
+          "invoker public.admin_create_devotional_series",
+          "invoker public.admin_create_family_faith_guide",
+          "invoker public.admin_create_identity_truth",
+          "invoker public.admin_create_lifetime_badge_level",
+          "invoker public.admin_create_notification_template",
+          "invoker public.admin_create_power_verse",
+          "invoker public.admin_create_prayer_prompt",
+          "invoker public.admin_create_product",
+          "invoker public.admin_create_promo_code",
+          "invoker public.admin_create_reward",
+          "invoker public.admin_create_scripture",
+          "invoker public.admin_create_series_streak_badge",
+          "invoker public.admin_create_weekly_challenge",
+          "invoker public.admin_link_book_experience",
+          "invoker public.admin_link_book_reward",
+          "invoker public.dc_preflight_scan",
+          "invoker public.publish_dc_entity",
+          "invoker public.request_dc_content_review"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.is_household_member",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.challenge_assignments.challenge_assignments_read",
+          "RLS public.checkout_sessions.checkout_sessions_household_read",
+          "RLS public.child_activity_events.child_activity_read_household",
+          "RLS public.child_profiles.child_profiles_select_household",
+          "RLS public.data_privacy_requests.data_privacy_requests_household_read",
+          "RLS public.event_registrations.event_registrations_read",
+          "RLS public.fulfillments.fulfillments_order_read",
+          "RLS public.household_consents.household_consents_select_household",
+          "RLS public.household_entitlement_grants.household_entitlement_grants_select_household",
+          "RLS public.household_faith_sessions.household_faith_sessions_read",
+          "RLS public.household_members.household_members_select_household",
+          "RLS public.household_subscriptions.household_subscriptions_select_household",
+          "RLS public.households.households_select_member",
+          "RLS public.inventory_reservations.inventory_reservations_household_read",
+          "RLS public.order_items.order_items_household_read",
+          "RLS public.orders.orders_household_read",
+          "RLS public.referral_attributions.referral_attributions_owner_read",
+          "RLS public.referral_codes.referral_codes_household_read",
+          "RLS public.support_tickets.support_tickets_user_insert",
+          "RLS public.support_tickets.support_tickets_user_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.is_household_owner",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.is_operations_admin",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.orders.orders_operations_update",
+          "RLS public.reward_redemptions.reward_redemptions_admin_update",
+          "invoker public.admin_set_order_status"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.is_org_member",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.organizations.organizations_read_member"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.join_child_to_group_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.join_child_to_group"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.notification_audience_count_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.admin_preview_notification_audience"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.notification_next_delivery_at",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.notification_preference_allows",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.notify_pending_parent_challenge",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.notify_reward_unlock",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.prevent_book_progress_regression",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.prevent_completed_progress_reversal",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.preview_group_join_code_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.preview_group_join_code"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.preview_organization_invitation_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.preview_organization_invitation"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.privacy_export_payload_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.privacy_export_payload"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.process_adventure_completion",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_book_progress",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_challenge_completion",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_content_completed",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_devotional_completed",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_family_faith_session",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_paid_order_access",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_prayer_completed",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_scripture_memorized",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.process_weekly_series_completion",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.queue_external_notification_delivery",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.register_for_event_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.register_for_event"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.save_digital_book_position_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.save_digital_book_position"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.set_guardian_pin_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.set_guardian_pin"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.set_updated_at",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.sync_reward_redemption_fulfillment",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.unlock_book_milestone_rewards",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.user_can_access_challenge",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.user_has_active_entitlement",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventures.adventures_read_authenticated",
+          "RLS public.challenges.challenges_read_authenticated",
+          "RLS public.content_items.content_items_read_authenticated",
+          "RLS public.devotional_days.devotional_days_read_authenticated",
+          "RLS public.devotional_series.devotional_series_read_authenticated",
+          "RLS public.family_faith_guides.family_faith_guides_read",
+          "RLS public.identity_truths.identity_truths_read_authenticated",
+          "RLS public.media_assets.media_assets_read_authenticated",
+          "RLS public.power_verses.power_verses_read_authenticated",
+          "RLS public.prayer_prompts.prayer_prompts_read_authenticated",
+          "RLS public.rewards.rewards_read_authenticated",
+          "Storage policy dc_members_authorized_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.user_has_book_access",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.book_challenges.book_challenges_read",
+          "RLS public.book_content_links.book_content_links_read",
+          "RLS public.book_devotional_series.book_devotional_series_read",
+          "RLS public.book_identity_truths.book_identity_truths_read",
+          "RLS public.book_power_verses.book_power_verses_read",
+          "RLS public.book_prayer_prompts.book_prayer_prompts_read",
+          "invoker public.has_book_access"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.user_has_household",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "RLS public.adventures.adventures_read_authenticated",
+          "RLS public.challenges.challenges_read_authenticated",
+          "RLS public.content_items.content_items_read_authenticated",
+          "RLS public.devotional_days.devotional_days_read_authenticated",
+          "RLS public.devotional_series.devotional_series_read_authenticated",
+          "RLS public.family_faith_guides.family_faith_guides_read",
+          "RLS public.identity_truths.identity_truths_read_authenticated",
+          "RLS public.media_assets.media_assets_read_authenticated",
+          "RLS public.power_verses.power_verses_read_authenticated",
+          "RLS public.prayer_prompts.prayer_prompts_read_authenticated",
+          "RLS public.rewards.rewards_read_authenticated",
+          "Storage policy dc_members_authorized_read"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "private.validate_challenge_completion",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.validate_digital_book_manifest",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.validate_notification_reminder_scope",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.validate_reward_redemption_transition",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "6 trigger/internal helper",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "private.verify_guardian_pin_impl",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "invoker public.verify_guardian_pin"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.accept_household_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/invitationAcceptance.ts:13 (conditional RPC)"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.accept_organization_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/invitationAcceptance.ts:13 (conditional RPC)"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_add_devotional_day",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:153"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_cancel_notification_campaign",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:425"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_badge_with_rule",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_book",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/BookAdmin.tsx:95"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_challenge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/AdminPortal.tsx:170"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_challenge_series",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/WeeklySeriesAdmin.tsx:127"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_content_item",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/ContentAdmin.tsx:59"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_devotional_series",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:135"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_family_faith_guide",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyFaithAdmin.tsx:110"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_identity_truth",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:189"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_lifetime_badge_level",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/AdminPortal.tsx:356"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_notification_reminder_rule",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:371"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_notification_template",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:271"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_organization",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/OrganizationsAdmin.tsx:39"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_power_verse",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:114"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_prayer_prompt",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:171"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_product",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommerceAdmin.tsx:112"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_product_variant",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_promo_code",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommerceAdmin.tsx:172"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_reward",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/AdminPortal.tsx:558"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_scripture",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FaithContentAdmin.tsx:101"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_series_streak_badge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/WeeklySeriesAdmin.tsx:199"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_create_weekly_challenge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/WeeklySeriesAdmin.tsx:166"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_get_daily_metrics",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:80"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_get_digital_book",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/DigitalBookReview.tsx:18"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_get_platform_snapshot",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/AnalyticsPrivacyAdmin.tsx:79"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_get_production_launch_gate",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/LaunchReadinessAdmin.tsx:29"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_link_book_experience",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/BookAdmin.tsx:118"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_link_book_reward",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyFaithAdmin.tsx:148"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_prepare_digital_book",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/digitalBookPreparation.ts:44"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_preview_notification_audience",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:237"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_schedule_notification_campaign",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommunicationsAdmin.tsx:317"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.admin_set_order_status",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/CommerceAdmin.tsx:188"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.approve_dc_content_review",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/GovernanceAdmin.tsx:272"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.approve_parent_challenge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/ParentApprovals.tsx:108 (conditional RPC)"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.archive_child_profile",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/PrivacyDataControls.tsx:248"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.attribute_referral",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:1268"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.begin_checkout_provider_handoff",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "supabase/functions/commerce-checkout/index.ts:250"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.cancel_checkout_session",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "public.cancel_data_privacy_request",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/PrivacyDataControls.tsx:239"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.cancel_event_registration",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyEventsCard.tsx:117"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.cancel_organization_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/LeaderGroupsHub.tsx:302"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.capture_marketing_lead",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.claim_marketing_leads_for_household",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:1262"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.claim_notification_deliveries",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.complete_child_book_adventure",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/bookActions.ts:35"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.complete_family_faith_participants",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/familyParticipation.ts:11"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.complete_notification_delivery",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.create_adventure_group",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/LeaderGroupsHub.tsx:236"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_checkout_order",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyStore.tsx:354"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_child_with_consent",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:520"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_group_join_code",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/LeaderGroupsHub.tsx:320"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_guardian_unlock_session",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/GuardianPin.tsx:121",
+          "club-app/src/components/ParentApprovals.tsx:61"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_household_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilySettings.tsx:277"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_household_with_consent",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:443"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.create_organization_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/LeaderGroupsHub.tsx:268"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.dc_preflight_scan",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/GovernanceAdmin.tsx:220",
+          "invoker public.request_dc_content_review"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.deactivate_app_installation",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "public.get_checkout_readiness",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyStore.tsx:196"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_child_achievement_progress",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/trophyData.ts:36"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_child_book_adventure_steps",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/KidHomeFocus.tsx:113",
+          "club-app/src/lib/bookActions.ts:7",
+          "invoker public.get_child_book_adventure_summary"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_child_book_adventure_summary",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/KidHomeFocus.tsx:109",
+          "club-app/src/lib/bookActions.ts:7",
+          "club-app/src/lib/familyProgress.ts:35",
+          "invoker public.complete_child_book_adventure"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_digital_book",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/digitalBooks.ts:34"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_group_progress_summary",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/leaderGroupData.ts:16"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_group_roster",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/leaderGroupData.ts:10"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_household_adults",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilySettings.tsx:164"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.get_notification_delivery_payload",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.get_or_create_referral_code",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/ReferralSupportCard.tsx:77"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.guardian_pin_status",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:1244",
+          "club-app/src/lib/onboarding.ts:51"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.has_book_access",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/Bookshelf.tsx:227",
+          "club-app/src/components/KidHomeFocus.tsx:119"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.join_child_to_group",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/groupMembership.ts:15"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.mark_order_paid_from_provider",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.preview_group_join_code",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyGroupsCard.tsx:147"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.preview_organization_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/OrganizationInviteAccept.tsx:43"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.privacy_export_payload",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "supabase/functions/privacy-export/index.ts:98"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.publish_dc_entity",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "4 admin-only RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/GovernanceAdmin.tsx:303"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.record_household_consent",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/PrivacyDataControls.tsx:156"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.record_integration_event",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.register_app_installation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/installations.ts:53"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.register_for_event",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilyEventsCard.tsx:85"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.remove_household_adult",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "7 owner-only implementation detail",
+      "reasons": {},
+      "service_role": []
+    },
+    {
+      "object": "public.request_data_privacy_action",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/PrivacyDataControls.tsx:178"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.request_dc_content_review",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/GovernanceAdmin.tsx:255"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.restore_child_profile",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/PrivacyDataControls.tsx:258"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.return_parent_challenge",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/ParentApprovals.tsx:108 (conditional RPC)"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.revoke_guardian_unlock_sessions",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "3 privileged guarded authenticated RPC",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/App.tsx:725"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.revoke_household_invitation",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/householdSettings.ts:19"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.save_digital_book_position",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/digitalBooks.ts:53"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.save_family_challenge_participants",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/familyParticipation.ts:12"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.set_guardian_pin",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/components/FamilySettings.tsx:261",
+          "club-app/src/lib/onboarding.ts:49"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.update_integration_provider_health",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.validate_worker_token",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.verify_guardian_pin",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "approved PIN repair API; guardian_pin_security_regression.sql"
+        ]
+      },
+      "service_role": []
+    },
+    {
+      "object": "public.verify_privacy_cleanup_secret",
+      "kind": "f",
+      "authenticated": [],
+      "anon": [],
+      "category": "5 server/worker-only function",
+      "reasons": {},
+      "service_role": [
+        "EXECUTE"
+      ]
+    },
+    {
+      "object": "public.withdraw_child_from_group",
+      "kind": "f",
+      "authenticated": [
+        "EXECUTE"
+      ],
+      "anon": [],
+      "category": "2 authenticated RPC/helper",
+      "reasons": {
+        "EXECUTE": [
+          "club-app/src/lib/groupMembership.ts:24"
+        ]
+      },
+      "service_role": []
+    }
+  ]
+}
