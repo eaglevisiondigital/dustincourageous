@@ -497,7 +497,7 @@ export function Bookshelf({
               )}
             </div>
 
-            <DigitalBookEntry key={childId + ":" + selectedBook.id} childId={childId} bookId={selectedBook.id} title={selectedBook.title} />
+            <DigitalBookEntry key={childId + ":" + selectedBook.id} childId={childId} bookId={selectedBook.id} title={selectedBook.title} relationship={relationship} />
             <div className="book-progress-actions">
               <button
                 className="secondary-button"
