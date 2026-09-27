@@ -861,7 +861,6 @@ function FamilyPortal({
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
-                  relationship={relationship}
                 />
               ) : kidSection === "books" && selectedChild ? (
                 <Bookshelf
@@ -880,6 +879,7 @@ function FamilyPortal({
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
+                  relationship={relationship}
                 />
               ) : (
                 <>
