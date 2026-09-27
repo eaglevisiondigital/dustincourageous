@@ -1262,7 +1262,7 @@ export default function App() {
     if (childResult.error) throw childResult.error;
     if (pinResult.error) throw pinResult.error;
     const pinStatus = pinResult.data?.[0];
-    if (!pinStatus) throw new Error("Guardian PIN status unavailable");
+    if (!pinStatus) throw new Error("Family PIN status unavailable");
 
     setAdminRole(adminData?.role ?? null);
     setHasOrganizationAccess(Boolean(orgMembershipData));
