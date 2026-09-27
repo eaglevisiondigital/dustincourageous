@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { familyRoleLabel, familyRoleLower } from "../lib/familyDisplay";
+import { familyRoleLower } from "../lib/familyDisplay";
 import { saveChallengeCompletion } from "../lib/challengeProgress";
 import { FamilyChallengeActivity } from "./FamilyChallengeActivity";
 import { ModalDialog } from "./ModalDialog";
@@ -38,7 +38,6 @@ export function ChallengeDialog({
   onClose: () => void;
   onCompleted: () => Promise<void>;
 }) {
-  const roleLabel = familyRoleLabel(relationship);
   const roleLower = familyRoleLower(relationship);
   const [familyMode,setFamilyMode] = useState(false);
   const [steps, setSteps] = useState<Step[]>([]);
