@@ -104,3 +104,20 @@ PRIMARY CHAT also supplies external September 26 Work verification that leaked-
 password protection is enabled and its warning cleared. Supabase Support's default-
 ACL question remains pending and does not block Work's acceptance pass. These facts
 supersede the earlier unresolved Auth configuration notes, not historical evidence.
+
+
+## September 27 relationship-aware family terminology
+
+The adult account's saved `family_relationship` choice is the presentation source
+for Parent versus Guardian wording throughout the signed-in family experience.
+When the account chooses Parent, visible family/child copy uses Parent/parent
+(for example Parent PIN, Parent Approvals, Parent Privacy and parent-facing child
+prompts). When the account chooses Guardian, those same surfaces use
+Guardian/guardian.
+
+Before a relationship is selected, public/signup copy may use the generic
+"Parent or Guardian" wording. Staff/admin surfaces that describe many families
+should use neutral terms such as family adult instead of assuming either
+relationship. Internal identifiers, database roles, RPC names, CSS classes and
+security helpers may retain existing guardian/parent technical names; the
+relationship preference is presentation-only and must never grant authorization.
