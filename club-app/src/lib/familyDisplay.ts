@@ -5,6 +5,14 @@ export function familyRelationship(value: unknown): FamilyRelationship {
   return value === "parent" ? "parent" : "guardian";
 }
 
+export function familyRoleLabel(value: unknown): "Parent" | "Guardian" {
+  return familyRelationship(value) === "parent" ? "Parent" : "Guardian";
+}
+
+export function familyRoleLower(value: unknown): FamilyRelationship {
+  return familyRelationship(value);
+}
+
 export function familyControlLabel(value: unknown): string {
-  return familyRelationship(value) === "parent" ? "Parent Controlled" : "Guardian Controlled";
+  return `${familyRoleLabel(value)} Controlled`;
 }
