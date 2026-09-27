@@ -336,7 +336,7 @@ export function WeeklySeriesAdmin() {
                 Guardian review
                 <select value={parentApprovalRequired ? "required" : "not_required"} onChange={event => setParentApprovalRequired(event.target.value === "required")}>
                   <option value="not_required">Child can complete independently</option>
-                  <option value="required">Guardian approval required for XP</option>
+                  <option value="required">Adult approval required for XP</option>
                 </select>
               </label>
               <label>
@@ -439,7 +439,7 @@ export function WeeklySeriesAdmin() {
                     </small>
                     <small>
                       {challenge.access_level === "premium" ? "Paid membership" : challenge.access_level === "member" ? "All signed-in families" : "Free access"}
-                      {challenge.parent_approval_required ? " · Guardian approval required" : " · Independent completion"}
+                      {challenge.parent_approval_required ? " · Adult approval required" : " · Independent completion"}
                     </small>
                   </div>
                   <span className={challenge.status === "published" ? "status-chip done" : "status-chip"}>
