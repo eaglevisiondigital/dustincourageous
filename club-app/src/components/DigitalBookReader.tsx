@@ -26,7 +26,7 @@ export function DigitalBookEntry({ childId, bookId, title, relationship }: { chi
     {loading ? <p role="status">Checking digital book availability...</p>
       : error ? <p role="alert">Digital book availability could not be checked. <button className="text-button" onClick={() => void load()}>Try Again</button></p>
       : book?.availability === "ready" ? <button className="primary-button compact" onClick={() => setOpen(true)}>{book.page_number > 1 ? "Continue digital book" : "Open digital book"}</button>
-      : <p className="muted">{book?.availability === "locked" ? "A {roleLower} can check this family's digital book access in Family Hub." : "The digital edition is not available yet. You can still enjoy the Book Companion below."}</p>}
+      : <p className="muted">{book?.availability === "locked" ? `A ${roleLower} can check this family's digital book access in Family Hub.` : "The digital edition is not available yet. You can still enjoy the Book Companion below."}</p>}
     {open && book?.availability === "ready" && <DigitalBookReader childId={childId} bookId={bookId} title={title} book={book}
       onClose={() => { setOpen(false); void load(); }} />}
   </div>;
