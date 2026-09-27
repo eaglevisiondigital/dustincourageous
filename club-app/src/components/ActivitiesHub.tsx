@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLower } from "../lib/familyDisplay";
 import { activityAssetUrl, activityExternalUrl, completeActivity } from "../lib/activityActions";
 
 type ContentItem = {
@@ -37,12 +38,15 @@ function externalUrl(body: Record<string, unknown> | null) {
 export function ActivitiesHub({
   childId,
   childName,
-  onProgress
+  onProgress,
+  relationship
 }: {
   childId: string;
   childName: string;
   onProgress: () => Promise<void>;
+  relationship?: unknown;
 }) {
+  const roleLower = familyRoleLower(relationship);
   const [items, setItems] = useState<ContentItem[]>([]);
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [progress, setProgress] = useState<Progress[]>([]);
@@ -139,7 +143,7 @@ export function ActivitiesHub({
       else {setReadyLink({id:item.id,url});setError("Your activity is ready. Use the open link below.");}
     } catch {
       tab?.close();
-      setError("This activity could not be opened. Please try again or ask your guardian for help.");
+      setError("This activity could not be opened. Please try again or ask your ${roleLower} for help.");
     } finally {actionBusy.current=false;setWorkingId(null);}
   }
 
