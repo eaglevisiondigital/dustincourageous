@@ -117,7 +117,7 @@ export function LeadsAdmin() {
         <article>
           <span>Active waitlist</span>
           <strong>{waitlistCount}</strong>
-          <small>Unique guardian emails</small>
+          <small>Unique family adult emails</small>
         </article>
         <article>
           <span>New inquiries</span>
@@ -157,7 +157,7 @@ export function LeadsAdmin() {
               <article className="lead-record" key={lead.id}>
                 <div className="lead-record-main">
                   <span>{lead.lead_type.replaceAll("_"," ")}</span>
-                  <h3>{lead.parent_guardian_name||"Parent / Guardian"}</h3>
+                  <h3>{lead.parent_guardian_name||"Family Adult"}</h3>
                   <a href={"mailto:"+lead.email}>{lead.email}</a>
                   {(lead.child_first_name||lead.child_age!==null)&&(
                     <p>
