@@ -861,6 +861,7 @@ function FamilyPortal({
                   childId={selectedChild.id}
                   childName={selectedChild.display_name}
                   onProgress={loadChildDashboard}
+                  relationship={relationship}
                 />
               ) : kidSection === "books" && selectedChild ? (
                 <Bookshelf
@@ -1132,6 +1133,7 @@ function FamilyPortal({
           challenge={selectedChallenge.challenge}
           childId={selectedChild.id}
           family={view === "parent" && !kidLocked ? {householdId:household.id,children:children.map(child=>({id:child.id,display_name:child.display_name}))} : undefined}
+          relationship={relationship}
           onClose={() => setSelectedChallenge(null)}
           onCompleted={async () => {
             await loadChildDashboard();
