@@ -99,7 +99,7 @@ def main():
         'guardian_decision_regression.sql', 'digital_book_reader_regression.sql',
         'reading_privacy_regression.sql', 'digital_book_launch_gate_regression.sql',
         'client_privilege_regression.sql', 'checkout_creation_regression.sql',
-        'payment_checkout_lock_regression.sql',
+        'payment_checkout_lock_regression.sql', 'provider_handoff_regression.sql',
     ]
     for name in suites:
         print('Running ' + name, flush=True)
@@ -110,10 +110,13 @@ def main():
     print('Running concurrent authenticated checkout inventory reservations', flush=True)
     subprocess.run([sys.executable, str(REPO / 'supabase/tests/checkout_creation_concurrency.py')],
                    env=env, check=True, timeout=90)
+    print('Running concurrent authenticated provider handoff', flush=True)
+    subprocess.run([sys.executable, str(REPO / 'supabase/tests/provider_handoff_concurrency.py')],
+                   env=env, check=True, timeout=90)
     # Transactional regressions must leave all application definitions unchanged.
     verify_catalog(json.loads(sql((ROOT / 'catalog-query.sql').read_text(), capture=True)), native=bool(args.native_socket))
     sql((ROOT / 'invariants.sql').read_text())
-    print('PASS: isolated restoration, 13 SQL suites, PIN/checkout concurrency and post-test catalog verification', flush=True)
+    print('PASS: isolated restoration, 14 SQL suites, PIN/checkout/handoff concurrency and post-test catalog verification', flush=True)
 
 
 if __name__ == '__main__':

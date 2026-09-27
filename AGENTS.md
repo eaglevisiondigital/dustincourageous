@@ -58,8 +58,9 @@ All 40 historical SQL records stay unchanged; two exact forward records live
 in supabase/recovery/forward (42 live / 26 root files). Do not alter the frozen
 history map to suggest the old chronology gaps vanished.
 
-Do not treat supabase_admin defaults or leaked-password protection as fixed.
-Their precise external actions are documented in docs/security.
+The supabase_admin default-ACL support question remains pending; do not treat it as fixed.
+Leaked-password protection is enabled per September 26, 2026 external Work verification
+supplied by PRIMARY CHAT. Do not alter Auth configuration; see docs/security/AUTH_HARDENING.md.
 Checkout creation is repaired by migration 20260927022208; do not replay it.
 Read docs/audits/2026-09-26-checkout-repair.md before commerce work. Preserve the
 public invoker/private guarded creation boundary, exclusive reservation locks,

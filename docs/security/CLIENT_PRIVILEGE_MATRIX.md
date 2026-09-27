@@ -16,6 +16,21 @@ checkout invoker table/column grants are retained, still restricted by unchanged
 RLS, even though checkout creation now executes behind the guarded boundary.
 They are not new permissions. See the [checkout report](../audits/2026-09-26-checkout-repair.md).
 
+## Current provider-handoff delta
+
+The public handoff API retains its authenticated EXECUTE ACL and invoker status.
+New authenticated EXECUTE is limited to `public.claim_checkout_provider_handoff`,
+its private implementation and the private finalizer. New service EXECUTE is
+limited to `public.record_checkout_handoff_result` and its private implementation.
+The service wrapper also requires private-schema USAGE for name resolution;
+all eight pre-existing private tables/functions still have no service privileges.
+The new RLS-enabled private attempt table grants neither client nor service direct
+access. Existing table/column/default/sequence ACLs and policies are unchanged.
+Public/private function totals are 219; authenticated EXECUTE 151, service 11.
+The old allowlist remains historical; the current dependency graph parses all
+219 functions without dynamic SQL or parse errors. See the
+[handoff report](../audits/2026-09-26-provider-handoff-repair.md).
+
 ## Original ACL package evidence
 
 Prepared before production revocation from commit `60e151c5556a407982342a81c8bac42579597699`. This is a reviewed positive allowlist, not a blanket CRUD grant based on the presence of RLS. The current catalog, SQL policies, invoker views, triggers and all 213 function bodies were inspected. PostgreSQL 17 parsing found no unreviewed dynamic SQL or failed expressions.

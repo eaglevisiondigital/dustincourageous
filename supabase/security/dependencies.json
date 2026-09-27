@@ -2375,60 +2375,28 @@
       "source": "club-app/src/lib/trophyData.ts:44"
     },
     {
-      "object": "public.checkout_session_summary",
+      "object": "public.claim_checkout_provider_handoff",
       "operations": [
-        "SELECT"
+        "EXECUTE"
       ],
       "role": "authenticated",
-      "source": "supabase/functions/commerce-checkout/index.ts:81"
+      "source": "supabase/functions/commerce-checkout/handoff.ts:26"
     },
     {
-      "object": "public.order_items",
-      "operations": [
-        "SELECT"
-      ],
-      "role": "authenticated",
-      "source": "supabase/functions/commerce-checkout/index.ts:103"
-    },
-    {
-      "object": "public.update_integration_provider_health",
+      "object": "public.record_checkout_handoff_result",
       "operations": [
         "EXECUTE"
       ],
       "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:127"
+      "source": "supabase/functions/commerce-checkout/handoff.ts:42"
     },
     {
-      "object": "public.record_integration_event",
+      "object": "public.record_checkout_handoff_result",
       "operations": [
         "EXECUTE"
       ],
       "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:183"
-    },
-    {
-      "object": "public.update_integration_provider_health",
-      "operations": [
-        "EXECUTE"
-      ],
-      "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:195"
-    },
-    {
-      "object": "public.record_integration_event",
-      "operations": [
-        "EXECUTE"
-      ],
-      "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:207"
-    },
-    {
-      "object": "public.update_integration_provider_health",
-      "operations": [
-        "EXECUTE"
-      ],
-      "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:220"
+      "source": "supabase/functions/commerce-checkout/handoff.ts:64"
     },
     {
       "object": "public.begin_checkout_provider_handoff",
@@ -2436,15 +2404,23 @@
         "EXECUTE"
       ],
       "role": "authenticated",
-      "source": "supabase/functions/commerce-checkout/index.ts:250"
+      "source": "supabase/functions/commerce-checkout/handoff.ts:77"
     },
     {
-      "object": "public.record_integration_event",
+      "object": "public.checkout_session_summary",
       "operations": [
-        "EXECUTE"
+        "SELECT"
       ],
-      "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:263"
+      "role": "authenticated",
+      "source": "supabase/functions/commerce-checkout/index.ts:82"
+    },
+    {
+      "object": "public.order_items",
+      "operations": [
+        "SELECT"
+      ],
+      "role": "authenticated",
+      "source": "supabase/functions/commerce-checkout/index.ts:104"
     },
     {
       "object": "public.update_integration_provider_health",
@@ -2452,7 +2428,23 @@
         "EXECUTE"
       ],
       "role": "service_role",
-      "source": "supabase/functions/commerce-checkout/index.ts:281"
+      "source": "supabase/functions/commerce-checkout/index.ts:128"
+    },
+    {
+      "object": "public.record_integration_event",
+      "operations": [
+        "EXECUTE"
+      ],
+      "role": "service_role",
+      "source": "supabase/functions/commerce-checkout/index.ts:178"
+    },
+    {
+      "object": "public.update_integration_provider_health",
+      "operations": [
+        "EXECUTE"
+      ],
+      "role": "service_role",
+      "source": "supabase/functions/commerce-checkout/index.ts:187"
     },
     {
       "object": "public.payment_webhook_events",
@@ -3961,6 +3953,27 @@
       "definer": true,
       "trigger": false
     },
+    "private.begin_checkout_provider_handoff_impl": {
+      "relations": {
+        "public.checkout_sessions": [
+          "SELECT",
+          "UPDATE"
+        ],
+        "public.orders": [
+          "SELECT",
+          "UPDATE"
+        ],
+        "private.checkout_handoff_attempts": [
+          "SELECT",
+          "UPDATE"
+        ]
+      },
+      "functions": [
+        "private.can_manage_household"
+      ],
+      "definer": true,
+      "trigger": false
+    },
     "private.can_approve_dc_governance": {
       "relations": {
         "public.app_admins": [
@@ -4217,6 +4230,25 @@
       },
       "functions": [
         "private.can_manage_child"
+      ],
+      "definer": true,
+      "trigger": false
+    },
+    "private.claim_checkout_provider_handoff_impl": {
+      "relations": {
+        "public.checkout_sessions": [
+          "SELECT"
+        ],
+        "public.orders": [
+          "SELECT"
+        ],
+        "private.checkout_handoff_attempts": [
+          "INSERT",
+          "SELECT"
+        ]
+      },
+      "functions": [
+        "private.can_manage_household"
       ],
       "definer": true,
       "trigger": false
@@ -5477,6 +5509,17 @@
       "definer": true,
       "trigger": true
     },
+    "private.record_checkout_handoff_result_impl": {
+      "relations": {
+        "private.checkout_handoff_attempts": [
+          "SELECT",
+          "UPDATE"
+        ]
+      },
+      "functions": [],
+      "definer": true,
+      "trigger": false
+    },
     "private.register_for_event_impl": {
       "relations": {
         "public.events": [
@@ -6226,17 +6269,10 @@
       "trigger": false
     },
     "public.begin_checkout_provider_handoff": {
-      "relations": {
-        "public.checkout_sessions": [
-          "SELECT",
-          "UPDATE"
-        ],
-        "public.orders": [
-          "SELECT",
-          "UPDATE"
-        ]
-      },
-      "functions": [],
+      "relations": {},
+      "functions": [
+        "private.begin_checkout_provider_handoff_impl"
+      ],
       "definer": false,
       "trigger": false
     },
@@ -6303,6 +6339,14 @@
       },
       "functions": [],
       "definer": true,
+      "trigger": false
+    },
+    "public.claim_checkout_provider_handoff": {
+      "relations": {},
+      "functions": [
+        "private.claim_checkout_provider_handoff_impl"
+      ],
+      "definer": false,
       "trigger": false
     },
     "public.claim_marketing_leads_for_household": {
@@ -6846,6 +6890,14 @@
       "functions": [
         "private.has_approved_dc_review",
         "private.is_content_admin"
+      ],
+      "definer": false,
+      "trigger": false
+    },
+    "public.record_checkout_handoff_result": {
+      "relations": {},
+      "functions": [
+        "private.record_checkout_handoff_result_impl"
       ],
       "definer": false,
       "trigger": false

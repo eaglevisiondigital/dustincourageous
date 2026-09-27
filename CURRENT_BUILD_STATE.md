@@ -1,5 +1,19 @@
 # Verified build state
 
+## Approved provider-handoff continuation in verification
+
+Starting at `29b3d29`, the handoff repair is implemented and isolated verification
+passes: 50 new actual-role checks, independent claim/finalization/expiry contention,
+14 SQL suites, 296 app tests, build and Edge syntax checks. Supabase HTTP CI and
+hosted deployment are pending. See [handoff report](docs/audits/2026-09-26-provider-handoff-repair.md).
+
+**Hosted leaked-password protection is enabled**, attributed to September 26,
+2026 Work verification supplied by PRIMARY CHAT. Its advisor warning cleared.
+No Auth setting is changed here. The supabase_admin default-ACL support question
+remains pending with Supabase Support and does not block this package or Work
+acceptance. Earlier disabled/unverified descriptions below are historical.
+
+
 ## Completed targeted checkout creation repair
 
 Starting at `bbd0b13`, tested implementation `22d9394` repairs checkout creation.

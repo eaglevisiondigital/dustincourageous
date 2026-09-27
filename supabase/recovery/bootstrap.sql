@@ -33,6 +33,19 @@ ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 
 -- Tables first; defaults/checks referencing application functions follow them.
 
+CREATE TABLE "private"."checkout_handoff_attempts" (
+  "id" uuid NOT NULL,
+  "checkout_session_id" uuid NOT NULL,
+  "provider" text NOT NULL,
+  "state" text NOT NULL,
+  "provider_checkout_id" text,
+  "checkout_url" text,
+  "failure_code" text,
+  "created_at" timestamp with time zone NOT NULL,
+  "result_recorded_at" timestamp with time zone,
+  "finalized_at" timestamp with time zone
+);
+
 CREATE TABLE "private"."digital_book_manifests" (
   "book_id" uuid NOT NULL,
   "manifest" jsonb NOT NULL,
@@ -2499,6 +2512,55 @@ begin
 end;
 $function$;
 
+CREATE OR REPLACE FUNCTION private.begin_checkout_provider_handoff_impl(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+ v_uid uuid := (SELECT auth.uid());
+ v_session public.checkout_sessions%rowtype;
+ v_order public.orders%rowtype;
+ v_attempt private.checkout_handoff_attempts%rowtype;
+BEGIN
+ IF v_uid IS NULL THEN RAISE EXCEPTION 'Authentication required'; END IF;
+ IF nullif(btrim(p_provider),'') IS NULL OR nullif(btrim(p_provider_checkout_id),'') IS NULL THEN
+  RAISE EXCEPTION 'Provider and checkout id are required';
+ END IF;
+ SELECT cs.* INTO v_session FROM public.checkout_sessions cs
+ WHERE cs.id=p_checkout_session_id AND cs.user_id=v_uid FOR UPDATE;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Checkout session is unavailable or expired'; END IF;
+ SELECT o.* INTO v_order FROM public.orders o WHERE o.id=v_session.order_id FOR UPDATE;
+ IF NOT FOUND OR v_order.purchaser_user_id IS DISTINCT FROM v_uid
+    OR v_order.household_id IS DISTINCT FROM v_session.household_id
+    OR NOT private.can_manage_household(v_session.household_id)
+    OR v_session.expires_at<=clock_timestamp() THEN
+  RAISE EXCEPTION 'Checkout session is unavailable or expired';
+ END IF;
+ SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.checkout_session_id=v_session.id FOR UPDATE;
+ IF NOT FOUND OR v_attempt.state NOT IN ('result_ready','finalized')
+    OR v_attempt.provider IS DISTINCT FROM p_provider
+    OR v_attempt.provider_checkout_id IS DISTINCT FROM p_provider_checkout_id THEN
+  RAISE EXCEPTION 'Matching provider result required';
+ END IF;
+ IF v_attempt.state='finalized' THEN
+  IF v_session.status='provider_pending' AND v_order.status='pending_payment'
+     AND v_session.payment_provider=p_provider AND v_order.payment_provider=p_provider
+     AND v_session.provider_checkout_id=p_provider_checkout_id THEN RETURN; END IF;
+  RAISE EXCEPTION 'Checkout session is unavailable or expired';
+ END IF;
+ IF v_session.status<>'created' OR v_order.status<>'draft'
+    OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL
+    OR v_order.payment_provider IS NOT NULL THEN
+  RAISE EXCEPTION 'Checkout session is unavailable or expired';
+ END IF;
+ UPDATE public.checkout_sessions SET status='provider_pending',payment_provider=p_provider,
+  provider_checkout_id=p_provider_checkout_id,updated_at=now() WHERE id=v_session.id;
+ UPDATE public.orders SET status='pending_payment',payment_provider=p_provider,updated_at=now() WHERE id=v_order.id;
+ UPDATE private.checkout_handoff_attempts SET state='finalized',finalized_at=clock_timestamp() WHERE id=v_attempt.id;
+END $function$;
+
 CREATE OR REPLACE FUNCTION private.can_approve_dc_governance()
  RETURNS boolean
  LANGUAGE sql
@@ -2846,6 +2908,63 @@ AS $function$
             and a.starts_at<=now() and (a.ends_at is null or a.ends_at>now()))
       ));
 $function$;
+
+CREATE OR REPLACE FUNCTION private.claim_checkout_provider_handoff_impl(p_checkout_session_id uuid, p_provider text)
+ RETURNS TABLE(attempt_id uuid, disposition text, provider_checkout_id text, checkout_url text)
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+ v_uid uuid := (SELECT auth.uid());
+ v_session public.checkout_sessions%rowtype;
+ v_order public.orders%rowtype;
+ v_attempt private.checkout_handoff_attempts%rowtype;
+BEGIN
+ IF v_uid IS NULL THEN RAISE EXCEPTION 'Authentication required'; END IF;
+ IF nullif(btrim(p_provider),'') IS NULL THEN RAISE EXCEPTION 'Provider is required'; END IF;
+ -- Match the payment callback/expiry lock order: checkout, order, then attempt.
+ SELECT cs.* INTO v_session FROM public.checkout_sessions cs
+ WHERE cs.id=p_checkout_session_id AND cs.user_id=v_uid FOR UPDATE;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Checkout session is unavailable or expired'; END IF;
+ SELECT o.* INTO v_order FROM public.orders o WHERE o.id=v_session.order_id FOR UPDATE;
+ IF NOT FOUND OR v_order.purchaser_user_id IS DISTINCT FROM v_uid
+    OR v_order.household_id IS DISTINCT FROM v_session.household_id
+    OR NOT private.can_manage_household(v_session.household_id)
+    OR v_session.expires_at<=clock_timestamp() THEN
+  RAISE EXCEPTION 'Checkout session is unavailable or expired';
+ END IF;
+ SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.checkout_session_id=v_session.id FOR UPDATE;
+ IF FOUND THEN
+  IF v_attempt.provider IS DISTINCT FROM p_provider THEN RAISE EXCEPTION 'Checkout handoff already claimed'; END IF;
+  IF v_attempt.state='finalized' THEN
+   IF v_session.status<>'provider_pending' OR v_order.status<>'pending_payment'
+      OR v_session.payment_provider IS DISTINCT FROM v_attempt.provider
+      OR v_order.payment_provider IS DISTINCT FROM v_attempt.provider
+      OR v_session.provider_checkout_id IS DISTINCT FROM v_attempt.provider_checkout_id THEN
+    RAISE EXCEPTION 'Checkout session is unavailable or expired';
+   END IF;
+   RETURN QUERY SELECT v_attempt.id,'reuse'::text,v_attempt.provider_checkout_id,v_attempt.checkout_url;
+   RETURN;
+  END IF;
+  IF v_session.status<>'created' OR v_order.status<>'draft'
+     OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL
+     OR v_order.payment_provider IS NOT NULL THEN
+   RAISE EXCEPTION 'Checkout session is unavailable or expired';
+  END IF;
+  RETURN QUERY SELECT v_attempt.id,CASE WHEN v_attempt.state='result_ready' THEN 'finalize' ELSE 'awaiting_result' END,
+    v_attempt.provider_checkout_id,v_attempt.checkout_url;
+  RETURN;
+ END IF;
+ IF v_session.status<>'created' OR v_order.status<>'draft'
+    OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL
+    OR v_order.payment_provider IS NOT NULL THEN
+  RAISE EXCEPTION 'Checkout session is unavailable or expired';
+ END IF;
+ INSERT INTO private.checkout_handoff_attempts(checkout_session_id,provider)
+ VALUES(v_session.id,p_provider) RETURNING * INTO v_attempt;
+ RETURN QUERY SELECT v_attempt.id,'invoke_adapter'::text,NULL::text,NULL::text;
+END $function$;
 
 CREATE OR REPLACE FUNCTION private.claim_marketing_leads_for_household_impl(p_household_id uuid)
  RETURNS integer
@@ -6298,6 +6417,38 @@ begin
 end;
 $function$;
 
+CREATE OR REPLACE FUNCTION private.record_checkout_handoff_result_impl(p_attempt_id uuid, p_provider_checkout_id text DEFAULT NULL::text, p_checkout_url text DEFAULT NULL::text, p_failure_code text DEFAULT NULL::text)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE v_attempt private.checkout_handoff_attempts%rowtype;
+BEGIN
+ IF (SELECT auth.jwt()->>'role') IS DISTINCT FROM 'service_role' THEN RAISE EXCEPTION 'Service authorization required'; END IF;
+ SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.id=p_attempt_id FOR UPDATE;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Handoff attempt not found'; END IF;
+ IF p_failure_code IS NOT NULL THEN
+  IF p_failure_code NOT IN ('adapter_unavailable','adapter_rejected','adapter_response_invalid','expired_before_dispatch')
+     OR p_provider_checkout_id IS NOT NULL OR p_checkout_url IS NOT NULL THEN RAISE EXCEPTION 'Invalid handoff result'; END IF;
+  IF v_attempt.state IN ('result_ready','finalized') THEN RETURN; END IF;
+  UPDATE private.checkout_handoff_attempts SET state='needs_reconciliation',failure_code=p_failure_code,result_recorded_at=clock_timestamp() WHERE id=p_attempt_id;
+  RETURN;
+ END IF;
+ IF nullif(btrim(p_provider_checkout_id),'') IS NULL OR p_checkout_url IS NULL
+    OR p_checkout_url !~ '^https://[^/@[:space:]?#]+([/?#][^[:space:]]*)?$' THEN
+  RAISE EXCEPTION 'Invalid handoff result';
+ END IF;
+ IF v_attempt.state IN ('result_ready','finalized') THEN
+  IF v_attempt.provider_checkout_id IS DISTINCT FROM p_provider_checkout_id OR v_attempt.checkout_url IS DISTINCT FROM p_checkout_url THEN
+   RAISE EXCEPTION 'Handoff result already recorded';
+  END IF;
+  RETURN;
+ END IF;
+ UPDATE private.checkout_handoff_attempts SET state='result_ready',provider_checkout_id=p_provider_checkout_id,
+  checkout_url=p_checkout_url,failure_code=NULL,result_recorded_at=clock_timestamp() WHERE id=p_attempt_id;
+END $function$;
+
 CREATE OR REPLACE FUNCTION private.register_for_event_impl(p_event_id uuid, p_household_id uuid, p_child_profile_id uuid DEFAULT NULL::uuid)
  RETURNS text
  LANGUAGE plpgsql
@@ -7983,43 +8134,10 @@ $function$;
 
 CREATE OR REPLACE FUNCTION public.begin_checkout_provider_handoff(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text)
  RETURNS void
- LANGUAGE plpgsql
+ LANGUAGE sql
  SET search_path TO ''
 AS $function$
-declare
-  v_order_id uuid;
-begin
-  if nullif(trim(p_provider),'') is null
-     or nullif(trim(p_provider_checkout_id),'') is null then
-    raise exception 'Provider and checkout id are required';
-  end if;
-
-  select order_id into v_order_id
-  from public.checkout_sessions
-  where id=p_checkout_session_id
-    and user_id=(select auth.uid())
-    and status='created'
-    and expires_at>now()
-  for update;
-
-  if v_order_id is null then
-    raise exception 'Checkout session is unavailable or expired';
-  end if;
-
-  update public.checkout_sessions
-  set status='provider_pending',
-      payment_provider=p_provider,
-      provider_checkout_id=p_provider_checkout_id,
-      updated_at=now()
-  where id=p_checkout_session_id;
-
-  update public.orders
-  set status='pending_payment',
-      payment_provider=p_provider,
-      updated_at=now()
-  where id=v_order_id
-    and status='draft';
-end;
+ SELECT private.begin_checkout_provider_handoff_impl(p_checkout_session_id,p_provider,p_provider_checkout_id);
 $function$;
 
 CREATE OR REPLACE FUNCTION public.cancel_checkout_session(p_checkout_session_id uuid)
@@ -8163,6 +8281,14 @@ begin
 
   return v_id;
 end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.claim_checkout_provider_handoff(p_checkout_session_id uuid, p_provider text)
+ RETURNS TABLE(attempt_id uuid, disposition text, provider_checkout_id text, checkout_url text)
+ LANGUAGE sql
+ SET search_path TO ''
+AS $function$
+ SELECT * FROM private.claim_checkout_provider_handoff_impl(p_checkout_session_id,p_provider);
 $function$;
 
 CREATE OR REPLACE FUNCTION public.claim_marketing_leads_for_household(p_household_id uuid)
@@ -9471,6 +9597,14 @@ begin
 end;
 $function$;
 
+CREATE OR REPLACE FUNCTION public.record_checkout_handoff_result(p_attempt_id uuid, p_provider_checkout_id text DEFAULT NULL::text, p_checkout_url text DEFAULT NULL::text, p_failure_code text DEFAULT NULL::text)
+ RETURNS void
+ LANGUAGE sql
+ SET search_path TO ''
+AS $function$
+ SELECT private.record_checkout_handoff_result_impl(p_attempt_id,p_provider_checkout_id,p_checkout_url,p_failure_code);
+$function$;
+
 CREATE OR REPLACE FUNCTION public.record_household_consent(p_household_id uuid, p_consent_key text, p_action text, p_child_profile_id uuid DEFAULT NULL::uuid, p_metadata jsonb DEFAULT '{}'::jsonb)
  RETURNS uuid
  LANGUAGE plpgsql
@@ -10661,6 +10795,12 @@ CREATE VIEW "public"."commerce_readiness_summary" WITH (security_invoker=true) A
 
 -- Defaults, primary/unique/check constraints, then foreign keys and indexes.
 
+ALTER TABLE "private"."checkout_handoff_attempts" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();
+
+ALTER TABLE "private"."checkout_handoff_attempts" ALTER COLUMN "state" SET DEFAULT 'claimed'::text;
+
+ALTER TABLE "private"."checkout_handoff_attempts" ALTER COLUMN "created_at" SET DEFAULT clock_timestamp();
+
 ALTER TABLE "private"."digital_book_manifests" ALTER COLUMN "updated_at" SET DEFAULT now();
 
 ALTER TABLE "private"."group_join_codes" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();
@@ -11799,6 +11939,18 @@ ALTER TABLE "public"."xp_ledger" ALTER COLUMN "id" SET DEFAULT gen_random_uuid()
 
 ALTER TABLE "public"."xp_ledger" ALTER COLUMN "created_at" SET DEFAULT now();
 
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_check" CHECK ((state = ANY (ARRAY['result_ready'::text, 'finalized'::text])) AND NULLIF(btrim(provider_checkout_id), ''::text) IS NOT NULL AND checkout_url IS NOT NULL OR (state = ANY (ARRAY['claimed'::text, 'needs_reconciliation'::text])) AND provider_checkout_id IS NULL AND checkout_url IS NULL);
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_checkout_session_id_key" UNIQUE (checkout_session_id);
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_failure_code_check" CHECK (failure_code = ANY (ARRAY['adapter_unavailable'::text, 'adapter_rejected'::text, 'adapter_response_invalid'::text, 'expired_before_dispatch'::text]));
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_pkey" PRIMARY KEY (id);
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_provider_check" CHECK (NULLIF(btrim(provider), ''::text) IS NOT NULL);
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_state_check" CHECK (state = ANY (ARRAY['claimed'::text, 'result_ready'::text, 'finalized'::text, 'needs_reconciliation'::text]));
+
 ALTER TABLE "private"."digital_book_manifests" ADD CONSTRAINT "digital_book_manifests_pkey" PRIMARY KEY (book_id);
 
 ALTER TABLE "private"."digital_book_manifests" ADD CONSTRAINT "digital_book_revision_is_string" CHECK (jsonb_typeof(manifest -> 'revision'::text) = 'string'::text);
@@ -12634,6 +12786,8 @@ ALTER TABLE "public"."user_notifications" ADD CONSTRAINT "user_notifications_sta
 ALTER TABLE "public"."xp_ledger" ADD CONSTRAINT "xp_ledger_pkey" PRIMARY KEY (id);
 
 ALTER TABLE "public"."xp_ledger" ADD CONSTRAINT "xp_ledger_points_check" CHECK (points <> 0);
+
+ALTER TABLE "private"."checkout_handoff_attempts" ADD CONSTRAINT "checkout_handoff_attempts_checkout_session_id_fkey" FOREIGN KEY (checkout_session_id) REFERENCES public.checkout_sessions(id) ON DELETE CASCADE;
 
 ALTER TABLE "private"."digital_book_manifests" ADD CONSTRAINT "digital_book_manifests_book_id_fkey" FOREIGN KEY (book_id) REFERENCES public.books(id) ON DELETE CASCADE;
 
@@ -13860,6 +14014,8 @@ CREATE TRIGGER user_notifications_queue_delivery AFTER INSERT ON public.user_not
 
 CREATE TRIGGER zz_xp_ledger_evaluate_badges AFTER INSERT ON public.xp_ledger FOR EACH ROW EXECUTE FUNCTION private.after_xp_insert_evaluate_badges();
 
+ALTER TABLE "private"."checkout_handoff_attempts" ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE "public"."achievement_token_ledger" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE "public"."admin_audit_log" ENABLE ROW LEVEL SECURITY;
@@ -14787,6 +14943,8 @@ GRANT CREATE ON SCHEMA "private" TO "postgres";
 
 GRANT USAGE ON SCHEMA "private" TO "authenticated";
 
+GRANT USAGE ON SCHEMA "private" TO "service_role";
+
 ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 
 REVOKE ALL ON SCHEMA "public" FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
@@ -14804,6 +14962,28 @@ GRANT USAGE ON SCHEMA "public" TO "anon";
 GRANT USAGE ON SCHEMA "public" TO "authenticated";
 
 GRANT USAGE ON SCHEMA "public" TO "service_role";
+
+ALTER TABLE "private"."checkout_handoff_attempts" OWNER TO "postgres";
+
+REVOKE ALL ON TABLE "private"."checkout_handoff_attempts" FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT INSERT ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT SELECT ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT UPDATE ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT DELETE ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT TRUNCATE ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT REFERENCES ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT TRIGGER ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+GRANT MAINTAIN ON TABLE "private"."checkout_handoff_attempts" TO "postgres";
+
+COMMENT ON TABLE "private"."checkout_handoff_attempts" IS 'One irreversible dispatch claim per checkout. No automatic redispatch: uncertain attempts require provider reconciliation using checkout/session and attempt IDs. Private provider URLs are never exposed by table grants.';
 
 ALTER TABLE "private"."digital_book_manifests" OWNER TO "postgres";
 
@@ -20565,6 +20745,14 @@ REVOKE ALL ON FUNCTION "private"."award_xp_event"(p_child_profile_id uuid, p_poi
 
 GRANT EXECUTE ON FUNCTION "private"."award_xp_event"(p_child_profile_id uuid, p_points integer, p_event_type text, p_source_type text, p_source_id uuid, p_description text) TO "postgres";
 
+ALTER FUNCTION "private"."begin_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text) OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "private"."begin_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT EXECUTE ON FUNCTION "private"."begin_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "private"."begin_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text) TO "authenticated";
+
 ALTER FUNCTION "private"."can_approve_dc_governance"() OWNER TO "postgres";
 
 REVOKE ALL ON FUNCTION "private"."can_approve_dc_governance"() FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
@@ -20696,6 +20884,14 @@ ALTER FUNCTION "private"."child_has_digital_book_access"(p_child_profile_id uuid
 REVOKE ALL ON FUNCTION "private"."child_has_digital_book_access"(p_child_profile_id uuid, p_book_id uuid) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
 
 GRANT EXECUTE ON FUNCTION "private"."child_has_digital_book_access"(p_child_profile_id uuid, p_book_id uuid) TO "postgres";
+
+ALTER FUNCTION "private"."claim_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text) OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "private"."claim_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT EXECUTE ON FUNCTION "private"."claim_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "private"."claim_checkout_provider_handoff_impl"(p_checkout_session_id uuid, p_provider text) TO "authenticated";
 
 ALTER FUNCTION "private"."claim_marketing_leads_for_household_impl"(p_household_id uuid) OWNER TO "postgres";
 
@@ -21167,6 +21363,14 @@ REVOKE ALL ON FUNCTION "private"."queue_external_notification_delivery"() FROM P
 
 GRANT EXECUTE ON FUNCTION "private"."queue_external_notification_delivery"() TO "postgres";
 
+ALTER FUNCTION "private"."record_checkout_handoff_result_impl"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "private"."record_checkout_handoff_result_impl"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT EXECUTE ON FUNCTION "private"."record_checkout_handoff_result_impl"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "private"."record_checkout_handoff_result_impl"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) TO "service_role";
+
 ALTER FUNCTION "private"."register_for_event_impl"(p_event_id uuid, p_household_id uuid, p_child_profile_id uuid) OWNER TO "postgres";
 
 REVOKE ALL ON FUNCTION "private"."register_for_event_impl"(p_event_id uuid, p_household_id uuid, p_child_profile_id uuid) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
@@ -21625,6 +21829,14 @@ GRANT EXECUTE ON FUNCTION "public"."capture_marketing_lead"(p_lead_type text, p_
 
 GRANT EXECUTE ON FUNCTION "public"."capture_marketing_lead"(p_lead_type text, p_source_page text, p_parent_guardian_name text, p_email text, p_child_first_name text, p_child_age smallint, p_parent_guardian_consent boolean, p_marketing_consent boolean, p_consent_text text, p_ip_hash text, p_user_agent_hash text, p_metadata jsonb) TO "service_role";
 
+ALTER FUNCTION "public"."claim_checkout_provider_handoff"(p_checkout_session_id uuid, p_provider text) OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "public"."claim_checkout_provider_handoff"(p_checkout_session_id uuid, p_provider text) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT EXECUTE ON FUNCTION "public"."claim_checkout_provider_handoff"(p_checkout_session_id uuid, p_provider text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."claim_checkout_provider_handoff"(p_checkout_session_id uuid, p_provider text) TO "authenticated";
+
 ALTER FUNCTION "public"."claim_marketing_leads_for_household"(p_household_id uuid) OWNER TO "postgres";
 
 REVOKE ALL ON FUNCTION "public"."claim_marketing_leads_for_household"(p_household_id uuid) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
@@ -21886,6 +22098,14 @@ REVOKE ALL ON FUNCTION "public"."publish_dc_entity"(p_entity_type text, p_entity
 GRANT EXECUTE ON FUNCTION "public"."publish_dc_entity"(p_entity_type text, p_entity_id uuid, p_target_status text) TO "postgres";
 
 GRANT EXECUTE ON FUNCTION "public"."publish_dc_entity"(p_entity_type text, p_entity_id uuid, p_target_status text) TO "authenticated";
+
+ALTER FUNCTION "public"."record_checkout_handoff_result"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "public"."record_checkout_handoff_result"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) FROM PUBLIC, "anon", "authenticated", "pg_database_owner", "postgres", "service_role", "supabase_admin";
+
+GRANT EXECUTE ON FUNCTION "public"."record_checkout_handoff_result"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."record_checkout_handoff_result"(p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text) TO "service_role";
 
 ALTER FUNCTION "public"."record_household_consent"(p_household_id uuid, p_consent_key text, p_action text, p_child_profile_id uuid, p_metadata jsonb) OWNER TO "postgres";
 

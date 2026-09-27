@@ -56,7 +56,7 @@
   ],
   "schemas": [
     {
-      "acl": "{postgres=UC/postgres,authenticated=U/postgres}",
+      "acl": "{postgres=UC/postgres,authenticated=U/postgres,service_role=U/postgres}",
       "name": "private",
       "owner": "postgres"
     },
@@ -5062,6 +5062,15 @@
     },
     {
       "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "begin_checkout_provider_handoff_impl",
+      "owner": "postgres",
+      "schema": "private",
+      "comment": null,
+      "definition": "CREATE OR REPLACE FUNCTION private.begin_checkout_provider_handoff_impl(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n v_uid uuid := (SELECT auth.uid());\n v_session public.checkout_sessions%rowtype;\n v_order public.orders%rowtype;\n v_attempt private.checkout_handoff_attempts%rowtype;\nBEGIN\n IF v_uid IS NULL THEN RAISE EXCEPTION 'Authentication required'; END IF;\n IF nullif(btrim(p_provider),'') IS NULL OR nullif(btrim(p_provider_checkout_id),'') IS NULL THEN\n  RAISE EXCEPTION 'Provider and checkout id are required';\n END IF;\n SELECT cs.* INTO v_session FROM public.checkout_sessions cs\n WHERE cs.id=p_checkout_session_id AND cs.user_id=v_uid FOR UPDATE;\n IF NOT FOUND THEN RAISE EXCEPTION 'Checkout session is unavailable or expired'; END IF;\n SELECT o.* INTO v_order FROM public.orders o WHERE o.id=v_session.order_id FOR UPDATE;\n IF NOT FOUND OR v_order.purchaser_user_id IS DISTINCT FROM v_uid\n    OR v_order.household_id IS DISTINCT FROM v_session.household_id\n    OR NOT private.can_manage_household(v_session.household_id)\n    OR v_session.expires_at<=clock_timestamp() THEN\n  RAISE EXCEPTION 'Checkout session is unavailable or expired';\n END IF;\n SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.checkout_session_id=v_session.id FOR UPDATE;\n IF NOT FOUND OR v_attempt.state NOT IN ('result_ready','finalized')\n    OR v_attempt.provider IS DISTINCT FROM p_provider\n    OR v_attempt.provider_checkout_id IS DISTINCT FROM p_provider_checkout_id THEN\n  RAISE EXCEPTION 'Matching provider result required';\n END IF;\n IF v_attempt.state='finalized' THEN\n  IF v_session.status='provider_pending' AND v_order.status='pending_payment'\n     AND v_session.payment_provider=p_provider AND v_order.payment_provider=p_provider\n     AND v_session.provider_checkout_id=p_provider_checkout_id THEN RETURN; END IF;\n  RAISE EXCEPTION 'Checkout session is unavailable or expired';\n END IF;\n IF v_session.status<>'created' OR v_order.status<>'draft'\n    OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL\n    OR v_order.payment_provider IS NOT NULL THEN\n  RAISE EXCEPTION 'Checkout session is unavailable or expired';\n END IF;\n UPDATE public.checkout_sessions SET status='provider_pending',payment_provider=p_provider,\n  provider_checkout_id=p_provider_checkout_id,updated_at=now() WHERE id=v_session.id;\n UPDATE public.orders SET status='pending_payment',payment_provider=p_provider,updated_at=now() WHERE id=v_order.id;\n UPDATE private.checkout_handoff_attempts SET state='finalized',finalized_at=clock_timestamp() WHERE id=v_attempt.id;\nEND $function$\n",
+      "identity_args": "p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "can_approve_dc_governance",
       "owner": "postgres",
       "schema": "private",
@@ -5212,6 +5221,15 @@
       "comment": null,
       "definition": "CREATE OR REPLACE FUNCTION private.child_has_digital_book_access(p_child_profile_id uuid, p_book_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select (select auth.uid()) is not null and private.can_manage_child(p_child_profile_id)\n    and exists (select 1 from public.child_profiles cp\n      where cp.id=p_child_profile_id and cp.status='active' and (\n        exists (select 1 from public.household_subscriptions hs\n          join public.plan_entitlements pe on pe.plan_id=hs.plan_id\n          where hs.household_id=cp.household_id and hs.status in ('trialing','active','comped')\n            and (hs.current_period_end is null or hs.current_period_end>now()) and pe.entitlement_key='digital_books')\n        or exists (select 1 from public.household_entitlement_grants g\n          where g.household_id=cp.household_id and g.entitlement_key='digital_books'\n            and g.starts_at<=now() and (g.ends_at is null or g.ends_at>now()))\n        or exists (select 1 from public.household_book_access a\n          where a.household_id=cp.household_id and a.book_id=p_book_id\n            and a.starts_at<=now() and (a.ends_at is null or a.ends_at>now()))\n      ));\n$function$\n",
       "identity_args": "p_child_profile_id uuid, p_book_id uuid"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "claim_checkout_provider_handoff_impl",
+      "owner": "postgres",
+      "schema": "private",
+      "comment": null,
+      "definition": "CREATE OR REPLACE FUNCTION private.claim_checkout_provider_handoff_impl(p_checkout_session_id uuid, p_provider text)\n RETURNS TABLE(attempt_id uuid, disposition text, provider_checkout_id text, checkout_url text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n v_uid uuid := (SELECT auth.uid());\n v_session public.checkout_sessions%rowtype;\n v_order public.orders%rowtype;\n v_attempt private.checkout_handoff_attempts%rowtype;\nBEGIN\n IF v_uid IS NULL THEN RAISE EXCEPTION 'Authentication required'; END IF;\n IF nullif(btrim(p_provider),'') IS NULL THEN RAISE EXCEPTION 'Provider is required'; END IF;\n -- Match the payment callback/expiry lock order: checkout, order, then attempt.\n SELECT cs.* INTO v_session FROM public.checkout_sessions cs\n WHERE cs.id=p_checkout_session_id AND cs.user_id=v_uid FOR UPDATE;\n IF NOT FOUND THEN RAISE EXCEPTION 'Checkout session is unavailable or expired'; END IF;\n SELECT o.* INTO v_order FROM public.orders o WHERE o.id=v_session.order_id FOR UPDATE;\n IF NOT FOUND OR v_order.purchaser_user_id IS DISTINCT FROM v_uid\n    OR v_order.household_id IS DISTINCT FROM v_session.household_id\n    OR NOT private.can_manage_household(v_session.household_id)\n    OR v_session.expires_at<=clock_timestamp() THEN\n  RAISE EXCEPTION 'Checkout session is unavailable or expired';\n END IF;\n SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.checkout_session_id=v_session.id FOR UPDATE;\n IF FOUND THEN\n  IF v_attempt.provider IS DISTINCT FROM p_provider THEN RAISE EXCEPTION 'Checkout handoff already claimed'; END IF;\n  IF v_attempt.state='finalized' THEN\n   IF v_session.status<>'provider_pending' OR v_order.status<>'pending_payment'\n      OR v_session.payment_provider IS DISTINCT FROM v_attempt.provider\n      OR v_order.payment_provider IS DISTINCT FROM v_attempt.provider\n      OR v_session.provider_checkout_id IS DISTINCT FROM v_attempt.provider_checkout_id THEN\n    RAISE EXCEPTION 'Checkout session is unavailable or expired';\n   END IF;\n   RETURN QUERY SELECT v_attempt.id,'reuse'::text,v_attempt.provider_checkout_id,v_attempt.checkout_url;\n   RETURN;\n  END IF;\n  IF v_session.status<>'created' OR v_order.status<>'draft'\n     OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL\n     OR v_order.payment_provider IS NOT NULL THEN\n   RAISE EXCEPTION 'Checkout session is unavailable or expired';\n  END IF;\n  RETURN QUERY SELECT v_attempt.id,CASE WHEN v_attempt.state='result_ready' THEN 'finalize' ELSE 'awaiting_result' END,\n    v_attempt.provider_checkout_id,v_attempt.checkout_url;\n  RETURN;\n END IF;\n IF v_session.status<>'created' OR v_order.status<>'draft'\n    OR v_session.payment_provider IS NOT NULL OR v_session.provider_checkout_id IS NOT NULL\n    OR v_order.payment_provider IS NOT NULL THEN\n  RAISE EXCEPTION 'Checkout session is unavailable or expired';\n END IF;\n INSERT INTO private.checkout_handoff_attempts(checkout_session_id,provider)\n VALUES(v_session.id,p_provider) RETURNING * INTO v_attempt;\n RETURN QUERY SELECT v_attempt.id,'invoke_adapter'::text,NULL::text,NULL::text;\nEND $function$\n",
+      "identity_args": "p_checkout_session_id uuid, p_provider text"
     },
     {
       "acl": "{postgres=X/postgres,authenticated=X/postgres}",
@@ -5826,6 +5844,15 @@
       "identity_args": ""
     },
     {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "record_checkout_handoff_result_impl",
+      "owner": "postgres",
+      "schema": "private",
+      "comment": null,
+      "definition": "CREATE OR REPLACE FUNCTION private.record_checkout_handoff_result_impl(p_attempt_id uuid, p_provider_checkout_id text DEFAULT NULL::text, p_checkout_url text DEFAULT NULL::text, p_failure_code text DEFAULT NULL::text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_attempt private.checkout_handoff_attempts%rowtype;\nBEGIN\n IF (SELECT auth.jwt()->>'role') IS DISTINCT FROM 'service_role' THEN RAISE EXCEPTION 'Service authorization required'; END IF;\n SELECT a.* INTO v_attempt FROM private.checkout_handoff_attempts a WHERE a.id=p_attempt_id FOR UPDATE;\n IF NOT FOUND THEN RAISE EXCEPTION 'Handoff attempt not found'; END IF;\n IF p_failure_code IS NOT NULL THEN\n  IF p_failure_code NOT IN ('adapter_unavailable','adapter_rejected','adapter_response_invalid','expired_before_dispatch')\n     OR p_provider_checkout_id IS NOT NULL OR p_checkout_url IS NOT NULL THEN RAISE EXCEPTION 'Invalid handoff result'; END IF;\n  IF v_attempt.state IN ('result_ready','finalized') THEN RETURN; END IF;\n  UPDATE private.checkout_handoff_attempts SET state='needs_reconciliation',failure_code=p_failure_code,result_recorded_at=clock_timestamp() WHERE id=p_attempt_id;\n  RETURN;\n END IF;\n IF nullif(btrim(p_provider_checkout_id),'') IS NULL OR p_checkout_url IS NULL\n    OR p_checkout_url !~ '^https://[^/@[:space:]?#]+([/?#][^[:space:]]*)?$' THEN\n  RAISE EXCEPTION 'Invalid handoff result';\n END IF;\n IF v_attempt.state IN ('result_ready','finalized') THEN\n  IF v_attempt.provider_checkout_id IS DISTINCT FROM p_provider_checkout_id OR v_attempt.checkout_url IS DISTINCT FROM p_checkout_url THEN\n   RAISE EXCEPTION 'Handoff result already recorded';\n  END IF;\n  RETURN;\n END IF;\n UPDATE private.checkout_handoff_attempts SET state='result_ready',provider_checkout_id=p_provider_checkout_id,\n  checkout_url=p_checkout_url,failure_code=NULL,result_recorded_at=clock_timestamp() WHERE id=p_attempt_id;\nEND $function$\n",
+      "identity_args": "p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text"
+    },
+    {
       "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "register_for_event_impl",
       "owner": "postgres",
@@ -6317,7 +6344,7 @@
       "owner": "postgres",
       "schema": "public",
       "comment": null,
-      "definition": "CREATE OR REPLACE FUNCTION public.begin_checkout_provider_handoff(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text)\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare\n  v_order_id uuid;\nbegin\n  if nullif(trim(p_provider),'') is null\n     or nullif(trim(p_provider_checkout_id),'') is null then\n    raise exception 'Provider and checkout id are required';\n  end if;\n\n  select order_id into v_order_id\n  from public.checkout_sessions\n  where id=p_checkout_session_id\n    and user_id=(select auth.uid())\n    and status='created'\n    and expires_at>now()\n  for update;\n\n  if v_order_id is null then\n    raise exception 'Checkout session is unavailable or expired';\n  end if;\n\n  update public.checkout_sessions\n  set status='provider_pending',\n      payment_provider=p_provider,\n      provider_checkout_id=p_provider_checkout_id,\n      updated_at=now()\n  where id=p_checkout_session_id;\n\n  update public.orders\n  set status='pending_payment',\n      payment_provider=p_provider,\n      updated_at=now()\n  where id=v_order_id\n    and status='draft';\nend;\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION public.begin_checkout_provider_handoff(p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text)\n RETURNS void\n LANGUAGE sql\n SET search_path TO ''\nAS $function$\n SELECT private.begin_checkout_provider_handoff_impl(p_checkout_session_id,p_provider,p_provider_checkout_id);\n$function$\n",
       "identity_args": "p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text"
     },
     {
@@ -6364,6 +6391,15 @@
       "comment": null,
       "definition": "CREATE OR REPLACE FUNCTION public.capture_marketing_lead(p_lead_type text, p_source_page text, p_parent_guardian_name text, p_email text, p_child_first_name text, p_child_age smallint, p_parent_guardian_consent boolean, p_marketing_consent boolean, p_consent_text text, p_ip_hash text, p_user_agent_hash text, p_metadata jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_id uuid;\n  v_email text := lower(trim(p_email));\nbegin\n  if p_lead_type not in ('adventure_club_waitlist','book_launch','general_updates','other') then\n    raise exception 'Invalid lead type';\n  end if;\n\n  if v_email = '' then raise exception 'Email is required'; end if;\n  if not coalesce(p_parent_guardian_consent,false) then\n    raise exception 'Guardian consent is required';\n  end if;\n\n  insert into public.marketing_leads(\n    lead_type,source_page,parent_guardian_name,email,\n    child_first_name,child_age,parent_guardian_consent,\n    marketing_consent,consent_text,consented_at,\n    status,ip_hash,user_agent_hash,metadata,\n    last_submitted_at,submission_count\n  )\n  values(\n    p_lead_type,nullif(trim(p_source_page),''),\n    nullif(trim(p_parent_guardian_name),''),v_email,\n    nullif(trim(p_child_first_name),''),p_child_age,\n    p_parent_guardian_consent,p_marketing_consent,\n    nullif(trim(p_consent_text),''),now(),\n    'active',p_ip_hash,p_user_agent_hash,\n    coalesce(p_metadata,'{}'::jsonb),now(),1\n  )\n  on conflict(lead_type,email) do update\n  set source_page=excluded.source_page,\n      parent_guardian_name=coalesce(excluded.parent_guardian_name,public.marketing_leads.parent_guardian_name),\n      child_first_name=coalesce(excluded.child_first_name,public.marketing_leads.child_first_name),\n      child_age=coalesce(excluded.child_age,public.marketing_leads.child_age),\n      parent_guardian_consent=excluded.parent_guardian_consent,\n      marketing_consent=excluded.marketing_consent,\n      consent_text=coalesce(excluded.consent_text,public.marketing_leads.consent_text),\n      consented_at=excluded.consented_at,\n      status='active',\n      ip_hash=excluded.ip_hash,\n      user_agent_hash=excluded.user_agent_hash,\n      metadata=public.marketing_leads.metadata||excluded.metadata,\n      last_submitted_at=now(),\n      submission_count=public.marketing_leads.submission_count+1\n  returning id into v_id;\n\n  return v_id;\nend;\n$function$\n",
       "identity_args": "p_lead_type text, p_source_page text, p_parent_guardian_name text, p_email text, p_child_first_name text, p_child_age smallint, p_parent_guardian_consent boolean, p_marketing_consent boolean, p_consent_text text, p_ip_hash text, p_user_agent_hash text, p_metadata jsonb"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "claim_checkout_provider_handoff",
+      "owner": "postgres",
+      "schema": "public",
+      "comment": null,
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_checkout_provider_handoff(p_checkout_session_id uuid, p_provider text)\n RETURNS TABLE(attempt_id uuid, disposition text, provider_checkout_id text, checkout_url text)\n LANGUAGE sql\n SET search_path TO ''\nAS $function$\n SELECT * FROM private.claim_checkout_provider_handoff_impl(p_checkout_session_id,p_provider);\n$function$\n",
+      "identity_args": "p_checkout_session_id uuid, p_provider text"
     },
     {
       "acl": "{postgres=X/postgres,authenticated=X/postgres}",
@@ -6663,6 +6699,15 @@
       "identity_args": "p_entity_type text, p_entity_id uuid, p_target_status text"
     },
     {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "record_checkout_handoff_result",
+      "owner": "postgres",
+      "schema": "public",
+      "comment": null,
+      "definition": "CREATE OR REPLACE FUNCTION public.record_checkout_handoff_result(p_attempt_id uuid, p_provider_checkout_id text DEFAULT NULL::text, p_checkout_url text DEFAULT NULL::text, p_failure_code text DEFAULT NULL::text)\n RETURNS void\n LANGUAGE sql\n SET search_path TO ''\nAS $function$\n SELECT private.record_checkout_handoff_result_impl(p_attempt_id,p_provider_checkout_id,p_checkout_url,p_failure_code);\n$function$\n",
+      "identity_args": "p_attempt_id uuid, p_provider_checkout_id text, p_checkout_url text, p_failure_code text"
+    },
+    {
       "acl": "{postgres=X/postgres,authenticated=X/postgres}",
       "name": "record_household_consent",
       "owner": "postgres",
@@ -6835,6 +6880,187 @@
     }
   ],
   "relations": [
+    {
+      "acl": "{postgres=arwdDxtm/postgres}",
+      "rls": true,
+      "kind": "r",
+      "name": "checkout_handoff_attempts",
+      "owner": "postgres",
+      "schema": "private",
+      "columns": [
+        {
+          "acl": null,
+          "name": "id",
+          "type": "uuid",
+          "comment": null,
+          "default": "gen_random_uuid()",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "checkout_session_id",
+          "type": "uuid",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "provider",
+          "type": "text",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "state",
+          "type": "text",
+          "comment": null,
+          "default": "'claimed'::text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "provider_checkout_id",
+          "type": "text",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "checkout_url",
+          "type": "text",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "failure_code",
+          "type": "text",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "comment": null,
+          "default": "clock_timestamp()",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "result_recorded_at",
+          "type": "timestamp with time zone",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "identity_sequence": null
+        },
+        {
+          "acl": null,
+          "name": "finalized_at",
+          "type": "timestamp with time zone",
+          "comment": null,
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "identity_sequence": null
+        }
+      ],
+      "comment": "One irreversible dispatch claim per checkout. No automatic redispatch: uncertain attempts require provider reconciliation using checkout/session and attempt IDs. Private provider URLs are never exposed by table grants.",
+      "indexes": [
+        {
+          "name": "checkout_handoff_attempts_checkout_session_id_key",
+          "definition": "CREATE UNIQUE INDEX checkout_handoff_attempts_checkout_session_id_key ON private.checkout_handoff_attempts USING btree (checkout_session_id)",
+          "constraint_backed": true
+        },
+        {
+          "name": "checkout_handoff_attempts_pkey",
+          "definition": "CREATE UNIQUE INDEX checkout_handoff_attempts_pkey ON private.checkout_handoff_attempts USING btree (id)",
+          "constraint_backed": true
+        }
+      ],
+      "options": null,
+      "force_rls": false,
+      "constraints": [
+        {
+          "name": "checkout_handoff_attempts_check",
+          "type": "c",
+          "validated": true,
+          "definition": "CHECK ((state = ANY (ARRAY['result_ready'::text, 'finalized'::text])) AND NULLIF(btrim(provider_checkout_id), ''::text) IS NOT NULL AND checkout_url IS NOT NULL OR (state = ANY (ARRAY['claimed'::text, 'needs_reconciliation'::text])) AND provider_checkout_id IS NULL AND checkout_url IS NULL)"
+        },
+        {
+          "name": "checkout_handoff_attempts_checkout_session_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition": "FOREIGN KEY (checkout_session_id) REFERENCES public.checkout_sessions(id) ON DELETE CASCADE"
+        },
+        {
+          "name": "checkout_handoff_attempts_checkout_session_id_key",
+          "type": "u",
+          "validated": true,
+          "definition": "UNIQUE (checkout_session_id)"
+        },
+        {
+          "name": "checkout_handoff_attempts_failure_code_check",
+          "type": "c",
+          "validated": true,
+          "definition": "CHECK (failure_code = ANY (ARRAY['adapter_unavailable'::text, 'adapter_rejected'::text, 'adapter_response_invalid'::text, 'expired_before_dispatch'::text]))"
+        },
+        {
+          "name": "checkout_handoff_attempts_pkey",
+          "type": "p",
+          "validated": true,
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "checkout_handoff_attempts_provider_check",
+          "type": "c",
+          "validated": true,
+          "definition": "CHECK (NULLIF(btrim(provider), ''::text) IS NOT NULL)"
+        },
+        {
+          "name": "checkout_handoff_attempts_state_check",
+          "type": "c",
+          "validated": true,
+          "definition": "CHECK (state = ANY (ARRAY['claimed'::text, 'result_ready'::text, 'finalized'::text, 'needs_reconciliation'::text]))"
+        }
+      ],
+      "view_definition": null,
+      "replica_identity": "d"
+    },
     {
       "acl": "{postgres=arwdDxtm/postgres}",
       "rls": false,

@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.1";
+import { handoffCheckout } from "./handoff.ts";
 
 function allowedOrigin(origin: string | null) {
   if (!origin) return false;
@@ -92,7 +93,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Checkout session not found" }, 404, origin);
   }
 
-  if (session.checkout_status !== "created") {
+  if (!["created", "provider_pending"].includes(session.checkout_status)) {
     return json({ error: "Checkout session is not available" }, 409, origin);
   }
 
@@ -164,136 +165,30 @@ Deno.serve(async (req: Request) => {
     },
   };
 
-  let response: Response;
-  let responseBody: Record<string, unknown> = {};
-
-  try {
-    response = await fetch(trustedAdapterUrl.toString(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${adapterSecret}`,
-      },
-      body: JSON.stringify(requestPayload),
-    });
-    responseBody = await response.json().catch(() => ({}));
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-
-    await admin.rpc("record_integration_event", {
-      p_provider_key: "commerce-primary",
-      p_event_type: "checkout_create",
-      p_direction: "outbound",
-      p_entity_type: "checkout_session",
-      p_entity_id: session.checkout_session_id,
-      p_status: "failed",
-      p_idempotency_key: `checkout:${session.checkout_session_id}`,
-      p_request_payload: requestPayload,
-      p_last_error: message,
-    });
-
-    await admin.rpc("update_integration_provider_health", {
-      p_provider_key: "commerce-primary",
-      p_status: "error",
-      p_health_status: "down",
-      p_success: false,
-      p_error: message,
-    });
-
-    return json({ error: "Checkout provider could not be reached." }, 502, origin);
-  }
-
-  if (!response.ok) {
-    await admin.rpc("record_integration_event", {
-      p_provider_key: "commerce-primary",
-      p_event_type: "checkout_create",
-      p_direction: "outbound",
-      p_entity_type: "checkout_session",
-      p_entity_id: session.checkout_session_id,
-      p_status: "failed",
-      p_idempotency_key: `checkout:${session.checkout_session_id}`,
-      p_request_payload: requestPayload,
-      p_response_payload: responseBody,
-      p_last_error: JSON.stringify(responseBody),
-    });
-
-    await admin.rpc("update_integration_provider_health", {
-      p_provider_key: "commerce-primary",
-      p_status: "error",
-      p_health_status: response.status >= 500 ? "down" : "degraded",
-      p_success: false,
-      p_error: JSON.stringify(responseBody),
-    });
-
-    return json({ error: "Checkout provider rejected the request." }, 502, origin);
-  }
-
-  const checkoutUrl =
-    typeof responseBody.checkout_url === "string" ? responseBody.checkout_url : "";
-  const providerCheckoutId =
-    typeof responseBody.provider_checkout_id === "string"
-      ? responseBody.provider_checkout_id
-      : "";
-
-  let hostedUrl: URL | null = null;
-  try {
-    hostedUrl = checkoutUrl ? new URL(checkoutUrl) : null;
-  } catch {
-    // Invalid or relative URLs must never be forwarded to a guardian browser.
-  }
-
-  if (!providerCheckoutId.trim() || hostedUrl?.protocol !== "https:" ||
-    hostedUrl.username || hostedUrl.password) {
-    return json({ error: "Checkout adapter returned an invalid response." }, 502, origin);
-  }
-
-  const { error: handoffError } = await userClient.rpc(
-    "begin_checkout_provider_handoff",
-    {
-      p_checkout_session_id: session.checkout_session_id,
-      p_provider: provider,
-      p_provider_checkout_id: providerCheckoutId,
-    },
-  );
-
-  if (handoffError) {
-    return json({ error: handoffError.message }, 409, origin);
-  }
-
-  await admin.rpc("record_integration_event", {
-    p_provider_key: "commerce-primary",
-    p_event_type: "checkout_create",
-    p_direction: "outbound",
-    p_entity_type: "checkout_session",
-    p_entity_id: session.checkout_session_id,
-    p_status: "succeeded",
-    p_idempotency_key: `checkout:${session.checkout_session_id}`,
-    p_request_payload: {
-      order_id: session.order_id,
-      total_cents: session.total_cents,
-      currency: session.currency,
-    },
-    p_response_payload: {
-      provider_checkout_id: providerCheckoutId,
-    },
+  const result = await handoffCheckout({
+    userClient, admin, sessionId: session.checkout_session_id, provider,
+    adapterUrl: trustedAdapterUrl.toString(), adapterSecret,
+    expiresAt: session.expires_at, payload: requestPayload,
   });
 
-  await admin.rpc("update_integration_provider_health", {
-    p_provider_key: "commerce-primary",
-    p_status: "active",
-    p_health_status: "healthy",
-    p_success: true,
-    p_error: null,
-  });
-
-  return json(
-    {
-      ok: true,
-      checkout_url: hostedUrl.toString(),
-      provider_checkout_id: providerCheckoutId,
-      order_number: session.order_number,
-    },
-    200,
-    origin,
-  );
+  // Never log raw adapter bodies, credentials, checkout URLs or network errors.
+  // The private durable attempt is the reconciliation record. Telemetry cannot
+  // invalidate a completed handoff or force a second external dispatch.
+  try {
+    await admin.rpc("record_integration_event", {
+      p_provider_key: "commerce-primary", p_event_type: "checkout_create",
+      p_direction: "outbound", p_entity_type: "checkout_session",
+      p_entity_id: session.checkout_session_id,
+      p_status: result.status === 200 ? "succeeded" : "failed",
+      p_idempotency_key: `checkout:${session.checkout_session_id}`,
+      p_last_error: result.status === 200 ? null : "handoff_pending_confirmation",
+    });
+    if (result.status === 200) {
+      await admin.rpc("update_integration_provider_health", {
+        p_provider_key: "commerce-primary", p_status: "active", p_health_status: "healthy",
+        p_success: true, p_error: null,
+      });
+    }
+  } catch { /* Keep the durable handoff result authoritative. */ }
+  return json({ ...result.body, ...(result.status === 200 ? { order_number: session.order_number } : {}) }, result.status, origin);
 });

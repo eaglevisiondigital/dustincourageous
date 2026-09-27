@@ -1,9 +1,17 @@
-# Password hardening — verified scope and remaining action
+# Password hardening — current hosted status and historical implementation
+
+**Current hosted status: enabled.** September 26, 2026 Work verification,
+as supplied by PRIMARY CHAT in the provider-handoff assignment, confirmed that
+leaked-password protection is enabled and its Security Advisor warning cleared.
+This is externally verified hosted configuration, not inferred from local tests.
+Codex did not modify Auth configuration in this handoff package.
+
+## Historical Codex hardening scope
 
 Chat approved enabling leaked-password protection only on
 `vrixketvinzhsfwwcqiu` (Dustin Courageous Adventure Club).
 
-**Not enabled by this package yet.** The installed Supabase connector exposes
+**Not enabled by the original Codex hardening package.** The installed Supabase connector exposes
 SQL/migration/advisor tools, but no Auth-configuration read/write operation.
 The dedicated project settings page redirects the available browser session to
 Supabase dashboard sign-in. No dashboard credentials or management token were
@@ -47,7 +55,7 @@ emails during synthetic signup. This does not change hosted Auth configuration.
 The local test does **not** prove hosted HIBP service activation or an end-to-end
 real email delivery journey. No hosted users or credentials were changed.
 
-## Exact outstanding action
+## Historical action — subsequently completed by Work verification
 
 In the authorized signed-in dashboard, open
 [the Dustin email Auth settings](https://supabase.com/dashboard/project/vrixketvinzhsfwwcqiu/auth/providers?provider=Email),
