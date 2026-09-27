@@ -6,9 +6,10 @@ SET LOCAL statement_timeout = '60s';
 REVOKE ALL ON ALL TABLES IN SCHEMA public, private FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public, private FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public, private FROM PUBLIC, anon, authenticated, service_role;
--- These two content inspection helpers must respect caller RLS; nested owner calls retain owner rights.
+-- Content inspection and membership-status helpers must respect caller RLS; nested owner calls retain owner rights.
 ALTER FUNCTION private.dc_entity_payload(text,uuid) SECURITY INVOKER;
 ALTER FUNCTION private.dc_entity_fingerprint(text,uuid) SECURITY INVOKER;
+ALTER FUNCTION private.household_is_paid_member(uuid) SECURITY INVOKER;
 -- Existing column-only group membership restriction is preserved below.
 GRANT SELECT ON TABLE public.achievement_token_ledger TO authenticated;
 GRANT INSERT, SELECT ON TABLE public.adventure_groups TO authenticated;

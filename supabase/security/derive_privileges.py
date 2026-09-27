@@ -11,7 +11,7 @@ def consume(deps,why):
   for op in ops:add(t,op,why)
  for f in deps['functions']:add(f,'EXECUTE',why)
 # Reviewed reduction: content payload/fingerprint run with caller rights.
-for name in ('private.dc_entity_payload','private.dc_entity_fingerprint'):
+for name in ('private.dc_entity_payload','private.dc_entity_fingerprint','private.household_is_paid_member'):
  d['functions'][name]['definer']=False
 for s in d['sources']:
  if s['role']=='authenticated':

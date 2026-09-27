@@ -5534,7 +5534,7 @@
       "owner": "postgres",
       "schema": "private",
       "comment": null,
-      "definition": "CREATE OR REPLACE FUNCTION private.household_is_paid_member(p_household_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.household_subscriptions hs\n    join public.membership_plans mp on mp.id=hs.plan_id\n    where hs.household_id=p_household_id\n      and hs.status in ('trialing','active','comped')\n      and (hs.current_period_end is null or hs.current_period_end>now())\n      and mp.plan_key <> 'free'\n  );\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION private.household_is_paid_member(p_household_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.household_subscriptions hs\n    join public.membership_plans mp on mp.id=hs.plan_id\n    where hs.household_id=p_household_id\n      and hs.status in ('trialing','active','comped')\n      and (hs.current_period_end is null or hs.current_period_end>now())\n      and mp.plan_key <> 'free'\n  );\n$function$\n",
       "identity_args": "p_household_id uuid"
     },
     {

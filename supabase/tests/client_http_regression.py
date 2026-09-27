@@ -141,7 +141,7 @@ rpc('complete_child_book_adventure',{'p_child_profile_id':a['child'],'p_book_id'
 check(len(good('/rest/v1/xp_ledger?child_profile_id=eq.'+a['child'],token=a['token']))==len(xp) and len(xp)>0,'duplicate completion does not award duplicate XP')
 # Password update/reset uses the same Auth update endpoint. Hosted HIBP availability
 # is separate; the local instance proves session and rejection/retry compatibility.
-code,error=req('/auth/v1/user','PUT',{'password':'x'},a['token']);check(code==422 and error.get('code')=='weak_password','weak password change rejected cleanly')
+code,error=req('/auth/v1/user','PUT',{'password':'x'},a['token']);check(code==422 and error.get('error_code',error.get('code'))=='weak_password','weak password change rejected cleanly')
 new_password=secrets.token_urlsafe(30)+'aA7!'
 good('/auth/v1/user','PUT',{'password':new_password},a['token'])
 check(bool(good('/auth/v1/token?grant_type=password','POST',{'email':a['email'],'password':new_password})['access_token']),'valid password change and new sign-in')

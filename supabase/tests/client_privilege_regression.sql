@@ -52,7 +52,17 @@ DO $$ DECLARE r record; who text; capability text; BEGIN
  END LOOP;
  INSERT INTO dc_privilege_checks VALUES('Every table/view lacks dangerous rights; views read-only; private tables/identity sequences/default-created objects protected');
 END $$;
+CREATE TEMP TABLE dc_content_acl_fixture AS SELECT gen_random_uuid() AS book;
+GRANT SELECT ON dc_content_acl_fixture TO authenticated;
+INSERT INTO public.books(id,title,slug) SELECT book,'Synthetic ACL draft','acl-'||book FROM dc_content_acl_fixture;
 SET LOCAL ROLE authenticated;
+DO $$ DECLARE b uuid; BEGIN
+ SELECT book INTO b FROM dc_content_acl_fixture;
+ IF private.dc_entity_payload('book',b) IS NOT NULL OR private.dc_entity_fingerprint('book',b) IS NOT NULL THEN
+  RAISE EXCEPTION 'Private content inspection bypassed draft RLS';
+ END IF;
+ INSERT INTO dc_privilege_checks VALUES('direct governance payload and fingerprint respect draft RLS');
+END $$;
 SELECT pg_temp.denied('TRUNCATE public.households CASCADE','authenticated TRUNCATE denied');
 SELECT pg_temp.denied('CREATE TABLE dc_privilege_fixture.ref_probe(home uuid REFERENCES public.households(id))','authenticated REFERENCES denied');
 SELECT pg_temp.denied('CREATE TRIGGER dc_acl_probe BEFORE UPDATE ON public.households FOR EACH ROW EXECUTE FUNCTION dc_privilege_fixture.trigger_stub()','authenticated TRIGGER denied');

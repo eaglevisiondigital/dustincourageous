@@ -4295,7 +4295,7 @@ $function$;
 CREATE OR REPLACE FUNCTION private.household_is_paid_member(p_household_id uuid)
  RETURNS boolean
  LANGUAGE sql
- STABLE SECURITY DEFINER
+ STABLE
  SET search_path TO ''
 AS $function$
   select exists (

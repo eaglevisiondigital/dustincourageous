@@ -16,9 +16,10 @@ lines=['-- Dependency-aware client ACL hardening. Reviewed source matrix: docs/s
 'REVOKE ALL ON ALL TABLES IN SCHEMA public, private FROM PUBLIC, anon, authenticated;',
 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public, private FROM PUBLIC, anon, authenticated;',
 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public, private FROM PUBLIC, anon, authenticated, service_role;',
-'-- These two content inspection helpers must respect caller RLS; nested owner calls retain owner rights.',
+'-- Content inspection and membership-status helpers must respect caller RLS; nested owner calls retain owner rights.',
 'ALTER FUNCTION private.dc_entity_payload(text,uuid) SECURITY INVOKER;',
 'ALTER FUNCTION private.dc_entity_fingerprint(text,uuid) SECURITY INVOKER;',
+'ALTER FUNCTION private.household_is_paid_member(uuid) SECURITY INVOKER;',
 '-- Existing column-only group membership restriction is preserved below.']
 for o in p['objects']:
  name=o['object']; ops=o['authenticated'];kind=o['kind']
@@ -50,7 +51,7 @@ md=['# Client privilege matrix','',
 'Closure follows invoker RPCs/views, applicable policies and invoker trigger bodies. It stops at definer boundaries: their table permissions belong to the owner, not the browser. Trigger execution does not require a client EXECUTE grant on the trigger entrypoint. Existing group-membership UPDATE is column-only (`status`, `ended_at`); it is not widened. All four sequences are identity sequences, tested without client sequence grants. PostgREST embedded relation reads are checked against source and the HTTP compatibility suite.','',
 'Anonymous clients require no application table/view/function privileges: the static site submits to the preserved public Edge form, whose database calls use service_role. Sign-in/signup/reset use Auth APIs. Club data is loaded after authentication. Storage uses its unchanged seven policies; private digital books use signed-in guarded helpers, and public asset URLs do not require SQL grants on application tables.','',
 'Nine explicit Edge worker/service RPCs retain service_role EXECUTE. Direct service-role table/Storage access is unchanged. Legacy Edge endpoints remain present. The repaired standalone verify_guardian_pin API is deliberately retained alongside the UI session API. Unused application RPCs remain owner-only.','',
-'`private.dc_entity_payload` and `private.dc_entity_fingerprint` change from definer to invoker: direct client calls respect existing content RLS; nested owner/definer calls still execute with owner rights. This avoids retaining an unguarded content-inspection privilege. No raw XP, badge, admin-assignment or entitlement mutation helper is exposed.','',
+'`private.dc_entity_payload` and `private.dc_entity_fingerprint` change from definer to invoker: direct client calls respect existing content RLS; nested owner/definer calls still execute with owner rights. `private.household_is_paid_member` also becomes invoker so an arbitrary household ID cannot disclose another family’s subscription state. This avoids retaining unguarded inspection privileges. No raw XP, badge, admin-assignment or entitlement mutation helper is exposed.','',
 '## Tables and views','', '| Object | Kind | anon | authenticated | Required path |','| --- | --- | --- | --- | --- |']
 for o in p['objects']:
  if o['kind']=='f':continue

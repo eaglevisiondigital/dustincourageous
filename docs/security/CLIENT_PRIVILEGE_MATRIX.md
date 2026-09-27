@@ -10,7 +10,7 @@ Anonymous clients require no application table/view/function privileges: the sta
 
 Nine explicit Edge worker/service RPCs retain service_role EXECUTE. Direct service-role table/Storage access is unchanged. Legacy Edge endpoints remain present. The repaired standalone verify_guardian_pin API is deliberately retained alongside the UI session API. Unused application RPCs remain owner-only.
 
-`private.dc_entity_payload` and `private.dc_entity_fingerprint` change from definer to invoker: direct client calls respect existing content RLS; nested owner/definer calls still execute with owner rights. This avoids retaining an unguarded content-inspection privilege. No raw XP, badge, admin-assignment or entitlement mutation helper is exposed.
+`private.dc_entity_payload` and `private.dc_entity_fingerprint` change from definer to invoker: direct client calls respect existing content RLS; nested owner/definer calls still execute with owner rights. `private.household_is_paid_member` also becomes invoker so an arbitrary household ID cannot disclose another family’s subscription state. This avoids retaining unguarded inspection privileges. No raw XP, badge, admin-assignment or entitlement mutation helper is exposed.
 
 ## Tables and views
 
@@ -110,7 +110,7 @@ Nine explicit Edge worker/service RPCs retain service_role EXECUTE. Direct servi
 | `public.household_invitations` | table | none | SELECT, UPDATE | SELECT: club-app/src/components/FamilySettings.tsx:165, club-app/src/lib/householdSettings.ts:21, invoker public.revoke_household_invitation; UPDATE: invoker public.revoke_household_invitation |
 | `public.household_members` | table | none | SELECT | SELECT: club-app/src/App.tsx:1211 |
 | `public.household_membership_summary` | view | none | SELECT | SELECT: club-app/src/components/FamilyStore.tsx:191, club-app/src/components/MembershipAccessCard.tsx:39 |
-| `public.household_subscriptions` | table | none | SELECT | SELECT: club-app/src/components/FamilySettings.tsx:146, invoker view public.household_membership_summary |
+| `public.household_subscriptions` | table | none | SELECT | SELECT: club-app/src/components/FamilySettings.tsx:146, invoker private.household_is_paid_member, invoker view public.household_membership_summary |
 | `public.households` | table | none | INSERT, SELECT, UPDATE | INSERT: invoker public.create_household_with_consent; SELECT: club-app/src/App.tsx:1213 (PostgREST embedding), club-app/src/lib/householdSettings.ts:11, invoker view public.child_series_streak_status, invoker view public.household_membership_summary; UPDATE: club-app/src/lib/householdSettings.ts:11 |
 | `public.identity_truths` | table | none | INSERT, SELECT, UPDATE | INSERT: invoker public.admin_create_identity_truth; SELECT: club-app/src/components/BibleHub.tsx:141, club-app/src/components/BookAdmin.tsx:53, club-app/src/components/Bookshelf.tsx:201 (PostgREST embedding), invoker private.dc_entity_payload, invoker public.admin_create_identity_truth, invoker public.dc_preflight_scan, invoker public.get_child_book_adventure_steps, invoker public.publish_dc_entity, invoker view public.dc_governance_entity_catalog; UPDATE: invoker public.publish_dc_entity |
 | `public.integration_events` | table | none | SELECT | SELECT: club-app/src/components/IntegrationHealthAdmin.tsx:161, invoker view public.integration_health_summary |
@@ -124,7 +124,7 @@ Nine explicit Edge worker/service RPCs retain service_role EXECUTE. Direct servi
 | `public.marketing_lead_summary` | view | none | none | No client path; owner/service or guarded definer only |
 | `public.marketing_leads` | table | none | SELECT, UPDATE | SELECT: club-app/src/components/LeadsAdmin.tsx:51, invoker view public.public_site_pipeline_summary; UPDATE: club-app/src/components/LeadsAdmin.tsx:81 |
 | `public.media_assets` | table | none | INSERT, SELECT | INSERT: club-app/src/components/MediaAdmin.tsx:102; SELECT: Storage policy dc_members_authorized_read, club-app/src/components/ActivitiesHub.tsx:92, club-app/src/components/ContentAdmin.tsx:45, club-app/src/components/MediaAdmin.tsx:55, invoker private.dc_entity_payload |
-| `public.membership_plans` | table | none | SELECT | SELECT: RLS public.plan_entitlements.plan_entitlements_read_active, club-app/src/components/CommunicationsAdmin.tsx:144, club-app/src/components/FamilySettings.tsx:141, club-app/src/components/FamilySettings.tsx:148 (PostgREST embedding), invoker view public.household_membership_summary |
+| `public.membership_plans` | table | none | SELECT | SELECT: RLS public.plan_entitlements.plan_entitlements_read_active, club-app/src/components/CommunicationsAdmin.tsx:144, club-app/src/components/FamilySettings.tsx:141, club-app/src/components/FamilySettings.tsx:148 (PostgREST embedding), invoker private.household_is_paid_member, invoker view public.household_membership_summary |
 | `public.notification_campaign_recipients` | table | none | none | No client path; owner/service or guarded definer only |
 | `public.notification_campaigns` | table | none | INSERT, SELECT, UPDATE | INSERT: invoker public.admin_schedule_notification_campaign; SELECT: club-app/src/components/CommunicationsAdmin.tsx:135, invoker public.admin_cancel_notification_campaign, invoker public.admin_schedule_notification_campaign; UPDATE: invoker public.admin_cancel_notification_campaign |
 | `public.notification_deliveries` | table | none | SELECT | SELECT: club-app/src/components/AnalyticsPrivacyAdmin.tsx:86, invoker view public.notification_delivery_health |
@@ -237,7 +237,7 @@ Categories: 1 anonymous public (none required); 2 authenticated invoker RPC/help
 | `private.handle_new_auth_user` | 6 trigger/internal helper | none | none | Internal trigger/owner path; no direct client execution |
 | `private.has_approved_dc_review` | 3 privileged guarded authenticated RPC | EXECUTE | none | invoker public.publish_dc_entity; invoker trigger private.enforce_dc_publish_gate on public.challenges |
 | `private.household_has_active_entitlement` | 3 privileged guarded authenticated RPC | EXECUTE | none | RLS public.household_faith_sessions.household_faith_sessions_insert; invoker public.complete_family_faith_participants |
-| `private.household_is_paid_member` | 3 privileged guarded authenticated RPC | EXECUTE | none | invoker public.create_checkout_order |
+| `private.household_is_paid_member` | 2 authenticated RPC/helper | EXECUTE | none | invoker public.create_checkout_order |
 | `private.initialize_household` | 6 trigger/internal helper | none | none | Internal trigger/owner path; no direct client execution |
 | `private.initialize_organization` | 6 trigger/internal helper | none | none | Internal trigger/owner path; no direct client execution |
 | `private.invoke_notification_delivery_worker` | 7 owner-only implementation detail | none | none | Internal trigger/owner path; no direct client execution |

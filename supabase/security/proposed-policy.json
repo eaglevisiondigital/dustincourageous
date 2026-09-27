@@ -1784,6 +1784,7 @@
       "reasons": {
         "SELECT": [
           "club-app/src/components/FamilySettings.tsx:146",
+          "invoker private.household_is_paid_member",
           "invoker view public.household_membership_summary"
         ]
       }
@@ -2019,6 +2020,7 @@
           "club-app/src/components/CommunicationsAdmin.tsx:144",
           "club-app/src/components/FamilySettings.tsx:141",
           "club-app/src/components/FamilySettings.tsx:148 (PostgREST embedding)",
+          "invoker private.household_is_paid_member",
           "invoker view public.household_membership_summary"
         ]
       }
@@ -3748,7 +3750,7 @@
         "EXECUTE"
       ],
       "anon": [],
-      "category": "3 privileged guarded authenticated RPC",
+      "category": "2 authenticated RPC/helper",
       "reasons": {
         "EXECUTE": [
           "invoker public.create_checkout_order"
