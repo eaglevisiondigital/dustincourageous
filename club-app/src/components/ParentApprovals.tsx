@@ -1,15 +1,20 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { familyRoleLabel, familyRoleLower } from "../lib/familyDisplay";
 
 import { readParentApprovals, confirmParentDecision, approvalRelation as firstRelation, type PendingApproval as PendingProgress } from "../lib/parentApprovals";
 
 export function ParentApprovals({
   householdId,
-  childIds
+  childIds,
+  relationship
 }: {
   householdId: string;
   childIds: string[];
+  relationship?: unknown;
 }) {
+  const roleLabel = familyRoleLabel(relationship);
+  const roleLower = familyRoleLower(relationship);
   const [items, setItems] = useState<PendingProgress[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -67,7 +72,7 @@ export function ParentApprovals({
     );
 
     if (error || !data) {
-      setMessage(error?.message ?? "Guardian PIN was not accepted.");
+      setMessage(error?.message ?? `${roleLabel} PIN was not accepted.`);
       setPin("");
       return;
     }
@@ -76,9 +81,9 @@ export function ParentApprovals({
     sessionStorage.setItem("dc_guardian_session_token", token);
     setGuardianToken(token);
     setPin("");
-    setMessage("Guardian approval session unlocked for up to 30 minutes.");
+    setMessage(`${roleLabel} approval session unlocked for up to 30 minutes.`);
     } catch {
-      setMessage("The guardian PIN could not be checked. Please try again.");
+      setMessage(`The ${roleLower} PIN could not be checked. Please try again.`);
       setPin("");
     } finally {
       await load();
@@ -98,7 +103,7 @@ export function ParentApprovals({
     const item = items.find(row => row.id === progressId && childIds.includes(row.child_profile_id));
     if (!item) return;
     if (!guardianToken) {
-      setMessage("Enter the guardian PIN before reviewing a challenge.");
+      setMessage(`Enter the ${roleLower} PIN before reviewing a challenge.`);
       return;
     }
     actionBusy.current = true;
@@ -115,7 +120,7 @@ export function ParentApprovals({
 
     if (error) {
       if (/unlock session|expired/i.test(error.message)) {
-        clearExpiredSession("Your guardian approval session expired. Enter the PIN again.");
+        clearExpiredSession(`Your ${roleLower} approval session expired. Enter the PIN again.`);
         return;
       }
 
@@ -139,16 +144,16 @@ export function ParentApprovals({
     [items.length, hasMore]
   );
 
-  if (loading && !loaded) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading guardian approvals...</p></section>;
+  if (loading && !loaded) return <section className="parent-approvals-card" aria-busy="true"><p role="status">Loading {roleLower} approvals...</p></section>;
   if (loadError && !loaded) return <section className="parent-approvals-card"><p role="alert">{loadError}</p>{message && <p>{message}</p>}<button className="secondary-button" onClick={() => void load()}>Try Again</button></section>;
 
   if (!items.length && !loading && !loadError) {
     return (
       <section className="parent-approvals-card clear">
         <div>
-          <p className="eyebrow gold">Guardian Approvals</p>
+          <p className="eyebrow gold">{roleLabel} Approvals</p>
           <h2>Nothing waiting right now</h2>
-          <p>Challenges that require a parent or guardian will appear here before XP is awarded.</p>
+          <p>Challenges that require {roleLower} approval will appear here before XP is awarded.</p>
           {message && <p role="status">{message}</p>}
         </div>
         <div className="family-action-buttons"><span className="status-chip done">All Clear</span><button type="button" className="text-button" onClick={() => void load()}>Refresh Approvals</button></div>
@@ -160,7 +165,7 @@ export function ParentApprovals({
     <section className="parent-approvals-card">
       <div className="section-heading">
         <div>
-          <p className="eyebrow red">Guardian Approvals</p>
+          <p className="eyebrow red">{roleLabel} Approvals</p>
           <h2>Review challenge completions</h2>
         </div>
         <span className="pill">{countLabel}</span>
@@ -173,7 +178,7 @@ export function ParentApprovals({
       {loadError && <p role="alert">{loadError} Displayed approvals may be out of date.</p>}
       {hasMore && <p className="muted">Showing the first 50 waiting approvals. Reviewing these brings the next items into the queue.</p>}
       <p className="muted">
-        Enter your guardian PIN to approve a challenge or return it to your child for another look.
+        Enter your {roleLower} PIN to approve a challenge or return it to your child for another look.
       </p>
 
       {message && <div className="form-message" role="status">{message}</div>}
@@ -181,7 +186,7 @@ export function ParentApprovals({
       {!guardianToken && (
         <form className="guardian-approval-unlock" onSubmit={unlock}>
           <label>
-            Guardian PIN
+            {roleLabel} PIN
             <input
               required
               disabled={Boolean(working) || loading || Boolean(loadError)}
@@ -206,7 +211,7 @@ export function ParentApprovals({
       {guardianToken && (
         <div className="guardian-session-chip">
           <span aria-hidden="true">◆</span>
-          <strong>Guardian PIN Entered</strong>
+          <strong>{roleLabel} PIN Entered</strong>
           <small>You may be asked to enter it again when approving.</small>
         </div>
       )}
