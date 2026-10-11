@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { familyRoleLower } from "../lib/familyDisplay";
 import { activityAssetUrl, activityExternalUrl, completeActivity } from "../lib/activityActions";
 import { ScriptureScramble } from "./ScriptureScramble";
+import { BookOneActivityZone } from "./BookOneActivityZone";
 
 type ContentItem = {
   id: string;
@@ -53,6 +54,7 @@ export function ActivitiesHub({
   const [progress, setProgress] = useState<Progress[]>([]);
   const [readyLink, setReadyLink] = useState<{id:string;url:string}|null>(null);
   const [category, setCategory] = useState("all");
+  const [activityZone, setActivityZone] = useState<"scripture"|"missions"|"puzzles"|"coloring">("scripture");
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
@@ -179,7 +181,19 @@ export function ActivitiesHub({
         <div className="activities-mark">★</div>
       </section>
 
-      <ScriptureScramble key={childId} childName={childName} />
+      <nav className="dc-book-one-tabs" aria-label="Book 1 featured activities">
+        {([
+          ["scripture","⚡","Scripture Scramble"],
+          ["missions","🛡️","Courage Missions"],
+          ["puzzles","🧩","Picture Puzzle"],
+          ["coloring","🎨","Coloring Headquarters"]
+        ] as const).map(([key,icon,label])=><button type="button" key={key}
+          className={activityZone===key?"active":""} aria-pressed={activityZone===key}
+          onClick={()=>setActivityZone(key)}><span aria-hidden="true">{icon}</span><strong>{label}</strong></button>)}
+      </nav>
+      {activityZone==="scripture" ? <ScriptureScramble key={childId} childName={childName} />
+        : <BookOneActivityZone key={childId+":"+activityZone} zone={activityZone}
+            childName={childName} relationship={relationship} />}
 
       {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh Activities</button></div>}
 
