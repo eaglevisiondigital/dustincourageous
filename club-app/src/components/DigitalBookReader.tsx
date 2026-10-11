@@ -45,11 +45,66 @@ export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
   const [saveError, setSaveError] = useState(false);
   const [zoom, setZoom] = useState(false);
   const [showText, setShowText] = useState(false);
+  const [turnDirection, setTurnDirection] = useState<"next" | "previous" | null>(null);
+  const [pageSound, setPageSound] = useState(() => localStorage.getItem("dc_reader_page_sound") !== "0");
+  const audioContext = useRef<AudioContext | null>(null);
   const navigationPending = useRef(false);
   const swipe = useRef<{ id: number; x: number; y: number; time: number } | null>(null);
   const version = useRef(0);
   const saveBusy = useRef(false);
   const savedRequest = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      const context = audioContext.current;
+      audioContext.current = null;
+      if (context && context.state !== "closed") void context.close().catch(() => {});
+    };
+  }, []);
+
+  function playPageTurnSound(direction: "next" | "previous") {
+    if (!pageSound) return;
+    try {
+      const AudioContextCtor = window.AudioContext;
+      const context = audioContext.current ?? new AudioContextCtor();
+      audioContext.current = context;
+      if (context.state === "suspended") void context.resume();
+
+      const duration = 0.22;
+      const sampleCount = Math.max(1, Math.floor(context.sampleRate * duration));
+      const buffer = context.createBuffer(1, sampleCount, context.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let index = 0; index < sampleCount; index += 1) {
+        const envelope = 1 - index / sampleCount;
+        data[index] = (Math.random() * 2 - 1) * envelope;
+      }
+
+      const source = context.createBufferSource();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(direction === "next" ? 1800 : 1500, context.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(500, context.currentTime + duration);
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.055, context.currentTime + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(context.destination);
+      source.start();
+      source.stop(context.currentTime + duration);
+    } catch {
+      // Reader navigation must never depend on audio support.
+    }
+  }
+
+  function togglePageSound() {
+    setPageSound(current => {
+      const next = !current;
+      localStorage.setItem("dc_reader_page_sound", next ? "1" : "0");
+      return next;
+    });
+  }
 
   useEffect(() => {
     const request = ++version.current;
@@ -82,7 +137,10 @@ export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
   }, [phase]);
   function goToPage(target: number) {
     if (busy || saveBusy.current || navigationPending.current || !Number.isInteger(target) || target < 1 || target > book.pages.length || target === page) return;
+    const direction = target > page ? "next" : "previous";
     navigationPending.current = true; swipe.current = null;
+    setTurnDirection(direction);
+    playPageTurnSound(direction);
     setPhase("loading"); setPage(target);
   }
   return <ModalDialog className="digital-book-reader" labelledBy={headingId} busy={phase === "saving"} onClose={onClose}>
@@ -96,12 +154,15 @@ export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
       <button className="secondary-button" disabled={busy || page === book.pages.length} onClick={() => goToPage(page + 1)}>Next Page</button>
       <button className="text-button" aria-pressed={zoom} disabled={!image || phase === "failed"} onClick={() => setZoom(value => !value)}>{zoom ? "Fit page" : "Enlarge page"}</button>
       <button className="text-button" aria-expanded={showText} aria-controls={pageTextId} onClick={() => setShowText(value => !value)}>{showText ? "Hide page text" : "Read page text"}</button>
+      <button className="text-button" type="button" aria-pressed={pageSound} onClick={togglePageSound}>
+        Page Sound {pageSound ? "On" : "Off"}
+      </button>
     </nav>
     <p className="digital-reader-status" role="status">{phase === "loading" || phase === "decoding" ? "Opening page..." : phase === "saving" ? "Saving your place..." : phase === "ready" && !saveError ? `Your place is saved on page ${page}.` : ""}</p>
     {saveError && <p role="alert">Your place could not be saved. <button className="text-button" onClick={() => image && void savePlace(image.request)}>Save My Place</button></p>}
     {phase === "failed" && <p role="alert">This page could not be opened. Check your connection and try again. If access has changed, close and reopen the book. <button className="secondary-button" onClick={() => setRetry(value => value + 1)}>Try Page Again</button></p>}
     <p id={helpId} className="muted digital-reader-help">{zoom ? "Scroll to explore the enlarged page. Choose Fit page to swipe between pages." : "Swipe left or right on the page. With the page focused, use arrow keys to turn pages, Home for the first page, or End for the last."}</p>
-    <div className={`digital-reader-page${zoom ? " enlarged" : ""}`} tabIndex={0} role="region" aria-label={`Book page ${page}`} aria-describedby={helpId}
+    <div className={`digital-reader-page${zoom ? " enlarged" : ""}${turnDirection ? ` page-turn-${turnDirection}` : ""}`} tabIndex={0} role="region" aria-label={`Book page ${page}`} aria-describedby={helpId}
       onKeyDown={event => {
         const target = readerKeyPage(event.key, page, book.pages.length, busy || zoom || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey);
         if (target !== null) { event.preventDefault(); goToPage(target); }
@@ -120,8 +181,15 @@ export function DigitalBookReader({ childId, bookId, title, book, onClose }: {
         const target = readerSwipePage(event.clientX - start.x, event.clientY - start.y, event.timeStamp - start.time, page, book.pages.length, busy || zoom);
         if (target !== null) goToPage(target);
       }}>
-      {image && image.page === page && phase !== "failed" && <img src={image.url} alt={book.pages[page - 1].alt}
-        onLoad={() => void savePlace(image.request)} onError={() => { if (image.request === version.current) setPhase("failed"); }} />}
+      {image && image.page === page && phase !== "failed" && <img
+        key={image.request}
+        className={turnDirection ? `page-turn-image page-turn-image-${turnDirection}` : "page-turn-image"}
+        src={image.url}
+        alt={book.pages[page - 1].alt}
+        onAnimationEnd={() => setTurnDirection(null)}
+        onLoad={() => void savePlace(image.request)}
+        onError={() => { if (image.request === version.current) setPhase("failed"); }}
+      />}
     </div>
     <section id={pageTextId} className="digital-reader-text" hidden={!showText} aria-label={`Text and description for page ${page}`}>
       <h3>Page {page}: text and description</h3>
