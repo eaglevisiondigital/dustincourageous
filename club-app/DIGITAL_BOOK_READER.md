@@ -133,3 +133,56 @@ The uploader supports PNG/JPG/WebP, 1 to 300 images, 20 MB per image and 512 MB
 per preparation. Supplied PDFs need source preparation before upload. Failed or
 abandoned preparation can leave private unreferenced files; cleanup is an admin
 operation and must not remove any file referenced by a reviewed edition.
+
+
+## October 11 final Book 1 digital source and reader plan
+
+Authoritative print-interior source for Book 1 is now
+`DC_Book1_KDP_Interior_FINAL_39_Pages_v04.pdf`, the 39-page KDP interior
+submitted for final publication. It is 621 x 630 pt per page and approximately
+342 MB. This supersedes the older 37-page production proof for digital-edition
+content preparation. The separately supplied approved front cover is the
+bookshelf/reader cover asset; the supplied print back cover is a book-detail /
+marketing asset and is not part of the normal digital reading sequence.
+
+Digital reading order follows physical-book logic:
+
+- front cover: standalone cover before the interior
+- interior page 1: standalone first right-hand page
+- larger screens: interior spreads 2-3, 4-5, ... 38-39
+- phones / narrow layouts: one interior page at a time in the same order
+- print page 39 is retained as published artwork, but the signed-in product
+  should follow it with an app-native Adventure Club completion surface rather
+  than requiring the embedded QR code to continue
+
+The digital edition is a protected interactive reader, not a downloadable PDF.
+The KDP PDF is the source master. Production assets should be generated from that
+master, stored privately, and referenced through the existing protected manifest
+and entitlement model. Preserve artwork exactly; do not restyle or recompose the
+published story pages.
+
+The reader now supports touch swipe, keyboard navigation, direction-aware
+storybook page-turn motion and an optional generated page-turn swoosh. The sound
+preference is user-controllable and persisted locally. Reduced-motion users get
+a short fade rather than the 3D turn. Navigation and reading-position saves do
+not depend on audio support.
+
+Book 1 content structure from the final interior:
+
+- pages 1-3: character/publisher/title front matter
+- pages 4-35: core No-Fear Secret story
+- page 36: Power Verse + Dustin's Challenge
+- page 37: Dustin's Prayer + Catch Phrase page
+- page 38: "The End... For Now!" closing page
+- page 39: Adventure Club join CTA / QR page
+
+Because a signed-in reader is already inside Adventure Club, after the published
+page 39 the app-native completion experience should provide direct actions such
+as Continue My Book Adventure, Go to Courage Challenges, Read Together and Back
+to My Bookshelf. Parent/Guardian wording on app-native surfaces follows the
+saved family relationship choice; the published print artwork itself is not
+rewritten dynamically.
+
+Accessible page text/descriptions still require final human preparation and
+governance review before release. The raw 342 MB PDF must never be exposed as a
+public or member-download URL.
