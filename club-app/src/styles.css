@@ -4912,6 +4912,30 @@ select:focus {
 .digital-reader-status { min-height: 1.5em; }
 .digital-reader-page { overflow: auto; max-height: 64dvh; background: #f0eee8; border-radius: 8px; text-align: center; }
 .digital-reader-page img { display: block; margin: auto; width: auto; height: auto; max-width: 100%; max-height: 64dvh; object-fit: contain; }
+.digital-reader-page { perspective: 1400px; position: relative; }
+.page-turn-image { will-change: transform, opacity, filter; backface-visibility: hidden; }
+.page-turn-image-next { transform-origin: left center; animation: dc-page-turn-next 360ms cubic-bezier(.2,.75,.25,1) both; }
+.page-turn-image-previous { transform-origin: right center; animation: dc-page-turn-previous 360ms cubic-bezier(.2,.75,.25,1) both; }
+@keyframes dc-page-turn-next {
+  0% { opacity: .34; transform: rotateY(-18deg) translateX(3%) scale(.985); filter: brightness(.9); box-shadow: -20px 0 30px rgba(0,0,0,.16); }
+  55% { opacity: .92; transform: rotateY(-4deg) translateX(.5%) scale(.997); filter: brightness(.98); box-shadow: -8px 0 18px rgba(0,0,0,.10); }
+  100% { opacity: 1; transform: rotateY(0) translateX(0) scale(1); filter: none; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+}
+@keyframes dc-page-turn-previous {
+  0% { opacity: .34; transform: rotateY(18deg) translateX(-3%) scale(.985); filter: brightness(.9); box-shadow: 20px 0 30px rgba(0,0,0,.16); }
+  55% { opacity: .92; transform: rotateY(4deg) translateX(-.5%) scale(.997); filter: brightness(.98); box-shadow: 8px 0 18px rgba(0,0,0,.10); }
+  100% { opacity: 1; transform: rotateY(0) translateX(0) scale(1); filter: none; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-turn-image-next,
+  .page-turn-image-previous {
+    animation: dc-page-turn-fade 120ms linear both;
+  }
+  @keyframes dc-page-turn-fade {
+    from { opacity: .72; }
+    to { opacity: 1; }
+  }
+}
 .digital-reader-page.enlarged img { width: 150%; max-width: none; max-height: none; }
 .digital-reader-page:focus-visible { outline: 3px solid #b9202c; outline-offset: 2px; }
 .digital-reader-page { touch-action: pan-y pinch-zoom; }
