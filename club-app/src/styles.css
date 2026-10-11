@@ -5084,3 +5084,282 @@ button.status-chip { min-height: 44px; }
 .adult-account-actions { margin-top: 1rem; }
 .adult-account-actions > *, .adult-account-download { min-height: 44px; white-space: normal; text-align: center; }
 .adult-account-download { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+
+
+/* Kid Experience v2: presentation-only layer over the existing Adventure Club systems. */
+.kid-experience-v2 {
+  background:
+    radial-gradient(circle at 85% 0%, rgba(45,132,255,.12), transparent 30rem),
+    radial-gradient(circle at 12% 18%, rgba(198,40,40,.16), transparent 26rem),
+    #07090d;
+}
+.kid-experience-v2 .app-header {
+  background: rgba(6,8,13,.9);
+  border-bottom-color: rgba(90,150,255,.18);
+}
+.kid-experience-v2 .side-panel {
+  background:
+    linear-gradient(180deg, rgba(9,20,42,.92), rgba(10,10,14,.96)),
+    #090b10;
+  border-right-color: rgba(90,150,255,.15);
+}
+.kid-experience-v2 .child-switcher {
+  min-height: 58px;
+  border-radius: 18px;
+  font-size: .95rem;
+}
+.kid-experience-v2 .child-switcher.active {
+  background: linear-gradient(135deg, rgba(30,82,170,.45), rgba(169,28,36,.35));
+  border-color: rgba(110,165,255,.35);
+  box-shadow: 0 10px 30px rgba(0,0,0,.22);
+}
+.kid-experience-v2 .avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f02b2b, #861313);
+  border: 2px solid rgba(255,255,255,.18);
+  box-shadow: 0 5px 14px rgba(0,0,0,.3);
+}
+.kid-experience-v2 .portal-main {
+  max-width: 1600px;
+}
+.kid-experience-v2 .kid-subnav {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin-bottom: 24px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+.kid-experience-v2 .kid-subnav-button {
+  min-height: 76px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #151b27, #0d1018);
+  color: #dbe8ff;
+  font-size: .8rem;
+  letter-spacing: .01em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 24px rgba(0,0,0,.2);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.kid-experience-v2 .kid-subnav-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(92,156,255,.42);
+}
+.kid-experience-v2 .kid-subnav-button.active {
+  color: white;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(76,142,255,.34), transparent 70%),
+    linear-gradient(145deg, #182944, #12151d);
+  border-color: rgba(104,166,255,.6);
+  box-shadow: 0 12px 32px rgba(19,77,170,.22), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.kid-nav-icon {
+  display: block;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+.kid-adventure-hero {
+  min-height: 330px;
+  align-items: stretch;
+  padding: 0;
+  border: 1px solid rgba(100,170,255,.28);
+  background:
+    linear-gradient(90deg, rgba(5,9,16,.96) 0%, rgba(5,9,16,.82) 38%, rgba(5,9,16,.18) 72%),
+    url("https://dustincourageous.com/assets/images/adventure-club-scene-approved.png") center/cover no-repeat;
+  box-shadow: 0 22px 60px rgba(0,0,0,.32);
+}
+.kid-adventure-hero:before {
+  background: linear-gradient(130deg, rgba(215,35,35,.20), transparent 42%, rgba(26,105,225,.16));
+}
+.kid-adventure-hero-copy {
+  width: min(58%, 720px);
+  align-self: center;
+  padding: clamp(30px, 5vw, 64px);
+}
+.kid-experience-v2 .kid-adventure-hero h1 {
+  font-size: clamp(3rem, 6vw, 6rem);
+  text-shadow: 0 5px 24px rgba(0,0,0,.45);
+}
+.kid-experience-v2 .kid-adventure-hero p:not(.eyebrow) {
+  color: #edf4ff;
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,.45);
+}
+.kid-adventure-hero > img {
+  position: absolute;
+  right: clamp(12px, 3vw, 42px);
+  bottom: 0;
+  width: min(41%, 520px);
+  height: 96%;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center bottom;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  filter: drop-shadow(0 16px 28px rgba(0,0,0,.32));
+}
+.kid-hero-motto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 20px;
+}
+.kid-hero-motto span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(6,10,18,.68);
+  border: 1px solid rgba(255,255,255,.18);
+  font-size: .74rem;
+  font-weight: 950;
+  letter-spacing: .11em;
+}
+.kid-experience-v2 .kid-stats {
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 34px;
+}
+.kid-experience-v2 .kid-stat {
+  min-height: 138px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 18px 12px;
+  border-radius: 24px;
+  background: linear-gradient(155deg, #141a24, #0b0e14);
+  border-color: rgba(255,255,255,.09);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+}
+.kid-experience-v2 .kid-stat:nth-child(1) { border-color: rgba(255,203,62,.32); }
+.kid-experience-v2 .kid-stat:nth-child(2) { border-color: rgba(88,155,255,.34); }
+.kid-experience-v2 .kid-stat:nth-child(3) { border-color: rgba(222,51,58,.34); }
+.kid-experience-v2 .kid-stat:nth-child(4) { border-color: rgba(255,123,41,.34); }
+.kid-experience-v2 .kid-stat:nth-child(5) { border-color: rgba(255,207,72,.34); }
+.kid-experience-v2 .kid-stat strong {
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+  line-height: 1;
+  margin-top: 8px;
+}
+.kid-experience-v2 .kid-stat > span:last-child {
+  margin-top: 8px;
+  color: #c7d3e7;
+  font-weight: 800;
+}
+.kid-stat-icon {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+.kid-experience-v2 .continue-adventure-card,
+.kid-experience-v2 .featured-power-card,
+.kid-experience-v2 .challenge-card,
+.kid-experience-v2 .identity-banner {
+  border-color: rgba(90,150,255,.18);
+  box-shadow: 0 14px 34px rgba(0,0,0,.22);
+}
+.kid-experience-v2 .continue-adventure-card {
+  background:
+    radial-gradient(circle at 0% 100%, rgba(220,40,45,.18), transparent 24rem),
+    radial-gradient(circle at 100% 0%, rgba(40,105,225,.14), transparent 28rem),
+    #0f131b;
+}
+.kid-experience-v2 .challenge-card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(45,115,225,.11), transparent 20rem),
+    linear-gradient(145deg, #151a22, #0d1016);
+}
+.kid-experience-v2 .challenge-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(100,166,255,.34);
+}
+.kid-experience-v2 .identity-banner {
+  background:
+    linear-gradient(110deg, rgba(37,79,150,.22), rgba(13,17,25,.98) 48%, rgba(143,20,27,.25));
+}
+@media (max-width: 1000px) {
+  .kid-experience-v2 .kid-subnav {
+    grid-template-columns: repeat(5, minmax(112px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  .kid-experience-v2 .kid-subnav-button {
+    min-width: 112px;
+  }
+  .kid-experience-v2 .kid-adventure-hero {
+    min-height: 300px;
+  }
+  .kid-adventure-hero-copy {
+    width: 62%;
+  }
+}
+@media (max-width: 700px) {
+  .kid-experience-v2 .portal-main { padding: 14px; }
+  .kid-experience-v2 .kid-subnav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .kid-experience-v2 .kid-subnav-button {
+    min-width: 112px;
+    min-height: 68px;
+    border-radius: 17px;
+  }
+  .kid-adventure-hero {
+    min-height: 365px;
+    background:
+      linear-gradient(180deg, rgba(5,9,16,.40), rgba(5,9,16,.96) 72%),
+      url("https://dustincourageous.com/assets/images/adventure-club-scene-approved.png") center/cover no-repeat;
+  }
+  .kid-adventure-hero-copy {
+    width: 100%;
+    align-self: end;
+    padding: 190px 22px 24px;
+  }
+  .kid-adventure-hero > img {
+    width: min(62%, 320px);
+    height: 58%;
+    right: -2%;
+    top: 0;
+    bottom: auto;
+  }
+  .kid-experience-v2 .kid-adventure-hero h1 {
+    font-size: clamp(2.7rem, 13vw, 4.3rem);
+    margin-bottom: 8px;
+  }
+  .kid-experience-v2 .kid-adventure-hero p:not(.eyebrow) {
+    font-size: .95rem;
+  }
+  .kid-experience-v2 .kid-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .kid-experience-v2 .kid-stat:last-child {
+    grid-column: 1 / -1;
+  }
+  .kid-experience-v2 .kid-stat {
+    min-height: 112px;
+    border-radius: 19px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kid-experience-v2 .kid-subnav-button,
+  .kid-experience-v2 .challenge-card {
+    transition: none;
+  }
+  .kid-experience-v2 .kid-subnav-button:hover,
+  .kid-experience-v2 .challenge-card:hover {
+    transform: none;
+  }
+}
