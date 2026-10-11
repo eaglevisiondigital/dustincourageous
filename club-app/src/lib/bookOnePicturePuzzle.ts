@@ -1,4 +1,4 @@
-import { shuffleTileIndices } from "./scriptureScramble";
+
 
 export type PicturePuzzleLevel = "explorer" | "adventurer" | "champion";
 
@@ -10,7 +10,16 @@ export const picturePuzzleLevels: Readonly<Record<PicturePuzzleLevel, {columns: 
 
 export function newPicturePuzzle(size: number, random: () => number = Math.random): number[] {
   if (!Number.isInteger(size) || size < 2 || size > 100) throw new Error("Invalid puzzle size");
-  return shuffleTileIndices(size, random);
+  const pieces = Array.from({length: size}, (_, index) => index);
+  for (let index = size - 1; index > 0; index--) {
+    const value = random();
+    const chosen = Math.min(index, Math.max(0, Math.floor(value * (index + 1))));
+    [pieces[index], pieces[chosen]] = [pieces[chosen], pieces[index]];
+  }
+  if (pieces.every((value, index) => value === index)) {
+    pieces.push(pieces.shift()!);
+  }
+  return pieces;
 }
 
 export function swapPuzzlePieces(order: readonly number[], first: number, second: number): number[] {
