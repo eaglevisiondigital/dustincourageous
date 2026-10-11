@@ -960,8 +960,8 @@ function FamilyPortal({
               </>)}
               <section className="identity-banner">
                 <p className="eyebrow gold">Identity Connection • 1 John 4:4</p>
-                <h2>When Jesus is your Lord, the Greater One lives in you!</h2>
-                <p>God's Spirit lives in you. Learn it. Say it. Live it. Give it away.</p>
+                <h2>Because Jesus is my Savior, God now lives in me!</h2>
+                <p>The Greater One lives in me. Learn it. Say it. Live it. Give it away.</p>
               </section>
                 </>
               )}
