@@ -738,7 +738,7 @@ function FamilyPortal({
   }
 
   return (
-    <div className="app-shell">
+    <div className={view === "kid" ? "app-shell kid-experience-v2" : "app-shell"}>
       <header className="app-header">
         <Brand />
         <div className="header-actions">
@@ -821,35 +821,40 @@ function FamilyPortal({
                   className={kidSection === "home" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("home")}
                 >
-                  Home
+                  <span className="kid-nav-icon" aria-hidden="true">🛡️</span>
+                  <span>Adventure Home</span>
                 </button>
                 <button
                   type="button"
                   className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("bible")}
                 >
-                  Bible
+                  <span className="kid-nav-icon" aria-hidden="true">⚡</span>
+                  <span>Bible Basecamp</span>
                 </button>
                 <button
                   type="button"
                   className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("books")}
                 >
-                  Books
+                  <span className="kid-nav-icon" aria-hidden="true">📚</span>
+                  <span>My Books</span>
                 </button>
                 <button
                   type="button"
                   className={kidSection === "activities" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("activities")}
                 >
-                  Activities
+                  <span className="kid-nav-icon" aria-hidden="true">🎨</span>
+                  <span>Activities</span>
                 </button>
                 <button
                   type="button"
                   className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
                   onClick={() => setKidSection("trophies")}
                 >
-                  Trophy Room
+                  <span className="kid-nav-icon" aria-hidden="true">🏆</span>
+                  <span>Trophy Room</span>
                 </button>
               </nav>
 
@@ -883,13 +888,16 @@ function FamilyPortal({
                 />
               ) : (
                 <>
-              <section className="welcome-card">
-                <div>
-                  <p className="eyebrow gold">Adventure Club</p>
+              <section className="welcome-card kid-adventure-hero">
+                <div className="kid-adventure-hero-copy">
+                  <p className="eyebrow gold">Dustin Courageous Adventure Club</p>
                   <h1>Hey, {selectedChild?.display_name}!</h1>
-                  <p>Ready to grow stronger in faith and courage today?</p>
+                  <p>Ready for today’s adventure? Grow stronger in faith, walk in courage, and keep moving toward victory.</p>
+                  <div className="kid-hero-motto" aria-label="Faith Courage Victory">
+                    <span>FAITH</span><span>COURAGE</span><span>VICTORY</span>
+                  </div>
                 </div>
-                <img src={shieldUrl} alt="" />
+                <img src="https://dustincourageous.com/assets/images/adventure-club-hero-approved-final-v4.png" alt="Dustin Courageous Adventure Club" />
               </section>
 
               {selectedChild && (
@@ -908,12 +916,12 @@ function FamilyPortal({
               ) : dashboardLoading || dashboardChildId !== selectedChild?.id ? (
                 <p role="status">Loading your progress...</p>
               ) : (<>
-              <section className="stats-grid five-up">
-                <article><strong>{snapshot.xp}</strong><span>XP Earned</span></article>
-                <article><strong>{snapshot.weeklyStars}</strong><span>Weekly Stars</span></article>
-                <article><strong>{snapshot.badges}</strong><span>Badges</span></article>
-                <article><strong>{snapshot.streak}</strong><span>Day Streak</span></article>
-                <article><strong>{snapshot.completedChallenges}</strong><span>Challenges Won</span></article>
+              <section className="stats-grid five-up kid-stats" aria-label="Adventure progress">
+                <article className="kid-stat xp"><span className="kid-stat-icon" aria-hidden="true">⚡</span><strong>{snapshot.xp}</strong><span>XP Earned</span></article>
+                <article className="kid-stat stars"><span className="kid-stat-icon" aria-hidden="true">★</span><strong>{snapshot.weeklyStars}</strong><span>Weekly Stars</span></article>
+                <article className="kid-stat badges"><span className="kid-stat-icon" aria-hidden="true">🛡️</span><strong>{snapshot.badges}</strong><span>Badges</span></article>
+                <article className="kid-stat streak"><span className="kid-stat-icon" aria-hidden="true">🔥</span><strong>{snapshot.streak}</strong><span>Day Streak</span></article>
+                <article className="kid-stat wins"><span className="kid-stat-icon" aria-hidden="true">🏆</span><strong>{snapshot.completedChallenges}</strong><span>Challenges Won</span></article>
               </section>
 
               <section className="section-block">
