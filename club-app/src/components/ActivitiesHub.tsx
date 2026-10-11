@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { familyRoleLower } from "../lib/familyDisplay";
 import { activityAssetUrl, activityExternalUrl, completeActivity } from "../lib/activityActions";
+import { ScriptureScramble } from "./ScriptureScramble";
 
 type ContentItem = {
   id: string;
@@ -177,6 +178,8 @@ export function ActivitiesHub({
         </div>
         <div className="activities-mark">★</div>
       </section>
+
+      <ScriptureScramble key={childId} childName={childName} />
 
       {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh Activities</button></div>}
 

@@ -142,3 +142,20 @@ while individually owned/granted books remain available. Full digital books are
 delivered through the protected Adventure Club reader, not as member-downloadable
 raw PDFs. Free Book Companion access remains separate from full digital-book
 access.
+
+
+## October 11 approved in-Christ Kid Home identity and Scripture Scramble practice
+
+Dave approved the exact first-person Kid Home declaration:
+"Because Jesus is my Savior, God now lives in me!" Its identity connection
+uses 1 John 4:4 and reinforces "The Greater One lives in me." Do not
+silently weaken this to generic "God is with me" wording. Do not presume
+unconverted children have already received Jesus; child-facing teaching
+distinguishes receiving Christ from living out one's identity in Him.
+
+Book 1 Scripture Scramble's first playable iteration is a signed-in,
+client-only learning exercise using 2 Timothy 1:7 and 1 John 4:4 (KJV).
+It deliberately has no authoritative XP awards, saved progress, or
+entitlement changes until a separate, server-validated reward model is
+approved and regression-tested. It does not change the household, payment,
+or private digital-book access systems.
