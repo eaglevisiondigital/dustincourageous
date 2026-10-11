@@ -121,3 +121,24 @@ should use neutral terms such as family adult instead of assuming either
 relationship. Internal identifiers, database roles, RPC names, CSS classes and
 security helpers may retain existing guardian/parent technical names; the
 relationship preference is presentation-only and must never grant authorization.
+
+
+## October 11 digital-book ownership and membership access
+
+Digital book access inside Adventure Club is independent from the household's
+current membership tier. Membership can bundle temporary access to books, but a
+household-level permanent digital-book grant from an individual purchase, gift,
+physical+digital bundle or approved redemption remains usable inside Adventure
+Club even when the household is on Free or no paid recurring plan.
+
+The access rule is effectively: active membership book entitlement OR permanent
+household book entitlement. Individual children do not separately own purchased
+books; approved child profiles in the household share the household's book access
+while keeping their own reading positions, progress and Book Adventure state.
+
+Premium may include all current/future digital books only while that Premium
+membership remains active. When Premium ends, subscription-only books relock,
+while individually owned/granted books remain available. Full digital books are
+delivered through the protected Adventure Club reader, not as member-downloadable
+raw PDFs. Free Book Companion access remains separate from full digital-book
+access.
