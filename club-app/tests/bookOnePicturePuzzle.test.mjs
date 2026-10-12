@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {newPicturePuzzle,swapPuzzlePieces,isPicturePuzzleSolved,picturePiecePosition,picturePuzzleLevels} from "../src/lib/bookOnePicturePuzzle.ts";
 
-test("book preview puzzle provides 6, 12 and 20 piece difficulties",()=>{
-  assert.deepEqual(Object.values(picturePuzzleLevels).map(v=>v.columns*v.rows),[6,12,20]);
+test("book preview puzzle provides 6, 20 and 50 piece difficulties",()=>{
+  assert.deepEqual(Object.values(picturePuzzleLevels).map(v=>v.columns*v.rows),[6,20,50]);
 });
 test("every shuffled puzzle is a permutation and is not already solved",()=>{
-  for(const size of [6,12,20]){
+  for(const size of [6,20,50]){
     const order=newPicturePuzzle(size,()=>.9999);
     assert.equal(order.length,size);
     assert.deepEqual([...order].sort((a,b)=>a-b),Array.from({length:size},(_,i)=>i));
@@ -29,7 +29,7 @@ test("invalid swaps cannot mutate source order",()=>{
   assert.throws(()=>newPicturePuzzle(0),/Invalid/);
 });
 test("image crop positions stay in a valid 0-100 percent range",()=>{
-  for(const [columns,rows] of [[3,2],[4,3],[5,4]]){
+  for(const [columns,rows] of [[3,2],[5,4],[10,5]]){
     for(let index=0;index<columns*rows;index++){
       const p=picturePiecePosition(index,columns,rows);
       assert.ok(p);

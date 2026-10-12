@@ -75,8 +75,9 @@ export function ScriptureScramble({ childName }: { childName: string }) {
         </label>
         <label htmlFor="dc-scramble-mode">Mission Difficulty
           <select id="dc-scramble-mode" value={difficulty} onChange={event => chooseGame(verseIndex, event.target.value as ScriptureScrambleDifficulty)}>
-            <option value="phrases">Explorer: Phrase Tiles</option>
-            <option value="words">Champion: Word Tiles</option>
+            <option value="phrases">Easy: Longer Phrase Tiles</option>
+            <option value="medium">Medium: 2–3 Words per Tile</option>
+            <option value="words">Hard: Every Word Separate</option>
           </select>
         </label>
       </div>

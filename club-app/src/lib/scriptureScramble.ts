@@ -1,4 +1,4 @@
-export type ScriptureScrambleDifficulty = "phrases" | "words";
+export type ScriptureScrambleDifficulty = "phrases" | "medium" | "words";
 
 export type ScriptureScrambleVerse = {
   id: "timothy" | "john";
@@ -29,7 +29,14 @@ export const scriptureScrambleVerses: readonly ScriptureScrambleVerse[] = [
 ] as const;
 
 export function scrambleTiles(verse: ScriptureScrambleVerse, difficulty: ScriptureScrambleDifficulty): string[] {
-  return difficulty === "phrases" ? [...verse.phrases] : verse.verse.split(/\s+/).filter(Boolean);
+  if (difficulty === "phrases") return [...verse.phrases];
+  const words = verse.verse.split(/\s+/).filter(Boolean);
+  if (difficulty === "words") return words;
+  const groups: string[] = [];
+  for (let index = 0; index < words.length; index += 3) {
+    groups.push(words.slice(index, index + 3).join(" "));
+  }
+  return groups;
 }
 
 export function shuffleTileIndices(length: number, random: () => number = Math.random): number[] {

@@ -4,8 +4,8 @@ export type PicturePuzzleLevel = "explorer" | "adventurer" | "champion";
 
 export const picturePuzzleLevels: Readonly<Record<PicturePuzzleLevel, {columns: number; rows: number; label: string}>> = {
   explorer: {columns: 3, rows: 2, label: "Explorer · 6 pieces"},
-  adventurer: {columns: 4, rows: 3, label: "Adventurer · 12 pieces"},
-  champion: {columns: 5, rows: 4, label: "Courage Champion · 20 pieces"}
+  adventurer: {columns: 5, rows: 4, label: "Adventurer · 20 pieces"},
+  champion: {columns: 10, rows: 5, label: "Courage Champion · 50 pieces"}
 };
 
 export function newPicturePuzzle(size: number, random: () => number = Math.random): number[] {

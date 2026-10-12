@@ -7,7 +7,7 @@ import {
 
 test('Book 1 Power Verse phrase tiles reconstruct the displayed KJV verse', () => {
   for (const verse of scriptureScrambleVerses) {
-    for (const difficulty of ['phrases','words']) {
+    for (const difficulty of ['phrases','medium','words']) {
       const tiles = scrambleTiles(verse,difficulty);
       assert.equal(tiles.join(' '),verse.verse);
       assert.equal(isScriptureScrambleSolved(tiles.map((_,i)=>i),tiles,verse.verse),true);
@@ -47,4 +47,16 @@ test('hint suggests next tile or correction without modifying progress', () => {
   assert.match(nextScrambleHint([],tiles),/For God hath/);
   assert.match(nextScrambleHint([1],tiles),/Check the order/);
   assert.match(nextScrambleHint([0],tiles),/the spirit/);
+});
+
+test('easy medium hard preserve verse text while increasing individual tiles', () => {
+ for (const verse of scriptureScrambleVerses) {
+  const easy = scrambleTiles(verse,'phrases');
+  const medium = scrambleTiles(verse,'medium');
+  const hard = scrambleTiles(verse,'words');
+  assert.ok(easy.length < medium.length && medium.length < hard.length);
+  assert.ok(medium.every(tile => tile.split(/\s+/).length <= 3));
+  assert.ok(hard.every(tile => !/\s/.test(tile)));
+  for (const tiles of [easy,medium,hard]) assert.equal(tiles.join(' '),verse.verse);
+ }
 });

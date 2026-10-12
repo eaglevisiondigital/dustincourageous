@@ -33,3 +33,8 @@
 - Keyboard users can focus the canvas, move a cursor with arrow keys, and fill with Enter/Space. Printable PDFs remain an alternative for physical coloring.
 - Coloring is entirely browser-local: there is no Auth/Storage/database save, no private media exposure, no child name embedded in output files, no XP, and no entitlement changes. Closing or switching the active page discards unsaved coloring.
 - This is not yet full brush painting, cloud save, or a paid feature. Phase 2 can add brush/eraser and guardian-controlled saved gallery after an explicit privacy and access design.
+
+## October 11 difficulty choices
+- Picture Puzzles: 6 (3x2), 20 (5x4), or 50 pieces (10x5), using the original 2:1 preview spread proportions.
+- Scripture Scramble: Easy, original long phrases; Medium, 2–3 words per tile; Hard, every word as an individual tile.
+- Both games remain practice-only without XP or server writes. Difficulty switches restart only the current game.
