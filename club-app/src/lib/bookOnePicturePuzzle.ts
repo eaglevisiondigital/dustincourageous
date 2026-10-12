@@ -8,6 +8,31 @@ export const picturePuzzleLevels: Readonly<Record<PicturePuzzleLevel, {columns: 
   champion: {columns: 10, rows: 4, label: "Courage Champion · 40 pieces"}
 };
 
+// Only publicly released Book 1 preview spreads are used here.
+ // Exact copies of approved repository assets; no private digital-reader pages.
+export const bookOnePuzzleScenes = [
+  {
+    id: "field-trip",
+    title: "Field Trip Adventure",
+    image: "/assets/images/book1-preview-bus-pages1-2.webp"
+  },
+  {
+    id: "brave-steps",
+    title: "Brave Steps",
+    image: "/assets/images/book1-preview-line-pages7-8.webp"
+  },
+  {
+    id: "climbing-wall",
+    title: "Face the Climbing Wall",
+    image: "/assets/images/book1-preview-wall-pages17-18.webp"
+  },
+  {
+    id: "victory",
+    title: "Victory Through Faith",
+    image: "/assets/images/book1-preview-victory-pages21-22.webp"
+  }
+] as const;
+
 export function newPicturePuzzle(size: number, random: () => number = Math.random): number[] {
   if (!Number.isInteger(size) || size < 2 || size > 100) throw new Error("Invalid puzzle size");
   const pieces = Array.from({length: size}, (_, index) => index);

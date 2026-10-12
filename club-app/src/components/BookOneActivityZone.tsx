@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DigitalColoring } from "./DigitalColoring";
 import {
-  isPicturePuzzleSolved, newPicturePuzzle, picturePiecePosition,
+  bookOnePuzzleScenes, isPicturePuzzleSolved, newPicturePuzzle, picturePiecePosition,
   picturePuzzleLevels, swapPuzzlePieces, type PicturePuzzleLevel
 } from "../lib/bookOnePicturePuzzle";
 
@@ -89,17 +89,25 @@ function CourageMissions({relationship}:{relationship?:unknown}) {
 
 function BookOnePicturePuzzle({childName}:{childName:string}) {
   const [level,setLevel]=useState<PicturePuzzleLevel>("explorer");
+  const [sceneIndex,setSceneIndex]=useState(2);
   const [pieces,setPieces]=useState<number[]>(() => newPicturePuzzle(6));
   const [selected,setSelected]=useState<number | null>(null);
   const [showPicture,setShowPicture]=useState(false);
   const setting=picturePuzzleLevels[level];
+  const scene=bookOnePuzzleScenes[sceneIndex];
   const solved=isPicturePuzzleSolved(pieces);
+
   function reset(nextLevel:PicturePuzzleLevel=level) {
     const next=picturePuzzleLevels[nextLevel];
     setLevel(nextLevel);
     setPieces(newPicturePuzzle(next.columns*next.rows));
     setSelected(null);
     setShowPicture(false);
+  }
+  function chooseScene(index:number) {
+    if(index===sceneIndex || !bookOnePuzzleScenes[index]) return;
+    setSceneIndex(index);
+    reset(level);
   }
   function pick(position:number) {
     if(solved) return;
@@ -108,40 +116,64 @@ function BookOnePicturePuzzle({childName}:{childName:string}) {
     setPieces(current=>swapPuzzlePieces(current,selected,position));
     setSelected(null);
   }
+
   return <section className="dc-picture-puzzle" aria-labelledby="dc-picture-puzzle-title">
     <header className="dc-puzzle-head">
       <div>
         <p className="eyebrow gold">Book #1 • Picture Puzzle</p>
         <h2 id="dc-picture-puzzle-title">PUT THE ADVENTURE TOGETHER!</h2>
-        <p>Hey, {childName}! Restore Dustin's scene from the Book 1 preview. Tap a piece, then tap where you'd like to swap it.</p>
+        <p>Hey, {childName}! Choose a Book 1 scene, then tap any two pieces to swap their places and restore the picture.</p>
       </div>
       <img src="/assets/images/book1-front.jpeg" alt="Dustin Courageous and the No-Fear Secret book cover" loading="lazy" />
     </header>
+
+    <p className="dc-scramble-instruction">Choose Your Book 1 Scene</p>
+    <div className="dc-puzzle-scenes" role="group" aria-label="Choose a puzzle scene">
+      {bookOnePuzzleScenes.map((option,index)=>(
+        <button key={option.id} type="button" className={index===sceneIndex?"dc-puzzle-scene selected":"dc-puzzle-scene"}
+          onClick={()=>chooseScene(index)} aria-pressed={index===sceneIndex}>
+          <img src={option.image} alt="" loading="lazy" />
+          <strong>{option.title}</strong>
+        </button>
+      ))}
+    </div>
+
     <div className="dc-puzzle-toolbar">
       <label>Choose Your Challenge
         <select value={level} onChange={event=>reset(event.target.value as PicturePuzzleLevel)}>
           {Object.entries(picturePuzzleLevels).map(([key,value])=><option value={key} key={key}>{value.label}</option>)}
         </select>
       </label>
-      <button type="button" className="secondary-button" onClick={() => setShowPicture(value=>!value)} aria-expanded={showPicture}>
+      <button type="button" className="secondary-button" onClick={()=>setShowPicture(value=>!value)} aria-expanded={showPicture}>
         {showPicture?"Hide Picture":"Show Picture"}
       </button>
       <button type="button" className="secondary-button" onClick={()=>reset()}>Shuffle Again</button>
     </div>
-    {showPicture && <img className="dc-puzzle-reference" src="/assets/images/book1-preview-wall-pages17-18.webp" alt="Preview of the finished Book 1 scene" />}
-    <div className="dc-puzzle-board" style={{gridTemplateColumns:`repeat(${setting.columns},minmax(0,1fr))`,aspectRatio:"2/1"}}
-      role="group" aria-label="Picture puzzle; tap two positions to swap">
-      {pieces.map((piece,position)=>{
-        const where=picturePiecePosition(piece,setting.columns,setting.rows);
-        return <button key={position} type="button" className={selected===position?"dc-puzzle-piece selected":"dc-puzzle-piece"}
-          style={{...where,backgroundImage:"url('/assets/images/book1-preview-wall-pages17-18.webp')"}}
-          onClick={()=>pick(position)} aria-pressed={selected===position}
-          aria-label={`Position ${position+1}, piece ${piece+1}; ${selected===position?"selected":"tap to select or swap"}`}/>;
-      })}
+
+    {showPicture && <img className="dc-puzzle-reference" src={scene.image}
+      alt={`Finished picture for ${scene.title}`} />}
+    {level==="champion" && <p className="dc-puzzle-zoom-notice" id="dc-puzzle-zoom-notice">
+      <strong>40-piece challenge:</strong> On a phone, swipe the puzzle area left or right to reach all the pieces.
+    </p>}
+    <div className="dc-puzzle-workbench" tabIndex={level==="champion"?0:undefined}
+      aria-label={level==="champion"?"Scrollable 40-piece puzzle workbench":undefined}>
+      <div className={level==="champion"?"dc-puzzle-board forty-piece":"dc-puzzle-board"}
+        style={{gridTemplateColumns:`repeat(${setting.columns},minmax(0,1fr))`,aspectRatio:"2/1"}}
+        role="group" aria-label={`${scene.title} puzzle; tap two positions to swap`}>
+        {pieces.map((piece,position)=>{
+          const where=picturePiecePosition(piece,setting.columns,setting.rows);
+          return <button key={position} type="button" className={selected===position?"dc-puzzle-piece selected":"dc-puzzle-piece"}
+            style={{...where,backgroundImage:`url("${scene.image}")`}}
+            onClick={()=>pick(position)} aria-pressed={selected===position}
+            aria-label={`Position ${position+1}, piece ${piece+1}; ${selected===position?"selected":"tap to select or swap"}`}/>;
+        })}
+      </div>
     </div>
     <div className="dc-puzzle-foot">
-      <p role="status" aria-live="polite">{solved?"You did it! Picture Puzzle complete! You can shuffle and play again.":selected===null?"Choose any two pieces to trade places.":"Now tap another piece to swap their positions."}</p>
-      <small>This is a practice puzzle using publicly released Book 1 preview artwork. It does not award XP or reveal the protected full digital book.</small>
+      <p role="status" aria-live="polite">{solved
+        ? "You did it! Puzzle complete! Choose another scene or shuffle and play again."
+        : selected===null?"Choose any two pieces to trade places.":"Now tap another piece to swap their positions."}</p>
+      <small>Practice-only. These scenes use already-public Book 1 preview artwork and do not grant XP or reveal protected digital-book pages.</small>
     </div>
   </section>;
 }

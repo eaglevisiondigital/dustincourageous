@@ -38,3 +38,16 @@
 - Picture Puzzles: 6 (3x2), 20 (5x4), or 40 pieces (10x4), using the original 2:1 preview spread proportions.
 - Scripture Scramble: Easy, original long phrases; Medium, 2–3 words per tile; Hard, every word as an individual tile.
 - Both games remain practice-only without XP or server writes. Difficulty switches restart only the current game.
+
+## October 12 selectable puzzle scenes and mobile 40-piece workbench
+
+- Four already-public approved Book 1 website preview spreads are selectable:
+  `book1-preview-bus-pages1-2.webp` (Field Trip Adventure),
+  `book1-preview-line-pages7-8.webp` (Brave Steps),
+  `book1-preview-wall-pages17-18.webp` (Face the Climbing Wall),
+  `book1-preview-victory-pages21-22.webp` (Victory Through Faith).
+- Each preview is an exact existing Git blob placed in `club-app/public/assets/images/`. No full private reader page, KDP master PDF, new character artwork, or additional premium asset is exposed.
+- Scene or difficulty switching resets only the current browser game. Choices are 6, 20, 40 pieces. The default remains the climbing wall scene.
+- On narrower screens, the 40-piece board has a 640px minimum width inside a horizontally scrollable workbench for larger touch targets, while other levels fit the available width.
+- Completion continues to be practice-only, with no child-progress writes or XP.
+- Real-phone Safari/Chrome touch and scene/image-crop review remain needed before product launch.

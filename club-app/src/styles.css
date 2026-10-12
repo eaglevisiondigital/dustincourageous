@@ -5560,3 +5560,54 @@ button.status-chip { min-height: 44px; }
  .dc-coloring-tools button { flex:1 1 130px; }
  .dc-color-swatch { width:42px; height:42px; }
 }
+
+
+/* Book 1 puzzle scene choices, with a touch-sized 40-piece mobile workbench. */
+.dc-puzzle-scenes {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:11px;
+}
+.dc-puzzle-scene {
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:8px;
+  border:2px solid #bca78c;
+  border-radius:14px;
+  color:#252025;
+  background:#fffdf6;
+  cursor:pointer;
+  font-weight:850;
+  text-align:left;
+}
+.dc-puzzle-scene img {
+  display:block;
+  width:100%;
+  aspect-ratio:2/1;
+  object-fit:cover;
+  border-radius:7px;
+}
+.dc-puzzle-scene strong { line-height:1.25; padding:0 4px 4px; font-size:.88rem; }
+.dc-puzzle-scene.selected { border-color:#bf232e; box-shadow:0 0 0 2px rgba(191,35,46,.17); background:#fff2d6; }
+.dc-puzzle-scene:focus-visible { outline:3px solid #2868c7; outline-offset:3px; }
+.dc-puzzle-workbench {
+  width:100%;
+  max-width:920px;
+  margin:0 auto;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-color:#b5222a #f1dfbe;
+  overscroll-behavior-inline:contain;
+}
+.dc-puzzle-workbench:focus-visible { outline:3px solid #266cd6; outline-offset:3px; }
+.dc-puzzle-zoom-notice { margin:14px auto 8px; color:#242329; font-size:.92rem; max-width:920px; }
+.dc-puzzle-piece { touch-action:pan-x; }
+@media(max-width:900px){
+  .dc-puzzle-scenes{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:640px){
+  .dc-puzzle-board.forty-piece { min-width:640px; }
+  .dc-puzzle-scene strong { font-size:.8rem; }
+}
