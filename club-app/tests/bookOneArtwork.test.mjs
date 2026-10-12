@@ -15,3 +15,15 @@ for (const [file,maximumBytes] of [
   assert.ok(statSync(path).size<=maximumBytes);
  });
 }
+
+for (const filename of [
+  "digital-coloring-01.png","digital-coloring-02.png",
+  "digital-coloring-03.png","digital-coloring-04.png"
+]) {
+ test(`${filename} comes from approved line-art PDF and has a PNG signature`,()=>{
+   const path=join(import.meta.dirname,"..","public","activities","book1",filename);
+   const bytes=readFileSync(path);
+   assert.deepEqual([...bytes.subarray(0,8)],[137,80,78,71,13,10,26,10]);
+   assert.ok(bytes.length>10000 && bytes.length<150000);
+ });
+}

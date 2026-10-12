@@ -26,3 +26,10 @@
 - The mission page is a print layout only; the new cards include no center gutter and no print-page alignment offsets.
 - The previews use WebP compression solely for screen display; the original source PDFs are still the print/download files.
 - Mission selection remains practice-only with no server XP, household writes or child data collection.
+
+## October 11 digital coloring practice
+- Four 1-bit, clean line-art PNG derivatives were rendered from the original approved four-page Book 1 coloring PDF for interactive browser display. All four printable PDFs remain byte-identical, with unchanged art, publication text and QR codes.
+- Kids can select a color and tap-to-fill an enclosed region. Undo keeps at most four prior canvas snapshots to bound memory; Reset and Save-to-Device PNG are available.
+- Keyboard users can focus the canvas, move a cursor with arrow keys, and fill with Enter/Space. Printable PDFs remain an alternative for physical coloring.
+- Coloring is entirely browser-local: there is no Auth/Storage/database save, no private media exposure, no child name embedded in output files, no XP, and no entitlement changes. Closing or switching the active page discards unsaved coloring.
+- This is not yet full brush painting, cloud save, or a paid feature. Phase 2 can add brush/eraser and guardian-controlled saved gallery after an explicit privacy and access design.

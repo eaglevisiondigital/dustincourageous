@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DigitalColoring } from "./DigitalColoring";
 import {
   isPicturePuzzleSolved, newPicturePuzzle, picturePiecePosition,
   picturePuzzleLevels, swapPuzzlePieces, type PicturePuzzleLevel
@@ -147,6 +148,7 @@ function BookOnePicturePuzzle({childName}:{childName:string}) {
 
 function BookOneColoring({relationship}:{relationship?:unknown}) {
   const role=relationship==="parent"?"parent":"guardian";
+  const [activeDigitalPage, setActiveDigitalPage] = useState<number | null>(null);
   const prefix="/printables/book1/";
   return <section className="dc-coloring-zone" aria-labelledby="dc-coloring-title">
     <header className="dc-coloring-head">
@@ -167,9 +169,16 @@ function BookOneColoring({relationship}:{relationship?:unknown}) {
           <h3>{page.name}</h3>
           <p>{page.theme}</p>
           <a className="secondary-button" href={prefix+page.url} target="_blank" rel="noopener noreferrer">Open Printable PDF</a>
+          <button className="dc-color-digitally" type="button"
+            aria-pressed={activeDigitalPage===i}
+            onClick={() => setActiveDigitalPage(current => current===i ? null : i)}>
+            {activeDigitalPage===i?"Close Digital Coloring":"Color on Screen"}
+          </button>
         </div>
       </article>)}
     </div>
+    {activeDigitalPage !== null && <DigitalColoring key={activeDigitalPage} pageIndex={activeDigitalPage}
+      pageTitle={printables[activeDigitalPage].name} onClose={() => setActiveDigitalPage(null)} />}
     <a className="primary-button dc-coloring-full-pack" href={prefix+"Dustin_Courageous_Book_1_Coloring_Sheets_Complete_Set.pdf"}
       target="_blank" rel="noopener noreferrer">Open All 4 Coloring Pages</a>
     <p className="dc-zone-disclaimer">These are the original, approved Book 1 printable files. Digital tap-to-color and artwork saving will be added separately. Printing is not required to enjoy other Adventure Club activities.</p>
