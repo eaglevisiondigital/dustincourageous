@@ -5499,3 +5499,30 @@ button.status-chip { min-height: 44px; }
  .dc-coloring-copy h3 { font-size:1.06rem; }
  .dc-coloring-copy a { font-size:.84rem; padding:9px 11px; min-height:45px; }
 }
+
+
+/* Kid-only Activities hero: reuse the approved Adventure Club scene and DC shield. */
+.kid-experience-v2 .activities-hero {
+  background:
+    linear-gradient(100deg, rgba(8,12,22,.97) 0%, rgba(8,12,22,.89) 48%, rgba(8,12,22,.45) 100%),
+    url("https://dustincourageous.com/assets/images/adventure-club-scene-approved.png") center / cover no-repeat;
+  border-color:rgba(115,168,255,.32);
+  box-shadow:0 16px 48px rgba(0,0,0,.28);
+}
+.kid-experience-v2 .activities-hero h1 {
+  color:#fffaf2;
+  text-shadow:0 4px 16px rgba(0,0,0,.38);
+}
+.kid-experience-v2 .activities-hero p:not(.eyebrow) {
+  color:#e3e8f1;
+  font-weight:650;
+  text-shadow:0 2px 8px rgba(0,0,0,.42);
+}
+.kid-experience-v2 .activities-mark {
+  border:2px solid rgba(255,255,255,.24);
+  background:
+    rgba(5,8,13,.68) url('/assets/images/dc-shield.jpeg') center / contain no-repeat;
+  box-shadow:0 12px 24px rgba(0,0,0,.3);
+  color:transparent;
+  border-radius:20px;
+}
