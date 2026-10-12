@@ -35,6 +35,6 @@
 - This is not yet full brush painting, cloud save, or a paid feature. Phase 2 can add brush/eraser and guardian-controlled saved gallery after an explicit privacy and access design.
 
 ## October 11 difficulty choices
-- Picture Puzzles: 6 (3x2), 20 (5x4), or 50 pieces (10x5), using the original 2:1 preview spread proportions.
+- Picture Puzzles: 6 (3x2), 20 (5x4), or 40 pieces (10x4), using the original 2:1 preview spread proportions.
 - Scripture Scramble: Easy, original long phrases; Medium, 2–3 words per tile; Hard, every word as an individual tile.
 - Both games remain practice-only without XP or server writes. Difficulty switches restart only the current game.
