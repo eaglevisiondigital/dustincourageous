@@ -4,7 +4,8 @@
 - All four printable PDFs and the full coloring collection are identical Git blob references from the existing approved `book-1-coloring-sheets/` directory. Copied into the Vite app's `public/printables/book1/` output path. They are not regenerated or edited.
 - Official shield and Book 1 cover are reused from `assets/images/` as exact Git blobs.
 - The picture puzzle uses only `book1-preview-wall-pages17-18.webp`, the already-public Book 1 preview asset. No full protected book pages or new source imagery is exposed.
-- Courage Missions use approved Book 1 page 36 wording and theming, but individual mission art crops are intentionally not yet bundled here. Do not represent this practice UI as the final approved challenge art layout.
+- Courage Mission visual art now uses four **exact crops** of the published mission panel on KDP interior PDF page 36 (39-page v04 master). The crops are assembled into a compressed 2x2 WebP atlas for the app, retaining approved faces/shields/scene content, but omitting the book's print gutters and yellow caption strips. Image presentation remains subject to signed-in desktop/mobile visual QA.
+- Coloring thumbnails are previews rendered from the existing unchanged four-page approved coloring PDF, combined as a compressed 2x2 WebP atlas. The underlying four printable PDFs and complete set remain byte-exact and unchanged.
 
 ## Authorization and UX
 - Book 1 Courage Missions and Picture Puzzle are intentionally client-only practice experiences, with no `child_content_progress` write, no XP/badge award, no privacy submission or parent approval. Existing protected ChallengeDialog is untouched.
@@ -17,3 +18,11 @@
 - Confirm top-of-page polish, desktop fill, mobile/touch swap usability, four mission instructions and printable PDF behavior in Chrome/Safari.
 - Confirm the copyrighted Book 1 preview asset cropping looks correct at 3x2, 4x3 and 5x4 grids.
 - Verify no conflicting classification of Family Hub versus Kid View navigation.
+
+## October 11 mission and coloring artwork integration
+
+- New app assets: `club-app/public/assets/images/book1-courage-mission-atlas.webp` and `club-app/public/assets/images/book1-coloring-previews-atlas.webp`.
+- Each atlas is 2x2 in book order. CSS maps card positions to exact atlas quadrants; client does not load the 342 MB KDP master.
+- The mission page is a print layout only; the new cards include no center gutter and no print-page alignment offsets.
+- The previews use WebP compression solely for screen display; the original source PDFs are still the print/download files.
+- Mission selection remains practice-only with no server XP, household writes or child data collection.

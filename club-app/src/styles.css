@@ -5462,3 +5462,40 @@ button.status-chip { min-height: 44px; }
 @media(max-width:800px){.dc-book-one-tabs{grid-template-columns:repeat(2,minmax(0,1fr));}.dc-mission-grid,.dc-coloring-grid{grid-template-columns:1fr;}}
 @media(max-width:490px){.dc-mission-head img,.dc-coloring-head img{width:68px;height:68px;}.dc-puzzle-head img{width:62px;height:80px;}.dc-mission-card{padding:15px;}.dc-book-one-tabs button{min-height:80px;font-size:.78rem;}.dc-puzzle-toolbar button{flex:1 1 115px;}.dc-picture-puzzle,.dc-coloring-zone,.dc-courage-missions{padding:14px;}}
 @media(prefers-reduced-motion:reduce){.dc-puzzle-piece{transition:none;}}
+
+
+/* Book 1 approved KDP art, delivered as two tiny lossily-optimized 2x2 atlases.
+   The original story illustrations and four printable PDFs remain unchanged. */
+.dc-mission-card { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); grid-template-rows:auto auto auto 1fr auto; column-gap:17px; align-items:start; }
+.dc-mission-top { grid-column:1 / -1; }
+.dc-mission-top span:last-child { font-size:.75rem; color:#44332a; }
+.dc-mission-art { grid-column:1; grid-row:2 / span 3; width:100%; aspect-ratio:1; border:3px solid #292024; border-radius:13px; background-image:url('/assets/images/book1-courage-mission-atlas.webp'); background-size:200% 200%; background-repeat:no-repeat; background-color:#d9e8ed; box-shadow:0 6px 12px rgba(0,0,0,.2); }
+.dc-mission-card h3 { grid-column:2; grid-row:2; }
+.dc-mission-card > p { grid-column:2; grid-row:3; }
+.dc-mission-open { grid-column:2; grid-row:4; margin-top:6px; }
+.dc-mission-detail { grid-column:1 / -1; }
+.dc-mission-open:focus-visible { outline:3px solid #2768ce; outline-offset:3px; }
+.dc-coloring-card { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); align-items:start; column-gap:17px; row-gap:8px; }
+.dc-coloring-illustration { position:relative; grid-column:1; grid-row:1; width:100%; height:auto; aspect-ratio:180/220; padding:0; overflow:hidden; border:2px solid #b99d76; background-color:white; background-image:url('/assets/images/book1-coloring-previews-atlas.webp'); background-size:200% 200%; background-repeat:no-repeat; }
+.dc-coloring-illustration strong { position:absolute; top:7px; right:7px; padding:6px 9px; border-radius:9px; font-size:.78rem; background:rgba(255,247,223,.96); border:1px solid #c79e44; box-shadow:0 2px 7px #0003; }
+.dc-coloring-copy { grid-column:2; display:flex; flex-direction:column; align-items:flex-start; gap:9px; min-width:0; }
+.dc-coloring-copy h3,.dc-coloring-copy p { margin:0; }
+.dc-coloring-copy a { margin-top:8px; }
+@media(max-width:1100px) and (min-width:801px){
+  .dc-mission-card { grid-template-columns: minmax(0,125px) minmax(0,1fr); }
+  .dc-coloring-card { grid-template-columns:minmax(0,130px) minmax(0,1fr); }
+}
+@media(max-width:800px) {
+ .dc-mission-card { grid-template-columns:minmax(0,180px) minmax(0,1fr); }
+ .dc-coloring-card { grid-template-columns:minmax(0,180px) minmax(0,1fr); }
+}
+@media(max-width:490px) {
+ .dc-mission-card { grid-template-columns:minmax(0,110px) minmax(0,1fr); gap:10px; }
+ .dc-mission-card h3 { font-size:clamp(1.15rem,5vw,1.5rem); }
+ .dc-mission-card>p { font-size:.9rem; }
+ .dc-mission-art { grid-row:2 / span 3; }
+ .dc-mission-open { width:100%; font-size:.9rem; padding:9px 11px; }
+ .dc-coloring-card { grid-template-columns:minmax(0,118px) minmax(0,1fr); padding:12px; column-gap:12px; }
+ .dc-coloring-copy h3 { font-size:1.06rem; }
+ .dc-coloring-copy a { font-size:.84rem; padding:9px 11px; min-height:45px; }
+}

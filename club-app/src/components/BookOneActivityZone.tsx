@@ -8,25 +8,25 @@ type Zone = "missions" | "puzzles" | "coloring";
 
 const missions = [
   {
-    id: "new-friend", tag: "MISSION 01", icon: "🤝", title: "Make a New Friend",
+    id: "new-friend", tag: "MISSION 01", artIndex: 0, artAlt: "Dustin greeting a new friend with a handshake", title: "Make a New Friend",
     instruction: "Smile, introduce yourself, and show kindness to someone new.",
     sayIt: "The love of God helps me show kindness.",
     tip: "Start with a hello. You can ask your parent or guardian to help you practice."
   },
   {
-    id: "raise-hand", tag: "MISSION 02", icon: "✋", title: "Raise Your Hand",
+    id: "raise-hand", tag: "MISSION 02", artIndex: 1, artAlt: "Dustin courageously raising his hand in class", title: "Raise Your Hand",
     instruction: "When you know an answer in class, be courageous and participate.",
     sayIt: "God has given me power, love, and a sound mind.",
     tip: "It's okay to try, even when you are still learning."
   },
   {
-    id: "pray-aloud", tag: "MISSION 03", icon: "🙏", title: "Pray Out Loud",
+    id: "pray-aloud", tag: "MISSION 03", artIndex: 2, artAlt: "Dustin and a friend praying together", title: "Pray Out Loud",
     instruction: "Talk to God out loud with simple words and confidence.",
     sayIt: "I can talk to my Father God.",
     tip: "Begin with 'Dear God,' and speak from your heart."
   },
   {
-    id: "invite-friend", tag: "MISSION 04", icon: "⛪", title: "Invite a Friend",
+    id: "invite-friend", tag: "MISSION 04", artIndex: 3, artAlt: "Dustin talking to a friend outside a church", title: "Invite a Friend",
     instruction: "With your family's help, invite a friend to church.",
     sayIt: "I can share God's love with other people.",
     tip: "Ask your parent or guardian before inviting someone."
@@ -34,10 +34,10 @@ const missions = [
 ] as const;
 
 const printables = [
-  {id:"01",name:"When I Am Afraid, I Choose Faith!",theme:"Faith over fear",url:"01_When_I_Am_Afraid_I_Choose_Faith.pdf",icon:"🙏"},
-  {id:"02",name:"No Fear Here! Climbing Wall",theme:"Stand strong in God's Word",url:"02_No_Fear_Here_Climbing_Wall.pdf",icon:"🧗"},
-  {id:"03",name:"We Always Win in Christ!",theme:"Victory in Christ",url:"03_We_Always_Win_In_Christ.pdf",icon:"🏆"},
-  {id:"04",name:"God Is in Me!",theme:"1 John 4:4",url:"04_God_Is_In_Me.pdf",icon:"🛡️"}
+  {id:"01",name:"When I Am Afraid, I Choose Faith!",theme:"Faith over fear",url:"01_When_I_Am_Afraid_I_Choose_Faith.pdf"},
+  {id:"02",name:"No Fear Here! Climbing Wall",theme:"Stand strong in God's Word",url:"02_No_Fear_Here_Climbing_Wall.pdf"},
+  {id:"03",name:"We Always Win in Christ!",theme:"Victory in Christ",url:"03_We_Always_Win_In_Christ.pdf"},
+  {id:"04",name:"God Is in Me!",theme:"1 John 4:4",url:"04_God_Is_In_Me.pdf"}
 ] as const;
 
 export function BookOneActivityZone({childName,relationship,zone}:{
@@ -65,7 +65,9 @@ function CourageMissions({relationship}:{relationship?:unknown}) {
     <div className="dc-mission-grid">
       {missions.map((mission) => (
         <article key={mission.id} className={active===mission.id?"dc-mission-card open":"dc-mission-card"}>
-          <div className="dc-mission-top"><span>{mission.tag}</span><span aria-hidden="true">{mission.icon}</span></div>
+          <div className="dc-mission-top"><span>{mission.tag}</span><span>BOOK #1</span></div>
+          <div className="dc-mission-art" role="img" aria-label={mission.artAlt}
+            style={{backgroundPosition:`${mission.artIndex % 2 ? 100 : 0}% ${mission.artIndex > 1 ? 100 : 0}%`}} />
           <h3>{mission.title}</h3>
           <p>{mission.instruction}</p>
           <button type="button" className="dc-mission-open" aria-expanded={active===mission.id}
@@ -157,10 +159,15 @@ function BookOneColoring({relationship}:{relationship?:unknown}) {
     </header>
     <div className="dc-coloring-grid">
       {printables.map((page,i)=><article className="dc-coloring-card" key={page.id}>
-        <div className="dc-coloring-illustration"><span aria-hidden="true">{page.icon}</span><strong>PAGE {i+1}</strong></div>
-        <h3>{page.name}</h3>
-        <p>{page.theme}</p>
-        <a className="secondary-button" href={prefix+page.url} target="_blank" rel="noopener noreferrer">Open Printable PDF</a>
+        <div className="dc-coloring-illustration" role="img" aria-label={`Preview of coloring page: ${page.name}`}
+          style={{backgroundPosition:`${i % 2 ? 100 : 0}% ${i > 1 ? 100 : 0}%`}}>
+          <strong>PAGE {i+1}</strong>
+        </div>
+        <div className="dc-coloring-copy">
+          <h3>{page.name}</h3>
+          <p>{page.theme}</p>
+          <a className="secondary-button" href={prefix+page.url} target="_blank" rel="noopener noreferrer">Open Printable PDF</a>
+        </div>
       </article>)}
     </div>
     <a className="primary-button dc-coloring-full-pack" href={prefix+"Dustin_Courageous_Book_1_Coloring_Sheets_Complete_Set.pdf"}
