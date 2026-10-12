@@ -128,7 +128,7 @@ function BookOnePicturePuzzle({childName}:{childName:string}) {
       <button type="button" className="secondary-button" onClick={()=>reset()}>Shuffle Again</button>
     </div>
     {showPicture && <img className="dc-puzzle-reference" src="/assets/images/book1-preview-wall-pages17-18.webp" alt="Preview of the finished Book 1 scene" />}
-    <div className="dc-puzzle-board" style={{gridTemplateColumns:`repeat(${setting.columns},minmax(0,1fr))`,aspectRatio:"16/9"}}
+    <div className="dc-puzzle-board" style={{gridTemplateColumns:`repeat(${setting.columns},minmax(0,1fr))`,aspectRatio:"2/1"}}
       role="group" aria-label="Picture puzzle; tap two positions to swap">
       {pieces.map((piece,position)=>{
         const where=picturePiecePosition(piece,setting.columns,setting.rows);
