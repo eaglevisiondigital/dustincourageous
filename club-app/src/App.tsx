@@ -738,9 +738,51 @@ function FamilyPortal({
   }
 
   return (
-    <div className={view === "kid" ? "app-shell kid-experience-v2" : "app-shell"}>
+    <div className={view === "kid" ? "app-shell kid-experience-v2 dc-approved-skin" : "app-shell"}>
       <header className="app-header">
         <Brand />
+        {view === "kid" && (<nav className="kid-subnav" aria-label="Kid area">
+                <button
+                  type="button"
+                  className={kidSection === "home" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("home")}
+                >
+                  <span className="kid-nav-icon" aria-hidden="true">⌂</span>
+                  <span>Adventure Home</span>
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("bible")}
+                >
+                  <span className="kid-nav-icon" aria-hidden="true">⚡</span>
+                  <span>Bible Basecamp</span>
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("books")}
+                >
+                  <span className="kid-nav-icon" aria-hidden="true">📚</span>
+                  <span>My Books</span>
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "activities" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("activities")}
+                >
+                  <span className="kid-nav-icon" aria-hidden="true">🎨</span>
+                  <span>Activities</span>
+                </button>
+                <button
+                  type="button"
+                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
+                  onClick={() => setKidSection("trophies")}
+                >
+                  <span className="kid-nav-icon" aria-hidden="true">🏆</span>
+                  <span>Trophy Room</span>
+                </button>
+              </nav>)}
         <div className="header-actions">
           {kidLocked ? (
             <>
@@ -815,48 +857,7 @@ function FamilyPortal({
           <Suspense fallback={<div className="section-loading" role="status"><div className="loader" aria-hidden="true" /><p>Loading your adventure…</p></div>}>
           {view === "kid" ? (
             <>
-              <nav className="kid-subnav" aria-label="Kid area">
-                <button
-                  type="button"
-                  className={kidSection === "home" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("home")}
-                >
-                  <span className="kid-nav-icon" aria-hidden="true">🛡️</span>
-                  <span>Adventure Home</span>
-                </button>
-                <button
-                  type="button"
-                  className={kidSection === "bible" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("bible")}
-                >
-                  <span className="kid-nav-icon" aria-hidden="true">⚡</span>
-                  <span>Bible Basecamp</span>
-                </button>
-                <button
-                  type="button"
-                  className={kidSection === "books" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("books")}
-                >
-                  <span className="kid-nav-icon" aria-hidden="true">📚</span>
-                  <span>My Books</span>
-                </button>
-                <button
-                  type="button"
-                  className={kidSection === "activities" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("activities")}
-                >
-                  <span className="kid-nav-icon" aria-hidden="true">🎨</span>
-                  <span>Activities</span>
-                </button>
-                <button
-                  type="button"
-                  className={kidSection === "trophies" ? "kid-subnav-button active" : "kid-subnav-button"}
-                  onClick={() => setKidSection("trophies")}
-                >
-                  <span className="kid-nav-icon" aria-hidden="true">🏆</span>
-                  <span>Trophy Room</span>
-                </button>
-              </nav>
+              
 
               {kidSection === "trophies" && selectedChild ? (
                 <TrophyRoom key={selectedChild.id} childId={selectedChild.id} childName={selectedChild.display_name} />
@@ -891,13 +892,13 @@ function FamilyPortal({
               <section className="welcome-card kid-adventure-hero">
                 <div className="kid-adventure-hero-copy">
                   <p className="eyebrow gold">Dustin Courageous Adventure Club</p>
-                  <h1>Hey, {selectedChild?.display_name}!</h1>
+                  <h1><span>Hey, </span><span className="dc-approved-name">{selectedChild?.display_name}!</span></h1>
                   <p>Ready for today’s adventure? Grow stronger in faith, walk in courage, and keep moving toward victory.</p>
-                  <div className="kid-hero-motto" aria-label="Faith Courage Victory">
-                    <span>FAITH</span><span>COURAGE</span><span>VICTORY</span>
+                  <div className="kid-hero-motto">
+                    <img className="dc-approved-motto" src="/assets/approved-ui/faith-courage-victory.webp" alt="Faith. Courage. Victory." />
                   </div>
                 </div>
-                <img src="https://dustincourageous.com/assets/images/adventure-club-hero-approved-final-v4.png" alt="Dustin Courageous Adventure Club" />
+                <img className="dc-approved-hero-art" src="/assets/approved-ui/home-hero-art.webp" alt="Dustin Courageous and his friends on an adventure" />
               </section>
 
               {selectedChild && (
@@ -916,6 +917,39 @@ function FamilyPortal({
               ) : dashboardLoading || dashboardChildId !== selectedChild?.id ? (
                 <p role="status">Loading your progress...</p>
               ) : (<>
+              
+
+              
+              <section className="dc-approved-actions" aria-labelledby="dc-today-title">
+                <div className="dc-approved-actions-heading">
+                  <span className="dc-approved-compass" aria-hidden="true">✧</span>
+                  <h2 id="dc-today-title">TODAY'S ADVENTURES</h2>
+                  <span className="dc-approved-small-steps">SMALL STEPS. BIGGER FAITH.</span>
+                </div>
+                <div className="dc-approved-action-grid">
+                  <button type="button" className="dc-approved-action dc-action-read" onClick={() => setKidSection("books")}>
+                    <span className="dc-action-icon" aria-hidden="true">📖</span>
+                    <span><strong>Read</strong><small>Continue your book adventure</small></span>
+                    <span className="dc-action-arrow" aria-hidden="true">›</span>
+                  </button>
+                  <button type="button" className="dc-approved-action dc-action-bible" onClick={() => setKidSection("bible")}>
+                    <span className="dc-action-icon" aria-hidden="true">⚡</span>
+                    <span><strong>Bible Basecamp</strong><small>Learn God's Truth</small></span>
+                    <span className="dc-action-arrow" aria-hidden="true">›</span>
+                  </button>
+                  <button type="button" className="dc-approved-action dc-action-color" onClick={() => setKidSection("activities")}>
+                    <span className="dc-action-icon" aria-hidden="true">🎨</span>
+                    <span><strong>Color &amp; Create</strong><small>Bring the story to life</small></span>
+                    <span className="dc-action-arrow" aria-hidden="true">›</span>
+                  </button>
+                  <button type="button" className="dc-approved-action dc-action-mission"
+                    onClick={() => challenges.length ? showChallenge(challenges[0]) : setKidSection("activities")}>
+                    <span className="dc-action-icon" aria-hidden="true">🏆</span>
+                    <span><strong>Courage Mission</strong><small>{challenges.length ? "Open today's challenge" : "Explore courage missions"}</small></span>
+                    <span className="dc-action-arrow" aria-hidden="true">›</span>
+                  </button>
+                </div>
+              </section>
               <section className="stats-grid five-up kid-stats" aria-label="Adventure progress">
                 <article className="kid-stat xp"><span className="kid-stat-icon" aria-hidden="true">⚡</span><strong>{snapshot.xp}</strong><span>XP Earned</span></article>
                 <article className="kid-stat stars"><span className="kid-stat-icon" aria-hidden="true">★</span><strong>{snapshot.weeklyStars}</strong><span>Weekly Stars</span></article>
@@ -923,12 +957,11 @@ function FamilyPortal({
                 <article className="kid-stat streak"><span className="kid-stat-icon" aria-hidden="true">🔥</span><strong>{snapshot.streak}</strong><span>Day Streak</span></article>
                 <article className="kid-stat wins"><span className="kid-stat-icon" aria-hidden="true">🏆</span><strong>{snapshot.completedChallenges}</strong><span>Challenges Won</span></article>
               </section>
-
-              <section className="section-block">
+<section className="section-block">
                 <div className="section-heading">
                   <div>
                     <p className="eyebrow red">Keep Going</p>
-                    <h2>Today's Adventures</h2>
+                    <h2>More Courage Challenges</h2>
                   </div>
                   <span className="pill sentence-pill">Fresh challenges appear here</span>
                 </div>
