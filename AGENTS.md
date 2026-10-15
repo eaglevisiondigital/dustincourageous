@@ -1,5 +1,22 @@
 # Dustin Courageous engineering instructions
 
+## Mandatory October 15 visual lock (read before ANY frontend design work)
+
+Exactly THREE Adventure Club screenshots are founder-approved: Adventure Home,
+Activities Center and Family Hub. Their canonical Library locations, exact
+SHA-256 hashes and strict no-variation constraints are in
+`docs/design/APPROVED_ADVENTURE_CLUB_VISUAL_CONTRACT_2026-10-15.md`.
+Treat those three images as the **sole visual source of truth**. No other
+previous/generated mockups, alternative layouts, visual substitutions or
+creative deviations are approved. Implement the exact approved appearance
+as real working frontend components using approved original Dustin and shield
+art. Preserve all family controls, data-dependent displays, RLS, entitlements,
+XP integrity and real empty states. Do not publish/merge without founder review.
+When an exact visual asset is unavailable, raise the blocker; never invent a
+lookalike. Responsive adaptation may only preserve, never replace, the approved
+look and feel. The founder requested this Chat to handle work directly by
+default; do not route to a separate agent without a substantial technical need.
+
 ## Start here
 
 - Repository: `eaglevisiondigital/dustincourageous`.
