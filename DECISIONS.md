@@ -159,3 +159,22 @@ It deliberately has no authoritative XP awards, saved progress, or
 entitlement changes until a separate, server-validated reward model is
 approved and regression-tested. It does not change the household, payment,
 or private digital-book access systems.
+
+
+## October 15: FINAL sole approved Adventure Club visual designs (LOCKED)
+
+Founder approval is limited exclusively to these three exact screenshots: Adventure Home,
+Activities Center, and Family Hub, all dated October 15, 2026. **No other variants,
+redesigns, alternatives, or approximations are approved.** The exact files and
+SHA-256 identities are recorded in
+`docs/design/APPROVED_ADVENTURE_CLUB_VISUAL_CONTRACT_2026-10-15.md` and preserved
+under the user's Library folder `/Dustin Courageous/APPROVED Adventure Club UI - 2026-10-15/`.
+
+The screenshots control the exact desired desktop appearance, visual elements, composition,
+layout, palette and hierarchy. Implementation should reproduce those references as a
+fully functional UI with actual approved brand imagery, connected application state,
+security and data. Sample screenshot activity histories/awards are **not** production
+records. Responsive changes must preserve the same design rather than introducing
+a different skin. No additional visual direction is authorized by any prior blueprint
+or by a developer's aesthetic judgment. Only explicit later founder approval can
+amend this lock. `main` remains untouched.
