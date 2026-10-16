@@ -45,3 +45,23 @@ There are exactly **three approved reference screens** at present. Other screens
 The canonical PNGs are preserved as byte-identical Library files, not in the public app bundle or GitHub repository. Before translation into production code, obtain those exact canonical files and compare SHA-256. Do not claim that a screenshot is a working production UI or that a different illustration is an identical replacement.
 
 **Change control:** This visual contract can only be altered by a later explicit founder approval identifying exactly which screen/portion changed. Approval of backend, content or tests does not constitute permission to alter the design.
+
+## October 16, 2026: Founder-approved LIMITED Adventure Home hero refinement
+
+The founder explicitly approved the improved **left text-panel background only** after
+reviewing the generated image `dustin_s_courageous_adventure_club.png` (2172×724 PNG;
+SHA-256 `e28e5d6446b337d377db53a5d4bc7b38a7314cda8b7bdf0140e5e439a39161b6`).
+
+**Exact approval scope:** richer atmospheric navy/indigo gradient, faint compass motif,
+subtle mountain/forest-like texture, soft blue glow, smooth integration where the text
+panel meets the unchanged approved Dustin-and-friends artwork. Keep all other
+Adventure Home and other screen layouts, spacing, shields, published images,
+typography decisions, and user interactions governed by the original three
+October 15 locked screenshots. This amendment is NOT approval of a fourth screen
+or alternate global design.
+
+The updated left-panel texture must be made from CSS/background decoration, never
+by displaying the approved screenshot as a flat hero image: the `Hey, {child}!`
+greeting, explanatory text and progress must stay dynamic for the signed-in child.
+Retain the existing transparent visual treatment for narrow/mobile layouts. Verify
+the real signed-in browser appearance with the founder before claiming pixel-fidelity.

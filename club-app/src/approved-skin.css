@@ -482,3 +482,68 @@
   .dc-approved-skin .kid-adventure-hero-copy { padding-top: 175px; }
   .dc-approved-skin .kid-adventure-hero h1 { font-size: 2.27rem; }
 }
+
+/* October 16 founder-approved refinement: LEFT HERO BACKGROUND ONLY.
+   Source: dustin_s_courageous_adventure_club.png (2172x724),
+   SHA-256 e28e5d6446b337d377db53a5d4bc7b38a7314cda8b7bdf0140e5e439a39161b6.
+   The screenshot is a VISUAL CONTRACT, not a live web graphic. Do not
+   embed its baked child name, other text, logos or buttons in the actual UI.
+   Preserve the approved Dustin artwork, official shield, layout and dynamic data. */
+@media (min-width: 761px) {
+  .dc-approved-skin .kid-adventure-hero-copy {
+    isolation: isolate;
+    background:
+      radial-gradient(ellipse at 35% 32%, rgba(24,87,166,.28) 0%,transparent 58%),
+      radial-gradient(ellipse at 89% 78%, rgba(14,107,193,.22) 0%,transparent 56%),
+      linear-gradient(90deg,
+        rgba(3,18,44,.99) 0%,
+        rgba(5,28,64,.98) 29%,
+        rgba(5,35,78,.95) 55%,
+        rgba(6,42,87,.77) 77%,
+        rgba(6,32,70,.16) 96%,
+        transparent 100%);
+  }
+  /* Faint rocky mountain silhouettes behind, not obscuring the badges. */
+  .dc-approved-skin .kid-adventure-hero-copy::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: auto 0 0;
+    height: 32%;
+    pointer-events: none;
+    opacity: .48;
+    background: linear-gradient(to top,#010a1b 0%,#061a35 80%,transparent 100%);
+    clip-path: polygon(0% 50%,7% 35%,14% 65%,21% 39%,28% 48%,35% 25%,42% 44%,50% 32%,57% 52%,63% 38%,69% 52%,75% 37%,82% 58%,89% 42%,95% 65%,100% 52%,100% 100%,0 100%);
+  }
+  /* Subtle compass watermark, echoing only the approved background texture. */
+  .dc-approved-skin .kid-adventure-hero-copy::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 10px;
+    left: 10px;
+    width: 145px;
+    height: 145px;
+    pointer-events: none;
+    border: 1px solid rgba(120,185,255,.18);
+    border-radius: 50%;
+    opacity: .24;
+    background:
+      linear-gradient(0deg,transparent 49.2%,rgba(129,191,255,.48) 49.5%,rgba(129,191,255,.48) 50.5%,transparent 50.8%),
+      linear-gradient(90deg,transparent 49.2%,rgba(129,191,255,.48) 49.5%,rgba(129,191,255,.48) 50.5%,transparent 50.8%),
+      conic-gradient(from 45deg,transparent 0deg 32deg,rgba(128,188,255,.28) 35deg 38deg,transparent 41deg 90deg,rgba(128,188,255,.28) 125deg 128deg,transparent 131deg 180deg,rgba(128,188,255,.28) 215deg 218deg,transparent 221deg 270deg,rgba(128,188,255,.28) 305deg 308deg,transparent 311deg 360deg);
+    box-shadow: 0 0 0 13px rgba(32,111,205,.055), inset 0 0 0 16px rgba(20,83,171,.075);
+  }
+  .dc-approved-skin .kid-adventure-hero-copy > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+@media (max-width: 760px) {
+  /* Preserve the original stacked mobile composition and fade-to-text. */
+  .dc-approved-skin .kid-adventure-hero-copy {
+    background:
+      radial-gradient(ellipse at 28% 85%,rgba(25,91,179,.25),transparent 64%),
+      linear-gradient(180deg,transparent 0%,rgba(5,27,60,.92) 48%,#061832 85%);
+  }
+}

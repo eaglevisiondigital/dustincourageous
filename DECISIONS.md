@@ -178,3 +178,12 @@ records. Responsive changes must preserve the same design rather than introducin
 a different skin. No additional visual direction is authorized by any prior blueprint
 or by a developer's aesthetic judgment. Only explicit later founder approval can
 amend this lock. `main` remains untouched.
+
+## October 16 limited approved refinement to Adventure Home
+
+The only new visual approval is the **left text-background atmosphere** in the
+Adventure Home hero, documented in
+`docs/design/APPROVED_ADVENTURE_CLUB_VISUAL_CONTRACT_2026-10-15.md`.
+It does not replace the three approved screenshots or authorize any other layout
+or character changes. The approved screenshot is **not** to be embedded as a
+flat banner because `Hey, {child}!` must remain dynamically personalized.

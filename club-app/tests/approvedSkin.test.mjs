@@ -68,3 +68,15 @@ test("Book 1 cover uses natural proportions and selected child's greeting is dyn
   assert.match(source, /selectedChild\?\.display_name/);
   assert.doesNotMatch(source, /Hey,\s*Sally!/);
 });
+
+test("October 16 hero refinement is decoration behind dynamic text only", () => {
+  const marker = "October 16 founder-approved refinement: LEFT HERO BACKGROUND ONLY";
+  const block = skin.slice(skin.indexOf(marker));
+  assert.ok(block.length > 500, "approved limited treatment exists");
+  assert.match(block, /kid-adventure-hero-copy::before/);
+  assert.match(block, /kid-adventure-hero-copy::after/);
+  assert.match(block, /rgba\(5,28,64,\.98\)/);
+  assert.match(block, /kid-adventure-hero-copy > \*/);
+  assert.match(source, /selectedChild\?\.display_name/);
+  assert.doesNotMatch(source, /dustin_s_courageous_adventure_club\.png/);
+});
