@@ -175,7 +175,7 @@ export function ActivitiesHub({
     setActivityZone(zone);
     window.requestAnimationFrame(() => {
       document.getElementById("dc-active-activity")?.scrollIntoView({
-        block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
+        block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
       });
     });
   }
