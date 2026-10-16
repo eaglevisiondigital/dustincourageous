@@ -44,3 +44,27 @@ test("only exact approved screenshot crops, not full screen pictures, are reused
     assert.match(skin + source, new RegExp(name.replace(/\./g, '\\.')));
   }
 });
+
+
+test("approved three-shield hero art keeps its landscape ratio and cannot push greeting off-screen",()=>{
+  const patch = skin.slice(skin.indexOf("/* Exact-reference Adventure Home visual correction: October 16, 2026 */"));
+  assert.ok(patch.length > 500, "visual correction block present");
+  assert.match(patch, /\.kid-hero-motto img\.dc-approved-motto \{/);
+  assert.match(patch, /aspect-ratio:\s*324\s*\/\s*122/);
+  assert.match(patch, /max-height:\s*115px/);
+  assert.match(patch, /overflow-wrap:\s*anywhere/);
+  assert.match(patch, /\.kid-adventure-hero:before \{ display: none; \}/);
+});
+
+test("approved sidebar scenic artwork is cropped without repeating child names",()=>{
+  const patch=skin.slice(skin.indexOf("/* Exact-reference Adventure Home visual correction: October 16, 2026 */"));
+  assert.match(patch, /height:\s*min\(586px,\s*100%\)/);
+  assert.match(patch, /adventure-sidebar-path\.webp/);
+  assert.match(patch, /\.side-panel::after/);
+});
+
+test("Book 1 cover uses natural proportions and selected child's greeting is dynamic",()=>{
+  assert.match(skin, /\.continue-book-cover img \{[\s\S]*?aspect-ratio:\s*auto/);
+  assert.match(source, /selectedChild\?\.display_name/);
+  assert.doesNotMatch(source, /Hey,\s*Sally!/);
+});

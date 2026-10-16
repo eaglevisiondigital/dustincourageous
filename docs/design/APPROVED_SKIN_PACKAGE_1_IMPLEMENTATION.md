@@ -32,3 +32,30 @@ This package is an implementation candidate, NOT additional visual design approv
 - Founder approval of actual production UI, **not only the reference screenshot**, before treating Package 1 as visually accepted.
 - Confirm keyboard and screen-reader navigation, child switching, loading/empty states and locked Family Hub.
 - More detailed Activities Center and Family Hub styling will be implemented only against their locked screenshots, not imagined alternate layouts.
+
+## October 16 visual correction against actual signed-in browser screenshots
+
+The screenshots supplied by the founder showed an unusable clipped personal greeting,
+oversized/darkened Dustin artwork, an overly tall book/verse row, a printed book cover
+cropped inside its box, and a duplicate QA child name baked into the scenic sidebar
+crop. These were **visual implementation defects**, not permissions or data defects.
+
+Root cause of greeting clipping: a broad `.welcome-card img` rule has
+`aspect-ratio:1`. The three-badge image is naturally 324:122 but was being
+laid out as a 305px square, which caused the hero's vertically centered content
+to overflow its 378px crop. Corrected via an explicit 324/122 image ratio,
+constrained badge height, compact safe hero layout and no overlapping darkening
+filter. Dynamic greeting remains React state, not part of an image.
+
+The sidebar now clips the duplicate third-child text from the approved scenic
+source crop using a bottom-aligned background layer rather than modifying any
+child-profile content.
+
+The Book 1 cover preserves its natural artwork via `object-fit:contain` and
+the verse card uses compact typography while keeping the live practice action.
+
+Remaining work: actual signed-in browser comparison against approved October 15
+Adventure Home at 1672x941 and responsive widths; verify Safari clipping,
+real image focal points, keyboard navigation and child changes. Do not claim
+100% visual acceptance from successful CI or CSS tests alone. The approved PNG
+remains the sole visual authority, with no additional mockup approved.
