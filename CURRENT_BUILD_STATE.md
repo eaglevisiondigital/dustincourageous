@@ -1,5 +1,11 @@
 # Verified build state
 
+## October 15 locked visual rollout: Activities Center implementation
+
+The exact founder-approved Adventure Home / Activities Center / Family Hub screenshots remain the ONLY authorized visual contracts. Following the verified Adventure Home first implementation, the Activities Center's four illustrated functioning activity cards, approved source-art crops and activity selection state were implemented on `build/adventure-club-app`.
+
+Verified at `8537f51763134b880c9b2b76d849e576e37fdc55`: 331 application tests, full isolated Supabase recovery, unchanged kid/household security and Netlify preview ready. 6/20/40-piece puzzles and Scripture Scramble Easy/Medium/Hard are connected to real playable controls; published activities retain existing protected completion. Exact desktop/mobile screenshot comparison and founder acceptance of the *working interface* are still pending. Family Hub exact-skin rollout is next. No `main` merge, payment launch, or digital-book publication.
+
 ## Relationship-aware Parent / Guardian terminology
 
 Verified code checkpoint: `cc26d9b789f825a28dac3779c3008dca86408823`.
