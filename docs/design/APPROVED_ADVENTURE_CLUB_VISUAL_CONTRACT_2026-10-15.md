@@ -65,3 +65,17 @@ by displaying the approved screenshot as a flat hero image: the `Hey, {child}!`
 greeting, explanatory text and progress must stay dynamic for the signed-in child.
 Retain the existing transparent visual treatment for narrow/mobile layouts. Verify
 the real signed-in browser appearance with the founder before claiming pixel-fidelity.
+
+## October 16, 2026: Approved constrained desktop/mobile polish package
+
+Founder-approved visual refinements are restricted to existing screens, with no new layout
+direction. The original three October 15 PNG screenshots remain the sole screen design
+contracts, together with the separately approved Adventure Home left-gradient refinement.
+
+Scope includes: hide white rectangular header backing while keeping the original DC shield;
+give the child list a dark clean surface above the scenic sidebar; unify Bible Basecamp,
+Books and Trophy styling with approved blue/gold/red palette; reduce isolated empty card
+space; keep warm light paper surfaces exclusively for the working Scripture, missions and
+coloring activities; standardize accessible buttons/pills; make the existing Book #1
+download card a clear additional resource without removing its protected completion logic.
+This is a visual implementation candidate, not acceptance of the final live screenshots.
