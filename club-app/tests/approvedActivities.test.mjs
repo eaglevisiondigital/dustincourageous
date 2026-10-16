@@ -8,7 +8,7 @@ const scramble=readFileSync(join(root,"src","components","ScriptureScramble.tsx"
 const bookone=readFileSync(join(root,"src","components","BookOneActivityZone.tsx"),"utf8");
 const style=readFileSync(join(root,"src","approved-activities.css"),"utf8");
 test("approved Activities screen retains exactly four featured working game destinations",()=>{
-  for(const name of ["Scripture Scramble","Courage Missions","Picture Puzzle","Coloring Headquarters"])assert.match(activities,new RegExp(name));
+  for(const name of [/Scripture<br\/><em>Scramble/, /Courage<br\/><em>Missions/, /Picture<br\/><em>Puzzle/, /Coloring<br\/><em>Headquarters/]) assert.match(activities,name);
   for(const key of ["scripture","missions","puzzles","coloring"])assert.match(activities,new RegExp('openFeatured\\("'+key+'"\\)'));
 });
 test("launch choices feed real game initial state, not simulated progress",()=>{
