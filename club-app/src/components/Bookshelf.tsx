@@ -524,7 +524,8 @@ export function Bookshelf({
                 This Book Companion is locked for this family. A {roleLower} can unlock it through membership, a book purchase, a gift, or a bundle.
               </div>
             )}
-            {selectedHasAccess && (
+          </div>
+          {selectedHasAccess && (
               <>
             <section className="book-adventure-path">
               <div className="book-adventure-heading">
@@ -646,7 +647,6 @@ export function Bookshelf({
             </div>
               </>
             )}
-          </div>
         </section>
       )}
     </div>

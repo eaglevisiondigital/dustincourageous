@@ -279,3 +279,135 @@
     grid-column:1;grid-row:auto;
   }
 }
+
+
+/* October 16 screenshot-based follow-up: repair Bookshelf's empty left column.
+   The Book Adventure and companion tiles stay protected, but now span the
+   full component width instead of being trapped inside the narrow detail. */
+@media (min-width: 1100px) {
+  .dc-approved-skin .bookshelf {
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+  }
+  .dc-approved-skin .bookshelf > .bookshelf-hero,
+  .dc-approved-skin .bookshelf > .book-shelf-row,
+  .dc-approved-skin .bookshelf > .book-companion {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .dc-approved-skin .bookshelf > .book-shelf-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 0 0 5px;
+  }
+  /* A single automatically selected book needs no redundant selection card. */
+  .dc-approved-skin .bookshelf > .book-shelf-row:has(> .book-spine-card:only-child) {
+    display: none;
+  }
+  .dc-approved-skin .bookshelf > .book-companion {
+    grid-template-columns: minmax(0,210px) minmax(0,1fr);
+  }
+}
+.dc-approved-skin .book-companion > .book-adventure-path,
+.dc-approved-skin .book-companion > .book-companion-grid {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.dc-approved-skin .book-companion > .book-adventure-path {
+  margin-top: 12px;
+  border: 1px solid rgba(240,71,82,.40);
+  background: linear-gradient(140deg,#0b2449,#111522 65%,#25111b);
+}
+.dc-approved-skin .book-companion > .book-companion-grid {
+  margin-top: 3px;
+}
+.dc-approved-skin .book-adventure-steps {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 10px;
+}
+.dc-approved-skin .book-adventure-step {
+  min-width: 0;
+  grid-template-columns: 40px minmax(0,1fr) auto;
+  border-color: #29486a;
+  padding: 14px 17px;
+  gap: 13px;
+}
+.dc-approved-skin .book-adventure-step > div:nth-child(2) {min-width:0;}
+.dc-approved-skin .book-adventure-step strong {overflow-wrap:anywhere;}
+.dc-approved-skin .book-step-action {min-width: 128px;}
+.dc-approved-skin .book-step-action button {max-width:100%;white-space:normal;}
+/* Bible Basecamp shows its available content as a purposeful full-width
+   experience instead of a half-width card surrounded by unused darkness. */
+.dc-approved-skin .bible-list-section {
+  min-width: 0;
+  border: 1px solid #2a5b92;
+  background: linear-gradient(130deg,#0c2951,#07162e 80%);
+  border-radius: 20px;
+}
+.dc-approved-skin .bible-list-section .section-heading h2 {
+  color: #fffaf4;
+  letter-spacing: -.025em;
+}
+.dc-approved-skin .memory-grid:has(> .memory-card:only-child),
+.dc-approved-skin .identity-truth-grid:has(> .identity-truth-card:only-child),
+.dc-approved-skin .prayer-grid:has(> .prayer-card:only-child) {
+  grid-template-columns: minmax(0,1fr);
+}
+.dc-approved-skin .memory-card:only-child,
+.dc-approved-skin .identity-truth-card:only-child,
+.dc-approved-skin .prayer-card:only-child {
+  padding: clamp(18px,2.6vw,27px);
+  border: 1px solid #316b9f;
+  background:
+    radial-gradient(ellipse at 96% 75%,rgba(13,100,189,.19),transparent 65%),
+    linear-gradient(135deg,#0b2b55,#081b35);
+}
+.dc-approved-skin .memory-card p,
+.dc-approved-skin .identity-truth-card p,
+.dc-approved-skin .prayer-card p {
+  color: #d1e0ef;
+  max-width: 840px;
+  line-height: 1.55;
+}
+.dc-approved-skin .memory-card h3,
+.dc-approved-skin .identity-truth-card h3,
+.dc-approved-skin .prayer-card h3 {
+  color: #fff9f2;
+}
+.dc-approved-skin .memory-meta {max-width:840px;color:#cfdeef;}
+.dc-approved-skin .memory-meta strong {color:#ffda65;}
+.dc-approved-skin .identity-truth-card blockquote {max-width:840px;color:#fff0da;}
+.dc-approved-skin .identity-say-it {max-width:840px;}
+.dc-approved-skin .prayer-card small {color:#d6c690;}
+/* The DC shield must not look like a white pasted-on square inside
+   cream printable areas. The original JPEG file is preserved unchanged. */
+.dc-approved-skin .dc-scripture-scramble img[src*="dc-shield.jpeg"],
+.dc-approved-skin .dc-courage-missions img[src*="dc-shield.jpeg"],
+.dc-approved-skin .dc-coloring-zone img[src*="dc-shield.jpeg"] {
+  mix-blend-mode: multiply;
+  background: transparent;
+  border-radius: 0;
+}
+.dc-approved-skin .dc-coloring-copy a,
+.dc-approved-skin .dc-color-digitally,
+.dc-approved-skin .dc-mission-open {min-height:46px;}
+@media (max-width: 1099px) {
+  .dc-approved-skin .book-companion > .book-adventure-path,
+  .dc-approved-skin .book-companion > .book-companion-grid {grid-column:1/-1;}
+}
+@media (max-width: 760px) {
+  .dc-approved-skin .book-adventure-step {
+    grid-template-columns:36px minmax(0,1fr);
+  }
+  .dc-approved-skin .book-step-action {
+    grid-column:2;
+    min-width:0;
+    text-align:left;
+  }
+  .dc-approved-skin .book-adventure-heading {
+    flex-wrap:wrap;
+  }
+}

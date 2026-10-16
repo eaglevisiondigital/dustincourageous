@@ -79,3 +79,19 @@ space; keep warm light paper surfaces exclusively for the working Scripture, mis
 coloring activities; standardize accessible buttons/pills; make the existing Book #1
 download card a clear additional resource without removing its protected completion logic.
 This is a visual implementation candidate, not acceptance of the final live screenshots.
+
+### October 16 latest screenshot follow-up: corrective layout only
+The 2:30 PM signed-in screenshots expose a severe wasted-column problem in the
+Bookshelf: the Book Adventure and related cards were nested in the right detail
+column, leaving an empty left column. The approved fix keeps the book cover and
+metadata in the two-column top row but moves the authenticated Book Adventure and
+companion cards beneath to span the card width. The Bookshelf itself returns to
+a one-column layout, with a horizontal book selector only when several books are
+available. For one book, the redundant selector is hidden while the Book Companion
+still works. Child permissions, verified XP, and book ownership rules are unchanged.
+
+Bible Memory, Identity and Prayer single-card cases fill the content column
+instead of presenting a small card and a black void. Approved source shield
+graphics on parchment-style activity screens visually blend their white external
+JPEG backing without editing the original image. This remains subject to signed-in
+desktop/mobile screenshot review, including 320/375px wrapping and screen readers.

@@ -100,3 +100,21 @@ test("Book 1 coloring retains approved printable completion and removes outdated
   assert.match(zone,/Digital coloring is available now/);
   assert.doesNotMatch(zone,/Digital tap-to-color and artwork saving will be added separately/);
 });
+
+test("Bookshelf adventure and companion content span full width without changing auth logic",()=>{
+  const book=readFileSync(join(root,"src","components","Bookshelf.tsx"),"utf8");
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  const contentEnd=book.indexOf('{selectedHasAccess && (',book.indexOf('className="book-companion-content"'));
+  assert.ok(book.lastIndexOf('</div>',contentEnd) > book.indexOf('className="book-companion-content"'));
+  assert.match(polish,/book-companion > \.book-adventure-path/);
+  assert.match(polish,/book-companion > \.book-companion-grid/);
+  assert.match(polish,/bookshelf > \.book-shelf-row:has/);
+  assert.match(book,/readBookAdventure|loadAdventure/);
+});
+test("single-card Bible screens and activity shield stay within the approved skin",()=>{
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(polish,/memory-grid:has\(> \.memory-card:only-child\)/);
+  assert.match(polish,/identity-truth-grid:has\(> \.identity-truth-card:only-child\)/);
+  assert.match(polish,/prayer-grid:has\(> \.prayer-card:only-child\)/);
+  assert.match(polish,/mix-blend-mode: multiply/);
+});
