@@ -1,0 +1,215 @@
+/*
+ * Activities Center candidate toward the SOLE approved October 15 screenshot.
+ * IMPORTANT: this remains off the active development branch until five EXACT
+ * artwork crops are transferred and visual/device tests pass. No substitutes.
+ */
+.dc-approved-skin .activities-hub { gap: 0; }
+.dc-approved-skin .dc-approved-activities-hero {
+  min-height: 310px; border: 2px solid #1499fa; border-radius:32px;
+  display:block; position:relative; overflow:hidden; isolation:isolate;
+  background:linear-gradient(110deg,#062150,#094383 65%,#153a77);
+  box-shadow:0 13px 36px #0007; padding:0;
+}
+.dc-approved-skin .dc-approved-activities-hero-copy {
+  position:relative; z-index:2; width:54%; min-height:310px; padding:27px 4.8%;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  background:linear-gradient(90deg,rgba(1,16,42,.96) 0%,rgba(2,21,55,.87) 75%,transparent);
+}
+.dc-approved-skin .dc-approved-activities-hero-copy>.eyebrow{
+  color:#ffd74c; font-size:.82rem; font-weight:950; letter-spacing:.08em;
+}
+.dc-approved-skin .dc-approved-activities-hero h1 {
+  line-height:.86; margin:9px 0 17px; font-weight:1000;
+  font-size:clamp(3.2rem,5.4vw,6.4rem); letter-spacing:-.065em;
+  text-shadow:3px 5px #d21924,5px 7px #00183d;
+}
+.dc-approved-skin .dc-approved-activities-hero h1>span{display:block;color:#ffdb40;}
+.dc-approved-skin .dc-approved-activities-hero h1>span+span{
+  color:#f0f9ff; font-size:.72em; margin-left:15%;
+  text-shadow:3px 4px #1165b2,5px 6px #001a3a;
+}
+.dc-approved-skin .dc-approved-activities-hero h2 {
+  color:#ffd44e; margin:0 0 5px; font-size:clamp(1.05rem,1.7vw,1.62rem); font-weight:950;
+  text-shadow:0 3px 7px #000;
+}
+.dc-approved-skin .dc-approved-activities-hero p:not(.eyebrow) {
+  margin:0; color:white; font-weight:700; line-height:1.35;
+  font-size:clamp(.87rem,1.16vw,1.04rem); max-width:465px;
+  text-shadow:0 3px 6px #0008;
+}
+.dc-approved-skin .dc-approved-activities-hero-art {
+  position:absolute; z-index:1; height:100%;width:67%;top:0;right:0;
+  object-fit:cover;object-position:center;
+}
+.dc-approved-skin .dc-approved-activity-menu {margin-top:0;}
+.dc-approved-skin .dc-approved-activity-heading {
+  min-height:68px; display:flex; align-items:center; gap:13px;
+  border-radius:20px 20px 0 0;
+  padding:0 14px;
+  background:linear-gradient(90deg,#062c67,#0c2f6c,#06204a);
+}
+.dc-approved-skin .dc-activity-compass{font-size:2.7rem; color:#ffdc4e;text-shadow:0 0 14px #ffb627;}
+.dc-approved-skin .dc-approved-activity-heading h2 {
+  font-size:clamp(1.3rem,2.5vw,2.45rem); line-height:1;
+  color:white; font-weight:1000; font-style:italic;
+  text-shadow:2px 3px #146ab5,4px 5px #03102b;
+  white-space:nowrap; margin:0;
+}
+.dc-approved-skin .dc-activity-trail {
+  flex:1; min-width:20px; align-self:center;
+  height:3px; border-top:3px dashed #ffd346; transform:translateY(2px);
+}
+.dc-approved-skin .dc-activity-motto {
+  text-align:right; font-size:.84rem; font-weight:950; font-style:italic;
+  color:#70f1ff; white-space:nowrap;
+}
+.dc-approved-skin .dc-approved-activity-cards {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:11px;
+  padding:0 5px 10px;
+}
+.dc-approved-skin .dc-approved-activity-card {
+  display:flex; flex-direction:column; gap:7px; align-items:stretch;
+  min-width:0; min-height:423px; padding:13px 12px 11px;
+  border:2px solid #24a9ff; border-radius:20px;
+  background:linear-gradient(155deg,#045cab,#064382 58%,#032355 100%);
+  box-shadow:0 5px 12px #0008,inset 0 1px #ffffff60;
+  overflow:hidden;
+}
+.dc-approved-skin .dc-approved-activity-card.active {
+  box-shadow:0 0 0 1px #ffffff49,0 0 17px #28a7ff6b;
+}
+.dc-approved-skin .dc-approved-activity-card h3 {
+  margin:0; font-size:clamp(1.22rem,2.1vw,2.15rem);
+  font-weight:1000; line-height:.95; color:#fff;
+  letter-spacing:-.04em; text-shadow:2px 3px #082347,0 0 6px #001c3d;
+}
+.dc-approved-skin .dc-approved-activity-card h3 em {
+  color:#ffe354; font-style:normal;
+}
+.dc-approved-skin .dc-activity-card-title{
+  display:flex;align-items:center;gap:9px; min-height:66px;
+}
+.dc-approved-skin .dc-card-icon {font-size:2.8rem; line-height:1;}
+.dc-approved-skin .dc-activity-shield {
+  width:64px; height:64px; object-fit:contain; border-radius:8px; flex-shrink:0;
+}
+.dc-approved-skin .dc-approved-activity-card>p {
+  color:#fff; min-height:47px; line-height:1.27;
+  margin:0; font-weight:700; font-size:.88rem; text-align:center;
+  text-shadow:0 2px #0007;
+}
+.dc-approved-skin .dc-activity-art {
+  display:block; width:100%; min-width:0; height:153px;
+  object-fit:contain; margin:2px auto 0; border:0; flex:1 1 140px;
+}
+.dc-approved-skin .dc-activity-choices {
+  display:flex; gap:7px; padding:0; margin:3px 0 0; border:0;
+}
+.dc-approved-skin .dc-activity-choices legend {
+  text-align:center; display:block; float:none; width:100%;
+  margin:0 0 6px; font-size:.7rem; font-weight:950;
+  letter-spacing:.05em; color:#fff;
+}
+.dc-approved-skin .dc-activity-choices button {
+  min-width:0; flex:1; padding:5px 4px; min-height:56px;
+  border-radius:12px; border:1px solid #ffffff80;
+  background:linear-gradient(#028e50,#006e32);
+  color:white; font-weight:900; font-size:.74rem;
+  cursor:pointer; box-shadow:inset 0 1px #ffffff5c;
+}
+.dc-approved-skin .dc-activity-choices button>span {display:block;color:#ffe25e; margin-bottom:2px;}
+.dc-approved-skin .dc-activity-choices button.selected {outline:3px solid #ffea73;outline-offset:-3px;}
+.dc-approved-skin .dc-activity-choices .dc-diff-medium,
+.dc-approved-skin .dc-activity-choices .dc-size-adventurer {background:linear-gradient(#0a7df2,#0646b0);}
+.dc-approved-skin .dc-activity-choices .dc-diff-words,
+.dc-approved-skin .dc-activity-choices .dc-size-champion {background:linear-gradient(#e52834,#a91425);}
+.dc-approved-skin .dc-activity-choices .dc-size-champion{background:linear-gradient(#8f2ef4,#5721ba);}
+.dc-approved-skin .dc-activity-choices button strong {font-size:1.12rem;display:block;line-height:1;}
+.dc-approved-skin .dc-activity-choices button span+span{color:white;}
+.dc-approved-skin .dc-activity-go {
+  margin-top:auto; display:flex; align-items:center; justify-content:space-between;
+  gap:8px; min-height:47px; padding:8px 12px;
+  color:white; border-radius:13px; border:1px solid #5fe5ff;
+  background:linear-gradient(#178cf7,#0063cb);
+  box-shadow:inset 0 1px #ffffff60,0 4px 8px #0004;
+  font-size:clamp(.83rem,1.2vw,1.1rem); font-weight:950; cursor:pointer;
+}
+.dc-approved-skin .dc-activity-go span:last-child{font-size:1.7rem;line-height:.8;}
+.dc-approved-skin .dc-activity-go:hover {filter:brightness(1.11);}
+.dc-approved-skin .dc-activity-go:focus-visible,
+.dc-approved-skin .dc-activity-choices button:focus-visible,
+.dc-approved-skin .dc-activity-double-actions button:focus-visible {
+  outline:3px solid #ffe86f;outline-offset:3px;
+}
+.dc-approved-skin .dc-activity-missions {
+  border-color:#ec3b48; background:linear-gradient(155deg,#a8202d,#64202d 65%,#280f29);
+}
+.dc-approved-skin .dc-activity-missions .dc-activity-go {
+  border-color:#ff7777; background:linear-gradient(#fe443a,#c20e1b);
+}
+.dc-approved-skin .dc-activity-puzzles {
+  border-color:#1bd8b2; background:linear-gradient(155deg,#006d42,#034d46 65%,#012e31);
+}
+.dc-approved-skin .dc-activity-puzzles .dc-activity-go {
+  border-color:#66ed9c; background:linear-gradient(#09c264,#008841);
+}
+.dc-approved-skin .dc-activity-coloring {
+  border-color:#ad71ff; background:linear-gradient(155deg,#6328b5,#452287 64%,#251559);
+}
+.dc-approved-skin .dc-activity-coloring .dc-activity-go {
+  border-color:#d2a2ff;background:linear-gradient(#9b4cf7,#6725c3);
+}
+.dc-approved-skin .dc-activity-double-actions{
+  display:flex; gap:7px; width:100%;
+}
+.dc-approved-skin .dc-activity-double-actions button{
+  color:white; cursor:pointer; flex:1; border:1px solid #bea6ff;
+  border-radius:9px; min-height:43px; padding:6px 3px;
+  background:linear-gradient(#8552d7,#4c2e99); font-size:.7rem;font-weight:900;
+}
+.dc-approved-skin .dc-activity-double-actions button+button {
+  background:linear-gradient(#e733b4,#96277f);
+}
+.dc-approved-skin .dc-approved-featured-detail {
+  margin-top:20px; scroll-margin-top:110px;
+}
+.dc-approved-skin .dc-approved-featured-detail .dc-scripture-scramble,
+.dc-approved-skin .dc-approved-featured-detail .dc-book-one-zone {margin-top:0;}
+.dc-approved-skin .activity-filters {margin-top:32px;}
+.dc-approved-skin .activity-card {border-color:#1f70bc; background:linear-gradient(145deg,#0e3460,#091c3f);}
+@media(max-width:1350px){
+  .dc-approved-skin .dc-approved-activity-cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dc-approved-skin .dc-approved-activity-card{min-height:380px;}
+  .dc-approved-skin .dc-activity-art{max-height:180px;}
+}
+@media(max-width:900px){
+  .dc-approved-skin .dc-approved-activities-hero{min-height:310px;}
+  .dc-approved-skin .dc-approved-activities-hero-art{width:78%;}
+  .dc-approved-skin .dc-approved-activities-hero-copy{width:65%;}
+  .dc-approved-skin .dc-activity-trail{display:none;}
+  .dc-approved-skin .dc-approved-activity-heading h2{white-space:normal;}
+}
+@media(max-width:700px){
+  .dc-approved-skin .dc-approved-activities-hero {min-height:440px;}
+  .dc-approved-skin .dc-approved-activities-hero-art{
+    width:100%;height:260px;top:0;right:0;object-position:center;
+  }
+  .dc-approved-skin .dc-approved-activities-hero-copy{
+    width:100%;min-height:440px;justify-content:flex-end;
+    padding:210px 20px 22px;
+    background:linear-gradient(180deg,transparent,#051735 54%,#041a39);
+  }
+  .dc-approved-skin .dc-approved-activities-hero h1 {font-size:clamp(3.1rem,10vw,5.5rem);}
+  .dc-approved-skin .dc-approved-activity-heading {min-height:75px;}
+  .dc-approved-skin .dc-activity-motto{display:none;}
+}
+@media(max-width:540px){
+  .dc-approved-skin .dc-approved-activity-cards {grid-template-columns:1fr; gap:13px;}
+  .dc-approved-skin .dc-approved-activity-card{min-height:375px;}
+  .dc-approved-skin .dc-activity-art {height:190px;max-height:190px;}
+  .dc-approved-skin .dc-activity-card-title h3{font-size:2rem;}
+  .dc-approved-skin .dc-approved-activity-heading h2{font-size:1.5rem;}
+}
+@media(prefers-reduced-motion:reduce){
+ .dc-approved-skin .dc-activity-go:hover{filter:none;}
+}

@@ -8,11 +8,11 @@ import {
   type ScriptureScrambleDifficulty
 } from "../lib/scriptureScramble";
 
-export function ScriptureScramble({ childName }: { childName: string }) {
+export function ScriptureScramble({ childName, initialDifficulty = "phrases" }: { childName: string; initialDifficulty?: ScriptureScrambleDifficulty }) {
   const [verseIndex, setVerseIndex] = useState(0);
-  const [difficulty, setDifficulty] = useState<ScriptureScrambleDifficulty>("phrases");
+  const [difficulty, setDifficulty] = useState<ScriptureScrambleDifficulty>(initialDifficulty);
   const [selected, setSelected] = useState<number[]>([]);
-  const [bankOrder, setBankOrder] = useState<number[]>(() => shuffleTileIndices(scrambleTiles(scriptureScrambleVerses[0], "phrases").length));
+  const [bankOrder, setBankOrder] = useState<number[]>(() => shuffleTileIndices(scrambleTiles(scriptureScrambleVerses[0], initialDifficulty).length));
   const [feedback, setFeedback] = useState("");
   const [hint, setHint] = useState("");
   const [showVerse, setShowVerse] = useState(false);

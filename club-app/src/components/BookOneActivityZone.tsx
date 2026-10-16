@@ -41,12 +41,12 @@ const printables = [
   {id:"04",name:"God Is in Me!",theme:"1 John 4:4",url:"04_God_Is_In_Me.pdf"}
 ] as const;
 
-export function BookOneActivityZone({childName,relationship,zone}:{
-  childName: string; relationship?: unknown; zone: Zone;
+export function BookOneActivityZone({childName,relationship,zone,initialPuzzleLevel="explorer"}:{
+  childName: string; relationship?: unknown; zone: Zone; initialPuzzleLevel?: PicturePuzzleLevel;
 }) {
   return <div className="dc-book-one-zone">
     {zone === "missions" && <CourageMissions relationship={relationship}/>}
-    {zone === "puzzles" && <BookOnePicturePuzzle childName={childName}/>}
+    {zone === "puzzles" && <BookOnePicturePuzzle childName={childName} initialLevel={initialPuzzleLevel}/>}
     {zone === "coloring" && <BookOneColoring relationship={relationship}/>}
   </div>;
 }
@@ -87,10 +87,10 @@ function CourageMissions({relationship}:{relationship?:unknown}) {
   </section>;
 }
 
-function BookOnePicturePuzzle({childName}:{childName:string}) {
-  const [level,setLevel]=useState<PicturePuzzleLevel>("explorer");
+function BookOnePicturePuzzle({childName,initialLevel}:{childName:string;initialLevel:PicturePuzzleLevel}) {
+  const [level,setLevel]=useState<PicturePuzzleLevel>(initialLevel);
   const [sceneIndex,setSceneIndex]=useState(2);
-  const [pieces,setPieces]=useState<number[]>(() => newPicturePuzzle(6));
+  const [pieces,setPieces]=useState<number[]>(() => newPicturePuzzle(picturePuzzleLevels[initialLevel].columns*picturePuzzleLevels[initialLevel].rows));
   const [selected,setSelected]=useState<number | null>(null);
   const [showPicture,setShowPicture]=useState(false);
   const setting=picturePuzzleLevels[level];

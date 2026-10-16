@@ -4,6 +4,8 @@ import { familyRoleLower } from "../lib/familyDisplay";
 import { activityAssetUrl, activityExternalUrl, completeActivity } from "../lib/activityActions";
 import { ScriptureScramble } from "./ScriptureScramble";
 import { BookOneActivityZone } from "./BookOneActivityZone";
+import type { ScriptureScrambleDifficulty } from "../lib/scriptureScramble";
+import type { PicturePuzzleLevel } from "../lib/bookOnePicturePuzzle";
 
 type ContentItem = {
   id: string;
@@ -55,6 +57,8 @@ export function ActivitiesHub({
   const [readyLink, setReadyLink] = useState<{id:string;url:string}|null>(null);
   const [category, setCategory] = useState("all");
   const [activityZone, setActivityZone] = useState<"scripture"|"missions"|"puzzles"|"coloring">("scripture");
+  const [scrambleDifficulty, setScrambleDifficulty] = useState<ScriptureScrambleDifficulty>("phrases");
+  const [puzzleLevel, setPuzzleLevel] = useState<PicturePuzzleLevel>("explorer");
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
@@ -167,33 +171,110 @@ export function ActivitiesHub({
     }
   }
 
+  function openFeatured(zone: "scripture"|"missions"|"puzzles"|"coloring") {
+    setActivityZone(zone);
+    window.requestAnimationFrame(() => {
+      document.getElementById("dc-active-activity")?.scrollIntoView({
+        block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
+      });
+    });
+  }
+
   if(loading)return <section className="activities-hub" aria-busy="true"><p role="status">Loading activities...</p></section>;
   if(loadError)return <section className="activities-hub"><p role="alert">{loadError}</p><button className="secondary-button" disabled={workingId!==null} onClick={()=>void load()}>Try Again</button></section>;
 
   return (
     <div className="activities-hub">
-      <section className="activities-hero">
-        <div>
-          <p className="eyebrow gold">Activities</p>
-          <h1>More Adventures for {childName}</h1>
-          <p>Watch. Listen. Color. Print. Learn. Put courage into action.</p>
+
+      <section className="activities-hero dc-approved-activities-hero" aria-labelledby="dc-activities-title">
+        <div className="dc-approved-activities-hero-copy">
+          <p className="eyebrow gold">Dustin Courageous Adventure Club</p>
+          <h1 id="dc-activities-title"><span>Activities</span><span>Center</span></h1>
+          <h2>Play. Learn. Create. Grow in Faith.</h2>
+          <p>Choose an activity and go on an adventure with God's Word. Every activity helps you know Him, follow Him, and live with courage!</p>
         </div>
-        <div className="activities-mark">★</div>
+        <img className="dc-approved-activities-hero-art" src="/assets/approved-ui/activities-hero-art.webp"
+          alt="Dustin and his friends racing toward their next adventure" />
       </section>
 
-      <nav className="dc-book-one-tabs" aria-label="Book 1 featured activities">
-        {([
-          ["scripture","⚡","Scripture Scramble"],
-          ["missions","🛡️","Courage Missions"],
-          ["puzzles","🧩","Picture Puzzle"],
-          ["coloring","🎨","Coloring Headquarters"]
-        ] as const).map(([key,icon,label])=><button type="button" key={key}
-          className={activityZone===key?"active":""} aria-pressed={activityZone===key}
-          onClick={()=>setActivityZone(key)}><span aria-hidden="true">{icon}</span><strong>{label}</strong></button>)}
-      </nav>
-      {activityZone==="scripture" ? <ScriptureScramble key={childId} childName={childName} />
-        : <BookOneActivityZone key={childId+":"+activityZone} zone={activityZone}
-            childName={childName} relationship={relationship} />}
+      <section className="dc-approved-activity-menu" aria-labelledby="dc-activity-choose-heading">
+        <div className="dc-approved-activity-heading">
+          <span className="dc-activity-compass" aria-hidden="true">✧</span>
+          <h2 id="dc-activity-choose-heading">CHOOSE YOUR ACTIVITY</h2>
+          <span className="dc-activity-trail" aria-hidden="true" />
+          <span className="dc-activity-motto">SMALL STEPS.<br/>BIGGER FAITH.</span>
+        </div>
+        <div className="dc-approved-activity-cards">
+          <article className={"dc-approved-activity-card dc-activity-scripture" + (activityZone==="scripture"?" active":"")}>
+            <div className="dc-activity-card-title"><span className="dc-card-icon" aria-hidden="true">📖</span>
+              <h3>Scripture<br/><em>Scramble</em></h3></div>
+            <p>Put the pieces in the right order and build God's Word!</p>
+            <img className="dc-activity-art" src="/assets/approved-ui/activities-scripture-art.webp"
+              alt="An open Bible with word tiles" loading="lazy" />
+            <fieldset className="dc-activity-choices"><legend>CHOOSE A DIFFICULTY</legend>
+              {([["phrases","★","Easy"],["medium","★★","Medium"],["words","★★★","Hard"]] as const).map(([key,stars,label])=>
+                <button key={key} type="button" className={"dc-difficulty-option dc-diff-" + key + (scrambleDifficulty===key?" selected":"")}
+                  aria-pressed={scrambleDifficulty===key} onClick={()=>setScrambleDifficulty(key)}>
+                  <span aria-hidden="true">{stars}</span>{label}
+                </button>)}
+            </fieldset>
+            <button type="button" className="dc-activity-go" onClick={()=>openFeatured("scripture")}>
+              <span aria-hidden="true">▶</span> Start Scrambling <span aria-hidden="true">›</span>
+            </button>
+          </article>
+
+          <article className={"dc-approved-activity-card dc-activity-missions" + (activityZone==="missions"?" active":"")}>
+            <div className="dc-activity-card-title"><img src="/assets/images/dc-shield.jpeg" alt="" className="dc-activity-shield"/>
+              <h3>Courage<br/><em>Missions</em></h3></div>
+            <p>Take on fun challenges, grow in character, and live out your faith!</p>
+            <img className="dc-activity-art" src="/assets/approved-ui/activities-missions-art.webp"
+              alt="Book 1 courage mission map" loading="lazy" />
+            <button type="button" className="dc-activity-go" onClick={()=>openFeatured("missions")}>
+              <span aria-hidden="true">⚡</span> View Missions <span aria-hidden="true">›</span>
+            </button>
+          </article>
+
+          <article className={"dc-approved-activity-card dc-activity-puzzles" + (activityZone==="puzzles"?" active":"")}>
+            <div className="dc-activity-card-title"><span className="dc-card-icon" aria-hidden="true">🧩</span>
+              <h3>Picture<br/><em>Puzzle</em></h3></div>
+            <p>Put the pieces together and discover amazing Book 1 scenes!</p>
+            <img className="dc-activity-art" src="/assets/approved-ui/activities-puzzle-art.webp"
+              alt="Dustin's puzzle adventure picture" loading="lazy" />
+            <fieldset className="dc-activity-choices"><legend>CHOOSE A PUZZLE SIZE</legend>
+              {([["explorer","6"],["adventurer","20"],["champion","40"]] as const).map(([key,count])=>
+                <button key={key} type="button" className={"dc-puzzle-size-option dc-size-" + key + (puzzleLevel===key?" selected":"")}
+                  aria-pressed={puzzleLevel===key} onClick={()=>setPuzzleLevel(key)}>
+                  <strong>{count}</strong><span>Pieces</span>
+                </button>)}
+            </fieldset>
+            <button type="button" className="dc-activity-go" onClick={()=>openFeatured("puzzles")}>
+              <span aria-hidden="true">▶</span> Start Puzzle <span aria-hidden="true">›</span>
+            </button>
+          </article>
+
+          <article className={"dc-approved-activity-card dc-activity-coloring" + (activityZone==="coloring"?" active":"")}>
+            <div className="dc-activity-card-title"><span className="dc-card-icon" aria-hidden="true">🎨</span>
+              <h3>Coloring<br/><em>Headquarters</em></h3></div>
+            <p>Bring Bible stories to life with color! Print or color online.</p>
+            <img className="dc-activity-art" src="/assets/approved-ui/activities-coloring-art.webp"
+              alt="Approved Dustin Courageous coloring pages and crayons" loading="lazy" />
+            <div className="dc-activity-double-actions">
+              <button type="button" onClick={()=>openFeatured("coloring")}>▣ Print Pages</button>
+              <button type="button" onClick={()=>openFeatured("coloring")}>🎨 Color Online</button>
+            </div>
+            <button type="button" className="dc-activity-go" onClick={()=>openFeatured("coloring")}>
+              <span aria-hidden="true">▶</span> Go to Coloring <span aria-hidden="true">›</span>
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <div id="dc-active-activity" className="dc-approved-featured-detail">
+        {activityZone==="scripture"
+          ? <ScriptureScramble key={childId+":"+scrambleDifficulty} childName={childName} initialDifficulty={scrambleDifficulty}/>
+          : <BookOneActivityZone key={childId+":"+activityZone+":"+puzzleLevel} zone={activityZone}
+              childName={childName} relationship={relationship} initialPuzzleLevel={puzzleLevel}/>}
+      </div>
 
       {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh Activities</button></div>}
 
