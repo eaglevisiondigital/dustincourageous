@@ -213,6 +213,6 @@ function BookOneColoring({relationship}:{relationship?:unknown}) {
       pageTitle={printables[activeDigitalPage].name} onClose={() => setActiveDigitalPage(null)} />}
     <a className="primary-button dc-coloring-full-pack" href={prefix+"Dustin_Courageous_Book_1_Coloring_Sheets_Complete_Set.pdf"}
       target="_blank" rel="noopener noreferrer">Open All 4 Coloring Pages</a>
-    <p className="dc-zone-disclaimer">These are the original, approved Book 1 printable files. Digital tap-to-color and artwork saving will be added separately. Printing is not required to enjoy other Adventure Club activities.</p>
+    <p className="dc-zone-disclaimer">These are the original approved Book 1 printables. Digital coloring is available now with Undo and Reset, and a finished picture can be saved privately to this device. Nothing is uploaded. Printing is optional.</p>
   </section>;
 }
