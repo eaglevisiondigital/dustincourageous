@@ -80,3 +80,23 @@ test("October 16 hero refinement is decoration behind dynamic text only", () => 
   assert.match(source, /selectedChild\?\.display_name/);
   assert.doesNotMatch(source, /dustin_s_courageous_adventure_club\.png/);
 });
+
+test("approved UI polish is included after the locked skin and never hardcodes a child",()=>{
+  const entry=readFileSync(join(root,"src","main.tsx"),"utf8");
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.ok(entry.indexOf("approved-polish.css") > entry.indexOf("approved-skin.css"));
+  assert.match(polish,/\.dc-approved-skin \.bible-hero/);
+  assert.match(polish,/\.dc-approved-skin \.bookshelf/);
+  assert.match(polish,/\.dc-approved-skin \.trophy-section/);
+  assert.match(polish,/clip-path:polygon/);
+  assert.doesNotMatch(polish,/Sally|QA Nova|QA Comet|mock XP/);
+  assert.match(source,/selectedChild\?\.display_name/);
+});
+test("Book 1 coloring retains approved printable completion and removes outdated copy",()=>{
+  const hub=readFileSync(join(root,"src","components","ActivitiesHub.tsx"),"utf8");
+  const zone=readFileSync(join(root,"src","components","BookOneActivityZone.tsx"),"utf8");
+  assert.match(hub,/dc-resource-preview/);
+  assert.match(hub,/completeActivity\(supabase,childId,item.id\)/);
+  assert.match(zone,/Digital coloring is available now/);
+  assert.doesNotMatch(zone,/Digital tap-to-color and artwork saving will be added separately/);
+});
