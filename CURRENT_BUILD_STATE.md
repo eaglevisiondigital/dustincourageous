@@ -202,3 +202,36 @@ acceptance**, including checkout through the safe pre-provider boundary. The pen
 Supabase Support default-ACL answer does not block this acceptance.
 No broad Edge/provider, launch or new major Codex package is authorized by this
 recommendation.
+
+
+## October 16 approved child-interface visual polish package
+
+Founder-approved scope: preserve the three exact October 15 approved screen references,
+add only already approved UI refinements, and correct the white shield tile, sidebar
+mountain transition, oversized/generic Bible/Books/Trophy headers, empty card areas,
+color contrast, worksheet cream/tan balance, and inconsistent controls.
+
+The latest visual candidate uses `club-app/src/approved-polish.css` imported after the
+locked `approved-skin.css`. The CSS header shield treatment masks the exterior backing
+at display time without modifying the original image file. The Bookshelf uses a
+desktop book-selector/detail layout when a selection exists, with responsive stacking.
+The Bible and Trophy modules reuse the existing approved Adventure Club artwork
+and palette. Verified progress, XP and badges continue to be read from existing
+services, with no fabricated records to fill empty states.
+
+The Book #1 Coloring Sheets download remains a real published content item with
+its existing completion path. It is now displayed with an approved four-page
+coloring preview in a compact additional-resources section; no award or
+entitlement logic was removed. The Coloring Headquarters copy now accurately
+describes existing digital tap-to-color and device-only PNG saving.
+
+Application build and **337 tests passed** for code commit `ebd3ce9` via
+[CI run 38941219645](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/38941219645)
+at the last inspection. Isolated recovery was still running at that
+moment, and the final visual/documentation HEAD may have no separate run.
+Do not call the whole package accepted until the latest CI completes
+and actual signed-in desktop/mobile screenshots are reviewed.
+
+All changes remain on `build/adventure-club-app`. `main` is untouched.
+No database migration, payment-provider activation, private book publication
+or production-release authorization occurred.
