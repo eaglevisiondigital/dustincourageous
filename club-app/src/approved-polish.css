@@ -1,0 +1,281 @@
+/*
+ * Approved Adventure Club Oct 16 polish. Visual only.
+ * The three October 15 references remain the sole approved designs.
+ * Scoped to locked Kid View; all RLS, Auth, XP and reader logic unchanged.
+ */
+
+/* Preserve the DC emblem; hide only the external white rectangular tile. */
+.dc-approved-skin .app-header .brand img {
+  border-radius:0;
+  background:transparent;
+  clip-path:polygon(50% 1%,89% 10%,94% 18%,94% 49%,87% 70%,72% 85%,50% 99%,28% 85%,13% 70%,6% 49%,6% 18%,11% 10%);
+}
+@media(min-width:1101px){
+  .dc-approved-skin .side-panel{background-color:#051432;}
+  .dc-approved-skin .side-panel::after{
+    height:min(515px,calc(100% - 285px));
+    background-position:bottom center;
+  }
+}
+/* Reuse the exact approved hero artwork, never generated lookalike art.
+   Calm dark-blue overlay keeps headings legible in learning sections. */
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero{
+  min-height:210px;
+  padding:clamp(24px,3vw,40px);
+  border:2px solid #167ad4;
+  border-radius:25px;
+  box-shadow:0 13px 26px #010a248f,inset 0 1px #ffffff1b;
+  background:
+    linear-gradient(90deg,#06152f 0%,rgba(4,24,57,.98) 44%,rgba(4,28,66,.86) 66%,rgba(4,25,58,.60) 100%),
+    url('/assets/approved-ui/home-hero-art.webp') right center/auto 110% no-repeat,
+    #05172f;
+}
+.dc-approved-skin .bible-hero h1,
+.dc-approved-skin .bookshelf-hero h1,
+.dc-approved-skin .trophy-hero h1{
+  color:#fffaf2;
+  font-size:clamp(2rem,3.7vw,3.7rem);
+  line-height:1.12;
+  letter-spacing:-.035em;
+  margin:0 0 10px;
+  text-shadow:0 3px 14px #00132e;
+}
+.dc-approved-skin .bible-hero p:not(.eyebrow),
+.dc-approved-skin .bookshelf-hero p:not(.eyebrow),
+.dc-approved-skin .trophy-hero p:not(.eyebrow){
+  max-width:580px;
+  color:#e4eeff;
+  font-size:1rem;
+  line-height:1.5;
+}
+.dc-approved-skin .bible-hero-mark{
+  border:2px solid #e2ad40;
+  background:radial-gradient(circle,#694218,#142e50 78%);
+  color:#ffdf65;
+  box-shadow:0 0 22px #e6b5484a;
+}
+.dc-approved-skin .bookshelf-count{
+  border:2px solid #5caafa;
+  background:linear-gradient(145deg,#143d72,#06152e);
+  border-radius:16px;
+}
+.dc-approved-skin .bookshelf-count strong{color:#fff;}
+.dc-approved-skin .bookshelf-count span{color:#cee6ff;}
+.dc-approved-skin .level-medallion{
+  border:3px solid #e8bd52;
+  background:radial-gradient(circle at 35% 25%,#7b5725,#1b2945 73%,#081428);
+  box-shadow:0 6px 24px #0008,0 0 18px #ffcc4e32;
+}
+.dc-approved-skin .level-medallion strong{color:#fff7cf;}
+
+/* Books: avoid one tiny book floating in an otherwise empty row. */
+@media(min-width:1100px){
+  .dc-approved-skin .bookshelf{
+    grid-template-columns:minmax(210px,.23fr) minmax(0,.77fr);
+    gap:16px;align-items:start;
+  }
+  .dc-approved-skin .bookshelf>.bookshelf-hero,
+  .dc-approved-skin .bookshelf>.form-message,
+  .dc-approved-skin .bookshelf>.muted{grid-column:1/-1;}
+  .dc-approved-skin .bookshelf>.book-shelf-row{
+    grid-column:1;grid-row:2;display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;overflow:visible;padding:0;
+  }
+  .dc-approved-skin .bookshelf>.book-companion{
+    grid-column:2;grid-row:2;margin:0;
+  }
+  .dc-approved-skin .bookshelf:not(:has(>.book-companion))>.book-shelf-row{
+    grid-column:1/-1;
+    grid-template-columns:repeat(auto-fill,minmax(180px,220px));
+  }
+}
+.dc-approved-skin .book-spine-card{
+  border:2px solid #157ac9;
+  border-radius:17px;
+  background:linear-gradient(150deg,#104178,#071a37);
+  color:#fffaf2;
+  padding:12px;
+}
+.dc-approved-skin .book-spine-card.active{
+  border-color:#f0444e;box-shadow:0 0 0 2px #f0444e36;
+}
+.dc-approved-skin .book-spine-card img{
+  object-fit:contain;background:#07162f;
+}
+.dc-approved-skin .book-spine-card span{color:#ffdf60;}
+.dc-approved-skin .book-spine-card small{color:#c5d8f1;}
+.dc-approved-skin .book-companion{
+  min-width:0;grid-template-columns:minmax(140px,.27fr) minmax(0,1fr);
+  gap:clamp(13px,2vw,24px);
+  padding:clamp(16px,2vw,28px);
+  border:2px solid #187acc;
+  border-radius:23px;
+  background:linear-gradient(145deg,#092c5a,#08172d 65%,#092744);
+}
+.dc-approved-skin .book-companion-content{min-width:0;}
+.dc-approved-skin .book-companion-cover img{
+  width:100%;max-height:360px;object-fit:contain;
+}
+.dc-approved-skin .book-companion-content>h2{
+  font-size:clamp(1.6rem,2.4vw,2.8rem);
+  line-height:1.12;overflow-wrap:anywhere;
+}
+.dc-approved-skin .book-companion-grid article{
+  background:#08172c;border-color:#285482;
+}
+.dc-approved-skin .book-companion-grid p{color:#d0ddec;}
+
+/* Learning and achievement cards, with less oversized blank-state padding. */
+.dc-approved-skin .bible-tab,
+.dc-approved-skin .activity-filters button{
+  min-height:43px;padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #37618a;
+  color:#d6eaff;
+  background:#092247;
+  font-size:.84rem;font-weight:850;
+}
+.dc-approved-skin .bible-tab.active,
+.dc-approved-skin .activity-filters button.active{
+  color:#fff;border-color:#4ac7ff;
+  background:linear-gradient(145deg,#056dbb,#102a5c);
+  box-shadow:0 0 12px #06a3ff44;
+}
+.dc-approved-skin .power-verse-card,
+.dc-approved-skin .level-progress-card,
+.dc-approved-skin .trophy-summary-grid article,
+.dc-approved-skin .trophy-section{
+  color:#fffaf4;
+  background:linear-gradient(155deg,#0a274d,#09172d);
+  border:1px solid #285a91;
+  border-radius:20px;
+}
+.dc-approved-skin .power-verse-card blockquote{
+  background:linear-gradient(110deg,#153b67,#111f3a);
+  color:#fff8e8;
+  border-left-color:#ffd04a;
+}
+.dc-approved-skin .power-verse-grid article,
+.dc-approved-skin .next-badge-card,
+.dc-approved-skin .streak-series-card,
+.dc-approved-skin .badge-cabinet-card{
+  border:1px solid #285080;
+  background:#081933;
+  border-radius:15px;
+}
+.dc-approved-skin .trophy-section{padding:clamp(16px,2vw,24px);}
+.dc-approved-skin .trophy-section .empty-state{
+  padding:26px 22px;
+  min-height:120px;
+  background:#08192f;
+  border:1px dashed #3278b8;
+}
+.dc-approved-skin .trophy-section .empty-state h3{font-size:1.2rem;}
+.dc-approved-skin .trophy-section .empty-state p{font-size:.94rem;}
+.dc-approved-skin .trophy-section .empty-icon{margin:0 auto 10px;}
+.dc-approved-skin .trophy-summary-grid article{padding:17px 20px;}
+
+/* Print-style games retain their cream pages but avoid muddy tan. */
+.dc-approved-skin .dc-scripture-scramble,
+.dc-approved-skin .dc-courage-missions,
+.dc-approved-skin .dc-picture-puzzle,
+.dc-approved-skin .dc-coloring-zone{
+  color:#20232b;
+  border:2px solid #bf2831;
+  background:linear-gradient(135deg,#fffaf1,#fcf0db 90%);
+  border-radius:23px;
+  box-shadow:0 13px 28px #0005;
+}
+.dc-approved-skin .dc-mission-card h3,
+.dc-approved-skin .dc-coloring-card h3{line-height:1.2;}
+.dc-approved-skin .dc-coloring-card{min-width:0;}
+.dc-approved-skin .dc-coloring-copy{min-width:0;}
+
+/* Display retained completion-enabled print resources as a deliberate section. */
+.dc-approved-skin .dc-more-resources-heading{margin-top:20px;}
+.dc-approved-skin .dc-more-resources-heading .eyebrow{color:#ffda55;}
+.dc-approved-skin .dc-more-resources-heading h2{
+  color:#fff;margin:5px 0;
+  font-size:clamp(1.45rem,2.2vw,2.05rem);
+}
+.dc-approved-skin .dc-more-resources-heading p{color:#cfe1f5;margin:0;line-height:1.45;}
+.dc-approved-skin .activity-grid:has(>.activity-card:only-child){
+  grid-template-columns:minmax(0,1fr);
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child{
+  display:grid;
+  grid-template-columns:minmax(0,200px) minmax(0,1fr);
+  gap:10px 18px;
+  border:2px solid #2385df;
+  background:linear-gradient(125deg,#103e73,#081a35);
+  border-radius:19px;
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-card-top{grid-column:1/-1;}
+.dc-approved-skin .activity-grid>.activity-card:only-child .dc-resource-preview{
+  grid-column:1;grid-row:2/span 4;
+  width:100%;max-height:160px;
+  background:#fffaf3;padding:7px;
+  object-fit:contain;border-radius:11px;
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-icon{display:none;}
+.dc-approved-skin .activity-grid>.activity-card:only-child h3,
+.dc-approved-skin .activity-grid>.activity-card:only-child p,
+.dc-approved-skin .activity-grid>.activity-card:only-child>small,
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-actions{
+  grid-column:2;margin:0;min-height:0;
+}
+.dc-approved-skin .activity-grid .dc-resource-preview{
+  width:100%;max-height:160px;object-fit:contain;
+  padding:7px;background:#fff9ec;border-radius:11px;
+}
+.dc-approved-skin .activity-grid .activity-card{
+  border-color:#2473ad;background:linear-gradient(140deg,#103869,#081a35);
+}
+.dc-approved-skin .activity-grid .activity-card p{color:#d1dff1;}
+.dc-approved-skin .activity-card-top>span:first-child,
+.dc-approved-skin .activity-card>small{color:#d5e3f3;}
+
+/* Consistent active states, pills and focus targets. */
+.dc-approved-skin .primary-button,
+.dc-approved-skin .secondary-button,
+.dc-approved-skin .activity-actions button{
+  min-height:43px;border-radius:11px;font-weight:850;
+}
+.dc-approved-skin .primary-button{
+  color:#fff;background:linear-gradient(125deg,#eb343e,#bb1822);
+}
+.dc-approved-skin .secondary-button{
+  color:#fff;border:1px solid #556c8e;
+}
+.dc-approved-skin button:focus-visible,
+.dc-approved-skin a:focus-visible,
+.dc-approved-skin select:focus-visible{
+  outline:3px solid #ffdb50;outline-offset:3px;
+}
+@media(max-width:1099px){
+  .dc-approved-skin .bookshelf{grid-template-columns:1fr;}
+  .dc-approved-skin .book-companion{
+    grid-template-columns:minmax(0,180px) minmax(0,1fr);
+  }
+}
+@media(max-width:760px){
+  .dc-approved-skin .bible-hero,
+  .dc-approved-skin .bookshelf-hero,
+  .dc-approved-skin .trophy-hero{padding:22px;min-height:190px;}
+  .dc-approved-skin .book-companion{grid-template-columns:1fr;}
+  .dc-approved-skin .book-companion-cover{max-width:220px;}
+  .dc-approved-skin .trophy-summary-grid{grid-template-columns:1fr;}
+  .dc-approved-skin .activity-grid>.activity-card:only-child{
+    grid-template-columns:minmax(0,1fr);
+  }
+  .dc-approved-skin .activity-grid>.activity-card:only-child .dc-resource-preview,
+  .dc-approved-skin .activity-grid>.activity-card:only-child h3,
+  .dc-approved-skin .activity-grid>.activity-card:only-child p,
+  .dc-approved-skin .activity-grid>.activity-card:only-child>small,
+  .dc-approved-skin .activity-grid>.activity-card:only-child .activity-actions{
+    grid-column:1;grid-row:auto;
+  }
+}
