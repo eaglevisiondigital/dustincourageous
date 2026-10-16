@@ -13,9 +13,12 @@ This candidate implements the interactive Activities Center HTML/CSS according t
 - Real published extra content and authenticated server completion behavior, unchanged.
 - Parent/Guardian terminology, Auth/RLS/XP and book entitlement boundaries.
 
-**BLOCKER:** The following five exact crops of the approved screenshot are ready in the PRIMARY CHAT working files but HAVE NOT been transferred into GitHub:
-`club-app/public/assets/approved-ui/activities-hero-art.webp`,
-`activities-scripture-art.webp`, `activities-missions-art.webp`,
-`activities-puzzle-art.webp`, `activities-coloring-art.webp`.
+**Asset transfer completed:** All five screenshot crop assets are now present under
+`club-app/public/assets/approved-ui/`. The SHA-256 of each crop is pinned
+by `club-app/tests/approvedActivitiesArtwork.test.mjs`. They were derived from the sole
+approved Activities Center reference, not from newly generated artwork.
 
-Do not merge this candidate into `build/adventure-club-app` or deploy it until every exact referenced crop is uploaded, checked, and visible. Do not substitute any invented character or mockup art. Once assets are available, run application tests, typecheck/build, full recovery, and screenshot/device fidelity review. Example screenshot numbers and activity examples are decorative, not real user data. No production Book 1 reader content is published in this package.
+The candidate is ready for CI/build and real screenshot fidelity review. Do not
+claim final visual acceptance until founder reviews actual desktop and phone previews.
+Screenshot examples and icons are decorative, not true user progress. No private
+Book 1 reader pages or provider settings are published.
