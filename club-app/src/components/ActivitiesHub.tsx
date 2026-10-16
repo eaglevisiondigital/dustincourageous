@@ -278,6 +278,11 @@ export function ActivitiesHub({
 
       {error && <div className="form-message" role="status">{error} <button className="text-button" disabled={workingId!==null} onClick={()=>void load()}>Refresh Activities</button></div>}
 
+      {items.length > 0 && <div className="dc-more-resources-heading">
+        <p className="eyebrow gold">Keep Exploring</p>
+        <h2>More Book 1 Resources</h2>
+        <p>Print, watch, listen and complete your approved adventure activities.</p>
+      </div>}
       <nav className="activity-filters" aria-label="Activity categories">
         {categories.map((item) => (
           <button
@@ -304,9 +309,11 @@ export function ActivitiesHub({
                 <span>{item.content_type}</span>
                 <span className="status-chip">{item.access_level}</span>
               </div>
-              <div className="activity-icon">
+              {item.title === "Book #1 Coloring Sheets" && item.content_type === "download" ?
+                <img className="dc-resource-preview" src="/assets/images/book1-coloring-previews-atlas.webp"
+                  alt="The approved Book 1 coloring pages" loading="lazy" /> : <div className="activity-icon">
                 {item.content_type === "video" ? "▶" : item.content_type === "audio" ? "♪" : item.content_type === "download" ? "↓" : "★"}
-              </div>
+              </div>}
               <h3>{item.title}</h3>
               <p>{item.summary || "A Dustin Courageous Adventure Club activity."}</p>
               <small>{item.category.replaceAll("_", " ")}</small>
