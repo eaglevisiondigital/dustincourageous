@@ -276,7 +276,7 @@ export function ChallengeDialog({
 
             {challenge.parent_approval_required && (
               <div className="guardian-note">
-                When you finish the required steps, this challenge goes to your parent or guardian for approval before XP is awarded.
+                When you finish the required steps, this challenge goes to your {roleLower} for approval before XP is awarded.
               </div>
             )}
 

@@ -411,3 +411,240 @@
     flex-wrap:wrap;
   }
 }
+
+
+/* October 16, signed-in visual QA: consistent learning, challenge and
+   achievement finishing. The original October 15 designs are unchanged.
+   All selectors stay within Kid View; backend progress is untouched. */
+
+/* Devotional pages must not revert to gray-on-black generic admin cards. */
+.dc-approved-skin .devotional-series-card {
+  min-width:0;
+  padding: clamp(17px,2vw,26px);
+  border: 1px solid #2b629e;
+  border-radius: 19px;
+  background: linear-gradient(148deg,#0b284e,#07192f 72%,#0c2341);
+}
+.dc-approved-skin .devotional-series-card .compact-heading {
+  margin-bottom: 18px;
+  gap:12px;
+}
+.dc-approved-skin .devotional-series-card .compact-heading h2 {
+  color:#fffaf2;
+  font-size:clamp(1.45rem,2.3vw,2.2rem);
+  line-height:1.2;
+}
+.dc-approved-skin .devotional-series-card .compact-heading .muted {
+  color:#cbddf0;line-height:1.5;
+}
+.dc-approved-skin .devotional-series-card .pill {
+  background:#092247;
+  border:1px solid #3876b7;
+  color:#f6e0a0;
+}
+.dc-approved-skin .devotional-day {
+  min-width:0;
+  grid-template-columns:40px minmax(0,1fr) auto;
+  border:1px solid #2e6196;
+  background:linear-gradient(125deg,#092144,#07182e);
+  border-radius:15px;
+  padding:17px;
+  gap:14px;
+  align-items:start;
+}
+.dc-approved-skin .devotional-day.complete {
+  border-color:#2d976c;
+  background:linear-gradient(125deg,#103d3c,#09273d);
+}
+.dc-approved-skin .devotional-day > div:nth-child(2) {min-width:0;}
+.dc-approved-skin .devotional-day h3 {
+  color:#fff9ef;
+  font-size:clamp(1.05rem,1.45vw,1.26rem);
+  line-height:1.25;
+  overflow-wrap:anywhere;
+}
+.dc-approved-skin .devotional-day p {
+  color:#d0e1f4;
+  line-height:1.5;
+}
+.dc-approved-skin .devotional-day span {color:#bcd5f2;}
+.dc-approved-skin .devotional-day .day-number{
+  background:#174077;
+  color:#ffdc69;
+  border:1px solid #3879b6;
+}
+.dc-approved-skin .devotional-callout {
+  max-width: 980px;
+  color:#f4e6bf;
+  border:1px solid rgba(243,193,87,.35);
+  background:rgba(238,181,65,.09);
+  line-height:1.5;
+}
+.dc-approved-skin .devotional-day > button {
+  min-width:148px;
+  text-align:center;
+  white-space:normal;
+}
+
+/* Actual child challenge preview: unify with approved navy/blue/gold/red skin.
+   The modal remains the same accessible native <dialog>, with real server
+   steps and XP untouched. */
+.dc-approved-skin dialog.native-modal.challenge-dialog {
+  width:min(760px,calc(100vw - 30px));
+  max-height:min(90dvh,950px);
+  padding:clamp(19px,3vw,34px);
+  border:2px solid #168ae6;
+  border-radius:23px;
+  background:
+    radial-gradient(ellipse at 100% 2%,rgba(204,43,58,.20),transparent 45%),
+    radial-gradient(ellipse at 3% 90%,rgba(23,115,228,.22),transparent 55%),
+    linear-gradient(150deg,#091a38,#071325 70%,#11172d);
+  color:#fffaf2;
+  box-shadow:0 36px 110px #000b,0 0 28px #0a6fca42;
+}
+.dc-approved-skin .challenge-dialog-head {
+  padding-right:48px;
+  align-items:start;
+  gap:12px;
+}
+.dc-approved-skin .challenge-dialog-head h2 {
+  margin:7px 0 12px;
+  font-size:clamp(1.9rem,3.7vw,3rem);
+  line-height:1.09;
+  letter-spacing:-.035em;
+  overflow-wrap:anywhere;
+  color:#fffaf2;
+}
+.dc-approved-skin .challenge-dialog-head p:not(.eyebrow){
+  color:#cbdcf1;
+  font-size:clamp(.92rem,1.15vw,1rem);
+  line-height:1.5;
+}
+.dc-approved-skin .challenge-dialog .xp-chip.large {
+  border:1px solid #f7d56e;
+  background:linear-gradient(110deg,#f9de71,#e8b73b);
+  color:#201400;
+  padding:9px 13px;
+  font-weight:950;
+  border-radius:999px;
+}
+.dc-approved-skin .challenge-dialog .challenge-steps {gap:11px;margin:22px 0;}
+.dc-approved-skin .challenge-dialog .step-row {
+  border:1px solid #2b5b8e;
+  background:linear-gradient(115deg,#102d57,#081b35);
+  border-radius:14px;
+  color:#fff9f2;
+  padding:14px;
+  gap:13px;
+}
+.dc-approved-skin .challenge-dialog .step-row:not(:disabled):hover{
+  border-color:#53b5fb;
+  background:#123c76;
+}
+.dc-approved-skin .challenge-dialog .step-row.complete{
+  background:linear-gradient(115deg,#124a44,#07283a);
+  border-color:#2f9c77;
+}
+.dc-approved-skin .challenge-dialog .step-check {
+  background:#254c7c;
+  border:1px solid #4c83b4;
+  color:#fff3cf;
+  font-weight:900;
+}
+.dc-approved-skin .challenge-dialog .step-row small {
+  color:#cbd9ea;
+  font-size:.83rem;
+}
+.dc-approved-skin .challenge-dialog .step-row em {
+  color:#ffd35b;
+}
+.dc-approved-skin .challenge-dialog .modal-close {
+  border:2px solid #ffcf54;
+  color:#fff;
+  background:#2c2634;
+  border-radius:12px;
+}
+.dc-approved-skin .challenge-dialog .dialog-actions .primary-button{
+  min-height:50px;
+  background:linear-gradient(115deg,#f13540,#bb131f);
+  border:1px solid #f65a60;
+  color:#fff;
+  font-weight:900;
+  border-radius:13px;
+}
+.dc-approved-skin .challenge-dialog .guardian-note{
+  background:#193450;
+  border-color:#d3a748;
+  color:#fff0c8;
+  line-height:1.45;
+}
+
+/* Trophy Room zero-state cards should feel intentional and rewarding without
+   fabricating earned badges. Keep the existing server zero values. */
+.dc-approved-skin .trophy-section .empty-state {
+  min-height:112px;
+  padding:22px clamp(16px,3vw,30px);
+  border:1px dashed #367db6;
+  border-radius:17px;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(238,184,68,.09),transparent 58%),
+    linear-gradient(125deg,#0b254b,#061a35);
+}
+.dc-approved-skin .trophy-section .empty-state h3{
+  color:#fff7df;
+  font-size:clamp(1.05rem,1.4vw,1.3rem);
+}
+.dc-approved-skin .trophy-section .empty-state p{
+  color:#c9d9ec;
+  line-height:1.5;
+}
+.dc-approved-skin .next-badge-grid .mini-progress-track {
+  height:8px;
+  border:1px solid #265282;
+  border-radius:999px;
+  background:#051329;
+}
+.dc-approved-skin .next-badge-grid .mini-progress-track span{
+  background:linear-gradient(90deg,#107dce,#ffd65c);
+}
+
+/* Button cohesion, touchability, focus and use at 320px wide. */
+.dc-approved-skin .bible-action-row button,
+.dc-approved-skin .bible-action-row .text-button{
+  min-height:42px;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:.86rem;
+}
+.dc-approved-skin .bible-action-row .text-button{
+  color:#d9e9ff;
+  border:1px solid transparent;
+}
+.dc-approved-skin .bible-action-row .text-button:hover{
+  border-color:#4474aa;
+  background:#0b2c54;
+}
+.dc-approved-skin .bible-action-row .text-button:disabled{
+  opacity:.55;
+}
+@media(max-width:700px){
+  .dc-approved-skin .devotional-day {
+    grid-template-columns:38px minmax(0,1fr);
+  }
+  .dc-approved-skin .devotional-day > button {
+    grid-column:2;
+    justify-self:start;
+    min-width:0;
+    max-width:100%;
+  }
+  .dc-approved-skin .challenge-dialog-head {
+    display:grid;
+    padding-right:43px;
+  }
+  .dc-approved-skin .challenge-dialog .xp-chip.large {
+    justify-self:start;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .dc-approved-skin .challenge-dialog .step-row {transition:none;}
+}

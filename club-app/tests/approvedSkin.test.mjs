@@ -118,3 +118,20 @@ test("single-card Bible screens and activity shield stay within the approved ski
   assert.match(polish,/prayer-grid:has\(> \.prayer-card:only-child\)/);
   assert.match(polish,/mix-blend-mode: multiply/);
 });
+
+test("Bible Devotionals and Kid Challenge modal retain approved blue contrast",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.dc-approved-skin \.devotional-series-card/);
+  assert.match(css,/\.dc-approved-skin \.devotional-day \{/);
+  assert.match(css,/\.dc-approved-skin dialog\.native-modal\.challenge-dialog/);
+  assert.match(css,/\.dc-approved-skin \.challenge-dialog \.step-row/);
+  assert.match(css,/\.dc-approved-skin \.trophy-section \.empty-state/);
+  assert.match(css,/@media\(max-width:700px\)/);
+});
+test("Challenge approval copy follows the parent or guardian preference",()=>{
+  const challenge=readFileSync(join(root,"src","components","ChallengeDialog.tsx"),"utf8");
+  assert.match(challenge,/familyRoleLower\(relationship\)/);
+  assert.match(challenge,/goes to your \{roleLower\} for approval/);
+  assert.doesNotMatch(challenge,/goes to your parent or guardian for approval/);
+  assert.match(challenge,/saveChallengeCompletion\(/);
+});

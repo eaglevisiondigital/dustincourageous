@@ -95,3 +95,25 @@ instead of presenting a small card and a black void. Approved source shield
 graphics on parchment-style activity screens visually blend their white external
 JPEG backing without editing the original image. This remains subject to signed-in
 desktop/mobile screenshot review, including 320/375px wrapping and screen readers.
+
+## October 16 latest screenshot visual consistency finishing
+
+The newer signed-in screenshots (8:36–8:38 PM) confirm Bookshelf's single-book
+layout now uses a full-width companion and seven-step adventure, and Bible
+Memory/Identity/Prayer screens use appropriate full-width cards. The remaining
+visual inconsistencies were the generic black/red Challenge modal and nested
+black-on-black Devotional panels. This patch aligns those with the same locked
+navy/blue/gold/red interface, improves small-screen button placement, and makes
+Trophy zero-state sections more intentional without inventing badges or progress.
+
+The Challenge approval explanation uses the actual saved Parent/Guardian role
+instead of the phrase "parent or guardian". No Auth, RLS, awards, entitlement,
+payment provider or challenge completion logic was changed.
+
+The "Alpha Demo" challenge is existing test-labeled database content, not newly
+approved production copy. It remains a content review issue, not a styling license
+to silently rename or delete the challenge.
+
+The three founder-approved October 15 screenshots plus the narrowly approved
+Adventure Home left-panel refinement remain the visual contract. Browser screenshot
+and accessibility acceptance are still necessary.
