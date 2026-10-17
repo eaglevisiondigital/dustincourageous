@@ -117,3 +117,22 @@ to silently rename or delete the challenge.
 The three founder-approved October 15 screenshots plus the narrowly approved
 Adventure Home left-panel refinement remain the visual contract. Browser screenshot
 and accessibility acceptance are still necessary.
+
+## October 16: Founder-approved final sidebar and kid polish refinements
+
+Explicitly approved: fade the solid navy background behind child names into
+the approved blue, plum and burgundy shades; preserve the red avatar and
+selected-child highlight; gradually blend the approved lower mountain/signpost
+scene into the left rail without revealing any text baked into the image.
+Maintain the exact approved three October 15 designs (plus prior limited
+Adventure Home left-panel amendment), with no alternative redesign.
+
+The same limited refinement aligns the real-number challenge status pill,
+uses a somewhat wider single real challenge card with more consistent
+spacing (never invent filler records), softens hard image transitions in
+Bible/Books/Trophy headers, improves prayer content spacing, and reduces
+the challenge close-button visual weight while preserving the accessibility
+focus outline. All user/child labels, Parent/Guardian roles, completion,
+XP, digital-book entitlements, Auth, RLS, payment provider settings and
+admin controls remain unchanged. No produced UI screenshots are pre-approved:
+real signed-in desktop/mobile visual acceptance still required.

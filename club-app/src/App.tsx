@@ -963,7 +963,7 @@ function FamilyPortal({
                     <p className="eyebrow red">Keep Going</p>
                     <h2>More Courage Challenges</h2>
                   </div>
-                  <span className="pill sentence-pill">Fresh challenges appear here</span>
+                  <span className="pill sentence-pill">{challenges.length ? `${challenges.length} ${challenges.length === 1 ? "challenge" : "challenges"} ready` : "Fresh challenges appear here"}</span>
                 </div>
 
                 {challenges.length ? (

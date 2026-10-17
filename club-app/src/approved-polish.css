@@ -648,3 +648,175 @@
 @media(prefers-reduced-motion:reduce){
   .dc-approved-skin .challenge-dialog .step-row {transition:none;}
 }
+
+
+/* Founder-approved October 16 final rail and spacing refinement:
+   keep the exact October 15 Adventure Club skin and supplied original artwork.
+   These are presentation-only changes; child names and progress stay live. */
+@media (min-width: 1101px) {
+  .dc-approved-skin .side-panel {
+    background-color: #061733;
+    background-image:
+      radial-gradient(ellipse at 96% 26%, rgba(99,48,113,.27) 0%, transparent 49%),
+      radial-gradient(ellipse at 1% 48%, rgba(13,98,175,.27) 0%, transparent 58%),
+      linear-gradient(180deg, #06152f 0%, #0a2249 44%, #08264e 71%, #041529 100%);
+  }
+  .dc-approved-skin .side-panel::after {
+    /* Retain the cropped approved scenic art, but remove its hard top edge. */
+    height: min(515px, calc(100% - 285px));
+    -webkit-mask-image: linear-gradient(
+      to bottom, transparent 0%, rgba(0,0,0,.07) 8%,
+      rgba(0,0,0,.48) 18%, #000 31%, #000 100%
+    );
+    mask-image: linear-gradient(
+      to bottom, transparent 0%, rgba(0,0,0,.07) 8%,
+      rgba(0,0,0,.48) 18%, #000 31%, #000 100%
+    );
+  }
+}
+.dc-approved-skin .child-switcher.active {
+  /* Keep the red avatar, preserve the blue edge, fade blue to plum/red. */
+  background: linear-gradient(105deg,#153f79 0%,#273f77 28%,#4c315b 62%,#772442 100%);
+  border-color:#397bd4;
+  box-shadow:inset 0 1px rgba(255,255,255,.12),0 6px 18px rgba(0,15,45,.18);
+}
+.dc-approved-skin .child-switcher:not(.active):hover {
+  background:linear-gradient(105deg,rgba(26,69,121,.50),rgba(67,39,89,.23));
+  border-color:rgba(71,143,222,.45);
+}
+@media (min-width:761px) and (max-width:1100px){
+  /* Small/tablet widths use the same gradient without inserting giant scenery. */
+  .dc-approved-skin .side-panel {
+    background:linear-gradient(110deg,#071c3c,#123469 52%,#09172f);
+  }
+}
+
+/* The single real challenge is a featured card, not a tiny isolated third
+   column. We do NOT create filler challenge data. */
+.dc-approved-skin .kid-stats + .section-block > .section-heading {
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px 20px;
+}
+.dc-approved-skin .kid-stats + .section-block .sentence-pill {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:9px 14px;
+  border:1px solid rgba(90,158,228,.48);
+  border-radius:999px;
+  background:rgba(10,37,78,.85);
+  color:#d8ecff;
+  font-size:.78rem;
+  font-weight:800;
+  max-width:100%;
+  white-space:normal;
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-grid:has(> .challenge-card:only-child) {
+  grid-template-columns:minmax(0,min(100%,610px));
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-card:only-child {
+  padding:clamp(19px,2.3vw,27px);
+  border-radius:21px;
+  background:
+    radial-gradient(ellipse at 98% 4%,rgba(35,104,203,.18),transparent 66%),
+    linear-gradient(140deg,#133565,#081932);
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-top {margin-bottom:17px;}
+.dc-approved-skin .kid-stats + .section-block .challenge-card p {
+  min-height:0;
+  max-width:520px;
+  color:#c9dcf1;
+  line-height:1.55;
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-card .secondary-button {
+  min-height:44px;
+  margin-top:15px;
+}
+@media(max-width:760px) {
+  .dc-approved-skin .kid-stats + .section-block .section-heading {
+    align-items:flex-start;
+  }
+  .dc-approved-skin .kid-stats + .section-block .sentence-pill {
+    margin-left:0;
+  }
+}
+
+/* Same approved artwork, with a gradual left-to-right atmospheric fade
+   rather than a visible hard starting line at the image's left edge. */
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 84% 50%,rgba(22,87,164,.23),transparent 62%),
+    linear-gradient(108deg,#06162f 0%,#082751 76%,#061c3d 100%);
+}
+.dc-approved-skin .bible-hero::before,
+.dc-approved-skin .bookshelf-hero::before,
+.dc-approved-skin .trophy-hero::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  opacity:.8;
+  background:url('/assets/approved-ui/home-hero-art.webp') right center/auto 116% no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,rgba(0,0,0,.20) 53%,#000 82%);
+  mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,rgba(0,0,0,.20) 53%,#000 82%);
+}
+.dc-approved-skin .bible-hero>*,
+.dc-approved-skin .bookshelf-hero>*,
+.dc-approved-skin .trophy-hero>* {
+  position:relative;
+  z-index:1;
+}
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero {
+  scroll-margin-top:110px;
+}
+.dc-approved-skin .prayer-card:only-child {
+  padding:clamp(20px,2.5vw,31px);
+}
+.dc-approved-skin .prayer-card:only-child p {
+  line-height:1.6;
+  margin:12px 0;
+}
+.dc-approved-skin .prayer-card:only-child small {
+  display:block;
+  margin:15px 0 8px;
+}
+.dc-approved-skin .prayer-card:only-child .bible-action-row {
+  margin-top:18px;
+}
+
+/* Keep the keyboard-focus ring accessible, but simplify the heavy double
+   gold border around the native challenge close button. */
+.dc-approved-skin .challenge-dialog .modal-close {
+  width:40px;
+  height:40px;
+  border:1px solid rgba(248,207,87,.68);
+  border-radius:11px;
+  background:linear-gradient(145deg,#28344a,#171c2d);
+  color:#fff;
+  font-size:1.35rem;
+}
+.dc-approved-skin .challenge-dialog .modal-close:focus-visible {
+  outline:3px solid #ffd85b;
+  outline-offset:2px;
+}
+@media(max-width:760px){
+  .dc-approved-skin .bible-hero::before,
+  .dc-approved-skin .bookshelf-hero::before,
+  .dc-approved-skin .trophy-hero::before{
+    background-position:right center;
+    background-size:auto 100%;
+    opacity:.44;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.17) 34%,#000 100%);
+    mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.17) 34%,#000 100%);
+  }
+}

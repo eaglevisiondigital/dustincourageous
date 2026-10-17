@@ -135,3 +135,26 @@ test("Challenge approval copy follows the parent or guardian preference",()=>{
   assert.doesNotMatch(challenge,/goes to your parent or guardian for approval/);
   assert.match(challenge,/saveChallengeCompletion\(/);
 });
+
+test("founder-approved rail gradient and scenic fade remain decorative",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.dc-approved-skin \.child-switcher\.active/);
+  assert.match(css,/linear-gradient\(105deg,#153f79/);
+  assert.match(css,/\.dc-approved-skin \.side-panel::after/);
+  assert.match(css,/-webkit-mask-image:\s*linear-gradient\(/);
+  assert.match(css,/adventure-sidebar-path\.webp/);
+  assert.doesNotMatch(css,/Sally|QA Nova|QA Comet/);
+  assert.match(source,/selectedChild\?\.display_name/);
+});
+test("challenge badge reflects real count and no fictional challenge filler",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(source,/challenges\.length === 1 \? "challenge" : "challenges"/);
+  assert.match(source,/challenges\.map\(\(challenge\) =>/);
+  assert.match(css,/\.challenge-grid:has\(> \.challenge-card:only-child\)/);
+});
+test("prayer spacing and hero crop stay faithful and accessible",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.bible-hero::before/);
+  assert.match(css,/\.prayer-card:only-child/);
+  assert.match(css,/\.challenge-dialog \.modal-close:focus-visible/);
+});
