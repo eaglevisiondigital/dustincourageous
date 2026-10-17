@@ -1,0 +1,44 @@
+# Read-only deployment evidence; merge into a NEW project config only after review.
+# This fragment is not automatically loaded or deployed.
+
+[functions.public-site-form]
+verify_jwt = false
+entrypoint = "./functions/public-site-form/index.ts"
+import_map = "./functions/public-site-form/deno.json"
+
+[functions.privacy-export]
+verify_jwt = true
+entrypoint = "./functions/privacy-export/index.ts"
+
+[functions.privacy-export-cleanup]
+verify_jwt = false
+entrypoint = "./functions/privacy-export-cleanup/index.ts"
+
+[functions.notification-delivery-worker]
+verify_jwt = false
+entrypoint = "./functions/notification-delivery-worker/index.ts"
+import_map = "./functions/notification-delivery-worker/deno.json"
+
+[functions.notification-delivery-worker-v2]
+verify_jwt = false
+entrypoint = "./functions/notification-delivery-worker-v2/index.ts"
+
+[functions.commerce-checkout]
+verify_jwt = true
+entrypoint = "./functions/commerce-checkout/index.ts"
+
+[functions.commerce-payment-webhook]
+verify_jwt = false
+entrypoint = "./functions/commerce-payment-webhook/index.ts"
+
+[functions.commerce-payment-webhook-v2]
+verify_jwt = false
+entrypoint = "./functions/commerce-payment-webhook-v2/index.ts"
+
+[functions.public-site-form-v2]
+verify_jwt = false
+entrypoint = "./functions/public-site-form-v2/index.ts"
+
+[functions.integration-provider-test]
+verify_jwt = true
+entrypoint = "./functions/integration-provider-test/index.ts"

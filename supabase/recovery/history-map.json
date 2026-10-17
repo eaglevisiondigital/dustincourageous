@@ -1,0 +1,3830 @@
+{
+  "records": [
+    {
+      "version": "20260924114237",
+      "name": "foundation_family_membership_security",
+      "archive": "20260924114237_foundation_family_membership_security.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "760c8858299218406fa0207e18b1a6cb0b8f05f8efded3b4a78ebfda86e76eca",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateSchemaStmt": 1,
+        "GrantStmt": 31,
+        "CreateStmt": 10,
+        "IndexStmt": 8,
+        "CreateFunctionStmt": 5,
+        "CreateTrigStmt": 7,
+        "DropStmt": 1,
+        "AlterTableStmt": 10,
+        "CreatePolicyStmt": 18,
+        "InsertStmt": 3
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.can_manage_household",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.handle_new_auth_user",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.is_household_member",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.is_household_owner",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_profiles_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_consents_guardian_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_consents_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_entitlement_grants_lookup_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_members_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_members_user_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_subscriptions_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_subscriptions_provider_subscription_uidx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_profiles.child_profiles_delete_manager",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_profiles.child_profiles_insert_manager",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_profiles.child_profiles_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_profiles.child_profiles_update_manager",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.entitlement_definitions.entitlement_definitions_read_active",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_consents.household_consents_insert_guardian",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_consents.household_consents_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_entitlement_grants.household_entitlement_grants_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_members.household_members_insert_initial_owner",
+          "present": false
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_members.household_members_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_subscriptions.household_subscriptions_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.households.households_insert_creator",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.households.households_select_member",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.households.households_update_manager",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.membership_plans.membership_plans_read_active",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.plan_entitlements.plan_entitlements_read_active",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.profiles.profiles_select_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.profiles.profiles_update_self",
+          "present": true
+        },
+        {
+          "kind": "schema",
+          "name": "private",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_profiles",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.entitlement_definitions",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_consents",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_entitlement_grants",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_members",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_subscriptions",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.households",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.membership_plans",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.plan_entitlements",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.profiles",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "auth.users.on_auth_user_created",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_profiles.child_profiles_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.entitlement_definitions.entitlement_definitions_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.household_subscriptions.household_subscriptions_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.households.households_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.membership_plans.membership_plans_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.profiles.profiles_set_updated_at",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.set_updated_at",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.handle_new_auth_user",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.is_household_member",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.can_manage_household",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.is_household_owner",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924120124_tighten_household_membership_authority"
+      ]
+    },
+    {
+      "version": "20260924114305",
+      "name": "foundation_foreign_key_indexes",
+      "archive": "20260924114305_foundation_foreign_key_indexes.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "0157e4d615a00ab2ba028fce96bff5cd714d82263e4b829fd8d3f7dd8d55b465",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "IndexStmt": 6
+      },
+      "objects": [
+        {
+          "kind": "index",
+          "name": "public.child_profiles_created_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_consents_child_profile_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_entitlement_grants_entitlement_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_subscriptions_plan_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.households_created_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.plan_entitlements_entitlement_idx",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924114606",
+      "name": "adventure_club_core_engine",
+      "archive": "20260924114606_adventure_club_core_engine.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "087fb59f9e0ddd5da33ff93e043e189020aaca401ffae6d7f1d3c4c92e5dc56f",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 5,
+        "GrantStmt": 53,
+        "CreateStmt": 21,
+        "IndexStmt": 26,
+        "CreateTrigStmt": 10,
+        "AlterTableStmt": 21,
+        "CreatePolicyStmt": 33,
+        "ViewStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.can_manage_challenge_progress",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.can_manage_child",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.can_view_child",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.user_has_active_entitlement",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.user_has_household",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.adventure_challenges_challenge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.adventure_content_links_content_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.adventures_book_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.adventures_publish_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.badge_awards_badge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.badge_awards_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.book_content_links_content_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenge_assignments_challenge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenge_assignments_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenge_assignments_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenge_steps_challenge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenge_steps_content_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenges_publish_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenges_type_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_adventure_progress_adventure_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_challenge_progress_approved_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_challenge_progress_challenge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_step_progress_step_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.content_items_publish_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_book_access_book_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.household_book_access_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.reward_redemptions_requested_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.reward_unlocks_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.reward_unlocks_reward_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.xp_ledger_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.xp_ledger_source_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_challenges.adventure_challenges_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_content_links.adventure_content_links_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_read_free",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_awards.badge_awards_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badges.badges_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.book_content_links.book_content_links_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.books.books_read_public",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_assignments.challenge_assignments_insert_parent",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_assignments.challenge_assignments_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_steps.challenge_steps_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_read_free",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_adventure_progress.child_adventure_progress_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_adventure_progress.child_adventure_progress_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_adventure_progress.child_adventure_progress_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_challenge_progress.child_challenge_progress_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_challenge_progress.child_challenge_progress_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_challenge_progress.child_challenge_progress_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_step_progress.child_step_progress_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_step_progress.child_step_progress_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_step_progress.child_step_progress_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_streaks.child_streaks_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_read_free",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_book_access.household_book_access_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.levels.levels_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_redemptions.reward_redemptions_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_redemptions.reward_redemptions_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_unlocks.reward_unlocks_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_read_free",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.xp_ledger.xp_ledger_read",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.adventure_challenges",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.adventure_content_links",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.adventures",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.badge_awards",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.badges",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.book_content_links",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.books",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.challenge_assignments",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.challenge_steps",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.challenges",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_adventure_progress",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_challenge_progress",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_step_progress",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_streaks",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.content_items",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_book_access",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.levels",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.reward_redemptions",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.reward_unlocks",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.rewards",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.xp_ledger",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.adventures.adventures_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.badges.badges_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.books.books_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.challenges.challenges_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_adventure_progress.child_adventure_progress_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.child_challenge_progress_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_step_progress.child_step_progress_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.content_items.content_items_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.levels.levels_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.rewards.rewards_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "view",
+          "name": "public.child_xp_totals",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.user_has_household",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.user_has_active_entitlement",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.can_view_child",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.can_manage_child",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.can_manage_challenge_progress",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924123317_weekly_stars_streak_badges_and_lifetime_badge_levels",
+        "20260924221321_define_membership_tiers_and_challenge_access"
+      ]
+    },
+    {
+      "version": "20260924114628",
+      "name": "challenge_assignment_assigned_by_index",
+      "archive": "20260924114628_challenge_assignment_assigned_by_index.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "f66e6a6f426d50590a33a70f7bca1fec2d0d3051ed8c80d8cd6b854090eb2479",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "IndexStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "index",
+          "name": "public.challenge_assignments_assigned_by_idx",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924114937",
+      "name": "admin_notifications_media_activity",
+      "archive": "20260924114937_admin_notifications_media_activity.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "eadaca5f4ab2c2daaf99c805ea9a91c1df78c17cabff4cdb64be07f6efc6d2e7",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateStmt": 7,
+        "IndexStmt": 15,
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 30,
+        "CreateTrigStmt": 4,
+        "AlterTableStmt": 7,
+        "CreatePolicyStmt": 50
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.is_app_admin",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.is_content_admin",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.admin_audit_actor_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.admin_audit_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.admin_audit_entity_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.admin_audit_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.app_admins_created_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_activity_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_activity_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_activity_source_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.media_assets_created_by_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.media_assets_delivery_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.media_assets_entitlement_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.push_devices_user_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.user_notifications_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.user_notifications_household_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.user_notifications_user_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.admin_audit_log.admin_audit_read_admin",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_challenges.adventure_challenges_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_challenges.adventure_challenges_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_challenges.adventure_challenges_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_content_links.adventure_content_links_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_content_links.adventure_content_links_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_content_links.adventure_content_links_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.app_admins.app_admins_read_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badges.badges_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badges.badges_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badges.badges_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.book_content_links.book_content_links_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.book_content_links.book_content_links_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.book_content_links.book_content_links_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.books.books_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.books.books_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.books.books_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_steps.challenge_steps_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_steps.challenge_steps_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_steps.challenge_steps_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_activity_events.child_activity_read_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.levels.levels_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.levels.levels_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.levels.levels_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.media_assets.media_assets_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.media_assets.media_assets_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.media_assets.media_assets_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.media_assets.media_assets_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.media_assets.media_assets_read_public",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.notification_preferences.notification_preferences_insert_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.notification_preferences.notification_preferences_read_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.notification_preferences.notification_preferences_update_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.push_devices.push_devices_delete_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.push_devices.push_devices_insert_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.push_devices.push_devices_read_self",
+          "present": false
+        },
+        {
+          "kind": "policy",
+          "name": "public.push_devices.push_devices_update_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.user_notifications.user_notifications_read_self",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.user_notifications.user_notifications_update_self",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.admin_audit_log",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.app_admins",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_activity_events",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.media_assets",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.notification_preferences",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.push_devices",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.user_notifications",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.app_admins.app_admins_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.media_assets.media_assets_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.notification_preferences.notification_preferences_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.push_devices.push_devices_set_updated_at",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.is_app_admin",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.is_content_admin",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924115118",
+      "name": "trusted_progression_automation",
+      "archive": "20260924115118_trusted_progression_automation.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "16b044f888831a87d7b3b1cf0aee1ac792573be7d4d29b83ea720bd4cf7bbb59",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "IndexStmt": 1,
+        "CreateFunctionStmt": 4,
+        "GrantStmt": 4,
+        "DropStmt": 4,
+        "CreateTrigStmt": 4
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.initialize_household",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.process_adventure_completion",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.process_challenge_completion",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.validate_challenge_completion",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.xp_ledger_unique_source_event",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_adventure_progress.adventure_progress_process_completion",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.challenge_progress_process_completion",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.challenge_progress_validate_completion",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.households.households_initialize_after_insert",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.initialize_household",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.validate_challenge_completion",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.process_challenge_completion",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.process_adventure_completion",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925120823_scope_child_household_premium_access"
+      ]
+    },
+    {
+      "version": "20260924115151",
+      "name": "prevent_completed_progress_reversal",
+      "archive": "20260924115151_prevent_completed_progress_reversal.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "132d04ba99f9004408e688a1968bb5152274b981c088a40bf014b9684f50893e",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 1,
+        "GrantStmt": 1,
+        "DropStmt": 2,
+        "CreateTrigStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.prevent_completed_progress_reversal",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_adventure_progress.adventure_progress_prevent_reversal",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.challenge_progress_prevent_reversal",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.prevent_completed_progress_reversal",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924120124",
+      "name": "tighten_household_membership_authority",
+      "archive": "20260924120124_tighten_household_membership_authority.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "a3355493451142e2fe037ea9e40b45c554cbd11734934fec935fef1f3c51984d",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "DropStmt": 4,
+        "CreatePolicyStmt": 3,
+        "GrantStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "policy",
+          "name": "public.household_members.household_members_select_household",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.households.households_select_member",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.households.households_update_manager",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924120216",
+      "name": "configurable_badge_and_reward_automation",
+      "archive": "20260924120216_configurable_badge_and_reward_automation.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "bc3abc593c81cd40d71a9fa8f5b7779d2cc52fb7b40831235c33205d51791062",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateStmt": 1,
+        "IndexStmt": 2,
+        "CreateTrigStmt": 5,
+        "AlterTableStmt": 1,
+        "CreatePolicyStmt": 5,
+        "GrantStmt": 8,
+        "CreateFunctionStmt": 4,
+        "DropStmt": 4
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.evaluate_badges_after_progress",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.evaluate_child_badges",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.notify_reward_unlock",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.sync_reward_redemption_fulfillment",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.badge_rules_active_type_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.badge_rules_badge_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_rules.badge_rules_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_rules.badge_rules_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_rules.badge_rules_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_rules.badge_rules_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_redemptions.reward_redemptions_admin_update",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.badge_rules",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.badge_rules.badge_rules_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_adventure_progress.zz_adventure_progress_evaluate_badges",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.zz_challenge_progress_evaluate_badges",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.reward_redemptions.reward_redemption_sync_fulfillment",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.reward_unlocks.reward_unlock_notify",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.evaluate_child_badges",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.evaluate_badges_after_progress",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.notify_reward_unlock",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.sync_reward_redemption_fulfillment",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924120556_admin_draft_visibility_and_operations_roles",
+        "20260924120733_harden_reward_redemption_fulfillment"
+      ]
+    },
+    {
+      "version": "20260924120556",
+      "name": "admin_draft_visibility_and_operations_roles",
+      "archive": "20260924120556_admin_draft_visibility_and_operations_roles.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "770ee07ce5efddce78b8b26d8df2a94369d0c2821149185508872c0a06ab0451",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 1,
+        "GrantStmt": 3,
+        "DropStmt": 1,
+        "CreatePolicyStmt": 17
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.is_operations_admin",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_challenges.adventure_challenges_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventure_content_links.adventure_content_links_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.adventures.adventures_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badge_rules.badge_rules_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.badges.badges_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.book_content_links.book_content_links_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.books.books_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_steps.challenge_steps_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.content_items.content_items_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_consents.household_consents_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_entitlement_grants.household_entitlement_grants_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.household_subscriptions.household_subscriptions_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.levels.levels_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_redemptions.reward_redemptions_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.reward_redemptions.reward_redemptions_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.rewards.rewards_admin_select_all",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.is_operations_admin",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924120705",
+      "name": "atomic_admin_content_operations_and_audit",
+      "archive": "20260924120705_atomic_admin_content_operations_and_audit.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "a3bce604277eee720a86de0b4bfee55b7096e3910a7e609a3023aff515a076cb",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 4,
+        "GrantStmt": 7,
+        "DropStmt": 9,
+        "CreateTrigStmt": 9
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.audit_admin_mutation",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_create_badge_with_rule",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_create_challenge",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_create_reward",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.adventures.audit_adventures_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.badge_rules.audit_badge_rules_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.badges.audit_badges_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.books.audit_books_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.challenges.audit_challenges_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.content_items.audit_content_items_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.levels.audit_levels_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.reward_redemptions.audit_reward_redemptions_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.rewards.audit_rewards_admin",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.admin_create_challenge",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_create_badge_with_rule",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_create_reward",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.audit_admin_mutation",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924120733",
+      "name": "harden_reward_redemption_fulfillment",
+      "archive": "20260924120733_harden_reward_redemption_fulfillment.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "2e7ebe7aa90adf7c4a217bc2ab3e160369bccb0f95eb22a6334095cd99ab4a49",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 2,
+        "DropStmt": 1,
+        "CreateTrigStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.sync_reward_redemption_fulfillment",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.validate_reward_redemption_transition",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.reward_redemptions.aa_reward_redemption_validate_transition",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.validate_reward_redemption_transition",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.sync_reward_redemption_fulfillment",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924121208",
+      "name": "guardian_pin_lock",
+      "archive": "20260924121208_guardian_pin_lock.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "9f70430a9cf83ce9e04b5bb0fa4204654a8adcd2248fa887e04129f1b8e39a97",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateStmt": 1,
+        "GrantStmt": 7,
+        "CreateFunctionStmt": 3
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "public.guardian_pin_status",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.set_guardian_pin",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.verify_guardian_pin",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "private.household_guardian_security",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.set_guardian_pin",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.guardian_pin_status",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.verify_guardian_pin",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924121443_move_guardian_pin_privilege_to_private_helpers"
+      ]
+    },
+    {
+      "version": "20260924121443",
+      "name": "move_guardian_pin_privilege_to_private_helpers",
+      "archive": "20260924121443_move_guardian_pin_privilege_to_private_helpers.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "3d407b748ed7718baf4ceebd8c88317b57438817afd1b1f93c47ce5a6df9a2fe",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateFunctionStmt": 6,
+        "GrantStmt": 12
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.guardian_pin_status_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.set_guardian_pin_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.verify_guardian_pin_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.guardian_pin_status",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.set_guardian_pin",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.verify_guardian_pin",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.set_guardian_pin_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.guardian_pin_status_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.verify_guardian_pin_impl",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.set_guardian_pin",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.guardian_pin_status",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.verify_guardian_pin",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260926212852_guardian_pin_and_rpc_security_repair"
+      ]
+    },
+    {
+      "version": "20260924122136",
+      "name": "public_site_leads_and_contact_inquiries",
+      "archive": "20260924122136_public_site_leads_and_contact_inquiries.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "a00d0f6bc35aa27663edf4ae49bc8f0e6c85c464f9b274f565fc369ba5295237",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "CreateStmt": 2,
+        "IndexStmt": 6,
+        "AlterTableStmt": 2,
+        "CreatePolicyStmt": 3,
+        "GrantStmt": 4
+      },
+      "objects": [
+        {
+          "kind": "index",
+          "name": "public.contact_inquiries_email_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.contact_inquiries_ip_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.contact_inquiries_status_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.marketing_leads_email_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.marketing_leads_ip_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.marketing_leads_type_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.contact_inquiries.contact_inquiries_admin_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.contact_inquiries.contact_inquiries_support_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.marketing_leads.marketing_leads_admin_read",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.contact_inquiries",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.marketing_leads",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924123317",
+      "name": "weekly_stars_streak_badges_and_lifetime_badge_levels",
+      "archive": "20260924123317_weekly_stars_streak_badges_and_lifetime_badge_levels.sql",
+      "local": null,
+      "classification": "production-only historical migration",
+      "sql_sha256": "47d26c967002037f7a74011838fad02631b5c7b59e85e5cc8c16f892e4c2d194",
+      "local_byte_equal": false,
+      "local_ast_equal": null,
+      "statement_counts": {
+        "AlterTableStmt": 8,
+        "IndexStmt": 9,
+        "CreateStmt": 6,
+        "CreateTrigStmt": 5,
+        "CreatePolicyStmt": 14,
+        "GrantStmt": 17,
+        "CreateFunctionStmt": 1,
+        "DropStmt": 1,
+        "ViewStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "column",
+          "name": "public.badges.badge_family_key",
+          "present": true
+        },
+        {
+          "kind": "column",
+          "name": "public.badges.badge_scope",
+          "present": true
+        },
+        {
+          "kind": "column",
+          "name": "public.badges.badge_tier",
+          "present": true
+        },
+        {
+          "kind": "column",
+          "name": "public.challenges.challenge_series_id",
+          "present": true
+        },
+        {
+          "kind": "column",
+          "name": "public.challenges.period_end",
+          "present": true
+        },
+        {
+          "kind": "column",
+          "name": "public.challenges.period_start",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.process_weekly_series_completion",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.achievement_token_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.achievement_token_series_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.achievement_token_unique_source_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.badges_family_tier_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.challenges_series_period_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_series_weekly_completions_challenge_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_series_weekly_completions_child_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.series_badge_rules_series_idx",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.streak_badge_earnings_child_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.achievement_token_ledger.achievement_token_read_child",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_series.challenge_series_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_series.challenge_series_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_series.challenge_series_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_series.challenge_series_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenge_series.challenge_series_read_active",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_series_streaks.child_series_streaks_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_series_weekly_completions.child_series_weekly_completions_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.series_badge_rules.series_badge_rules_admin_delete",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.series_badge_rules.series_badge_rules_admin_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.series_badge_rules.series_badge_rules_admin_select_all",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.series_badge_rules.series_badge_rules_admin_update",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.series_badge_rules.series_badge_rules_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.streak_badge_earnings.streak_badge_earnings_read",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.achievement_token_ledger",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.badges",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.challenge_series",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.challenges",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_series_streaks",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_series_weekly_completions",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.series_badge_rules",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.streak_badge_earnings",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.challenge_series.audit_challenge_series_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.challenge_series.challenge_series_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.zz_weekly_series_progression",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.series_badge_rules.audit_series_badge_rules_admin",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.series_badge_rules.series_badge_rules_set_updated_at",
+          "present": true
+        },
+        {
+          "kind": "view",
+          "name": "public.child_active_streak_badges",
+          "present": true
+        },
+        {
+          "kind": "view",
+          "name": "public.child_token_totals",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.process_weekly_series_completion",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924205627",
+      "name": "guard_book_progress_regression",
+      "archive": "20260924205627_guard_book_progress_regression.sql",
+      "local": "20260924205627_guard_book_progress_regression.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "9fefc1255928ec54bd444417e9c3441f46e7068e5b203bdaeeb9fbb96e2460ac",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 1,
+        "DropStmt": 1,
+        "CreateTrigStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.prevent_book_progress_regression",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_book_progress.prevent_book_progress_regression",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.prevent_book_progress_regression",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924210810",
+      "name": "enforce_book_companion_access",
+      "archive": "20260924210810_enforce_book_companion_access.sql",
+      "local": "20260924212000_enforce_book_companion_access.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "54016f176689c7a320fed54953baafc616c7ab5d54ec233c9fdd64e531c7bb20",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 3,
+        "GrantStmt": 2,
+        "DropStmt": 1,
+        "CreateTrigStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.enforce_child_book_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.complete_child_book_adventure",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.has_book_access",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_book_progress.enforce_child_book_access",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.has_book_access",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.enforce_child_book_access",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.complete_child_book_adventure",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925120823_scope_child_household_premium_access",
+        "20260926212852_guardian_pin_and_rpc_security_repair"
+      ]
+    },
+    {
+      "version": "20260924211023",
+      "name": "add_book_launch_checks",
+      "archive": "20260924211023_add_book_launch_checks.sql",
+      "local": "20260924212500_add_book_launch_checks.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "eb5ee700aa7863b3d4ef8b58ac732e051786f20a3d25e6cbe8eddf99cfe9bfba",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.admin_get_book_launch_gate_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_get_production_launch_gate",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.admin_get_book_launch_gate_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_get_production_launch_gate",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924220618_add_book_release_launch_checks",
+        "20260924221449_add_membership_launch_checks",
+        "20260925025111_add_digital_book_launch_readiness"
+      ]
+    },
+    {
+      "version": "20260924211143",
+      "name": "index_integration_test_provider",
+      "archive": "20260924211143_index_integration_test_provider.sql",
+      "local": "20260924213000_index_integration_test_provider.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "c0d1c23b3df4deb549343d156db8a8c77d874b83d7414012cf66ead5499b6d55",
+      "local_byte_equal": false,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "IndexStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "index",
+          "name": "public.integration_test_runs_provider_id_idx",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924220618",
+      "name": "add_book_release_launch_checks",
+      "archive": "20260924220618_add_book_release_launch_checks.sql",
+      "local": "20260924215000_add_book_release_launch_checks.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "6ec59100be5fc16ba5565e7078085779302c6abe190bd491978ac361b872783e",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.admin_get_book_release_gate_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_get_production_launch_gate",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.admin_get_book_release_gate_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_get_production_launch_gate",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260924221449_add_membership_launch_checks",
+        "20260925025111_add_digital_book_launch_readiness"
+      ]
+    },
+    {
+      "version": "20260924221321",
+      "name": "define_membership_tiers_and_challenge_access",
+      "archive": "20260924221321_define_membership_tiers_and_challenge_access.sql",
+      "local": "20260924222500_define_membership_tiers_and_challenge_access.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "2a8afd8ea8f42b2daa96044e5207179dca304e6c66d9d2c3f8ff054f2da2704a",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "InsertStmt": 2,
+        "DropStmt": 2,
+        "CreatePolicyStmt": 1,
+        "CreateFunctionStmt": 2,
+        "CreateTrigStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.enforce_child_challenge_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.user_can_access_challenge",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.challenges.challenges_read_authenticated",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.enforce_child_challenge_access",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.user_can_access_challenge",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.enforce_child_challenge_access",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925120823_scope_child_household_premium_access"
+      ]
+    },
+    {
+      "version": "20260924221449",
+      "name": "add_membership_launch_checks",
+      "archive": "20260924221449_add_membership_launch_checks.sql",
+      "local": "20260924223000_add_membership_launch_checks.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "9e5f7c04db2a560073445401bc73f7f48b08c7769ecfe9a9faaa7cf4e5272944",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.admin_get_membership_tier_gate_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_get_production_launch_gate",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.admin_get_membership_tier_gate_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_get_production_launch_gate",
+          "matches_current_body": false,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925025111_add_digital_book_launch_readiness"
+      ]
+    },
+    {
+      "version": "20260924230504",
+      "name": "guard_concurrent_guardian_decisions",
+      "archive": "20260924230504_guard_concurrent_guardian_decisions.sql",
+      "local": "20260924230504_guard_concurrent_guardian_decisions.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "e0396a9873d6d427f2f33ac92cd02fe2ff63170fcdbdc94e3dd7bcf89051b18a",
+      "local_byte_equal": false,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "public.approve_parent_challenge",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.return_parent_challenge",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.approve_parent_challenge",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.return_parent_challenge",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260924234414",
+      "name": "secure_family_event_registration",
+      "archive": "20260924234414_secure_family_event_registration.sql",
+      "local": "20260924234414_secure_family_event_registration.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "9116c7e7d45fb6208ae78ca7ba73ccbeeb29b7fe8b0472561289e394746568ab",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 4,
+        "GrantStmt": 8
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.cancel_event_registration_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.register_for_event_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.cancel_event_registration",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.register_for_event",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.register_for_event_impl",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.cancel_event_registration_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.register_for_event",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.cancel_event_registration",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925120823_scope_child_household_premium_access",
+        "20260925122342_scope_event_registration_audience"
+      ]
+    },
+    {
+      "version": "20260925004449",
+      "name": "family_faith_whole_household_uniqueness",
+      "archive": "20260925004449_family_faith_whole_household_uniqueness.sql",
+      "local": "20260925004449_family_faith_whole_household_uniqueness.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "d80550faa43a775b3ca79fbc1cd4d1d9863029039d549b3b66c3398bf04bcc52",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "VariableSetStmt": 1,
+        "AlterTableStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "constraint",
+          "name": "public.household_faith_sessions.household_faith_sessions_household_id_family_faith_guide_id_key",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.household_faith_sessions",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925011427",
+      "name": "harden_guardian_group_membership",
+      "archive": "20260925011427_harden_guardian_group_membership.sql",
+      "local": "20260925011427_harden_guardian_group_membership.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "74a642aaa9563d523a8972b599e1e414378d6d3f124568c98ca72b57f7efca1e",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "VariableSetStmt": 1,
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 9,
+        "DropStmt": 2,
+        "CreatePolicyStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.join_child_to_group_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.withdraw_child_from_group",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_group_memberships.child_group_memberships_update",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.join_child_to_group_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.withdraw_child_from_group",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925013210",
+      "name": "enforce_activity_completion_access",
+      "archive": "20260925013210_enforce_activity_completion_access.sql",
+      "local": "20260925013210_enforce_activity_completion_access.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "2a4c3eb9131f050339e1d177788f7b4a1c7f84dda657ed4f94be5256a366da9f",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "VariableSetStmt": 1,
+        "CreateFunctionStmt": 1,
+        "GrantStmt": 2,
+        "DropStmt": 2,
+        "CreatePolicyStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.can_record_child_activity",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_content_progress.child_content_progress_insert",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_content_progress.child_content_progress_update",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.can_record_child_activity",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925015358",
+      "name": "add_protected_digital_book_reader",
+      "archive": "20260925015358_add_protected_digital_book_reader.sql",
+      "local": "20260925015358_add_protected_digital_book_reader.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "10dd3258075838993516fc34ec0f1ee7cedf70783118849114f6f485f9a06a87",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 9,
+        "CreateTrigStmt": 1,
+        "InsertStmt": 1,
+        "CreatePolicyStmt": 3,
+        "CreateStmt": 1,
+        "IndexStmt": 1,
+        "AlterTableStmt": 1,
+        "GrantStmt": 4
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.child_has_digital_book_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.digital_book_manifest_valid",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.digital_book_object_readable",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.digital_book_released",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.get_digital_book_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.save_digital_book_position_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.validate_digital_book_manifest",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.get_digital_book",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.save_digital_book_position",
+          "present": true
+        },
+        {
+          "kind": "index",
+          "name": "public.child_book_reading_positions_book_idx",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_book_reading_positions.dc_read_own_book_position",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "storage.objects.dc_digital_book_read",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "storage.objects.dc_digital_book_upload",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "public.child_book_reading_positions",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.books.validate_digital_book_manifest",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.digital_book_manifest_valid",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.validate_digital_book_manifest",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.digital_book_released",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.child_has_digital_book_access",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.digital_book_object_readable",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.get_digital_book_impl",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.get_digital_book",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.save_digital_book_position_impl",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "public.save_digital_book_position",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925020034_protect_digital_book_manifest_text",
+        "20260925023737_include_reading_positions_in_privacy"
+      ]
+    },
+    {
+      "version": "20260925020034",
+      "name": "protect_digital_book_manifest_text",
+      "archive": "20260925020034_protect_digital_book_manifest_text.sql",
+      "local": "20260925020034_protect_digital_book_manifest_text.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "dc8eb28c79a0e775a33e5c0cb70273da11882fbc7a5efac01986a8acedccbbbd",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateStmt": 1,
+        "GrantStmt": 3,
+        "CreateFunctionStmt": 7
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.admin_prepare_digital_book_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.digital_book_object_readable",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.digital_book_released",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.get_digital_book_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.save_digital_book_position_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.validate_digital_book_manifest",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_prepare_digital_book",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "private.digital_book_manifests",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.validate_digital_book_manifest",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.digital_book_released",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.digital_book_object_readable",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.get_digital_book_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.save_digital_book_position_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.admin_prepare_digital_book_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_prepare_digital_book",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925021110_add_digital_edition_review_access"
+      ]
+    },
+    {
+      "version": "20260925021110",
+      "name": "add_digital_edition_review_access",
+      "archive": "20260925021110_add_digital_edition_review_access.sql",
+      "local": "20260925021110_add_digital_edition_review_access.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "eacd9b1917a592d66fbf6235d4874b7831361c1e5c0de1aa5edb0ce60501e723",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "AlterTableStmt": 1,
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "constraint",
+          "name": "private.digital_book_manifests.digital_book_revision_is_string",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.admin_get_digital_book_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_get_digital_book",
+          "present": true
+        },
+        {
+          "kind": "table",
+          "name": "private.digital_book_manifests",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.admin_get_digital_book_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_get_digital_book",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925023737",
+      "name": "include_reading_positions_in_privacy",
+      "archive": "20260925023737_include_reading_positions_in_privacy.sql",
+      "local": "20260925023737_include_reading_positions_in_privacy.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "4f622f794d91fdb81d7e2e8256f7a798c48a7c7d7c9ac1e3f6e9df0ba61778a3",
+      "local_byte_equal": false,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "DropStmt": 1,
+        "CreatePolicyStmt": 1,
+        "CreateFunctionStmt": 1,
+        "ViewStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.privacy_export_payload_impl",
+          "present": true
+        },
+        {
+          "kind": "policy",
+          "name": "public.child_book_reading_positions.dc_read_own_book_position",
+          "present": true
+        },
+        {
+          "kind": "view",
+          "name": "public.child_data_inventory",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.privacy_export_payload_impl",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925025111",
+      "name": "add_digital_book_launch_readiness",
+      "archive": "20260925025111_add_digital_book_launch_readiness.sql",
+      "local": "20260925025111_add_digital_book_launch_readiness.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "b9b6aa41cc433526ce606fb5dbe473fc22348999f66ddc01d15dc1dcd3f657cb",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.admin_get_digital_book_launch_gate_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.admin_get_production_launch_gate",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.admin_get_digital_book_launch_gate_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.admin_get_production_launch_gate",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925111607",
+      "name": "fix_household_onboarding_returning",
+      "archive": "20260925111607_fix_household_onboarding_returning.sql",
+      "local": "20260925111603_fix_household_onboarding_returning.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "d648fb8060b8bb848ed89e5f3ffc5359c47d6fb35063fec20b2e2d91846d4183",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "public.create_household_with_consent",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.create_household_with_consent",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925120823",
+      "name": "scope_child_household_premium_access",
+      "archive": "20260925120823_scope_child_household_premium_access.sql",
+      "local": "20260925120405_scope_child_household_premium_access.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "cf7fac0e94109050281a032a9d95c47148c434912e7213658c5e22ad5aa45700",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 10,
+        "GrantStmt": 9,
+        "DropStmt": 3,
+        "CreateTrigStmt": 3
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.child_can_access_adventure",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.child_can_access_challenge",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.child_has_book_companion_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.enforce_child_adventure_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.enforce_child_book_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.enforce_child_challenge_access",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.household_has_active_entitlement",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.process_adventure_completion",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.process_challenge_completion",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.register_for_event_impl",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_adventure_progress.enforce_child_adventure_access",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_book_progress.enforce_child_book_access",
+          "present": true
+        },
+        {
+          "kind": "trigger",
+          "name": "public.child_challenge_progress.enforce_child_challenge_access",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.household_has_active_entitlement",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.child_has_book_companion_access",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.child_can_access_challenge",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.enforce_child_book_access",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.enforce_child_challenge_access",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.process_adventure_completion",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.process_challenge_completion",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.register_for_event_impl",
+          "matches_current_body": false,
+          "current_present": true
+        },
+        {
+          "name": "private.child_can_access_adventure",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.enforce_child_adventure_access",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": [
+        "20260925122342_scope_event_registration_audience"
+      ]
+    },
+    {
+      "version": "20260925122342",
+      "name": "scope_event_registration_audience",
+      "archive": "20260925122342_scope_event_registration_audience.sql",
+      "local": "20260925122115_scope_event_registration_audience.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "371df7c8ddb261bcd53a81fc7b7b16635436a1aa7ba1b702501dd2de9f62d673",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 2
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.event_audience_allows_registration",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.register_for_event_impl",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.event_audience_allows_registration",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.register_for_event_impl",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925124058",
+      "name": "family_activity_participants",
+      "archive": "20260925124058_family_activity_participants.sql",
+      "local": "20260925123327_family_activity_participants.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "de2367b204b79b7e59183b5af59fb8d9113f0355f2ed02ca57d8559a79a4aa2e",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 2,
+        "GrantStmt": 4
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "public.complete_family_faith_participants",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.save_family_challenge_participants",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.complete_family_faith_participants",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.save_family_challenge_participants",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925131404",
+      "name": "protect_direct_family_faith_credit",
+      "archive": "20260925131404_protect_direct_family_faith_credit.sql",
+      "local": "20260925131231_protect_direct_family_faith_credit.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "dc6eb4e9eed2f4161baa19f707265270b981e00f6945555ef1fd93ff99a69f6c",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "AlterPolicyStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "policy",
+          "name": "public.household_faith_sessions.household_faith_sessions_insert",
+          "present": true
+        }
+      ],
+      "function_bodies": [],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260925133014",
+      "name": "validate_payment_checkout_under_lock",
+      "archive": "20260925133014_validate_payment_checkout_under_lock.sql",
+      "local": "20260925132731_validate_payment_checkout_under_lock.sql",
+      "classification": "same logical migration but different timestamp/name",
+      "sql_sha256": "5fbee7f7031a0d5e34a52ce48de3875351b5ca6ce234382157043f1548f91e1f",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "CreateFunctionStmt": 1
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "public.mark_order_paid_from_provider",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "public.mark_order_paid_from_provider",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    },
+    {
+      "version": "20260926212852",
+      "name": "guardian_pin_and_rpc_security_repair",
+      "archive": "20260926212852_guardian_pin_and_rpc_security_repair.sql",
+      "local": "20260926212852_guardian_pin_and_rpc_security_repair.sql",
+      "classification": "exact repository match",
+      "sql_sha256": "249e3b9103f0e0905cbd641a2f43966e6e2362ab92e8b23d9d8c83be7e51153b",
+      "local_byte_equal": true,
+      "local_ast_equal": true,
+      "statement_counts": {
+        "VariableSetStmt": 4,
+        "CreateFunctionStmt": 6,
+        "GrantStmt": 7
+      },
+      "objects": [
+        {
+          "kind": "function",
+          "name": "private.award_completed_book_adventure",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.create_guardian_unlock_session_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.guardian_unlock_session_valid",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "private.verify_guardian_pin_impl",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.complete_child_book_adventure",
+          "present": true
+        },
+        {
+          "kind": "function",
+          "name": "public.revoke_guardian_unlock_sessions",
+          "present": true
+        }
+      ],
+      "function_bodies": [
+        {
+          "name": "private.verify_guardian_pin_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.create_guardian_unlock_session_impl",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.guardian_unlock_session_valid",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "private.award_completed_book_adventure",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.complete_child_book_adventure",
+          "matches_current_body": true,
+          "current_present": true
+        },
+        {
+          "name": "public.revoke_guardian_unlock_sessions",
+          "matches_current_body": true,
+          "current_present": true
+        }
+      ],
+      "later_recorded_touches": []
+    }
+  ],
+  "gaps": {
+    "tables_without_recorded_create": [
+      "private.group_join_codes",
+      "private.guardian_unlock_sessions",
+      "private.household_invitation_tokens",
+      "private.organization_invitation_tokens",
+      "private.system_secret_hashes",
+      "private.worker_auth_tokens",
+      "public.adventure_groups",
+      "public.app_installations",
+      "public.automated_notification_log",
+      "public.book_challenges",
+      "public.book_devotional_series",
+      "public.book_identity_truths",
+      "public.book_power_verses",
+      "public.book_prayer_prompts",
+      "public.book_reward_rules",
+      "public.checkout_sessions",
+      "public.child_book_progress",
+      "public.child_content_progress",
+      "public.child_devotional_progress",
+      "public.child_group_memberships",
+      "public.child_identity_progress",
+      "public.child_prayer_progress",
+      "public.child_scripture_progress",
+      "public.consent_policies",
+      "public.data_privacy_requests",
+      "public.dc_blueprint_requirements",
+      "public.dc_brand_assets",
+      "public.dc_character_profiles",
+      "public.dc_content_blueprints",
+      "public.dc_content_reviews",
+      "public.dc_governance_rules",
+      "public.dc_governance_standards",
+      "public.delivery_worker_runs",
+      "public.devotional_days",
+      "public.devotional_series",
+      "public.event_registrations",
+      "public.events",
+      "public.family_faith_guides",
+      "public.fulfillments",
+      "public.group_challenge_assignments",
+      "public.group_leaders",
+      "public.household_faith_sessions",
+      "public.household_invitations",
+      "public.identity_truths",
+      "public.integration_events",
+      "public.integration_providers",
+      "public.integration_test_runs",
+      "public.inventory_reservations",
+      "public.notification_campaign_recipients",
+      "public.notification_campaigns",
+      "public.notification_deliveries",
+      "public.notification_reminder_rules",
+      "public.notification_templates",
+      "public.order_items",
+      "public.orders",
+      "public.organization_invitations",
+      "public.organization_members",
+      "public.organizations",
+      "public.payment_webhook_events",
+      "public.power_verses",
+      "public.prayer_prompts",
+      "public.product_book_access_rules",
+      "public.product_entitlement_rules",
+      "public.product_variants",
+      "public.products",
+      "public.promo_codes",
+      "public.referral_attributions",
+      "public.referral_codes",
+      "public.scripture_passages",
+      "public.support_tickets"
+    ],
+    "functions_without_recorded_create": [
+      "private.accept_household_invitation_impl",
+      "private.accept_organization_invitation_impl",
+      "private.admin_daily_metrics_impl",
+      "private.admin_get_production_launch_gate_impl",
+      "private.admin_platform_snapshot_impl",
+      "private.after_token_insert_evaluate_badges",
+      "private.after_xp_insert_evaluate_badges",
+      "private.attribute_referral_impl",
+      "private.award_xp_event",
+      "private.can_approve_dc_governance",
+      "private.can_lead_group",
+      "private.can_manage_event",
+      "private.can_manage_org",
+      "private.can_manage_privacy_requests",
+      "private.can_schedule_notifications",
+      "private.can_view_event",
+      "private.claim_marketing_leads_for_household_impl",
+      "private.create_group_join_code_impl",
+      "private.create_household_invitation_impl",
+      "private.create_organization_invitation_impl",
+      "private.dc_entity_fingerprint",
+      "private.dc_entity_payload",
+      "private.dc_row_fingerprint",
+      "private.demote_changed_dc_content",
+      "private.demote_changed_dc_product",
+      "private.demote_changed_notification_template",
+      "private.dispatch_automated_notification_reminders",
+      "private.dispatch_due_notification_campaigns",
+      "private.enforce_dc_prayer_opening",
+      "private.enforce_dc_publish_gate",
+      "private.expire_checkout_sessions",
+      "private.get_group_progress_summary_impl",
+      "private.get_group_roster_impl",
+      "private.get_household_adults_impl",
+      "private.get_or_create_referral_code_impl",
+      "private.has_approved_dc_review",
+      "private.household_is_paid_member",
+      "private.initialize_organization",
+      "private.invoke_notification_delivery_worker",
+      "private.is_org_member",
+      "private.notification_audience_count_impl",
+      "private.notification_next_delivery_at",
+      "private.notification_preference_allows",
+      "private.notify_pending_parent_challenge",
+      "private.preview_group_join_code_impl",
+      "private.preview_organization_invitation_impl",
+      "private.process_book_progress",
+      "private.process_content_completed",
+      "private.process_devotional_completed",
+      "private.process_family_faith_session",
+      "private.process_paid_order_access",
+      "private.process_prayer_completed",
+      "private.process_scripture_memorized",
+      "private.queue_external_notification_delivery",
+      "private.unlock_book_milestone_rewards",
+      "private.user_has_book_access",
+      "private.validate_notification_reminder_scope",
+      "public.accept_household_invitation",
+      "public.accept_organization_invitation",
+      "public.admin_add_devotional_day",
+      "public.admin_cancel_notification_campaign",
+      "public.admin_create_book",
+      "public.admin_create_challenge_series",
+      "public.admin_create_content_item",
+      "public.admin_create_devotional_series",
+      "public.admin_create_family_faith_guide",
+      "public.admin_create_identity_truth",
+      "public.admin_create_lifetime_badge_level",
+      "public.admin_create_notification_reminder_rule",
+      "public.admin_create_notification_template",
+      "public.admin_create_organization",
+      "public.admin_create_power_verse",
+      "public.admin_create_prayer_prompt",
+      "public.admin_create_product",
+      "public.admin_create_product_variant",
+      "public.admin_create_promo_code",
+      "public.admin_create_scripture",
+      "public.admin_create_series_streak_badge",
+      "public.admin_create_weekly_challenge",
+      "public.admin_get_daily_metrics",
+      "public.admin_get_platform_snapshot",
+      "public.admin_link_book_experience",
+      "public.admin_link_book_reward",
+      "public.admin_preview_notification_audience",
+      "public.admin_schedule_notification_campaign",
+      "public.admin_set_order_status",
+      "public.approve_dc_content_review",
+      "public.archive_child_profile",
+      "public.attribute_referral",
+      "public.begin_checkout_provider_handoff",
+      "public.cancel_checkout_session",
+      "public.cancel_data_privacy_request",
+      "public.cancel_organization_invitation",
+      "public.capture_marketing_lead",
+      "public.claim_marketing_leads_for_household",
+      "public.claim_notification_deliveries",
+      "public.complete_notification_delivery",
+      "public.create_adventure_group",
+      "public.create_checkout_order",
+      "public.create_child_with_consent",
+      "public.create_group_join_code",
+      "public.create_guardian_unlock_session",
+      "public.create_household_invitation",
+      "public.create_organization_invitation",
+      "public.dc_preflight_scan",
+      "public.deactivate_app_installation",
+      "public.get_checkout_readiness",
+      "public.get_child_achievement_progress",
+      "public.get_child_book_adventure_steps",
+      "public.get_child_book_adventure_summary",
+      "public.get_group_progress_summary",
+      "public.get_group_roster",
+      "public.get_household_adults",
+      "public.get_notification_delivery_payload",
+      "public.get_or_create_referral_code",
+      "public.join_child_to_group",
+      "public.preview_group_join_code",
+      "public.preview_organization_invitation",
+      "public.privacy_export_payload",
+      "public.publish_dc_entity",
+      "public.record_household_consent",
+      "public.record_integration_event",
+      "public.register_app_installation",
+      "public.remove_household_adult",
+      "public.request_data_privacy_action",
+      "public.request_dc_content_review",
+      "public.restore_child_profile",
+      "public.revoke_household_invitation",
+      "public.update_integration_provider_health",
+      "public.validate_worker_token",
+      "public.verify_privacy_cleanup_secret"
+    ]
+  }
+}

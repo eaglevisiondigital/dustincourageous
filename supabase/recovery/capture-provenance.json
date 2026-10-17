@@ -1,0 +1,48 @@
+{
+  "project_ref": "vrixketvinzhsfwwcqiu",
+  "captured_date": "2026-09-26 (America/Chicago); live handoff migration 2026-09-27 03:02:54 UTC",
+  "source_checkpoint_before_recovery": "7f2f7a102fdc757635a8cbb9db40e205f641f54c",
+  "production_postgresql_version": "17.6",
+  "counts": {
+    "public_tables": 112,
+    "private_tables": 9,
+    "views": 25,
+    "functions": 219,
+    "triggers": 166,
+    "constraints": 638,
+    "indexes": 434,
+    "public_policies": 298,
+    "storage_policies": 7,
+    "identity_sequences": 4,
+    "buckets": 4,
+    "live_migration_records": 43,
+    "root_migration_files": 27,
+    "deployed_functions": 10,
+    "previously_missing_edge_directories": 6,
+    "cron_jobs": 5,
+    "historical_archive_records": 40,
+    "new_forward_records": 3
+  },
+  "sha256": {
+    "catalog.json": "109bb3454525d450db7ccee49bcf4af37c12abfa768f1e3da6492f8217a7444f",
+    "catalog-query.sql": "88517785c5e0ed45157ffead48f658e598b72cc255e5b5fbadc3226c41cc2600",
+    "bootstrap.sql": "5f6b856a914919fff2d7462edda0f21f6f1453a0ac374541b4ef4336eeb986b5",
+    "platform.json": "f2d93da5288ed7ca844cdc7ab03ed32440690480aed67a87147041c519ddf9fc",
+    "history-map.json": "764431ce535744d7b21a69de24d925a5a0e10b7feed90f8300500312cb30a033",
+    "edge-source-manifest.json": "a866f43b8639dd5790ed45885572ebe6ee226835bf92d5ed07e5444d609965ad",
+    "forward-migrations.json": "cba495b2b0cb2d341f816b03d5385171a9ed05939430f1978422889d119a5f8c"
+  },
+  "live_end_check": "Read-only full live application catalog equals the isolated/CI-tested handoff baseline after migration 20260927030254. All existing table/column/function/default/sequence ACLs and RLS policies are unchanged. Private schema adds service_role USAGE for its guarded receipt helper only. Five functions and one private RLS table added; only the existing public handoff function body changes. commerce-checkout version 4 source is byte-exact and verify_jwt remains true. No production fixtures, provider configuration, Auth settings, cron, Storage or application rows were changed.",
+  "scope": "Schema and deployed source only; no family/Auth rows, files or secret values. Synthetic test data is not production reference data.",
+  "current_acl_source_checkpoint": "8ec568fe4bc3859bc003e202fe1c0a7220d40fb8",
+  "previous_capture": "../security/legacy-capture-provenance.json",
+  "remaining_security_limits": [
+    "supabase_admin default ACLs require supported platform action; Supabase Support response pending, not a blocker for Work acceptance"
+  ],
+  "verified_live_catalog_canonical_sha256": "bed5e67940bf6ff318ebad736e8746d5d26025ab66a6f63df7d0773710907343",
+  "historical_end_check": "All 40 historical records and both prior forward SQL SHA-256 values are unchanged. Third forward handoff record is byte-equal to root and forward archive. Only the new candidate filename was aligned to its actual managed timestamp; no historical migration was renamed.",
+  "current_checkout_source_checkpoint": "22d9394dfb6ebb5b87ae319bdcfe2af497a12f5c",
+  "canonical_hash_encoding": "UTF-8 canonical(catalog) JSON, sorted keys, compact separators",
+  "current_handoff_source_checkpoint": "fabf9b16469df46c4948ccd703334502b3615f23",
+  "external_auth_verification": "Leaked-password protection enabled and warning cleared, per September 26, 2026 Work verification supplied by PRIMARY CHAT. Auth configuration was not altered by this package."
+}

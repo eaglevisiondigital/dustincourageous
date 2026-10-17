@@ -1,0 +1,161 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+const root = join(import.meta.dirname, "..");
+const source = readFileSync(join(root, "src", "App.tsx"), "utf8");
+const skin = readFileSync(join(root, "src", "approved-skin.css"), "utf8");
+const entry = readFileSync(join(root, "src", "main.tsx"), "utf8");
+
+test("locked approved skin is applied only to Kid View", () => {
+  assert.match(source, /view === "kid" \? "app-shell kid-experience-v2 dc-approved-skin" : "app-shell"/);
+  assert.match(entry, /import "\.\/approved-skin\.css"/);
+  assert.match(skin, /\.dc-approved-skin \.app-header/);
+});
+
+test("kid navigation appears once in the working header", () => {
+  const header = source.slice(source.indexOf('<header className="app-header">'), source.indexOf('<div className="app-body">'));
+  const inMain = source.slice(source.indexOf('<main className="portal-main">'));
+  assert.match(header, /view === "kid" && \(<nav className="kid-subnav"/);
+  assert.doesNotMatch(inMain, /aria-label="Kid area"/);
+  for (const id of ["home", "bible", "books", "activities", "trophies"]) {
+    assert.match(header, new RegExp('setKidSection\\("' + id + '"\\)'));
+  }
+});
+
+test("approved hero remains personalized and never embeds static test names or mock progress", () => {
+  assert.match(source, /dc-approved-name/);
+  assert.match(source, /selectedChild\?\.display_name/);
+  assert.match(source, /snapshot\.xp/);
+  assert.match(source, /snapshot\.badges/);
+  assert.match(source, /dc-approved-actions/);
+  assert.match(source, /challenges\.length \? showChallenge/);
+  assert.doesNotMatch(skin, /Sally|QA Comet|QA Nova/);
+});
+
+test("only exact approved screenshot crops, not full screen pictures, are reused for artwork", () => {
+  for (const name of ["home-hero-art.webp","adventure-sidebar-path.webp","faith-courage-victory.webp"]) {
+    const file = join(root, "public", "assets", "approved-ui", name);
+    const bytes = readFileSync(file);
+    assert.equal(bytes.toString("ascii", 0, 4), "RIFF");
+    assert.equal(bytes.toString("ascii", 8, 12), "WEBP");
+    assert.ok(bytes.length > 5000 && bytes.length < 300000);
+    assert.match(skin + source, new RegExp(name.replace(/\./g, '\\.')));
+  }
+});
+
+
+test("approved three-shield hero art keeps its landscape ratio and cannot push greeting off-screen",()=>{
+  const patch = skin.slice(skin.indexOf("/* Exact-reference Adventure Home visual correction: October 16, 2026 */"));
+  assert.ok(patch.length > 500, "visual correction block present");
+  assert.match(patch, /\.kid-hero-motto img\.dc-approved-motto \{/);
+  assert.match(patch, /aspect-ratio:\s*324\s*\/\s*122/);
+  assert.match(patch, /max-height:\s*115px/);
+  assert.match(patch, /overflow-wrap:\s*anywhere/);
+  assert.match(patch, /\.kid-adventure-hero:before \{ display: none; \}/);
+});
+
+test("approved sidebar scenic artwork is cropped without repeating child names",()=>{
+  const patch=skin.slice(skin.indexOf("/* Exact-reference Adventure Home visual correction: October 16, 2026 */"));
+  assert.match(patch, /height:\s*min\(586px,\s*100%\)/);
+  assert.match(patch, /adventure-sidebar-path\.webp/);
+  assert.match(patch, /\.side-panel::after/);
+});
+
+test("Book 1 cover uses natural proportions and selected child's greeting is dynamic",()=>{
+  assert.match(skin, /\.continue-book-cover img \{[\s\S]*?aspect-ratio:\s*auto/);
+  assert.match(source, /selectedChild\?\.display_name/);
+  assert.doesNotMatch(source, /Hey,\s*Sally!/);
+});
+
+test("October 16 hero refinement is decoration behind dynamic text only", () => {
+  const marker = "October 16 founder-approved refinement: LEFT HERO BACKGROUND ONLY";
+  const block = skin.slice(skin.indexOf(marker));
+  assert.ok(block.length > 500, "approved limited treatment exists");
+  assert.match(block, /kid-adventure-hero-copy::before/);
+  assert.match(block, /kid-adventure-hero-copy::after/);
+  assert.match(block, /rgba\(5,28,64,\.98\)/);
+  assert.match(block, /kid-adventure-hero-copy > \*/);
+  assert.match(source, /selectedChild\?\.display_name/);
+  assert.doesNotMatch(source, /dustin_s_courageous_adventure_club\.png/);
+});
+
+test("approved UI polish is included after the locked skin and never hardcodes a child",()=>{
+  const entry=readFileSync(join(root,"src","main.tsx"),"utf8");
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.ok(entry.indexOf("approved-polish.css") > entry.indexOf("approved-skin.css"));
+  assert.match(polish,/\.dc-approved-skin \.bible-hero/);
+  assert.match(polish,/\.dc-approved-skin \.bookshelf/);
+  assert.match(polish,/\.dc-approved-skin \.trophy-section/);
+  assert.match(polish,/clip-path:polygon/);
+  assert.doesNotMatch(polish,/Sally|QA Nova|QA Comet|mock XP/);
+  assert.match(source,/selectedChild\?\.display_name/);
+});
+test("Book 1 coloring retains approved printable completion and removes outdated copy",()=>{
+  const hub=readFileSync(join(root,"src","components","ActivitiesHub.tsx"),"utf8");
+  const zone=readFileSync(join(root,"src","components","BookOneActivityZone.tsx"),"utf8");
+  assert.match(hub,/dc-resource-preview/);
+  assert.match(hub,/completeActivity\(supabase,childId,item.id\)/);
+  assert.match(zone,/Digital coloring is available now/);
+  assert.doesNotMatch(zone,/Digital tap-to-color and artwork saving will be added separately/);
+});
+
+test("Bookshelf adventure and companion content span full width without changing auth logic",()=>{
+  const book=readFileSync(join(root,"src","components","Bookshelf.tsx"),"utf8");
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  const contentEnd=book.indexOf('{selectedHasAccess && (',book.indexOf('className="book-companion-content"'));
+  assert.ok(book.lastIndexOf('</div>',contentEnd) > book.indexOf('className="book-companion-content"'));
+  assert.match(polish,/book-companion > \.book-adventure-path/);
+  assert.match(polish,/book-companion > \.book-companion-grid/);
+  assert.match(polish,/bookshelf > \.book-shelf-row:has/);
+  assert.match(book,/readBookAdventure|loadAdventure/);
+});
+test("single-card Bible screens and activity shield stay within the approved skin",()=>{
+  const polish=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(polish,/memory-grid:has\(> \.memory-card:only-child\)/);
+  assert.match(polish,/identity-truth-grid:has\(> \.identity-truth-card:only-child\)/);
+  assert.match(polish,/prayer-grid:has\(> \.prayer-card:only-child\)/);
+  assert.match(polish,/mix-blend-mode: multiply/);
+});
+
+test("Bible Devotionals and Kid Challenge modal retain approved blue contrast",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.dc-approved-skin \.devotional-series-card/);
+  assert.match(css,/\.dc-approved-skin \.devotional-day \{/);
+  assert.match(css,/\.dc-approved-skin dialog\.native-modal\.challenge-dialog/);
+  assert.match(css,/\.dc-approved-skin \.challenge-dialog \.step-row/);
+  assert.match(css,/\.dc-approved-skin \.trophy-section \.empty-state/);
+  assert.match(css,/@media\(max-width:700px\)/);
+});
+test("Challenge approval copy follows the parent or guardian preference",()=>{
+  const challenge=readFileSync(join(root,"src","components","ChallengeDialog.tsx"),"utf8");
+  assert.match(challenge,/familyRoleLower\(relationship\)/);
+  assert.match(challenge,/goes to your \{roleLower\} for approval/);
+  assert.doesNotMatch(challenge,/goes to your parent or guardian for approval/);
+  assert.match(challenge,/saveChallengeCompletion\(/);
+});
+
+test("founder-approved rail gradient and scenic fade remain decorative",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.dc-approved-skin \.child-switcher\.active/);
+  assert.match(css,/linear-gradient\(105deg,#153f79/);
+  assert.match(css,/\.dc-approved-skin \.side-panel::after/);
+  assert.match(css,/-webkit-mask-image:\s*linear-gradient\(/);
+  const skin=readFileSync(join(root,"src","approved-skin.css"),"utf8");
+  assert.match(skin,/adventure-sidebar-path\.webp/);
+  assert.doesNotMatch(css,/Sally|QA Nova|QA Comet/);
+  assert.match(source,/selectedChild\?\.display_name/);
+});
+test("challenge badge reflects real count and no fictional challenge filler",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(source,/challenges\.length === 1 \? "challenge" : "challenges"/);
+  assert.match(source,/challenges\.map\(\(challenge\) =>/);
+  assert.match(css,/\.challenge-grid:has\(> \.challenge-card:only-child\)/);
+});
+test("prayer spacing and hero crop stay faithful and accessible",()=>{
+  const css=readFileSync(join(root,"src","approved-polish.css"),"utf8");
+  assert.match(css,/\.bible-hero::before/);
+  assert.match(css,/\.prayer-card:only-child/);
+  assert.match(css,/\.challenge-dialog \.modal-close:focus-visible/);
+});

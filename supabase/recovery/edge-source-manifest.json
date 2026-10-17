@@ -1,0 +1,208 @@
+[
+  {
+    "slug": "public-site-form",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/public-site-form/deno.json",
+        "sha256": "dd1395e2767f6a8e57689cedb50cdd7c46c32958af590085f5e8117770d68e3f"
+      },
+      {
+        "path": "supabase/functions/public-site-form/index.ts",
+        "sha256": "21a650c9c4650188237173d193550ae48563cfc637c3e21bc184e48c288feb22"
+      }
+    ],
+    "environment_names": [
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "privacy-export",
+    "version": 1,
+    "verify_jwt": true,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/privacy-export/index.ts",
+        "sha256": "96dd2c01ccae0ad0d286b4a0307ebd995d1a33075812188ad9a475c017026124"
+      }
+    ],
+    "environment_names": [
+      "SUPABASE_PUBLISHABLE_KEYS",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "privacy-export-cleanup",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/privacy-export-cleanup/index.ts",
+        "sha256": "583bf016dab5ce8e734afce2c53a181b12c744d16f5d5e50f7bfc18d2c0cb083"
+      }
+    ],
+    "environment_names": [
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "notification-delivery-worker",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/notification-delivery-worker/deno.json",
+        "sha256": "dd1395e2767f6a8e57689cedb50cdd7c46c32958af590085f5e8117770d68e3f"
+      },
+      {
+        "path": "supabase/functions/notification-delivery-worker/index.ts",
+        "sha256": "8a29ca33a8f8c7969c3f92bce9dc4cc132348992e852f7aa707e4558df2ef4a5"
+      }
+    ],
+    "environment_names": [
+      "DC_EMAIL_FROM",
+      "DC_EMAIL_PROVIDER",
+      "DC_PUSH_PROVIDER",
+      "DC_PUSH_WEBHOOK_SECRET",
+      "DC_PUSH_WEBHOOK_URL",
+      "RESEND_API_KEY",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "notification-delivery-worker-v2",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "tracked and exact-match",
+    "files": [
+      {
+        "path": "supabase/functions/notification-delivery-worker-v2/index.ts",
+        "sha256": "d5e6b1f28b916013eea9398a8579d952d93429af5e1c5052708788de8e60b75b"
+      }
+    ],
+    "environment_names": [
+      "DC_EMAIL_FROM",
+      "DC_EMAIL_PROVIDER",
+      "DC_PUSH_PROVIDER",
+      "DC_PUSH_WEBHOOK_SECRET",
+      "DC_PUSH_WEBHOOK_URL",
+      "RESEND_API_KEY",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "commerce-checkout",
+    "version": 4,
+    "verify_jwt": true,
+    "initial_classification": "tracked and exact-match",
+    "files": [
+      {
+        "path": "supabase/functions/commerce-checkout/index.ts",
+        "sha256": "c79ab1a537aa799728427b760183ba22ce11d1f111a146abd5ec68f41fbca699"
+      },
+      {
+        "path": "supabase/functions/commerce-checkout/handoff.ts",
+        "sha256": "fd7e601577a9eb8dab5485840624cb4aedacc4f8173babffa3fede278daee778"
+      }
+    ],
+    "environment_names": [
+      "DC_COMMERCE_CHECKOUT_ADAPTER_SECRET",
+      "DC_COMMERCE_CHECKOUT_ADAPTER_URL",
+      "DC_COMMERCE_PROVIDER",
+      "SUPABASE_PUBLISHABLE_KEYS",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ],
+    "current_classification": "approved handoff forward repair; deployed sources verified byte-exact"
+  },
+  {
+    "slug": "commerce-payment-webhook",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/commerce-payment-webhook/index.ts",
+        "sha256": "52d15436cbc4ef3e3ba17f390bd9bebfcefd5b21408e5490c54c526dd1fc321d"
+      }
+    ],
+    "environment_names": [
+      "DC_COMMERCE_WEBHOOK_SECRET",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "commerce-payment-webhook-v2",
+    "version": 3,
+    "verify_jwt": false,
+    "initial_classification": "tracked and exact-match",
+    "files": [
+      {
+        "path": "supabase/functions/commerce-payment-webhook-v2/index.ts",
+        "sha256": "a3e6a16e4a0ce11ceec2008d71df3e9382003e5d5862bab4a2058504a1144986"
+      },
+      {
+        "path": "supabase/functions/commerce-payment-webhook-v2/validation.ts",
+        "sha256": "72a069e4baa7f6611123d7706c929dd1aa70a3f19f7e27c43b482be4f15e2d26"
+      }
+    ],
+    "environment_names": [
+      "DC_COMMERCE_WEBHOOK_SECRET",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "public-site-form-v2",
+    "version": 1,
+    "verify_jwt": false,
+    "initial_classification": "tracked and exact-match",
+    "files": [
+      {
+        "path": "supabase/functions/public-site-form-v2/index.ts",
+        "sha256": "31411f74a838616506ffbc9ecdd5d3b259095eb0f8e1e6f8ff4bc69bde3f2426"
+      }
+    ],
+    "environment_names": [
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  },
+  {
+    "slug": "integration-provider-test",
+    "version": 1,
+    "verify_jwt": true,
+    "initial_classification": "deployed-only; source now recovered exactly",
+    "files": [
+      {
+        "path": "supabase/functions/integration-provider-test/index.ts",
+        "sha256": "4a5a7ee7b0812c433ca0ff55e06704c770fb17f9a98bb72ac46fa8a8b8ec598f"
+      }
+    ],
+    "environment_names": [
+      "DC_COMMERCE_CHECKOUT_ADAPTER_SECRET",
+      "DC_COMMERCE_CHECKOUT_ADAPTER_URL",
+      "DC_COMMERCE_PROVIDER",
+      "DC_EMAIL_FROM",
+      "DC_EMAIL_PROVIDER",
+      "DC_PUSH_PROVIDER",
+      "DC_PUSH_WEBHOOK_SECRET",
+      "DC_PUSH_WEBHOOK_URL",
+      "RESEND_API_KEY",
+      "SUPABASE_PUBLISHABLE_KEYS",
+      "SUPABASE_SECRET_KEYS",
+      "SUPABASE_URL"
+    ]
+  }
+]
