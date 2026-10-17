@@ -142,7 +142,8 @@ test("founder-approved rail gradient and scenic fade remain decorative",()=>{
   assert.match(css,/linear-gradient\(105deg,#153f79/);
   assert.match(css,/\.dc-approved-skin \.side-panel::after/);
   assert.match(css,/-webkit-mask-image:\s*linear-gradient\(/);
-  assert.match(css,/adventure-sidebar-path\.webp/);
+  const skin=readFileSync(join(root,"src","approved-skin.css"),"utf8");
+  assert.match(skin,/adventure-sidebar-path\.webp/);
   assert.doesNotMatch(css,/Sally|QA Nova|QA Comet/);
   assert.match(source,/selectedChild\?\.display_name/);
 });
