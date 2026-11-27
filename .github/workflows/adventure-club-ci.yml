@@ -32,9 +32,15 @@ jobs:
         run: |
           python3 supabase/recovery/generate.py
           git diff --exit-code -- supabase/recovery/bootstrap.sql
+      # Use the official pinned CLI action (GitHub release fallback). The
+      # npm registry tarball for @ecies/ciphers@0.2.7 is currently missing.
+      - name: Install pinned Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.118.0
       - name: Start isolated Supabase platform
         run: >-
-          npx --yes supabase@2.118.0 start --workdir supabase/recovery/local
+          supabase start --workdir supabase/recovery/local
           --exclude studio,postgres-meta,realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
       - name: Restore and verify database security
         run: python3 supabase/recovery/run.py --supabase --port 55432
@@ -44,7 +50,7 @@ jobs:
         run: python3 supabase/recovery/run.py --supabase --port 55432 --verify-only
       - name: Stop isolated Supabase platform
         if: always()
-        run: npx --yes supabase@2.118.0 stop --workdir supabase/recovery/local --no-backup
+        run: supabase stop --workdir supabase/recovery/local --no-backup
 
   build:
     runs-on: ubuntu-latest
