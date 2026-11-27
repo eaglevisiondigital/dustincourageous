@@ -1,0 +1,71 @@
+/* Dustin Courageous single global template. Not copied per household.
+   Parent/Family Hub inherits the original approved DC colors and artwork. */
+.dc-global-template{--dc-navy:#06152f;--dc-royal:#0b3874;--dc-blue:#009bfc;--dc-red:#dc2331;--dc-gold:#ffda56;--dc-white:#fffaf3}
+.dc-family-skin{min-height:100dvh;color:var(--dc-white);background:radial-gradient(circle at 70% 4%,#084b91,transparent 36%),#06142f}
+.dc-family-skin .app-header{position:sticky;top:0;z-index:30;display:flex;gap:14px;align-items:center;justify-content:space-between;min-height:86px;padding:10px 23px;background:#030e25;border-bottom:1px solid #195494}
+.dc-family-skin .brand img{width:57px;height:57px;object-fit:contain;border:0;border-radius:0;clip-path:polygon(50% 1%,89% 10%,94% 18%,94% 49%,87% 70%,72% 85%,50% 99%,28% 85%,13% 70%,6% 49%,6% 18%,11% 10%)}
+.dc-family-skin .brand strong{color:white;font-weight:950;font-style:italic}
+.dc-family-skin .brand span{color:#ffdc58;font-weight:900;text-transform:uppercase}
+.dc-family-skin .header-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.dc-family-skin .header-actions .mode{color:#fff;min-height:43px;border-radius:12px;background:linear-gradient(135deg,#12427b,#071b39);border:1px solid #367fc1;font-weight:850}
+.dc-family-skin .header-actions .mode.active{border-color:#4dc7ff;box-shadow:0 0 13px #038df966}
+.dc-family-skin .app-body{display:grid;grid-template-columns:245px minmax(0,1fr)}
+.dc-family-skin .side-panel{position:sticky;top:86px;height:calc(100dvh - 86px);align-self:start;overflow:hidden;isolation:isolate;padding:20px 14px;background:linear-gradient(145deg,#06162f,#102d61 60%,#07182f);border-right:1px solid #196db7}
+.dc-family-skin .side-panel:after{content:"";position:absolute;inset:auto 0 0;height:min(520px,calc(100% - 275px));z-index:-1;background:url('/assets/approved-ui/adventure-sidebar-path.webp') bottom center/100% auto no-repeat;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 35%);mask-image:linear-gradient(to bottom,transparent,#000 35%)}
+.dc-family-skin .side-panel>.eyebrow{color:#e7efff;font-size:.76rem;font-weight:900;letter-spacing:.13em}
+.dc-family-skin .child-switcher{min-height:55px;border:1px solid transparent;border-radius:14px;color:white;font-weight:850;padding:8px}
+.dc-family-skin .child-switcher.active{border-color:#3890e0;background:linear-gradient(105deg,#133f79,#4f305c 60%,#762340)}
+.dc-family-skin .avatar{border:2px solid #ff6a74;background:linear-gradient(#f3313a,#b51420);color:white;border-radius:50%}
+.dc-family-skin .add-link{color:#ffdb60;font-weight:850}
+.dc-family-skin .portal-main{max-width:1700px;width:100%;min-width:0;margin:0 auto;padding:22px clamp(15px,2.6vw,32px) 45px}
+.dc-family-skin .portal-main>.kid-subnav{display:flex;gap:8px;flex-wrap:wrap;padding:0;margin:0 0 17px;border:0;background:transparent}
+.dc-family-skin .portal-main>.kid-subnav .kid-subnav-button{min-height:45px;padding:10px 14px;border-radius:12px;background:linear-gradient(140deg,#0d3265,#081d3b);border:1px solid #326eb4;color:white;font-weight:850;font-size:.85rem;white-space:normal}
+.dc-family-skin .portal-main>.kid-subnav .kid-subnav-button.active{background:linear-gradient(#0875c8,#0a3165);border-color:#32bbff;box-shadow:0 0 14px #048df970}
+.dc-family-skin .parent-hero{position:relative;isolation:isolate;overflow:hidden;min-height:278px;display:flex;align-items:center;justify-content:space-between;padding:clamp(22px,3vw,42px);gap:22px;border-radius:27px;border:2px solid #078bf1;background:linear-gradient(110deg,#08204b,#073f78)}
+.dc-family-skin .parent-hero:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:url('/assets/approved-ui/home-hero-art.webp') right center/auto 115% no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent 32%,#000 87%);mask-image:linear-gradient(90deg,transparent 32%,#000 87%);opacity:.85}
+.dc-family-skin .parent-hero:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(90deg,rgba(3,16,38,.95),rgba(3,20,49,.72) 48%,transparent 83%)}
+.dc-family-skin .parent-hero>*{position:relative;z-index:1}
+.dc-family-skin .parent-hero h1{font-size:clamp(2.2rem,4vw,4.25rem);line-height:1.08;color:#fff;text-shadow:2px 3px #a81a2d;letter-spacing:-.035em;margin:8px 0 12px}
+.dc-family-skin .parent-hero p:not(.eyebrow){color:#f2f6ff;max-width:550px;line-height:1.5}
+.dc-family-skin .dc-family-hero-kicker{color:#ffdc5c!important;font-weight:950;font-size:.75rem!important;letter-spacing:.14em}
+.dc-family-skin .dc-family-hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:13px;max-width:300px}
+.dc-family-skin .household-badge{border:1px solid #ff6975;background:linear-gradient(120deg,#e32d39,#a41724);color:white;border-radius:999px;font-weight:950;padding:12px 17px;max-width:220px}
+.dc-family-skin .dc-family-values{display:flex;gap:8px}
+.dc-family-skin .dc-family-values span{display:grid;gap:3px;place-items:center;color:#ffe568;font-size:1.2rem;background:#081c3edf;border:1px solid #e9b84280;border-radius:12px;padding:7px;min-width:53px}
+.dc-family-skin .dc-family-values small{font-size:.55rem;font-weight:900}
+.dc-family-skin .family-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:17px}
+.dc-family-skin .family-child-card{border:1px solid #3676b6;background:linear-gradient(140deg,#0c2f60,#071a35);border-radius:18px;min-width:0;padding:17px}
+.dc-family-skin .family-child-card h3{color:#fff}
+.dc-family-skin .family-child-card p{color:#bcd6eb}
+.dc-family-skin .family-child-card .text-button{background:linear-gradient(#0a72c7,#083467);border:1px solid #47bbff;border-radius:12px;color:white;min-height:42px;padding:10px;font-weight:850}
+.dc-family-skin .parent-modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dc-family-skin .parent-modules article{background:linear-gradient(120deg,#103869,#071a39);border:1px solid #277dc3;border-radius:18px;padding:22px;color:#fff}
+.dc-family-skin .parent-modules article:nth-child(2){background:linear-gradient(120deg,#473015,#181c39);border-color:#cb9939}
+.dc-family-skin .parent-modules article:nth-child(3){background:linear-gradient(120deg,#10543f,#08273b);border-color:#2b976b}
+.dc-family-skin .parent-modules article:nth-child(4){background:linear-gradient(120deg,#3c2b6b,#131a3c);border-color:#8161ce}
+.dc-family-skin .parent-modules span{color:#ffce56}
+.dc-family-skin .parent-modules strong{color:#fff}
+.dc-family-skin .parent-progress-overview,.dc-family-skin .membership-access-card,.dc-family-skin .parent-child-progress-card{border:1px solid #3477bb;border-radius:20px;background:linear-gradient(130deg,#0e315f,#081a39);color:#fff;padding:22px}
+.dc-family-skin .parent-progress-grid article,.dc-family-skin .membership-feature-grid>div,.dc-family-skin .parent-book-progress-card{border:1px solid #306da6;background:#081a34;border-radius:13px;color:#fff}
+.dc-family-skin .parent-progress-grid span,.dc-family-skin .membership-footnote{color:#d3dfef}
+.dc-family-skin .parent-child-tab{border:1px solid #477db8;background:#0b2b53;color:white}
+.dc-family-skin .parent-child-tab.active{border-color:#fc6071;background:linear-gradient(120deg,#b42d3e,#292d78)}
+.dc-family-skin .dc-family-access{margin:20px 0;padding:clamp(18px,2.5vw,27px);border:2px solid #298be3;border-radius:21px;background:linear-gradient(130deg,#103c78,#081c3c 75%)}
+.dc-family-skin .dc-family-access-heading{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.dc-family-skin .dc-family-access-heading h2{font-size:clamp(1.5rem,2.6vw,2.4rem);margin:7px 0;color:#fff}
+.dc-family-skin .dc-family-access-heading p:not(.eyebrow){color:#d3e6fa;line-height:1.5;max-width:850px}
+.dc-family-skin .dc-family-access-shield{font-size:2.2rem}
+.dc-family-skin .dc-family-books-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:14px 0}
+.dc-family-skin .dc-family-book{background:#091a34;border:1px solid #3577b4;border-radius:14px;padding:15px}
+.dc-family-skin .dc-family-book h3{color:#fff;margin:4px 0}
+.dc-family-skin .dc-family-book small{display:block;color:#bbd2e8;line-height:1.4}
+.dc-family-skin .dc-access-available{color:#a8f1cc;font-weight:850}
+.dc-family-skin .dc-access-locked{color:#f9ce80;font-weight:850}
+.dc-family-skin .dc-family-access-kids{display:flex;flex-wrap:wrap;gap:12px;margin:19px 0}
+.dc-family-skin .dc-family-access-kid{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:9px 12px;border:1px solid #3377b6;background:#071a3b;border-radius:14px}
+.dc-family-skin .dc-family-avatar{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#d12332;color:white;font-weight:950}
+.dc-family-skin .dc-family-access-kid button{min-height:42px;padding:8px 12px;border-radius:11px;color:white;font-weight:850;background:#0b64ab;border:1px solid #40bdff}
+.dc-family-skin .dc-family-access-note{color:#d1e0f0;line-height:1.5;font-size:.9rem}
+.dc-global-template button:focus-visible,.dc-global-template a:focus-visible{outline:3px solid #ffdc55;outline-offset:3px}
+@media(max-width:1100px){.dc-family-skin .app-body{grid-template-columns:1fr}.dc-family-skin .side-panel{position:relative;top:0;height:auto;padding:14px 16px}.dc-family-skin .side-panel:after{display:none}.dc-family-skin .children-list{display:flex;overflow-x:auto}.dc-family-skin .child-switcher{min-width:max-content}}
+@media(max-width:760px){.dc-family-skin .app-header{padding:9px 12px;flex-wrap:wrap}.dc-family-skin .brand img{width:42px;height:42px}.dc-family-skin .portal-main{padding:13px 12px}.dc-family-skin .portal-main>.kid-subnav{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.dc-family-skin .portal-main>.kid-subnav>.kid-subnav-button{flex:0 0 auto;min-width:90px}.dc-family-skin .parent-hero{min-height:345px;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:18px}.dc-family-skin .parent-hero:before{background-size:auto 74%;background-position:right top}.dc-family-skin .parent-hero:after{background:linear-gradient(180deg,transparent,#061a38fa 62%)}.dc-family-skin .dc-family-hero-right{align-items:flex-start}.dc-family-skin .family-grid,.dc-family-skin .parent-modules{grid-template-columns:1fr}.dc-family-skin .family-child-card{grid-template-columns:auto minmax(0,1fr)}.dc-family-skin .family-child-card .text-button{grid-column:2;justify-self:start}.dc-family-skin .parent-progress-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
