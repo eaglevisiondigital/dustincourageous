@@ -235,3 +235,14 @@ and actual signed-in desktop/mobile screenshots are reviewed.
 All changes remain on `build/adventure-club-app`. `main` is untouched.
 No database migration, payment-provider activation, private book publication
 or production-release authorization occurred.
+
+
+## November 27: Shared global Dustin UI template candidate
+
+One global app class `dc-global-v1` powers both approved kid skin and
+matching Family Hub skin. Added guarded /join entry intents and Family Hub
+membership/book-companion access visibility using existing authorized RPC
+(no family copied; no RLS/SQL change). See
+`docs/design/GLOBAL_SHARED_FAMILY_TEMPLATE_2026-11-27.md`.
+Current status: implementation awaiting CI, signed-in browser and QR physical
+acceptance. Public main/production untouched.

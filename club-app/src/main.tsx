@@ -7,6 +7,7 @@ import "./styles.css";
 import "./approved-skin.css";
 import "./approved-polish.css";
 import "./approved-activities.css";
+import "./global-template.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -10,6 +10,8 @@ import { childProfileInput, householdInput, createOnboardingAttempt } from "./li
 import { readChildDashboard, type ChildSnapshot } from "./lib/childDashboard";
 import { PasswordField } from "./components/PasswordField";
 import { familyControlLabel, familyRoleLabel, familyRoleLower, type FamilyRelationship } from "./lib/familyDisplay";
+import { parseAdventureEntry } from "./lib/adventureEntry";
+import { FamilyAccessOverview } from "./components/FamilyAccessOverview";
 
 const AdminPortal = lazy(() =>
   import("./components/AdminPortal").then((module) => ({ default: module.AdminPortal }))
@@ -101,7 +103,9 @@ function LoadingScreen() {
 
 function AuthScreen({ initialMessage = "" }: { initialMessage?: string }) {
   const leaderInvitation = window.location.pathname.startsWith("/org-invite");
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">(
+    () => parseAdventureEntry(window.location.pathname,window.location.search).join ? "signup" : "signin"
+  );
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cellPhone, setCellPhone] = useState("");
@@ -638,9 +642,12 @@ function FamilyPortal({
   );
   const [unlockOpen, setUnlockOpen] = useState(false);
   const [view, setView] = useState<"kid" | "parent">(
-    () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ? "kid" : "parent"
+    () => localStorage.getItem("dc_adventure_club_kid_locked") === "1" ||
+      parseAdventureEntry(window.location.pathname,window.location.search).join ? "kid" : "parent"
   );
-  const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">("home");
+  const [kidSection, setKidSection] = useState<"home" | "bible" | "books" | "activities" | "trophies">(
+    () => parseAdventureEntry(window.location.pathname,window.location.search).section
+  );
   const [parentSection, setParentSection] = useState<"overview" | "faith" | "groups" | "events" | "store" | "settings">(
     () => ["success", "canceled"].includes(new URLSearchParams(window.location.search).get("checkout") ?? "")
       ? "store" : "overview"
@@ -738,7 +745,7 @@ function FamilyPortal({
   }
 
   return (
-    <div className={view === "kid" ? "app-shell kid-experience-v2 dc-approved-skin" : "app-shell"}>
+    <div className={view === "kid" ? "app-shell dc-global-template kid-experience-v2 dc-approved-skin" : "app-shell dc-global-template dc-family-skin"} data-template="dc-global-v1">
       <header className="app-header">
         <Brand />
         {view === "kid" && (<nav className="kid-subnav" aria-label="Kid area">
@@ -1094,13 +1101,22 @@ function FamilyPortal({
                 />
               ) : (
                 <>
-              <section className="parent-hero">
+              <section className="parent-hero dc-family-hero">
                 <div>
+                  <p className="dc-family-hero-kicker">DUSTIN COURAGEOUS ADVENTURE CLUB</p>
                   <p className="eyebrow red">Family Hub</p>
                   <h1>{household.name}</h1>
                   <p>See progress, manage profiles, approve rewards, and help your kids keep growing.</p>
                 </div>
-                <div className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</div>
+                <div className="dc-family-hero-right">
+                  <div className="household-badge">{familyControlLabel(user.user_metadata?.family_relationship)}</div>
+                  <div className="dc-family-values" aria-label="Faith Courage Victory Family">
+                    <span>✝<small>FAITH</small></span>
+                    <span>◆<small>COURAGE</small></span>
+                    <span>★<small>VICTORY</small></span>
+                    <span>♥<small>FAMILY</small></span>
+                  </div>
+                </div>
               </section>
 
               <section className="family-grid">
@@ -1125,6 +1141,13 @@ function FamilyPortal({
                 ))}
               </section>
 
+              <FamilyAccessOverview
+                householdId={household.id}
+                children={children.map(child=>({id:child.id,display_name:child.display_name}))}
+                onOpenBooks={childId=>{selectChild(childId);setKidSection("books");setView("kid");}}
+                onOpenActivities={childId=>{selectChild(childId);setKidSection("activities");setView("kid");}}
+              />
+              <MembershipAccessCard householdId={household.id} />
               <section className="parent-modules">
                 <article><span>Progress</span><strong>See XP, streaks, badges, and completed challenges.</strong></article>
                 <article><span>Rewards</span><strong>Review and approve rewards your kids unlock.</strong></article>

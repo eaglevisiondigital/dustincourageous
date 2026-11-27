@@ -9,7 +9,7 @@ const skin = readFileSync(join(root, "src", "approved-skin.css"), "utf8");
 const entry = readFileSync(join(root, "src", "main.tsx"), "utf8");
 
 test("locked approved skin is applied only to Kid View", () => {
-  assert.match(source, /view === "kid" \? "app-shell kid-experience-v2 dc-approved-skin" : "app-shell"/);
+  assert.match(source, /view === "kid" \? "app-shell dc-global-template kid-experience-v2 dc-approved-skin" : "app-shell dc-global-template dc-family-skin"/);
   assert.match(entry, /import "\.\/approved-skin\.css"/);
   assert.match(skin, /\.dc-approved-skin \.app-header/);
 });

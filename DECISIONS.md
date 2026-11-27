@@ -187,3 +187,13 @@ Adventure Home hero, documented in
 It does not replace the three approved screenshots or authorize any other layout
 or character changes. The approved screenshot is **not** to be embedded as a
 flat banner because `Hey, {child}!` must remain dynamically personalized.
+
+
+## November 27 global standard, not Sally-only
+
+Approved requirement: Dustin Courageous Kid View and Family Hub are one
+globally versioned app and stylesheet. All past and future families receive
+the same approved design/components; their data remains isolated behind Auth
+and RLS. No per-account copies, feature forks or hardcoded Sally values.
+Production deployment and physical-QR redirect remain separately gated
+pending verified signed-in desktop/mobile acceptance.
