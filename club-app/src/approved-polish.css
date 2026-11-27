@@ -1,0 +1,822 @@
+/*
+ * Approved Adventure Club Oct 16 polish. Visual only.
+ * The three October 15 references remain the sole approved designs.
+ * Scoped to locked Kid View; all RLS, Auth, XP and reader logic unchanged.
+ */
+
+/* Preserve the DC emblem; hide only the external white rectangular tile. */
+.dc-approved-skin .app-header .brand img {
+  border-radius:0;
+  background:transparent;
+  clip-path:polygon(50% 1%,89% 10%,94% 18%,94% 49%,87% 70%,72% 85%,50% 99%,28% 85%,13% 70%,6% 49%,6% 18%,11% 10%);
+}
+@media(min-width:1101px){
+  .dc-approved-skin .side-panel{background-color:#051432;}
+  .dc-approved-skin .side-panel::after{
+    height:min(515px,calc(100% - 285px));
+    background-position:bottom center;
+  }
+}
+/* Reuse the exact approved hero artwork, never generated lookalike art.
+   Calm dark-blue overlay keeps headings legible in learning sections. */
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero{
+  min-height:210px;
+  padding:clamp(24px,3vw,40px);
+  border:2px solid #167ad4;
+  border-radius:25px;
+  box-shadow:0 13px 26px #010a248f,inset 0 1px #ffffff1b;
+  background:
+    linear-gradient(90deg,#06152f 0%,rgba(4,24,57,.98) 44%,rgba(4,28,66,.86) 66%,rgba(4,25,58,.60) 100%),
+    url('/assets/approved-ui/home-hero-art.webp') right center/auto 110% no-repeat,
+    #05172f;
+}
+.dc-approved-skin .bible-hero h1,
+.dc-approved-skin .bookshelf-hero h1,
+.dc-approved-skin .trophy-hero h1{
+  color:#fffaf2;
+  font-size:clamp(2rem,3.7vw,3.7rem);
+  line-height:1.12;
+  letter-spacing:-.035em;
+  margin:0 0 10px;
+  text-shadow:0 3px 14px #00132e;
+}
+.dc-approved-skin .bible-hero p:not(.eyebrow),
+.dc-approved-skin .bookshelf-hero p:not(.eyebrow),
+.dc-approved-skin .trophy-hero p:not(.eyebrow){
+  max-width:580px;
+  color:#e4eeff;
+  font-size:1rem;
+  line-height:1.5;
+}
+.dc-approved-skin .bible-hero-mark{
+  border:2px solid #e2ad40;
+  background:radial-gradient(circle,#694218,#142e50 78%);
+  color:#ffdf65;
+  box-shadow:0 0 22px #e6b5484a;
+}
+.dc-approved-skin .bookshelf-count{
+  border:2px solid #5caafa;
+  background:linear-gradient(145deg,#143d72,#06152e);
+  border-radius:16px;
+}
+.dc-approved-skin .bookshelf-count strong{color:#fff;}
+.dc-approved-skin .bookshelf-count span{color:#cee6ff;}
+.dc-approved-skin .level-medallion{
+  border:3px solid #e8bd52;
+  background:radial-gradient(circle at 35% 25%,#7b5725,#1b2945 73%,#081428);
+  box-shadow:0 6px 24px #0008,0 0 18px #ffcc4e32;
+}
+.dc-approved-skin .level-medallion strong{color:#fff7cf;}
+
+/* Books: avoid one tiny book floating in an otherwise empty row. */
+@media(min-width:1100px){
+  .dc-approved-skin .bookshelf{
+    grid-template-columns:minmax(210px,.23fr) minmax(0,.77fr);
+    gap:16px;align-items:start;
+  }
+  .dc-approved-skin .bookshelf>.bookshelf-hero,
+  .dc-approved-skin .bookshelf>.form-message,
+  .dc-approved-skin .bookshelf>.muted{grid-column:1/-1;}
+  .dc-approved-skin .bookshelf>.book-shelf-row{
+    grid-column:1;grid-row:2;display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;overflow:visible;padding:0;
+  }
+  .dc-approved-skin .bookshelf>.book-companion{
+    grid-column:2;grid-row:2;margin:0;
+  }
+  .dc-approved-skin .bookshelf:not(:has(>.book-companion))>.book-shelf-row{
+    grid-column:1/-1;
+    grid-template-columns:repeat(auto-fill,minmax(180px,220px));
+  }
+}
+.dc-approved-skin .book-spine-card{
+  border:2px solid #157ac9;
+  border-radius:17px;
+  background:linear-gradient(150deg,#104178,#071a37);
+  color:#fffaf2;
+  padding:12px;
+}
+.dc-approved-skin .book-spine-card.active{
+  border-color:#f0444e;box-shadow:0 0 0 2px #f0444e36;
+}
+.dc-approved-skin .book-spine-card img{
+  object-fit:contain;background:#07162f;
+}
+.dc-approved-skin .book-spine-card span{color:#ffdf60;}
+.dc-approved-skin .book-spine-card small{color:#c5d8f1;}
+.dc-approved-skin .book-companion{
+  min-width:0;grid-template-columns:minmax(140px,.27fr) minmax(0,1fr);
+  gap:clamp(13px,2vw,24px);
+  padding:clamp(16px,2vw,28px);
+  border:2px solid #187acc;
+  border-radius:23px;
+  background:linear-gradient(145deg,#092c5a,#08172d 65%,#092744);
+}
+.dc-approved-skin .book-companion-content{min-width:0;}
+.dc-approved-skin .book-companion-cover img{
+  width:100%;max-height:360px;object-fit:contain;
+}
+.dc-approved-skin .book-companion-content>h2{
+  font-size:clamp(1.6rem,2.4vw,2.8rem);
+  line-height:1.12;overflow-wrap:anywhere;
+}
+.dc-approved-skin .book-companion-grid article{
+  background:#08172c;border-color:#285482;
+}
+.dc-approved-skin .book-companion-grid p{color:#d0ddec;}
+
+/* Learning and achievement cards, with less oversized blank-state padding. */
+.dc-approved-skin .bible-tab,
+.dc-approved-skin .activity-filters button{
+  min-height:43px;padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #37618a;
+  color:#d6eaff;
+  background:#092247;
+  font-size:.84rem;font-weight:850;
+}
+.dc-approved-skin .bible-tab.active,
+.dc-approved-skin .activity-filters button.active{
+  color:#fff;border-color:#4ac7ff;
+  background:linear-gradient(145deg,#056dbb,#102a5c);
+  box-shadow:0 0 12px #06a3ff44;
+}
+.dc-approved-skin .power-verse-card,
+.dc-approved-skin .level-progress-card,
+.dc-approved-skin .trophy-summary-grid article,
+.dc-approved-skin .trophy-section{
+  color:#fffaf4;
+  background:linear-gradient(155deg,#0a274d,#09172d);
+  border:1px solid #285a91;
+  border-radius:20px;
+}
+.dc-approved-skin .power-verse-card blockquote{
+  background:linear-gradient(110deg,#153b67,#111f3a);
+  color:#fff8e8;
+  border-left-color:#ffd04a;
+}
+.dc-approved-skin .power-verse-grid article,
+.dc-approved-skin .next-badge-card,
+.dc-approved-skin .streak-series-card,
+.dc-approved-skin .badge-cabinet-card{
+  border:1px solid #285080;
+  background:#081933;
+  border-radius:15px;
+}
+.dc-approved-skin .trophy-section{padding:clamp(16px,2vw,24px);}
+.dc-approved-skin .trophy-section .empty-state{
+  padding:26px 22px;
+  min-height:120px;
+  background:#08192f;
+  border:1px dashed #3278b8;
+}
+.dc-approved-skin .trophy-section .empty-state h3{font-size:1.2rem;}
+.dc-approved-skin .trophy-section .empty-state p{font-size:.94rem;}
+.dc-approved-skin .trophy-section .empty-icon{margin:0 auto 10px;}
+.dc-approved-skin .trophy-summary-grid article{padding:17px 20px;}
+
+/* Print-style games retain their cream pages but avoid muddy tan. */
+.dc-approved-skin .dc-scripture-scramble,
+.dc-approved-skin .dc-courage-missions,
+.dc-approved-skin .dc-picture-puzzle,
+.dc-approved-skin .dc-coloring-zone{
+  color:#20232b;
+  border:2px solid #bf2831;
+  background:linear-gradient(135deg,#fffaf1,#fcf0db 90%);
+  border-radius:23px;
+  box-shadow:0 13px 28px #0005;
+}
+.dc-approved-skin .dc-mission-card h3,
+.dc-approved-skin .dc-coloring-card h3{line-height:1.2;}
+.dc-approved-skin .dc-coloring-card{min-width:0;}
+.dc-approved-skin .dc-coloring-copy{min-width:0;}
+
+/* Display retained completion-enabled print resources as a deliberate section. */
+.dc-approved-skin .dc-more-resources-heading{margin-top:20px;}
+.dc-approved-skin .dc-more-resources-heading .eyebrow{color:#ffda55;}
+.dc-approved-skin .dc-more-resources-heading h2{
+  color:#fff;margin:5px 0;
+  font-size:clamp(1.45rem,2.2vw,2.05rem);
+}
+.dc-approved-skin .dc-more-resources-heading p{color:#cfe1f5;margin:0;line-height:1.45;}
+.dc-approved-skin .activity-grid:has(>.activity-card:only-child){
+  grid-template-columns:minmax(0,1fr);
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child{
+  display:grid;
+  grid-template-columns:minmax(0,200px) minmax(0,1fr);
+  gap:10px 18px;
+  border:2px solid #2385df;
+  background:linear-gradient(125deg,#103e73,#081a35);
+  border-radius:19px;
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-card-top{grid-column:1/-1;}
+.dc-approved-skin .activity-grid>.activity-card:only-child .dc-resource-preview{
+  grid-column:1;grid-row:2/span 4;
+  width:100%;max-height:160px;
+  background:#fffaf3;padding:7px;
+  object-fit:contain;border-radius:11px;
+}
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-icon{display:none;}
+.dc-approved-skin .activity-grid>.activity-card:only-child h3,
+.dc-approved-skin .activity-grid>.activity-card:only-child p,
+.dc-approved-skin .activity-grid>.activity-card:only-child>small,
+.dc-approved-skin .activity-grid>.activity-card:only-child .activity-actions{
+  grid-column:2;margin:0;min-height:0;
+}
+.dc-approved-skin .activity-grid .dc-resource-preview{
+  width:100%;max-height:160px;object-fit:contain;
+  padding:7px;background:#fff9ec;border-radius:11px;
+}
+.dc-approved-skin .activity-grid .activity-card{
+  border-color:#2473ad;background:linear-gradient(140deg,#103869,#081a35);
+}
+.dc-approved-skin .activity-grid .activity-card p{color:#d1dff1;}
+.dc-approved-skin .activity-card-top>span:first-child,
+.dc-approved-skin .activity-card>small{color:#d5e3f3;}
+
+/* Consistent active states, pills and focus targets. */
+.dc-approved-skin .primary-button,
+.dc-approved-skin .secondary-button,
+.dc-approved-skin .activity-actions button{
+  min-height:43px;border-radius:11px;font-weight:850;
+}
+.dc-approved-skin .primary-button{
+  color:#fff;background:linear-gradient(125deg,#eb343e,#bb1822);
+}
+.dc-approved-skin .secondary-button{
+  color:#fff;border:1px solid #556c8e;
+}
+.dc-approved-skin button:focus-visible,
+.dc-approved-skin a:focus-visible,
+.dc-approved-skin select:focus-visible{
+  outline:3px solid #ffdb50;outline-offset:3px;
+}
+@media(max-width:1099px){
+  .dc-approved-skin .bookshelf{grid-template-columns:1fr;}
+  .dc-approved-skin .book-companion{
+    grid-template-columns:minmax(0,180px) minmax(0,1fr);
+  }
+}
+@media(max-width:760px){
+  .dc-approved-skin .bible-hero,
+  .dc-approved-skin .bookshelf-hero,
+  .dc-approved-skin .trophy-hero{padding:22px;min-height:190px;}
+  .dc-approved-skin .book-companion{grid-template-columns:1fr;}
+  .dc-approved-skin .book-companion-cover{max-width:220px;}
+  .dc-approved-skin .trophy-summary-grid{grid-template-columns:1fr;}
+  .dc-approved-skin .activity-grid>.activity-card:only-child{
+    grid-template-columns:minmax(0,1fr);
+  }
+  .dc-approved-skin .activity-grid>.activity-card:only-child .dc-resource-preview,
+  .dc-approved-skin .activity-grid>.activity-card:only-child h3,
+  .dc-approved-skin .activity-grid>.activity-card:only-child p,
+  .dc-approved-skin .activity-grid>.activity-card:only-child>small,
+  .dc-approved-skin .activity-grid>.activity-card:only-child .activity-actions{
+    grid-column:1;grid-row:auto;
+  }
+}
+
+
+/* October 16 screenshot-based follow-up: repair Bookshelf's empty left column.
+   The Book Adventure and companion tiles stay protected, but now span the
+   full component width instead of being trapped inside the narrow detail. */
+@media (min-width: 1100px) {
+  .dc-approved-skin .bookshelf {
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+  }
+  .dc-approved-skin .bookshelf > .bookshelf-hero,
+  .dc-approved-skin .bookshelf > .book-shelf-row,
+  .dc-approved-skin .bookshelf > .book-companion {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .dc-approved-skin .bookshelf > .book-shelf-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 0 0 5px;
+  }
+  /* A single automatically selected book needs no redundant selection card. */
+  .dc-approved-skin .bookshelf > .book-shelf-row:has(> .book-spine-card:only-child) {
+    display: none;
+  }
+  .dc-approved-skin .bookshelf > .book-companion {
+    grid-template-columns: minmax(0,210px) minmax(0,1fr);
+  }
+}
+.dc-approved-skin .book-companion > .book-adventure-path,
+.dc-approved-skin .book-companion > .book-companion-grid {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.dc-approved-skin .book-companion > .book-adventure-path {
+  margin-top: 12px;
+  border: 1px solid rgba(240,71,82,.40);
+  background: linear-gradient(140deg,#0b2449,#111522 65%,#25111b);
+}
+.dc-approved-skin .book-companion > .book-companion-grid {
+  margin-top: 3px;
+}
+.dc-approved-skin .book-adventure-steps {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 10px;
+}
+.dc-approved-skin .book-adventure-step {
+  min-width: 0;
+  grid-template-columns: 40px minmax(0,1fr) auto;
+  border-color: #29486a;
+  padding: 14px 17px;
+  gap: 13px;
+}
+.dc-approved-skin .book-adventure-step > div:nth-child(2) {min-width:0;}
+.dc-approved-skin .book-adventure-step strong {overflow-wrap:anywhere;}
+.dc-approved-skin .book-step-action {min-width: 128px;}
+.dc-approved-skin .book-step-action button {max-width:100%;white-space:normal;}
+/* Bible Basecamp shows its available content as a purposeful full-width
+   experience instead of a half-width card surrounded by unused darkness. */
+.dc-approved-skin .bible-list-section {
+  min-width: 0;
+  border: 1px solid #2a5b92;
+  background: linear-gradient(130deg,#0c2951,#07162e 80%);
+  border-radius: 20px;
+}
+.dc-approved-skin .bible-list-section .section-heading h2 {
+  color: #fffaf4;
+  letter-spacing: -.025em;
+}
+.dc-approved-skin .memory-grid:has(> .memory-card:only-child),
+.dc-approved-skin .identity-truth-grid:has(> .identity-truth-card:only-child),
+.dc-approved-skin .prayer-grid:has(> .prayer-card:only-child) {
+  grid-template-columns: minmax(0,1fr);
+}
+.dc-approved-skin .memory-card:only-child,
+.dc-approved-skin .identity-truth-card:only-child,
+.dc-approved-skin .prayer-card:only-child {
+  padding: clamp(18px,2.6vw,27px);
+  border: 1px solid #316b9f;
+  background:
+    radial-gradient(ellipse at 96% 75%,rgba(13,100,189,.19),transparent 65%),
+    linear-gradient(135deg,#0b2b55,#081b35);
+}
+.dc-approved-skin .memory-card p,
+.dc-approved-skin .identity-truth-card p,
+.dc-approved-skin .prayer-card p {
+  color: #d1e0ef;
+  max-width: 840px;
+  line-height: 1.55;
+}
+.dc-approved-skin .memory-card h3,
+.dc-approved-skin .identity-truth-card h3,
+.dc-approved-skin .prayer-card h3 {
+  color: #fff9f2;
+}
+.dc-approved-skin .memory-meta {max-width:840px;color:#cfdeef;}
+.dc-approved-skin .memory-meta strong {color:#ffda65;}
+.dc-approved-skin .identity-truth-card blockquote {max-width:840px;color:#fff0da;}
+.dc-approved-skin .identity-say-it {max-width:840px;}
+.dc-approved-skin .prayer-card small {color:#d6c690;}
+/* The DC shield must not look like a white pasted-on square inside
+   cream printable areas. The original JPEG file is preserved unchanged. */
+.dc-approved-skin .dc-scripture-scramble img[src*="dc-shield.jpeg"],
+.dc-approved-skin .dc-courage-missions img[src*="dc-shield.jpeg"],
+.dc-approved-skin .dc-coloring-zone img[src*="dc-shield.jpeg"] {
+  mix-blend-mode: multiply;
+  background: transparent;
+  border-radius: 0;
+}
+.dc-approved-skin .dc-coloring-copy a,
+.dc-approved-skin .dc-color-digitally,
+.dc-approved-skin .dc-mission-open {min-height:46px;}
+@media (max-width: 1099px) {
+  .dc-approved-skin .book-companion > .book-adventure-path,
+  .dc-approved-skin .book-companion > .book-companion-grid {grid-column:1/-1;}
+}
+@media (max-width: 760px) {
+  .dc-approved-skin .book-adventure-step {
+    grid-template-columns:36px minmax(0,1fr);
+  }
+  .dc-approved-skin .book-step-action {
+    grid-column:2;
+    min-width:0;
+    text-align:left;
+  }
+  .dc-approved-skin .book-adventure-heading {
+    flex-wrap:wrap;
+  }
+}
+
+
+/* October 16, signed-in visual QA: consistent learning, challenge and
+   achievement finishing. The original October 15 designs are unchanged.
+   All selectors stay within Kid View; backend progress is untouched. */
+
+/* Devotional pages must not revert to gray-on-black generic admin cards. */
+.dc-approved-skin .devotional-series-card {
+  min-width:0;
+  padding: clamp(17px,2vw,26px);
+  border: 1px solid #2b629e;
+  border-radius: 19px;
+  background: linear-gradient(148deg,#0b284e,#07192f 72%,#0c2341);
+}
+.dc-approved-skin .devotional-series-card .compact-heading {
+  margin-bottom: 18px;
+  gap:12px;
+}
+.dc-approved-skin .devotional-series-card .compact-heading h2 {
+  color:#fffaf2;
+  font-size:clamp(1.45rem,2.3vw,2.2rem);
+  line-height:1.2;
+}
+.dc-approved-skin .devotional-series-card .compact-heading .muted {
+  color:#cbddf0;line-height:1.5;
+}
+.dc-approved-skin .devotional-series-card .pill {
+  background:#092247;
+  border:1px solid #3876b7;
+  color:#f6e0a0;
+}
+.dc-approved-skin .devotional-day {
+  min-width:0;
+  grid-template-columns:40px minmax(0,1fr) auto;
+  border:1px solid #2e6196;
+  background:linear-gradient(125deg,#092144,#07182e);
+  border-radius:15px;
+  padding:17px;
+  gap:14px;
+  align-items:start;
+}
+.dc-approved-skin .devotional-day.complete {
+  border-color:#2d976c;
+  background:linear-gradient(125deg,#103d3c,#09273d);
+}
+.dc-approved-skin .devotional-day > div:nth-child(2) {min-width:0;}
+.dc-approved-skin .devotional-day h3 {
+  color:#fff9ef;
+  font-size:clamp(1.05rem,1.45vw,1.26rem);
+  line-height:1.25;
+  overflow-wrap:anywhere;
+}
+.dc-approved-skin .devotional-day p {
+  color:#d0e1f4;
+  line-height:1.5;
+}
+.dc-approved-skin .devotional-day span {color:#bcd5f2;}
+.dc-approved-skin .devotional-day .day-number{
+  background:#174077;
+  color:#ffdc69;
+  border:1px solid #3879b6;
+}
+.dc-approved-skin .devotional-callout {
+  max-width: 980px;
+  color:#f4e6bf;
+  border:1px solid rgba(243,193,87,.35);
+  background:rgba(238,181,65,.09);
+  line-height:1.5;
+}
+.dc-approved-skin .devotional-day > button {
+  min-width:148px;
+  text-align:center;
+  white-space:normal;
+}
+
+/* Actual child challenge preview: unify with approved navy/blue/gold/red skin.
+   The modal remains the same accessible native <dialog>, with real server
+   steps and XP untouched. */
+.dc-approved-skin dialog.native-modal.challenge-dialog {
+  width:min(760px,calc(100vw - 30px));
+  max-height:min(90dvh,950px);
+  padding:clamp(19px,3vw,34px);
+  border:2px solid #168ae6;
+  border-radius:23px;
+  background:
+    radial-gradient(ellipse at 100% 2%,rgba(204,43,58,.20),transparent 45%),
+    radial-gradient(ellipse at 3% 90%,rgba(23,115,228,.22),transparent 55%),
+    linear-gradient(150deg,#091a38,#071325 70%,#11172d);
+  color:#fffaf2;
+  box-shadow:0 36px 110px #000b,0 0 28px #0a6fca42;
+}
+.dc-approved-skin .challenge-dialog-head {
+  padding-right:48px;
+  align-items:start;
+  gap:12px;
+}
+.dc-approved-skin .challenge-dialog-head h2 {
+  margin:7px 0 12px;
+  font-size:clamp(1.9rem,3.7vw,3rem);
+  line-height:1.09;
+  letter-spacing:-.035em;
+  overflow-wrap:anywhere;
+  color:#fffaf2;
+}
+.dc-approved-skin .challenge-dialog-head p:not(.eyebrow){
+  color:#cbdcf1;
+  font-size:clamp(.92rem,1.15vw,1rem);
+  line-height:1.5;
+}
+.dc-approved-skin .challenge-dialog .xp-chip.large {
+  border:1px solid #f7d56e;
+  background:linear-gradient(110deg,#f9de71,#e8b73b);
+  color:#201400;
+  padding:9px 13px;
+  font-weight:950;
+  border-radius:999px;
+}
+.dc-approved-skin .challenge-dialog .challenge-steps {gap:11px;margin:22px 0;}
+.dc-approved-skin .challenge-dialog .step-row {
+  border:1px solid #2b5b8e;
+  background:linear-gradient(115deg,#102d57,#081b35);
+  border-radius:14px;
+  color:#fff9f2;
+  padding:14px;
+  gap:13px;
+}
+.dc-approved-skin .challenge-dialog .step-row:not(:disabled):hover{
+  border-color:#53b5fb;
+  background:#123c76;
+}
+.dc-approved-skin .challenge-dialog .step-row.complete{
+  background:linear-gradient(115deg,#124a44,#07283a);
+  border-color:#2f9c77;
+}
+.dc-approved-skin .challenge-dialog .step-check {
+  background:#254c7c;
+  border:1px solid #4c83b4;
+  color:#fff3cf;
+  font-weight:900;
+}
+.dc-approved-skin .challenge-dialog .step-row small {
+  color:#cbd9ea;
+  font-size:.83rem;
+}
+.dc-approved-skin .challenge-dialog .step-row em {
+  color:#ffd35b;
+}
+.dc-approved-skin .challenge-dialog .modal-close {
+  border:2px solid #ffcf54;
+  color:#fff;
+  background:#2c2634;
+  border-radius:12px;
+}
+.dc-approved-skin .challenge-dialog .dialog-actions .primary-button{
+  min-height:50px;
+  background:linear-gradient(115deg,#f13540,#bb131f);
+  border:1px solid #f65a60;
+  color:#fff;
+  font-weight:900;
+  border-radius:13px;
+}
+.dc-approved-skin .challenge-dialog .guardian-note{
+  background:#193450;
+  border-color:#d3a748;
+  color:#fff0c8;
+  line-height:1.45;
+}
+
+/* Trophy Room zero-state cards should feel intentional and rewarding without
+   fabricating earned badges. Keep the existing server zero values. */
+.dc-approved-skin .trophy-section .empty-state {
+  min-height:112px;
+  padding:22px clamp(16px,3vw,30px);
+  border:1px dashed #367db6;
+  border-radius:17px;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(238,184,68,.09),transparent 58%),
+    linear-gradient(125deg,#0b254b,#061a35);
+}
+.dc-approved-skin .trophy-section .empty-state h3{
+  color:#fff7df;
+  font-size:clamp(1.05rem,1.4vw,1.3rem);
+}
+.dc-approved-skin .trophy-section .empty-state p{
+  color:#c9d9ec;
+  line-height:1.5;
+}
+.dc-approved-skin .next-badge-grid .mini-progress-track {
+  height:8px;
+  border:1px solid #265282;
+  border-radius:999px;
+  background:#051329;
+}
+.dc-approved-skin .next-badge-grid .mini-progress-track span{
+  background:linear-gradient(90deg,#107dce,#ffd65c);
+}
+
+/* Button cohesion, touchability, focus and use at 320px wide. */
+.dc-approved-skin .bible-action-row button,
+.dc-approved-skin .bible-action-row .text-button{
+  min-height:42px;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:.86rem;
+}
+.dc-approved-skin .bible-action-row .text-button{
+  color:#d9e9ff;
+  border:1px solid transparent;
+}
+.dc-approved-skin .bible-action-row .text-button:hover{
+  border-color:#4474aa;
+  background:#0b2c54;
+}
+.dc-approved-skin .bible-action-row .text-button:disabled{
+  opacity:.55;
+}
+@media(max-width:700px){
+  .dc-approved-skin .devotional-day {
+    grid-template-columns:38px minmax(0,1fr);
+  }
+  .dc-approved-skin .devotional-day > button {
+    grid-column:2;
+    justify-self:start;
+    min-width:0;
+    max-width:100%;
+  }
+  .dc-approved-skin .challenge-dialog-head {
+    display:grid;
+    padding-right:43px;
+  }
+  .dc-approved-skin .challenge-dialog .xp-chip.large {
+    justify-self:start;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .dc-approved-skin .challenge-dialog .step-row {transition:none;}
+}
+
+
+/* Founder-approved October 16 final rail and spacing refinement:
+   keep the exact October 15 Adventure Club skin and supplied original artwork.
+   These are presentation-only changes; child names and progress stay live. */
+@media (min-width: 1101px) {
+  .dc-approved-skin .side-panel {
+    background-color: #061733;
+    background-image:
+      radial-gradient(ellipse at 96% 26%, rgba(99,48,113,.27) 0%, transparent 49%),
+      radial-gradient(ellipse at 1% 48%, rgba(13,98,175,.27) 0%, transparent 58%),
+      linear-gradient(180deg, #06152f 0%, #0a2249 44%, #08264e 71%, #041529 100%);
+  }
+  .dc-approved-skin .side-panel::after {
+    /* Retain the cropped approved scenic art, but remove its hard top edge. */
+    height: min(515px, calc(100% - 285px));
+    -webkit-mask-image: linear-gradient(
+      to bottom, transparent 0%, rgba(0,0,0,.07) 8%,
+      rgba(0,0,0,.48) 18%, #000 31%, #000 100%
+    );
+    mask-image: linear-gradient(
+      to bottom, transparent 0%, rgba(0,0,0,.07) 8%,
+      rgba(0,0,0,.48) 18%, #000 31%, #000 100%
+    );
+  }
+}
+.dc-approved-skin .child-switcher.active {
+  /* Keep the red avatar, preserve the blue edge, fade blue to plum/red. */
+  background: linear-gradient(105deg,#153f79 0%,#273f77 28%,#4c315b 62%,#772442 100%);
+  border-color:#397bd4;
+  box-shadow:inset 0 1px rgba(255,255,255,.12),0 6px 18px rgba(0,15,45,.18);
+}
+.dc-approved-skin .child-switcher:not(.active):hover {
+  background:linear-gradient(105deg,rgba(26,69,121,.50),rgba(67,39,89,.23));
+  border-color:rgba(71,143,222,.45);
+}
+@media (min-width:761px) and (max-width:1100px){
+  /* Small/tablet widths use the same gradient without inserting giant scenery. */
+  .dc-approved-skin .side-panel {
+    background:linear-gradient(110deg,#071c3c,#123469 52%,#09172f);
+  }
+}
+
+/* The single real challenge is a featured card, not a tiny isolated third
+   column. We do NOT create filler challenge data. */
+.dc-approved-skin .kid-stats + .section-block > .section-heading {
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px 20px;
+}
+.dc-approved-skin .kid-stats + .section-block .sentence-pill {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:9px 14px;
+  border:1px solid rgba(90,158,228,.48);
+  border-radius:999px;
+  background:rgba(10,37,78,.85);
+  color:#d8ecff;
+  font-size:.78rem;
+  font-weight:800;
+  max-width:100%;
+  white-space:normal;
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-grid:has(> .challenge-card:only-child) {
+  grid-template-columns:minmax(0,min(100%,610px));
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-card:only-child {
+  padding:clamp(19px,2.3vw,27px);
+  border-radius:21px;
+  background:
+    radial-gradient(ellipse at 98% 4%,rgba(35,104,203,.18),transparent 66%),
+    linear-gradient(140deg,#133565,#081932);
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-top {margin-bottom:17px;}
+.dc-approved-skin .kid-stats + .section-block .challenge-card p {
+  min-height:0;
+  max-width:520px;
+  color:#c9dcf1;
+  line-height:1.55;
+}
+.dc-approved-skin .kid-stats + .section-block .challenge-card .secondary-button {
+  min-height:44px;
+  margin-top:15px;
+}
+@media(max-width:760px) {
+  .dc-approved-skin .kid-stats + .section-block .section-heading {
+    align-items:flex-start;
+  }
+  .dc-approved-skin .kid-stats + .section-block .sentence-pill {
+    margin-left:0;
+  }
+}
+
+/* Same approved artwork, with a gradual left-to-right atmospheric fade
+   rather than a visible hard starting line at the image's left edge. */
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 84% 50%,rgba(22,87,164,.23),transparent 62%),
+    linear-gradient(108deg,#06162f 0%,#082751 76%,#061c3d 100%);
+}
+.dc-approved-skin .bible-hero::before,
+.dc-approved-skin .bookshelf-hero::before,
+.dc-approved-skin .trophy-hero::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  opacity:.8;
+  background:url('/assets/approved-ui/home-hero-art.webp') right center/auto 116% no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,rgba(0,0,0,.20) 53%,#000 82%);
+  mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,rgba(0,0,0,.20) 53%,#000 82%);
+}
+.dc-approved-skin .bible-hero>*,
+.dc-approved-skin .bookshelf-hero>*,
+.dc-approved-skin .trophy-hero>* {
+  position:relative;
+  z-index:1;
+}
+.dc-approved-skin .bible-hero,
+.dc-approved-skin .bookshelf-hero,
+.dc-approved-skin .trophy-hero {
+  scroll-margin-top:110px;
+}
+.dc-approved-skin .prayer-card:only-child {
+  padding:clamp(20px,2.5vw,31px);
+}
+.dc-approved-skin .prayer-card:only-child p {
+  line-height:1.6;
+  margin:12px 0;
+}
+.dc-approved-skin .prayer-card:only-child small {
+  display:block;
+  margin:15px 0 8px;
+}
+.dc-approved-skin .prayer-card:only-child .bible-action-row {
+  margin-top:18px;
+}
+
+/* Keep the keyboard-focus ring accessible, but simplify the heavy double
+   gold border around the native challenge close button. */
+.dc-approved-skin .challenge-dialog .modal-close {
+  width:40px;
+  height:40px;
+  border:1px solid rgba(248,207,87,.68);
+  border-radius:11px;
+  background:linear-gradient(145deg,#28344a,#171c2d);
+  color:#fff;
+  font-size:1.35rem;
+}
+.dc-approved-skin .challenge-dialog .modal-close:focus-visible {
+  outline:3px solid #ffd85b;
+  outline-offset:2px;
+}
+@media(max-width:760px){
+  .dc-approved-skin .bible-hero::before,
+  .dc-approved-skin .bookshelf-hero::before,
+  .dc-approved-skin .trophy-hero::before{
+    background-position:right center;
+    background-size:auto 100%;
+    opacity:.44;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.17) 34%,#000 100%);
+    mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.17) 34%,#000 100%);
+  }
+}

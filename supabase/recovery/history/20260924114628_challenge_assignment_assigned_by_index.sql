@@ -1,0 +1,1 @@
+create index if not exists challenge_assignments_assigned_by_idx on public.challenge_assignments(assigned_by) where assigned_by is not null;

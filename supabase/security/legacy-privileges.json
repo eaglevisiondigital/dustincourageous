@@ -1,0 +1,2426 @@
+{
+  "relations": [
+    {
+      "schema": "private",
+      "name": "digital_book_manifests",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "group_join_codes",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "guardian_unlock_sessions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "household_guardian_security",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "household_invitation_tokens",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "organization_invitation_tokens",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "system_secret_hashes",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "worker_auth_tokens",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "achievement_token_ledger",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_audit_log",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_daily_metrics",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=awdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_platform_snapshot",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=awdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "adventure_challenges",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "adventure_content_links",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "adventure_groups",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "adventures",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "app_admins",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "app_channel_health",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "app_installation_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "app_installations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "automated_notification_log",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "badge_awards",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "badge_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "badges",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_challenges",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_content_links",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_devotional_series",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_identity_truths",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_power_verses",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_prayer_prompts",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "book_reward_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "books",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "challenge_assignments",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "challenge_series",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "challenge_steps",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "challenges",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "checkout_session_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "checkout_sessions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_active_streak_badges",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_activity_events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_adventure_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_book_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_book_reading_positions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=r/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_challenge_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_content_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_data_inventory",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_devotional_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_group_memberships",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=rdDxtm/postgres,authenticated=rdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_identity_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_level_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_prayer_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_profiles",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_scripture_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_series_streak_status",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_series_streaks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_series_weekly_completions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_step_progress",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_streaks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_token_totals",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_xp_totals",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "commerce_readiness_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "commerce_recent_webhooks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "consent_policies",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "contact_inquiries",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "content_items",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "current_household_consents",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "data_privacy_requests",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_blueprint_requirements",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_brand_assets",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_character_profiles",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_content_blueprints",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_content_reviews",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_governance_entity_catalog",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_governance_review_status",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_governance_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_governance_standards",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "delivery_worker_health",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "delivery_worker_runs",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "devotional_days",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "devotional_series",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "entitlement_definitions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "event_registrations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "family_faith_guides",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "fulfillments",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "group_challenge_assignments",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "group_leaders",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_book_access",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_consents",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_entitlement_grants",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_faith_sessions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_invitations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_members",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=rwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_membership_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "household_subscriptions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "households",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "identity_truths",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "integration_events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "integration_health_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "integration_latest_tests",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "integration_providers",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "integration_test_runs",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "inventory_reservations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "levels",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "marketing_conversion_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "marketing_lead_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "marketing_leads",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "media_assets",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "membership_plans",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_campaign_recipients",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_campaigns",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_deliveries",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_delivery_health",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_preferences",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_reminder_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "notification_templates",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "order_items",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "orders",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "organization_invitations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "organization_members",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "organizations",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "parent_child_progress_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "payment_webhook_events",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "plan_entitlements",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "power_verses",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "prayer_prompts",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "product_book_access_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "product_entitlement_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "product_variants",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "products",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "profiles",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "promo_codes",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "public_site_pipeline_summary",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "push_devices",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "referral_attributions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "referral_codes",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "reward_redemptions",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "reward_unlocks",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "rewards",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "scripture_passages",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "series_badge_rules",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "streak_badge_earnings",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "support_tickets",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "user_notifications",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "xp_ledger",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    }
+  ],
+  "sequences": [
+    {
+      "schema": "public",
+      "name": "admin_audit_log_id_seq",
+      "owner": "postgres",
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "child_activity_events_id_seq",
+      "owner": "postgres",
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "orders_order_number_seq",
+      "owner": "postgres",
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "support_tickets_ticket_number_seq",
+      "owner": "postgres",
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+    }
+  ],
+  "functions": [
+    {
+      "schema": "private",
+      "name": "accept_household_invitation_impl",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "accept_organization_invitation_impl",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_daily_metrics_impl",
+      "identity_args": "p_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_book_launch_gate_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_book_release_gate_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_digital_book_impl",
+      "identity_args": "p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_digital_book_launch_gate_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_membership_tier_gate_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "admin_get_production_launch_gate_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_platform_snapshot_impl",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "admin_prepare_digital_book_impl",
+      "identity_args": "p_book_id uuid, p_manifest jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "after_token_insert_evaluate_badges",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "after_xp_insert_evaluate_badges",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "attribute_referral_impl",
+      "identity_args": "p_code text, p_referred_household_id uuid, p_source text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "audit_admin_mutation",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "award_completed_book_adventure",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "award_xp_event",
+      "identity_args": "p_child_profile_id uuid, p_points integer, p_event_type text, p_source_type text, p_source_id uuid, p_description text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_approve_dc_governance",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_lead_group",
+      "identity_args": "p_group_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_challenge_progress",
+      "identity_args": "p_progress_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_child",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_event",
+      "identity_args": "p_event_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_household",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_org",
+      "identity_args": "p_organization_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_manage_privacy_requests",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_record_child_activity",
+      "identity_args": "p_child_id uuid, p_content_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_schedule_notifications",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_view_child",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "can_view_event",
+      "identity_args": "p_event_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "cancel_event_registration_impl",
+      "identity_args": "p_registration_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "child_can_access_adventure",
+      "identity_args": "p_child_profile_id uuid, p_adventure_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "child_can_access_challenge",
+      "identity_args": "p_child_profile_id uuid, p_challenge_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "child_has_book_companion_access",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "child_has_digital_book_access",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "claim_marketing_leads_for_household_impl",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "create_group_join_code_impl",
+      "identity_args": "p_group_id uuid, p_expires_in_days integer, p_max_uses integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "create_guardian_unlock_session_impl",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "create_household_invitation_impl",
+      "identity_args": "p_household_id uuid, p_email text, p_role text, p_expires_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "create_organization_invitation_impl",
+      "identity_args": "p_organization_id uuid, p_email text, p_organization_role text, p_group_id uuid, p_group_role text, p_expires_in_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "dc_entity_fingerprint",
+      "identity_args": "p_entity_type text, p_entity_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "dc_entity_payload",
+      "identity_args": "p_entity_type text, p_entity_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "dc_row_fingerprint",
+      "identity_args": "p_payload jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "demote_changed_dc_content",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "demote_changed_dc_product",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "demote_changed_notification_template",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "digital_book_manifest_valid",
+      "identity_args": "p_book_id uuid, p_manifest jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "digital_book_object_readable",
+      "identity_args": "p_path text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "digital_book_released",
+      "identity_args": "p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "dispatch_automated_notification_reminders",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "dispatch_due_notification_campaigns",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "enforce_child_adventure_access",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "enforce_child_book_access",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "enforce_child_challenge_access",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "enforce_dc_prayer_opening",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "enforce_dc_publish_gate",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "evaluate_badges_after_progress",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "evaluate_child_badges",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "event_audience_allows_registration",
+      "identity_args": "p_event_id uuid, p_household_id uuid, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "expire_checkout_sessions",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "get_digital_book_impl",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "get_group_progress_summary_impl",
+      "identity_args": "p_group_id uuid, p_challenge_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "get_group_roster_impl",
+      "identity_args": "p_group_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "get_household_adults_impl",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "get_or_create_referral_code_impl",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "guardian_pin_status_impl",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "guardian_unlock_session_valid",
+      "identity_args": "p_household_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "handle_new_auth_user",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "has_approved_dc_review",
+      "identity_args": "p_entity_type text, p_entity_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "household_has_active_entitlement",
+      "identity_args": "p_household_id uuid, p_entitlement_key text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "household_is_paid_member",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "initialize_household",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "initialize_organization",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "invoke_notification_delivery_worker",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_app_admin",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_content_admin",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_household_member",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_household_owner",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_operations_admin",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "is_org_member",
+      "identity_args": "p_organization_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "join_child_to_group_impl",
+      "identity_args": "p_code text, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "notification_audience_count_impl",
+      "identity_args": "p_audience_type text, p_membership_plan_id uuid, p_household_id uuid, p_organization_id uuid, p_group_id uuid, p_event_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "notification_next_delivery_at",
+      "identity_args": "p_user_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "notification_preference_allows",
+      "identity_args": "p_user_id uuid, p_notification_type text, p_channel text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "notify_pending_parent_challenge",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "notify_reward_unlock",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "prevent_book_progress_regression",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "prevent_completed_progress_reversal",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "preview_group_join_code_impl",
+      "identity_args": "p_code text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "preview_organization_invitation_impl",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "privacy_export_payload_impl",
+      "identity_args": "p_request_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_adventure_completion",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_book_progress",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_challenge_completion",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_content_completed",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_devotional_completed",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_family_faith_session",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_paid_order_access",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_prayer_completed",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_scripture_memorized",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "process_weekly_series_completion",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "queue_external_notification_delivery",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "register_for_event_impl",
+      "identity_args": "p_event_id uuid, p_household_id uuid, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "save_digital_book_position_impl",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid, p_revision text, p_page_number integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "set_guardian_pin_impl",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "set_updated_at",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "sync_reward_redemption_fulfillment",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "unlock_book_milestone_rewards",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "user_can_access_challenge",
+      "identity_args": "p_challenge_id uuid",
+      "owner": "postgres",
+      "acl": null
+    },
+    {
+      "schema": "private",
+      "name": "user_has_active_entitlement",
+      "identity_args": "p_entitlement_key text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "user_has_book_access",
+      "identity_args": "p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "user_has_household",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "validate_challenge_completion",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "validate_digital_book_manifest",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "validate_notification_reminder_scope",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "validate_reward_redemption_transition",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres}"
+    },
+    {
+      "schema": "private",
+      "name": "verify_guardian_pin_impl",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "accept_household_invitation",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "accept_organization_invitation",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_add_devotional_day",
+      "identity_args": "p_series_id uuid, p_day_number integer, p_title text, p_body text, p_scripture_id uuid, p_prayer_prompt text, p_action_step text, p_xp_reward integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_cancel_notification_campaign",
+      "identity_args": "p_campaign_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_badge_with_rule",
+      "identity_args": "p_badge_key text, p_name text, p_description text, p_rarity text, p_rule_type text, p_threshold_value integer, p_streak_key text, p_challenge_type text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_book",
+      "identity_args": "p_book_number integer, p_title text, p_slug text, p_description text, p_cover_asset_key text, p_release_date date, p_status text, p_completion_xp integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_challenge",
+      "identity_args": "p_title text, p_slug text, p_challenge_type text, p_description text, p_instructions text, p_access_level text, p_xp_reward integer, p_parent_approval_required boolean, p_status text, p_steps jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_challenge_series",
+      "identity_args": "p_series_key text, p_name text, p_description text, p_token_type text, p_token_amount integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_content_item",
+      "identity_args": "p_content_type text, p_title text, p_slug text, p_summary text, p_category text, p_asset_key text, p_thumbnail_asset_key text, p_access_level text, p_status text, p_is_featured boolean, p_completion_xp integer, p_body jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_devotional_series",
+      "identity_args": "p_title text, p_slug text, p_description text, p_access_level text, p_status text, p_is_featured boolean",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_family_faith_guide",
+      "identity_args": "p_guide_key text, p_title text, p_book_id uuid, p_description text, p_scripture_passage_id uuid, p_discussion_prompt text, p_prayer_prompt text, p_family_action text, p_access_level text, p_status text, p_sort_order integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_identity_truth",
+      "identity_args": "p_title text, p_slug text, p_statement text, p_explanation text, p_scripture_id uuid, p_say_it text, p_sort_order integer, p_access_level text, p_status text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_lifetime_badge_level",
+      "identity_args": "p_badge_key text, p_name text, p_rule_type text, p_threshold_value integer, p_description text, p_badge_family_key text, p_tier text, p_rarity text, p_streak_key text, p_challenge_type text, p_token_type text, p_activity_event_type text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_notification_reminder_rule",
+      "identity_args": "p_rule_key text, p_name text, p_rule_type text, p_template_id uuid, p_lead_minutes integer, p_delivery_channels text[], p_organization_id uuid, p_group_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_notification_template",
+      "identity_args": "p_template_key text, p_name text, p_notification_type text, p_title text, p_body text, p_deep_link text, p_priority text, p_default_channels text[]",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_organization",
+      "identity_args": "p_organization_key text, p_name text, p_organization_type text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_power_verse",
+      "identity_args": "p_scripture_id uuid, p_title text, p_slug text, p_explanation text, p_say_it text, p_live_it text, p_give_it_away text, p_memorize_xp integer, p_access_level text, p_status text, p_is_featured boolean",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_prayer_prompt",
+      "identity_args": "p_title text, p_slug text, p_prompt_text text, p_category text, p_scripture_id uuid, p_xp_reward integer, p_access_level text, p_status text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_product",
+      "identity_args": "p_product_key text, p_name text, p_product_type text, p_description text, p_sku text, p_base_price_cents integer, p_member_price_cents integer, p_status text, p_track_inventory boolean, p_inventory_quantity integer, p_allow_backorder boolean, p_is_featured boolean",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_product_variant",
+      "identity_args": "p_product_id uuid, p_variant_key text, p_name text, p_sku text, p_price_delta_cents integer, p_member_price_delta_cents integer, p_inventory_quantity integer, p_attributes jsonb, p_sort_order integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_promo_code",
+      "identity_args": "p_code text, p_description text, p_discount_type text, p_discount_value integer, p_starts_at timestamp with time zone, p_ends_at timestamp with time zone, p_max_redemptions integer, p_minimum_order_cents integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_reward",
+      "identity_args": "p_reward_key text, p_name text, p_description text, p_reward_type text, p_xp_required integer, p_access_level text, p_inventory_quantity integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_scripture",
+      "identity_args": "p_reference text, p_translation text, p_verse_text text, p_theme_key text, p_status text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_series_streak_badge",
+      "identity_args": "p_series_id uuid, p_badge_key text, p_name text, p_consecutive_weeks integer, p_description text, p_tier text, p_rarity text, p_active_only_while_current_streak boolean",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_create_weekly_challenge",
+      "identity_args": "p_series_id uuid, p_title text, p_slug text, p_period_start date, p_description text, p_challenge_type text, p_access_level text, p_xp_reward integer, p_parent_approval_required boolean, p_status text, p_steps jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_get_daily_metrics",
+      "identity_args": "p_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_get_digital_book",
+      "identity_args": "p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_get_platform_snapshot",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_get_production_launch_gate",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_link_book_experience",
+      "identity_args": "p_book_id uuid, p_item_type text, p_item_id uuid, p_sort_order integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_link_book_reward",
+      "identity_args": "p_book_id uuid, p_reward_id uuid, p_milestone text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_prepare_digital_book",
+      "identity_args": "p_book_id uuid, p_manifest jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_preview_notification_audience",
+      "identity_args": "p_audience_type text, p_membership_plan_id uuid, p_household_id uuid, p_organization_id uuid, p_group_id uuid, p_event_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_schedule_notification_campaign",
+      "identity_args": "p_campaign_key text, p_name text, p_template_id uuid, p_audience_type text, p_scheduled_at timestamp with time zone, p_delivery_channels text[], p_membership_plan_id uuid, p_household_id uuid, p_organization_id uuid, p_group_id uuid, p_event_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "admin_set_order_status",
+      "identity_args": "p_order_id uuid, p_status text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "approve_dc_content_review",
+      "identity_args": "p_review_id uuid, p_creative_alignment boolean, p_word_of_faith_alignment boolean, p_scripture_verified boolean, p_identity_in_christ_alignment boolean, p_child_age_appropriate boolean, p_church_affirming boolean, p_approved_assets_only boolean, p_character_continuity boolean, p_language_style_pass boolean, p_notes text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "approve_parent_challenge",
+      "identity_args": "p_progress_id uuid, p_guardian_session_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "archive_child_profile",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "attribute_referral",
+      "identity_args": "p_code text, p_referred_household_id uuid, p_source text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "begin_checkout_provider_handoff",
+      "identity_args": "p_checkout_session_id uuid, p_provider text, p_provider_checkout_id text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "cancel_checkout_session",
+      "identity_args": "p_checkout_session_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "cancel_data_privacy_request",
+      "identity_args": "p_request_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "cancel_event_registration",
+      "identity_args": "p_registration_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "cancel_organization_invitation",
+      "identity_args": "p_invitation_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "capture_marketing_lead",
+      "identity_args": "p_lead_type text, p_source_page text, p_parent_guardian_name text, p_email text, p_child_first_name text, p_child_age smallint, p_parent_guardian_consent boolean, p_marketing_consent boolean, p_consent_text text, p_ip_hash text, p_user_agent_hash text, p_metadata jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "claim_marketing_leads_for_household",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "claim_notification_deliveries",
+      "identity_args": "p_limit integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "complete_child_book_adventure",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "complete_family_faith_participants",
+      "identity_args": "p_household_id uuid, p_guide_id uuid, p_child_ids uuid[]",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "complete_notification_delivery",
+      "identity_args": "p_delivery_id uuid, p_status text, p_provider text, p_provider_message_id text, p_last_error text, p_retry_minutes integer, p_metadata jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_adventure_group",
+      "identity_args": "p_organization_id uuid, p_group_key text, p_name text, p_group_type text, p_description text, p_minimum_age smallint, p_maximum_age smallint",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_checkout_order",
+      "identity_args": "p_household_id uuid, p_items jsonb, p_promo_code text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_child_with_consent",
+      "identity_args": "p_household_id uuid, p_display_name text, p_birth_year smallint",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_group_join_code",
+      "identity_args": "p_group_id uuid, p_expires_in_days integer, p_max_uses integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_guardian_unlock_session",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_household_invitation",
+      "identity_args": "p_household_id uuid, p_email text, p_role text, p_expires_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_household_with_consent",
+      "identity_args": "p_name text, p_timezone text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "create_organization_invitation",
+      "identity_args": "p_organization_id uuid, p_email text, p_organization_role text, p_group_id uuid, p_group_role text, p_expires_in_days integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "dc_preflight_scan",
+      "identity_args": "p_entity_type text, p_entity_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "deactivate_app_installation",
+      "identity_args": "p_installation_key text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_checkout_readiness",
+      "identity_args": "",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_child_achievement_progress",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_child_book_adventure_steps",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_child_book_adventure_summary",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_digital_book",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_group_progress_summary",
+      "identity_args": "p_group_id uuid, p_challenge_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_group_roster",
+      "identity_args": "p_group_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_household_adults",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_notification_delivery_payload",
+      "identity_args": "p_delivery_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "get_or_create_referral_code",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "guardian_pin_status",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "has_book_access",
+      "identity_args": "p_book_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "join_child_to_group",
+      "identity_args": "p_code text, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "mark_order_paid_from_provider",
+      "identity_args": "p_order_id uuid, p_provider text, p_provider_payment_id text, p_provider_customer_id text, p_provider_event_id text, p_event_type text, p_shipping_name text, p_shipping_address jsonb, p_payload jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "preview_group_join_code",
+      "identity_args": "p_code text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "preview_organization_invitation",
+      "identity_args": "p_invitation_id uuid, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "privacy_export_payload",
+      "identity_args": "p_request_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "publish_dc_entity",
+      "identity_args": "p_entity_type text, p_entity_id uuid, p_target_status text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "record_household_consent",
+      "identity_args": "p_household_id uuid, p_consent_key text, p_action text, p_child_profile_id uuid, p_metadata jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "record_integration_event",
+      "identity_args": "p_provider_key text, p_event_type text, p_direction text, p_entity_type text, p_entity_id uuid, p_status text, p_idempotency_key text, p_request_payload jsonb, p_response_payload jsonb, p_last_error text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "register_app_installation",
+      "identity_args": "p_installation_key text, p_app_channel text, p_platform text, p_app_version text, p_device_name text, p_push_provider text, p_push_token text, p_capabilities jsonb, p_metadata jsonb",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "register_for_event",
+      "identity_args": "p_event_id uuid, p_household_id uuid, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "remove_household_adult",
+      "identity_args": "p_household_id uuid, p_user_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "request_data_privacy_action",
+      "identity_args": "p_household_id uuid, p_request_type text, p_child_profile_id uuid, p_reason text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "request_dc_content_review",
+      "identity_args": "p_entity_type text, p_entity_id uuid, p_notes text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "restore_child_profile",
+      "identity_args": "p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "return_parent_challenge",
+      "identity_args": "p_progress_id uuid, p_guardian_session_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "revoke_guardian_unlock_sessions",
+      "identity_args": "p_household_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "revoke_household_invitation",
+      "identity_args": "p_invitation_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "save_digital_book_position",
+      "identity_args": "p_child_profile_id uuid, p_book_id uuid, p_revision text, p_page_number integer",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "save_family_challenge_participants",
+      "identity_args": "p_household_id uuid, p_challenge_id uuid, p_child_ids uuid[], p_action text, p_step_ids uuid[]",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "set_guardian_pin",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "update_integration_provider_health",
+      "identity_args": "p_provider_key text, p_status text, p_health_status text, p_success boolean, p_error text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "validate_worker_token",
+      "identity_args": "p_token_key text, p_token text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "verify_guardian_pin",
+      "identity_args": "p_household_id uuid, p_pin text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "verify_privacy_cleanup_secret",
+      "identity_args": "p_secret text",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "name": "withdraw_child_from_group",
+      "identity_args": "p_group_id uuid, p_child_profile_id uuid",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    }
+  ],
+  "default_privileges": [
+    {
+      "schema": "public",
+      "owner": "postgres",
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}"
+    },
+    {
+      "schema": "public",
+      "owner": "postgres",
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "schema": "public",
+      "owner": "postgres",
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}"
+    },
+    {
+      "schema": "public",
+      "owner": "supabase_admin",
+      "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}"
+    },
+    {
+      "schema": "public",
+      "owner": "supabase_admin",
+      "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}"
+    },
+    {
+      "schema": "public",
+      "owner": "supabase_admin",
+      "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}"
+    }
+  ],
+  "source_commit": "60e151c5556a407982342a81c8bac42579597699"
+}

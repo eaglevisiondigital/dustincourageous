@@ -1,0 +1,34 @@
+{
+  "project_ref": "vrixketvinzhsfwwcqiu",
+  "captured_date": "2026-09-26",
+  "source_checkpoint_before_recovery": "7f2f7a102fdc757635a8cbb9db40e205f641f54c",
+  "production_postgresql_version": "17.6",
+  "counts": {
+    "public_tables": 112,
+    "private_tables": 8,
+    "views": 25,
+    "functions": 213,
+    "triggers": 166,
+    "constraints": 631,
+    "indexes": 432,
+    "public_policies": 298,
+    "storage_policies": 7,
+    "identity_sequences": 4,
+    "buckets": 4,
+    "live_migration_records": 40,
+    "root_migration_files": 24,
+    "deployed_functions": 10,
+    "previously_missing_edge_directories": 6,
+    "cron_jobs": 5
+  },
+  "sha256": {
+    "catalog.json": "92d00e0520abd021ef91206b874ecd1307848780ce6f9f0efee8b3ce57bfe773",
+    "catalog-query.sql": "aa406d92c733a4515a9678dd504d3bd625ba170b797038adda8854780a37e886",
+    "bootstrap.sql": "e2e5d07cb3a9b81a937ee60444221bdc7b74a63300453b6426d3f20310a74867",
+    "platform.json": "f2d93da5288ed7ca844cdc7ab03ed32440690480aed67a87147041c519ddf9fc",
+    "history-map.json": "764431ce535744d7b21a69de24d925a5a0e10b7feed90f8300500312cb30a033",
+    "edge-source-manifest.json": "9619f6cd2f984ab0849185e4787a8956bbef8a4975035ac62b95bc9b3e14aff5"
+  },
+  "live_end_check": "Current catalog, all40 migration SQL hashes and all10 Edge metadata records unchanged; production received no writes.",
+  "scope": "Schema and deployed source only; no family/Auth rows, files or secret values. Synthetic test data is not production reference data."
+}
