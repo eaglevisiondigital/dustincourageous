@@ -123,3 +123,32 @@ Hosted leaked-password protection is enabled per September 26, 2026 Work
 verification supplied by PRIMARY CHAT. Earlier Auth access limitations above are
 historical; Codex does not change Auth settings in this package. The separate
 platform-owner default-ACL support question remains pending and nonblocking.
+
+
+## November 27 global client template and QR entry
+
+The Adventure Club is a **single React application shared by every current and
+future household**, not a personalized deployment or cloned theme per account.
+The common `FamilyPortal` is rendered with authenticated household and child
+inputs. `data-template="dc-global-v1"` and `global-template.css` provide
+the Family Hub skin; the existing `approved-skin.css`,
+`approved-polish.css` and `approved-activities.css` continue as the
+single shared Kid View skin. Their bundle is built once by Netlify.
+Changing a component, feature, or shared CSS and deploying it changes the
+experience for **all** accounts served by that version, without row-by-row
+updates.
+
+The Family Hub overview includes a membership summary, household Book
+Companion access checked through the existing authenticated
+`has_book_access` RPC, child-specific buttons to Books and Activities,
+and the existing family/child progress views. These queries do not use
+service-role credentials. The URL may request a safe display section via
+`/join?next=books` or `/join?next=activities`, but never supplies identity,
+household ownership, or entitlements; RLS, PIN and digital book publication
+controls remain authoritative.
+
+App source branch `build/adventure-club-app` is served from Netlify deploy
+preview. The separate public main remains a static marketing site; exact
+QR routing from the physical printed Book 1 and future production domain
+still require verified launch/redirect action. See
+`docs/audits/2026-11-27-global-family-template-report.md`.

@@ -246,3 +246,17 @@ membership/book-companion access visibility using existing authorized RPC
 `docs/design/GLOBAL_SHARED_FAMILY_TEMPLATE_2026-11-27.md`.
 Current status: implementation awaiting CI, signed-in browser and QR physical
 acceptance. Public main/production untouched.
+
+
+## November 27 global UI rollout verification checkpoint
+
+DRAFT READY on preview (application e44c16d; CI repair af6cbe2): 348 app tests,
+94 local JWT/Auth/PostgREST checks and full isolated recovery all PASS
+[CI 46015561732](https://github.com/eaglevisiondigital/dustincourageous/actions/runs/46015561732).
+Netlify deployment 6b0992346e6d9ac6ad1af8d3 READY, preview
+https://deploy-preview-1--dustincourageous.netlify.app.
+Shared global Kid View/Family Hub visual version and household book-access
+summary are implemented. Production public main remains unchanged; physical
+QR, real desktop/mobile two-family journey and full Family Hub screenshot
+acceptance BLOCKED pending external verification. Full report:
+docs/audits/2026-11-27-global-family-template-report.md.

@@ -88,3 +88,20 @@ checkout, service-only receipts and operator reconciliation after uncertainty.
 No provider activation or paid-checkout readiness is approved. Recovery now runs
 14 SQL suites, PIN/checkout/handoff concurrency and 94 local Auth/PostgREST checks;
 296 app tests and production build pass.
+
+
+## Global Family Hub design and deployment rule (November 27)
+
+Do not create account-specific templates or clone the Sally demonstration
+household. The root `data-template="dc-global-v1"` controls both
+Kid View and Family Hub, with per-household child/member/entitlement data
+fetched through authenticated Supabase and RLS. Keep code changes centralized
+in shared React components and the global approved stylesheets; deploy one
+version to every account on that environment. Apply no per-family feature
+flags or CSS exceptions to mimic visual parity. QR entry is a strict
+`/join?next=<allowlisted section>` route and confers no permission.
+See `docs/design/GLOBAL_SHARED_FAMILY_TEMPLATE_2026-11-27.md`.
+The three October 15 screenshots remain the founder visual contract.
+Do not label production as live just because a shared Netlify preview deploys;
+verify physical book QR/public-domain routing and separate-family desktop/mobile
+journeys before any production promotion.
